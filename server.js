@@ -104,7 +104,7 @@ app.get('/', (req, res) => {
                 : `<button class="btn-agregar" onclick="agregarAlCarrito(${prod.id}, '${prod.nombre.replace(/'/g, "\\'")}', ${prod.precio}, ${stockActual})">➕ Agregar al Carrito</button>`;
 
             html += `
-              <div class="product-card" data-categoria="${prod.categoria || ''}" data-nombre="${prod.nombre.toLowerCase()}" data-descripcion="${(prod.descripcion || '').toLowerCase()}">
+              <div class="product-card" data-categoria="${prod.categoria || ''}" data-nombre="${prod.nombre || ''}" data-descripcion="${prod.descripcion || ''}">
                   <div class="product-image-container">
                       <img src="${imagenUrl}" alt="${prod.nombre}" class="zoom-img" onerror="this.src='https://via.placeholder.com/300x200?text=Error+Imagen'">
                       ${badgeEtiqueta}
@@ -129,7 +129,7 @@ app.get('/', (req, res) => {
                 </section>
             </main>
 
-            <!-- BOTÓN FLOTANTE DE WHATSAPP PRO -->
+            <!-- BOTÓN FLOTANTE DE WHATSAPP -->
             <a href="https://wa.me/5493794655867?text=¡Hola!%20Tengo%20una%20consulta%20sobre%20Polirubro%20Virtual" class="whatsapp-float" target="_blank">
                 💬 <span>¿Tenés dudas? Hablá con nosotros</span>
             </a>
@@ -137,8 +137,8 @@ app.get('/', (req, res) => {
             <!-- MODAL DEL CARRITO -->
             <div id="cartModal" class="modal">
                 <div class="modal-content">
-                    <span class="close-btn" onclick="toggleCartModal()">&times;</span>
-                    <h2>🛒 Tu Carrito de Compras</h2>
+                    <button type="button" class="close-btn" onclick="toggleCartModal()">&times;</button>
+                    <h2 class="modal-title">🛒 Tu Carrito de Compras</h2>
                     
                     <div id="cartItemsList" class="cart-items-list">
                         <p class="empty-cart">El carrito está vacío.</p>
@@ -148,15 +148,15 @@ app.get('/', (req, res) => {
                         <!-- DATOS DEL CLIENTE -->
                         <div class="customer-info-form">
                             <h4>📋 Tus Datos para la Entrega:</h4>
-                            <input type="text" id="clienteNombre" placeholder="Tu Nombre y Apellido *" required>
-                            <input type="text" id="clienteDireccion" placeholder="Dirección de Entrega / Barrio *">
-                            <input type="tel" id="clienteTelefono" placeholder="Teléfono de contacto">
+                            <input type="text" id="clienteNombre" class="cart-input" placeholder="Tu Nombre y Apellido *" required>
+                            <input type="text" id="clienteDireccion" class="cart-input" placeholder="Dirección de Entrega / Barrio *">
+                            <input type="tel" id="clienteTelefono" class="cart-input" placeholder="Teléfono de contacto">
                         </div>
 
                         <!-- ZONAS DE ENVÍO Y PAGO -->
                         <div class="option-group">
                             <label for="tipoEnvio">🚚 Zona / Forma de Entrega:</label>
-                            <select id="tipoEnvio" class="custom-input" onchange="actualizarTotal()">
+                            <select id="tipoEnvio" class="cart-select" onchange="actualizarTotal()">
                                 <option value="retiro" data-costo="0">Retirar por el local (Gratis)</option>
                                 <option value="centro" data-costo="1500">Zona Centro / Cambá Cuá (+$1.500)</option>
                                 <option value="barrios_cercanos" data-costo="2000">Barrios Cercanos / Aldana / Yapeyú (+$2.000)</option>
@@ -166,7 +166,7 @@ app.get('/', (req, res) => {
 
                         <div class="option-group">
                             <label for="metodoPago">💳 Método de Pago:</label>
-                            <select id="metodoPago" class="custom-input" onchange="mostrarDatosTransferencia()">
+                            <select id="metodoPago" class="cart-select" onchange="mostrarDatosTransferencia()">
                                 <option value="Efectivo">Efectivo al recibir</option>
                                 <option value="Mercado Pago">Mercado Pago</option>
                                 <option value="Transferencia Bancaria">Transferencia Bancaria (Alias/CBU)</option>
@@ -195,7 +195,7 @@ app.get('/', (req, res) => {
             <!-- MODAL CÓDIGO QR PARA PC -->
             <div id="optionsModal" class="modal">
                 <div class="modal-content" style="text-align:center;">
-                    <span class="close-btn" onclick="cerrarOptionsModal()">&times;</span>
+                    <button type="button" class="close-btn" onclick="cerrarOptionsModal()">&times;</button>
                     <h2>📲 Escaneá para enviar tu Pedido</h2>
                     <p style="color:#94a3b8; font-size:0.9rem; margin-bottom:1.2rem;">Apuntá con la cámara de tu celular para abrir WhatsApp y enviar el pedido al instante:</p>
 
@@ -205,7 +205,7 @@ app.get('/', (req, res) => {
                 </div>
             </div>
 
-            <!-- MODAL PARA VER IMAGEN EN GRANDE (CELULARES) -->
+            <!-- MODAL ZOOM IMAGEN -->
             <div id="modal-imagen-zoom" onclick="this.style.display='none'" style="display:none; position:fixed; z-index:999999; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.9); justify-content:center; align-items:center; padding:1rem;">
                 <span style="position:absolute; top:20px; right:30px; color:#fff; font-size:2.5rem; font-weight:bold; cursor:pointer;">&times;</span>
                 <img id="img-ampliada" src="" alt="Zoom Producto" style="max-width:90%; max-height:85vh; object-fit:contain; border-radius:12px; box-shadow:0 0 25px rgba(255,255,255,0.2);">
@@ -219,8 +219,13 @@ app.get('/', (req, res) => {
                 let carrito = [];
                 let categoriaSeleccionada = 'Todas';
 
-                function limpiarTexto(txt) {
-                    return (txt || '').normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+                function normalizarTexto(str) {
+                    if (!str) return '';
+                    return str.toString()
+                        .toLowerCase()
+                        .trim()
+                        .normalize("NFD")
+                        .replace(/[\u0300-\u036f]/g, "");
                 }
 
                 function formatoPesos(num) {
@@ -236,17 +241,18 @@ app.get('/', (req, res) => {
                 }
 
                 function filtrarProductos() {
-                    const busqueda = limpiarTexto(document.getElementById('searchInput').value);
+                    const inputVal = document.getElementById('searchInput') ? document.getElementById('searchInput').value : '';
+                    const busqueda = normalizarTexto(inputVal);
+                    const catSeleccionadaNorm = normalizarTexto(categoriaSeleccionada);
                     const tarjetas = document.querySelectorAll('.product-card');
 
                     tarjetas.forEach(tarjeta => {
-                        const catProducto = limpiarTexto(tarjeta.getAttribute('data-categoria'));
-                        const nombre = limpiarTexto(tarjeta.getAttribute('data-nombre'));
-                        const descripcion = limpiarTexto(tarjeta.getAttribute('data-descripcion'));
-                        const catSeleccionadaNorm = limpiarTexto(categoriaSeleccionada);
+                        const catProducto = normalizarTexto(tarjeta.getAttribute('data-categoria'));
+                        const nombre = normalizarTexto(tarjeta.getAttribute('data-nombre'));
+                        const descripcion = normalizarTexto(tarjeta.getAttribute('data-descripcion'));
 
                         const coincideCategoria = (catSeleccionadaNorm === 'todas' || catProducto === catSeleccionadaNorm);
-                        const coincideTexto = (nombre.includes(busqueda) || descripcion.includes(busqueda));
+                        const coincideTexto = (busqueda === '' || nombre.includes(busqueda) || descripcion.includes(busqueda));
 
                         if (coincideCategoria && coincideTexto) {
                             tarjeta.style.display = 'flex';
