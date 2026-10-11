@@ -81,15 +81,18 @@ app.get('/', (req, res) => {
             </header>
 
             <main>
-                <!-- BARRA DE ÍCONOS SUPERIOR SIEMPRE VISIBLE PARA NAVEGAR -->
-                <section class="top-secciones-bar" style="background: #0f172a; border: 1px solid #1e293b; border-radius: 20px; padding: 1.2rem; margin-bottom: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-                    <div style="display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 0.3rem; justify-content: center; align-items: center;">
+                <!-- BARRA SUPERIOR DE ACCESO RÁPIDO A SECCIONES -->
+                <section class="top-secciones-bar" style="background: #0f172a; border: 1px solid #1e293b; border-radius: 16px; padding: 1rem; margin-bottom: 2rem; box-shadow: 0 8px 25px rgba(0,0,0,0.4);">
+                    <div style="display: flex; gap: 0.8rem; overflow-x: auto; padding-bottom: 0.2rem; justify-content: center; align-items: center;">
+                        <button onclick="mostrarMenuPrincipal()" class="btn-seccion-mini" style="background: #334155; color: #38bdf8; border: 1px solid #38bdf8; padding: 0.6rem 1.2rem; border-radius: 50px; font-weight: bold; cursor: pointer; white-space: nowrap;">
+                            🏠 Menú Principal
+                        </button>
     `;
 
     categorias.forEach(cat => {
         html += `
-            <button onclick="entrarASeccion('${cat.nombre.replace(/'/g, "\\'")}')" class="btn-seccion-mini" style="background: #1e293b; color: #fff; border: 2px solid #3b82f6; padding: 0.7rem 1.4rem; border-radius: 50px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 0.6rem; white-space: nowrap; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);">
-                <span style="font-size: 1.4rem;">${cat.icono || '📦'}</span> ${cat.nombre}
+            <button onclick="entrarASeccion('${cat.nombre.replace(/'/g, "\\'")}')" class="btn-seccion-mini" style="background: #1e293b; color: #fff; border: 1px solid #3b82f6; padding: 0.6rem 1.2rem; border-radius: 50px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; white-space: nowrap;">
+                <span>${cat.icono || '📦'}</span> ${cat.nombre}
             </button>
         `;
     });
@@ -98,18 +101,18 @@ app.get('/', (req, res) => {
                     </div>
                 </section>
 
-                <!-- VISTA 1: MENÚ CENTRAL DE SECCIONES CON TARJETAS LLAMATIVAS -->
+                <!-- VISTA 1: MENÚ CENTRAL DE SECCIONES -->
                 <section id="vistaSecciones" class="secciones-container">
-                    <h2 style="text-align: center; font-size: 1.8rem; color: #38bdf8; margin-bottom: 2rem; font-weight: 900; letter-spacing: -0.5px;">✨ Explorar Secciones Destacadas</h2>
+                    <h2 style="text-align: center; font-size: 1.8rem; color: #38bdf8; margin-bottom: 2rem; font-weight: 900;">✨ Explorar Secciones</h2>
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1.8rem; justify-content: center; max-width: 900px; margin: 0 auto;">
     `;
 
-    categorias.forEach((cat, index) => {
+    categorias.forEach(cat => {
         const bgGlow = cat.color || 'linear-gradient(135deg, #3b82f6, #1d4ed8)';
         html += `
-            <div onclick="entrarASeccion('${cat.nombre.replace(/'/g, "\\'")}')" class="card-seccion-glow" style="background: #111827; border: 2px solid #334155; border-radius: 24px; padding: 2.2rem 1.2rem; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1); text-align: center; position: relative; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.4);">
+            <div onclick="entrarASeccion('${cat.nombre.replace(/'/g, "\\'")}')" class="card-seccion-glow" style="background: #111827; border: 2px solid #334155; border-radius: 24px; padding: 2.2rem 1.2rem; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; text-align: center; position: relative; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.4);">
                 <div style="position: absolute; top: 0; left: 0; width: 100%; height: 6px; background: ${bgGlow};"></div>
-                <span class="emoji-bounce" style="font-size: 4.2rem; margin-bottom: 1rem; filter: drop-shadow(0 8px 12px rgba(0,0,0,0.4)); transition: transform 0.3s;">${cat.icono || '📦'}</span>
+                <span style="font-size: 4rem; margin-bottom: 1rem;">${cat.icono || '📦'}</span>
                 <strong style="font-size: 1.2rem; color: #ffffff; font-weight: 800;">${cat.nombre}</strong>
                 <span style="font-size: 0.8rem; color: #38bdf8; margin-top: 0.5rem; font-weight: 600;">Ver productos ➔</span>
             </div>
@@ -120,10 +123,10 @@ app.get('/', (req, res) => {
                     </div>
                 </section>
 
-                <!-- VISTA 2: CATÁLOGO DE PRODUCTOS FILTRADO -->
+                <!-- VISTA 2: CATÁLOGO DE PRODUCTOS -->
                 <section id="vistaProductos" class="catalogo" style="display: none;">
                     <div style="margin-bottom: 1.5rem;">
-                        <input type="text" id="searchInput" oninput="filtrarProductos()" placeholder="🔍 Buscar producto en esta sección..." style="width: 100%; padding: 1rem 1.4rem; border-radius: 14px; background: #111827; color: white; border: 1px solid #334155; font-size: 1rem; box-shadow: 0 4px 15px rgba(0,0,0,0.3); outline: none;">
+                        <input type="text" id="searchInput" oninput="filtrarProductos()" placeholder="🔍 Buscar producto en esta sección..." style="width: 100%; padding: 1rem 1.4rem; border-radius: 14px; background: #111827; color: white; border: 1px solid #334155; font-size: 1rem; outline: none;">
                     </div>
 
                     <h2 id="tituloSeccionActual" style="font-size: 1.5rem; color: #38bdf8; margin-bottom: 1.5rem; border-bottom: 2px solid #1e293b; padding-bottom: 0.6rem; font-weight: 800;"></h2>
@@ -144,7 +147,7 @@ app.get('/', (req, res) => {
 
             const botonAgregar = estaAgotado 
                 ? `<button class="btn-agregar btn-disabled" disabled style="width:100%; padding:0.75rem; border-radius:12px; border:none; background:#374151; color:#9ca3af; font-weight:bold; cursor:not-allowed;">🚫 Sin Stock</button>`
-                : `<button class="btn-agregar" onclick="agregarAlCarrito(${prod.id}, '${prod.nombre.replace(/'/g, "\\'")}', ${prod.precio}, ${stockActual})" style="width:100%; padding:0.75rem; border-radius:12px; border:none; background:linear-gradient(135deg, #2563eb, #3b82f6); color:#fff; font-weight:bold; cursor:pointer; box-shadow:0 4px 12px rgba(37,99,235,0.3);">➕ Agregar al Carrito</button>`;
+                : `<button class="btn-agregar" onclick="agregarAlCarrito(${prod.id}, '${prod.nombre.replace(/'/g, "\\'")}', ${prod.precio}, ${stockActual})" style="width:100%; padding:0.75rem; border-radius:12px; border:none; background:linear-gradient(135deg, #2563eb, #3b82f6); color:#fff; font-weight:bold; cursor:pointer;">➕ Agregar al Carrito</button>`;
 
             html += `
               <div class="product-card" data-categoria="${(prod.categoria || '').trim()}" data-nombre="${prod.nombre || ''}" data-descripcion="${prod.descripcion || ''}">
@@ -164,8 +167,7 @@ app.get('/', (req, res) => {
                               <small class="stock-count" style="color: #94a3b8; font-size: 0.82rem;">${estaAgotado ? 'Sin disponibilidad' : 'Stock: ' + stockActual}</small>
                           </div>
 
-                          <!-- BOTÓN DE COMPARTIR DESTACADO EN VERDE INSTITUCIONAL -->
-                          <button class="btn-share-prominente" onclick="compartirProducto('${prod.nombre.replace(/'/g, "\\'")}', '${prod.precio}')" style="width: 100%; background: #059669; color: #ffffff; border: 1px solid #10b981; padding: 0.65rem; border-radius: 12px; font-weight: bold; font-size: 0.88rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.65rem; transition: transform 0.2s, background 0.2s;">
+                          <button class="btn-share-prominente" onclick="compartirProducto('${prod.nombre.replace(/'/g, "\\'")}', '${prod.precio}')" style="width: 100%; background: #059669; color: #ffffff; border: 1px solid #10b981; padding: 0.65rem; border-radius: 12px; font-weight: bold; font-size: 0.88rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.65rem;">
                               📲 Compartir por WhatsApp
                           </button>
 
@@ -182,17 +184,15 @@ app.get('/', (req, res) => {
                 </section>
             </main>
 
-            <!-- BOTÓN FLOTANTE WHATSAPP PRO -->
+            <!-- BOTÓN FLOTANTE WHATSAPP -->
             <a href="https://wa.me/5493794655867?text=¡Hola!%20Tengo%20una%20consulta%20sobre%20Polirubro%20Virtual" class="whatsapp-float" target="_blank">
                 💬 <span>¿Tenés dudas? Hablá con nosotros</span>
             </a>
 
-            <!-- MODAL DEL CARRITO DE COMPRAS -->
+            <!-- MODAL CARRITO -->
             <div id="cartModal" class="modal" style="display:none; position:fixed; z-index:999999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.85); justify-content:center; align-items:center; padding:1rem;">
                 <div style="background:#0f172a; border:1px solid #334155; border-radius:24px; padding:2rem; width:100%; max-width:480px; position:relative; color:#f8fafc; box-shadow:0 20px 50px rgba(0,0,0,0.9);">
-                    
                     <button type="button" onclick="toggleCartModal()" style="position:absolute; top:18px; right:20px; background:none; border:none; color:#94a3b8; font-size:1.8rem; cursor:pointer; line-height:1;">&times;</button>
-                    
                     <h2 style="font-size:1.4rem; color:#38bdf8; margin-bottom:1rem; font-weight:800;">🛒 Tu Carrito de Compras</h2>
                     
                     <div id="cartItemsList" style="max-height:180px; overflow-y:auto; margin-bottom:1rem; padding-right:0.3rem;">
@@ -237,7 +237,7 @@ app.get('/', (req, res) => {
                             <h3 style="color:#34d399; font-size:1.4rem; font-weight:800;">Total: $<span id="cartTotalPrice">0</span></h3>
                         </div>
 
-                        <button onclick="procesarPedido()" style="background:linear-gradient(135deg, #059669, #10b981); color:white; width:100%; padding:0.9rem; border-radius:12px; border:none; font-weight:bold; font-size:1rem; cursor:pointer; box-shadow:0 4px 15px rgba(16, 185, 129, 0.35);">
+                        <button onclick="procesarPedido()" style="background:linear-gradient(135deg, #059669, #10b981); color:white; width:100%; padding:0.9rem; border-radius:12px; border:none; font-weight:bold; font-size:1rem; cursor:pointer;">
                             📲 Confirmar y Enviar por WhatsApp
                         </button>
                     </div>
@@ -273,11 +273,7 @@ app.get('/', (req, res) => {
 
                 function normalizar(str) {
                     if (!str) return '';
-                    return str.toString()
-                        .toLowerCase()
-                        .trim()
-                        .normalize("NFD")
-                        .replace(/[\u0300-\u036f]/g, "");
+                    return str.toString().toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
                 }
 
                 function formatoPesos(num) {
@@ -291,6 +287,13 @@ app.get('/', (req, res) => {
                     document.getElementById('tituloSeccionActual').innerText = '📂 Sección: ' + nombreCat;
                     document.getElementById('searchInput').value = '';
                     filtrarProductos();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+
+                function mostrarMenuPrincipal() {
+                    seccionSeleccionada = '';
+                    document.getElementById('vistaSecciones').style.display = 'block';
+                    document.getElementById('vistaProductos').style.display = 'none';
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
 
