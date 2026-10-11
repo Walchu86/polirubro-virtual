@@ -66,6 +66,32 @@ app.get('/', (req, res) => {
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Polirubro Virtual | Tu Tienda Online</title>
             <link rel="stylesheet" href="/style.css">
+            <style>
+                /* REGLAS EXCLUSIVAS PARA CORREGIR EL MÓVIL AL INSTANTE */
+                @media (max-width: 768px) {
+                    .card-seccion-glow {
+                        padding: 1.2rem 0.8rem !important;
+                        border-radius: 16px !important;
+                    }
+                    .card-seccion-glow span:first-of-type {
+                        font-size: 2.5rem !important;
+                        margin-bottom: 0.4rem !important;
+                    }
+                    .card-seccion-glow strong {
+                        font-size: 1rem !important;
+                    }
+                    /* Corrige el texto gigante de "Ver productos" en las tarjetas de sección */
+                    .card-seccion-glow span[style*="font-size: 0.8rem"] {
+                        font-size: 0.78rem !important;
+                        margin-top: 0.3rem !important;
+                        display: block !important;
+                    }
+                    /* Espaciado inferior para que el botón flotante de WhatsApp no tape contenido */
+                    main {
+                        padding-bottom: 5rem !important;
+                    }
+                }
+            </style>
         </head>
         <body>
             <header>
@@ -83,7 +109,7 @@ app.get('/', (req, res) => {
             <main>
                 <!-- BARRA SUPERIOR DE ACCESO RÁPIDO A SECCIONES -->
                 <section class="top-secciones-bar" style="background: #0f172a; border: 1px solid #1e293b; border-radius: 16px; padding: 1rem; margin-bottom: 2rem; box-shadow: 0 8px 25px rgba(0,0,0,0.4);">
-                    <div style="display: flex; gap: 0.8rem; overflow-x: auto; padding-bottom: 0.2rem; justify-content: center; align-items: center;">
+                    <div style="display: flex; gap: 0.8rem; overflow-x: auto; padding-bottom: 0.2rem; justify-content: flex-start; align-items: center;">
                         <button onclick="mostrarMenuPrincipal()" class="btn-seccion-mini" style="background: #334155; color: #38bdf8; border: 1px solid #38bdf8; padding: 0.6rem 1.2rem; border-radius: 50px; font-weight: bold; cursor: pointer; white-space: nowrap;">
                             🏠 Menú Principal
                         </button>
@@ -472,10 +498,10 @@ app.get('/', (req, res) => {
 
                     const numeroWhatsApp = "5493794655867";
                     const mensajeCodificado = encodeURIComponent(mensaje);
-                    const esMovil = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                    const esMovil = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
 
                     if (esMovil) {
-                        window.open(\`https://api.whatsapp.com/send?phone=\${numeroWhatsApp}&text=\${mensajeCodificado}\`, '_blank');
+                        window.location.href = \`https://api.whatsapp.com/send?phone=\${numeroWhatsApp}&text=\${mensajeCodificado}\`;
                     } else {
                         const qrUrl = \`https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=\${encodeURIComponent("https://wa.me/" + numeroWhatsApp + "?text=" + mensajeCodificado)}\`;
                         document.getElementById('qrImage').src = qrUrl;
