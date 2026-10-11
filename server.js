@@ -52,13 +52,11 @@ function formatearPrecio(monto) {
 }
 
 // ==========================================
-// 1. TIENDA PÚBLICA (DISEÑO MÓVIL AMIGABLE)
+// 1. TIENDA PÚBLICA (VISTA CLIENTE)
 // ==========================================
 app.get('/', (req, res) => {
     const productos = leerProductos();
     const categorias = leerCategorias();
-    const userAgent = req.headers['user-agent'] || '';
-    const esMovil = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
 
     let html = `
         <!DOCTYPE html>
@@ -68,61 +66,6 @@ app.get('/', (req, res) => {
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Polirubro Virtual | Tu Tienda Online</title>
             <link rel="stylesheet" href="/style.css">
-    `;
-
-    if (esMovil) {
-        html += `
-            <style>
-                body { background-color: #0b0f19 !important; padding: 0 !important; margin: 0 !important; }
-                header { padding: 1rem !important; flex-direction: column !important; text-align: center !important; gap: 0.8rem !important; }
-                header h1 { font-size: 1.6rem !important; }
-                header p { font-size: 0.85rem !important; }
-                .header-actions { width: 100% !important; display: flex !important; justify-content: center !important; }
-                button.cart-btn { width: 100% !important; padding: 0.8rem !important; font-size: 1rem !important; border-radius: 14px !important; }
-                
-                main { padding: 0.8rem !important; margin: 0.5rem auto !important; width: 100% !important; }
-                
-                /* GRILLA DE CATEGORÍAS EN INICIO */
-                .secciones-container div {
-                    display: grid !important;
-                    grid-template-columns: repeat(2, 1fr) !important;
-                    gap: 1rem !important;
-                }
-                .card-seccion-glow {
-                    padding: 1.5rem 0.8rem !important;
-                    border-radius: 18px !important;
-                }
-                .card-seccion-glow span {
-                    font-size: 3rem !important;
-                }
-                .card-seccion-glow strong {
-                    font-size: 1rem !important;
-                }
-
-                /* PRODUCTOS EN UNA COLUMNA CÓMODA */
-                .product-grid {
-                    display: grid !important;
-                    grid-template-columns: 1fr !important;
-                    gap: 1.2rem !important;
-                }
-                .product-card {
-                    border-radius: 16px !important;
-                }
-                .product-card img {
-                    height: 220px !important;
-                }
-                
-                .whatsapp-float {
-                    bottom: 15px !important;
-                    right: 15px !important;
-                    padding: 0.6rem 1rem !important;
-                    font-size: 0.8rem !important;
-                }
-            </style>
-        `;
-    }
-
-    html += `
         </head>
         <body>
             <header>
@@ -138,10 +81,30 @@ app.get('/', (req, res) => {
             </header>
 
             <main>
+                <!-- BARRA SUPERIOR DE ACCESO RÁPIDO A SECCIONES -->
+                <section class="top-secciones-bar" style="background: #0f172a; border: 1px solid #1e293b; border-radius: 16px; padding: 1rem; margin-bottom: 2rem; box-shadow: 0 8px 25px rgba(0,0,0,0.4);">
+                    <div style="display: flex; gap: 0.8rem; overflow-x: auto; padding-bottom: 0.2rem; justify-content: center; align-items: center;">
+                        <button onclick="mostrarMenuPrincipal()" class="btn-seccion-mini" style="background: #334155; color: #38bdf8; border: 1px solid #38bdf8; padding: 0.6rem 1.2rem; border-radius: 50px; font-weight: bold; cursor: pointer; white-space: nowrap;">
+                            🏠 Menú Principal
+                        </button>
+    `;
+
+    categorias.forEach(cat => {
+        html += `
+            <button onclick="entrarASeccion('${cat.nombre.replace(/'/g, "\\'")}')" class="btn-seccion-mini" style="background: #1e293b; color: #fff; border: 1px solid #3b82f6; padding: 0.6rem 1.2rem; border-radius: 50px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; white-space: nowrap;">
+                <span>${cat.icono || '📦'}</span> ${cat.nombre}
+            </button>
+        `;
+    });
+
+    html += `
+                    </div>
+                </section>
+
                 <!-- VISTA 1: MENÚ CENTRAL DE SECCIONES -->
                 <section id="vistaSecciones" class="secciones-container">
-                    <h2 style="text-align: center; font-size: 1.6rem; color: #38bdf8; margin-bottom: 1.5rem; font-weight: 900;">✨ Explorar Secciones</h2>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1.5rem; justify-content: center; max-width: 900px; margin: 0 auto;">
+                    <h2 style="text-align: center; font-size: 1.8rem; color: #38bdf8; margin-bottom: 2rem; font-weight: 900;">✨ Explorar Secciones</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1.8rem; justify-content: center; max-width: 900px; margin: 0 auto;">
     `;
 
     categorias.forEach(cat => {
@@ -162,33 +125,11 @@ app.get('/', (req, res) => {
 
                 <!-- VISTA 2: CATÁLOGO DE PRODUCTOS -->
                 <section id="vistaProductos" class="catalogo" style="display: none;">
-                    
-                    <!-- BOTÓN GRANDE PARA VOLVER AL MENÚ PRINCIPAL DESDE EL CELU -->
-                    <div style="margin-bottom: 1rem;">
-                        <button onclick="mostrarMenuPrincipal()" style="width: 100%; background: linear-gradient(135deg, #334155, #1e293b); color: #38bdf8; border: 2px solid #38bdf8; padding: 0.8rem; border-radius: 14px; font-weight: 800; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.6rem; box-shadow: 0 4px 15px rgba(56, 189, 248, 0.2);">
-                            🏠 Volver a Elegir Sección
-                        </button>
+                    <div style="margin-bottom: 1.5rem;">
+                        <input type="text" id="searchInput" oninput="filtrarProductos()" placeholder="🔍 Buscar producto en esta sección..." style="width: 100%; padding: 1rem 1.4rem; border-radius: 14px; background: #111827; color: white; border: 1px solid #334155; font-size: 1rem; outline: none;">
                     </div>
 
-                    <!-- SELECTOR DESPLEGABLE RÁPIDO DE CATEGORÍAS -->
-                    <div style="margin-bottom: 1.2rem;">
-                        <select id="selectCategoriaMovil" onchange="cambiarSeccionDesdeSelect(this.value)" style="width: 100%; padding: 0.9rem 1rem; border-radius: 12px; background: #1e293b; color: white; border: 2px solid #3b82f6; font-size: 1rem; font-weight: bold; outline: none; cursor: pointer;">
-                            <option value="">📂 Cambiar de sección al instante...</option>
-    `;
-
-    categorias.forEach(cat => {
-        html += `<option value="${cat.nombre}">${cat.icono || '📦'} ${cat.nombre}</option>`;
-    });
-
-    html += `
-                        </select>
-                    </div>
-
-                    <div style="margin-bottom: 1.2rem;">
-                        <input type="text" id="searchInput" oninput="filtrarProductos()" placeholder="🔍 Buscar producto..." style="width: 100%; padding: 0.9rem 1.2rem; border-radius: 12px; background: #111827; color: white; border: 1px solid #334155; font-size: 1rem; outline: none;">
-                    </div>
-
-                    <h2 id="tituloSeccionActual" style="font-size: 1.4rem; color: #38bdf8; margin-bottom: 1.2rem; border-bottom: 2px solid #1e293b; padding-bottom: 0.5rem; font-weight: 800;"></h2>
+                    <h2 id="tituloSeccionActual" style="font-size: 1.5rem; color: #38bdf8; margin-bottom: 1.5rem; border-bottom: 2px solid #1e293b; padding-bottom: 0.6rem; font-weight: 800;"></h2>
                     <div class="product-grid" id="productGrid">
     `;
 
@@ -243,12 +184,14 @@ app.get('/', (req, res) => {
                 </section>
             </main>
 
+            <!-- BOTÓN FLOTANTE WHATSAPP -->
             <a href="https://wa.me/5493794655867?text=¡Hola!%20Tengo%20una%20consulta%20sobre%20Polirubro%20Virtual" class="whatsapp-float" target="_blank">
                 💬 <span>¿Tenés dudas? Hablá con nosotros</span>
             </a>
 
+            <!-- MODAL CARRITO -->
             <div id="cartModal" class="modal" style="display:none; position:fixed; z-index:999999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.85); justify-content:center; align-items:center; padding:1rem;">
-                <div style="background:#0f172a; border:1px solid #334155; border-radius:24px; padding:1.8rem; width:100%; max-width:480px; position:relative; color:#f8fafc; box-shadow:0 20px 50px rgba(0,0,0,0.9);">
+                <div style="background:#0f172a; border:1px solid #334155; border-radius:24px; padding:2rem; width:100%; max-width:480px; position:relative; color:#f8fafc; box-shadow:0 20px 50px rgba(0,0,0,0.9);">
                     <button type="button" onclick="toggleCartModal()" style="position:absolute; top:18px; right:20px; background:none; border:none; color:#94a3b8; font-size:1.8rem; cursor:pointer; line-height:1;">&times;</button>
                     <h2 style="font-size:1.4rem; color:#38bdf8; margin-bottom:1rem; font-weight:800;">🛒 Tu Carrito de Compras</h2>
                     
@@ -301,6 +244,7 @@ app.get('/', (req, res) => {
                 </div>
             </div>
 
+            <!-- MODAL QR PC -->
             <div id="optionsModal" class="modal" style="display:none; position:fixed; z-index:999999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.85); justify-content:center; align-items:center; padding:1rem;">
                 <div style="background:#0f172a; border:1px solid #334155; border-radius:24px; padding:2rem; width:100%; max-width:420px; text-align:center; position:relative; color:#fff;">
                     <button type="button" onclick="cerrarOptionsModal()" style="position:absolute; top:18px; right:20px; background:none; border:none; color:#94a3b8; font-size:1.8rem; cursor:pointer;">&times;</button>
@@ -313,6 +257,7 @@ app.get('/', (req, res) => {
                 </div>
             </div>
 
+            <!-- MODAL ZOOM IMAGEN -->
             <div id="modal-imagen-zoom" onclick="this.style.display='none'" style="display:none; position:fixed; z-index:999999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.9); justify-content:center; align-items:center; padding:1rem;">
                 <span style="position:absolute; top:20px; right:30px; color:#fff; font-size:2.5rem; font-weight:bold; cursor:pointer;">&times;</span>
                 <img id="img-ampliada" src="" alt="Zoom Producto" style="max-width:90%; max-height:85vh; object-fit:contain; border-radius:12px;">
@@ -346,16 +291,8 @@ app.get('/', (req, res) => {
                     document.getElementById('tituloSeccionActual').innerText = '📂 Sección: ' + nombreCat;
                     document.getElementById('searchInput').value = '';
                     
-                    const selectMovil = document.getElementById('selectCategoriaMovil');
-                    if (selectMovil) selectMovil.value = nombreCat;
-
                     filtrarProductos();
                     window.scrollTo({ top: 0, behavior: 'smooth' });
-                }
-
-                function cambiarSeccionDesdeSelect(nombreCat) {
-                    if (!nombreCat) return;
-                    entrarASeccion(nombreCat);
                 }
 
                 function mostrarMenuPrincipal() {
