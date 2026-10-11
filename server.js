@@ -254,6 +254,30 @@ app.get('/', (req, res) => {
                     transform: translateY(-2px);
                 }
 
+                /* ESTILOS DE IMAGEN ADAPTABLE Y PROPORCIONADA */
+                .product-image-container {
+                    position: relative;
+                    width: 100%;
+                    height: 200px;
+                    background: #0b0f19;
+                    overflow: hidden;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+
+                .product-image-container img.zoom-img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    cursor: zoom-in;
+                    transition: transform 0.3s ease;
+                }
+
+                .product-image-container img.zoom-img:hover {
+                    transform: scale(1.05);
+                }
+
                 @media (max-width: 768px) {
                     .promo-banner {
                         font-size: 0.82rem !important;
@@ -392,7 +416,7 @@ app.get('/', (req, res) => {
 
             html += `
               <div class="product-card" data-categoria="${(prod.categoria || '').trim()}" data-nombre="${prod.nombre || ''}" data-descripcion="${prod.descripcion || ''}">
-                  <div class="product-image-container" style="position: relative; width: 100%; height: 210px;">
+                  <div class="product-image-container">
                       <img src="${imagenUrl}" alt="${prod.nombre}" class="zoom-img" onerror="this.src='https://via.placeholder.com/300x200?text=Error+Imagen'">
                       ${badgeCategoria}
                   </div>
@@ -429,7 +453,7 @@ app.get('/', (req, res) => {
                 💬 <span>¿Tenés dudas? Hablá con nosotros</span>
             </a>
 
-            <!-- POPUP BIENVENIDA (SOLO SE MUESTRA UNA VEZ POR SESIÓN) -->
+            <!-- POPUP BIENVENIDA -->
             <div id="promoWelcomeModal" class="modal" style="display:none; position:fixed; z-index:9999999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.85); justify-content:center; align-items:center; padding:1rem;">
                 <div style="background: linear-gradient(135deg, #0f172a, #1e1b4b); border: 2px solid #10b981; border-radius: 28px; padding: 2.2rem 1.8rem; width: 100%; max-width: 440px; text-align: center; position: relative; color: #fff; box-shadow: 0 20px 60px rgba(16, 185, 129, 0.4);">
                     <button type="button" onclick="cerrarPromoWelcome()" style="position:absolute; top:15px; right:20px; background:none; border:none; color:#94a3b8; font-size:2rem; cursor:pointer;">&times;</button>
@@ -522,9 +546,9 @@ app.get('/', (req, res) => {
             </div>
 
             <!-- MODAL ZOOM IMAGEN -->
-            <div id="modal-imagen-zoom" onclick="this.style.display='none'" style="display:none; position:fixed; z-index:999999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.9); justify-content:center; align-items:center; padding:1rem;">
-                <span style="position:absolute; top:20px; right:30px; color:#fff; font-size:2.5rem; font-weight:bold; cursor:pointer;">&times;</span>
-                <img id="img-ampliada" src="" alt="Zoom Producto" style="max-width:90%; max-height:85vh; object-fit:contain; border-radius:12px;">
+            <div id="modal-imagen-zoom" onclick="cerrarZoom()" style="display:none; position:fixed; z-index:99999999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.92); justify-content:center; align-items:center; padding:1rem; box-sizing:border-box;">
+                <span onclick="cerrarZoom()" style="position:absolute; top:15px; right:20px; color:#fff; font-size:2.5rem; font-weight:bold; cursor:pointer; background:rgba(0,0,0,0.5); width:45px; height:45px; border-radius:50%; display:flex; align-items:center; justify-content:center; z-index:100000000;">&times;</span>
+                <img id="img-ampliada" src="" alt="Zoom Producto" style="max-width:88%; max-height:80vh; object-fit:contain; border-radius:16px; box-shadow: 0 10px 30px rgba(0,0,0,0.8);">
             </div>
 
             <footer>
@@ -536,16 +560,13 @@ app.get('/', (req, res) => {
                 let seccionSeleccionada = '';
                 let searchTimeout = null;
 
-                // INICIALIZACIÓN AL CARGAR LA PÁGINA (RECORDAR ESTADO Y PROMO)
                 document.addEventListener("DOMContentLoaded", function() {
-                    // Control de Modal de Bienvenida (Solo 1 vez por sesión de navegación)
                     if (!sessionStorage.getItem('promoVisto')) {
                         document.getElementById('promoWelcomeModal').style.display = 'flex';
                     }
 
-                    // Recuperar la última sección guardada o por Hash en la URL
                     let ultimaSeccion = localStorage.getItem('seccionActiva');
-                    if (window.location.hash) {
+                    if (window.location.hash && window.location.hash.startsWith('#seccion-')) {
                         ultimaSeccion = decodeURIComponent(window.location.hash.replace('#seccion-', ''));
                     }
 
@@ -555,6 +576,31 @@ app.get('/', (req, res) => {
                         mostrarMenuPrincipal(false);
                     }
                 });
+
+                window.addEventListener('popstate', function(event) {
+                    const modalZoom = document.getElementById("modal-imagen-zoom");
+                    if (modalZoom.style.display === "flex") {
+                        modalZoom.style.display = "none";
+                    }
+                });
+
+                function abrirZoom(urlImagen) {
+                    const modal = document.getElementById("modal-imagen-zoom");
+                    const imgAmpliada = document.getElementById("img-ampliada");
+                    imgAmpliada.src = urlImagen;
+                    modal.style.display = "flex";
+                    history.pushState({ zoomOpen: true }, "");
+                }
+
+                function cerrarZoom() {
+                    const modal = document.getElementById("modal-imagen-zoom");
+                    if (modal.style.display === "flex") {
+                        modal.style.display = "none";
+                        if (history.state && history.state.zoomOpen) {
+                            history.back();
+                        }
+                    }
+                }
 
                 function cerrarPromoWelcome() {
                     sessionStorage.setItem('promoVisto', 'true');
@@ -577,7 +623,7 @@ app.get('/', (req, res) => {
                 function entrarASeccion(nombreCat, registrarStat = true) {
                     seccionSeleccionada = nombreCat;
                     localStorage.setItem('seccionActiva', nombreCat);
-                    window.location.hash = 'seccion-' + encodeURIComponent(nombreCat);
+                    history.replaceState(null, "", '#seccion-' + encodeURIComponent(nombreCat));
 
                     document.getElementById('vistaSecciones').style.display = 'none';
                     document.getElementById('vistaProductos').style.display = 'block';
@@ -598,7 +644,7 @@ app.get('/', (req, res) => {
                     seccionSeleccionada = '';
                     localStorage.removeItem('seccionActiva');
                     if (limpiarHash) {
-                        history.pushState("", document.title, window.location.pathname + window.location.search);
+                        history.replaceState(null, "", window.location.pathname);
                     }
                     document.getElementById('vistaSecciones').style.display = 'block';
                     document.getElementById('vistaProductos').style.display = 'none';
@@ -775,10 +821,7 @@ app.get('/', (req, res) => {
 
                 document.addEventListener("click", function(e) {
                     if (e.target.classList.contains("zoom-img")) {
-                        const modal = document.getElementById("modal-imagen-zoom");
-                        const imgAmpliada = document.getElementById("img-ampliada");
-                        imgAmpliada.src = e.target.src;
-                        modal.style.display = "flex";
+                        abrirZoom(e.target.src);
                     }
                 });
 
@@ -848,7 +891,7 @@ app.get('/', (req, res) => {
 });
 
 // ==========================================
-// 2. PANEL ADMINISTRADOR (MAQUETADO LIMPIO Y ORDENADO)
+// 2. PANEL ADMINISTRADOR
 // ==========================================
 app.get('/admin', (req, res) => {
     const productos = leerProductos();
@@ -1014,7 +1057,7 @@ app.get('/admin', (req, res) => {
 
             <div class="admin-wrapper">
 
-                <!-- BLOQUE 1: MÉTRICAS (ANCHO COMPLETO HORIZONTAL) -->
+                <!-- BLOQUE 1: MÉTRICAS -->
                 <section style="background:#0f172a; border:1px solid #1e293b; border-radius:20px; padding:1.5rem; margin-bottom:1.8rem; box-shadow:0 8px 25px rgba(0,0,0,0.4);">
                     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1.2rem; border-bottom:1px solid #1e293b; padding-bottom:0.8rem;">
                         <div>
@@ -1026,7 +1069,6 @@ app.get('/admin', (req, res) => {
                         </form>
                     </div>
 
-                    <!-- TARJETAS DE CONTADORES -->
                     <div class="grid-stats-cards">
                         <div class="stat-box-clean">
                             <h3>👁️ Visitas Totales</h3>
@@ -1045,7 +1087,6 @@ app.get('/admin', (req, res) => {
                         </div>
                     </div>
 
-                    <!-- TABLAS DE SECCIONES Y BÚSQUEDAS -->
                     <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:1.2rem;">
                         <div style="background:#1e293b; padding:1rem; border-radius:12px; border:1px solid #334155;">
                             <h4 style="margin:0 0 0.6rem 0; color:#38bdf8; font-size:0.95rem;">📂 Clics por Sección</h4>
@@ -1079,10 +1120,9 @@ app.get('/admin', (req, res) => {
                     </div>
                 </section>
 
-                <!-- BLOQUE 2: FORMULARIOS Y PRODUCTOS EN 2 COLUMNAS PAREJAS -->
+                <!-- BLOQUE 2: FORMULARIOS Y PRODUCTOS -->
                 <div class="admin-two-columns">
                     
-                    <!-- COLUMNA IZQUIERDA: FORMULARIOS -->
                     <div style="display:flex; flex-direction:column; gap:1.5rem;">
                         <section style="background:#0f172a; border:1px solid #1e293b; border-radius:18px; padding:1.2rem;">
                             <h3 style="margin:0 0 1rem 0; font-size:1.1rem; color:#38bdf8;">📂 Crear Nueva Sección</h3>
@@ -1146,7 +1186,6 @@ app.get('/admin', (req, res) => {
                         </section>
                     </div>
 
-                    <!-- COLUMNA DERECHA: LISTA DE PRODUCTOS -->
                     <section style="background:#0f172a; border:1px solid #1e293b; border-radius:18px; padding:1.2rem;">
                         <h3 style="margin:0 0 1rem 0; font-size:1.1rem; color:#38bdf8;">📦 Productos Cargados (${productos.length})</h3>
                         <div>
