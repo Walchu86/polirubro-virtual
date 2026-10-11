@@ -12,10 +12,10 @@ const DATA_FILE = path.join(__dirname, 'productos.json');
 const CATEGORIAS_FILE = path.join(__dirname, 'categorias.json');
 
 const categoriasPorDefecto = [
-    { id: 1, nombre: 'Estética', icono: '💄' },
-    { id: 2, nombre: 'Electrónica', icono: '🎧' },
-    { id: 3, nombre: 'Zapatería', icono: '👟' },
-    { id: 4, nombre: 'Accesorios', icono: '📱' }
+    { id: 1, nombre: 'Estética', icono: '💄', color: 'linear-gradient(135deg, #ec4899, #be185d)' },
+    { id: 2, nombre: 'Electrónica', icono: '🎧', color: 'linear-gradient(135deg, #3b82f6, #1d4ed8)' },
+    { id: 3, nombre: 'Zapatería', icono: '👟', color: 'linear-gradient(135deg, #f59e0b, #d97706)' },
+    { id: 4, nombre: 'Accesorios', icono: '📱', color: 'linear-gradient(135deg, #8b5cf6, #6d28d9)' }
 ];
 
 function leerCategorias() {
@@ -51,8 +51,6 @@ function formatearPrecio(monto) {
     return Number(monto || 0).toLocaleString('es-AR');
 }
 
-const etiquetasValidas = ['NINGUNA', 'NUEVO', 'PROMO', 'DESTACADO', 'ÚLTIMOS STOCK'];
-
 // ==========================================
 // 1. TIENDA PÚBLICA (VISTA CLIENTE)
 // ==========================================
@@ -83,15 +81,15 @@ app.get('/', (req, res) => {
             </header>
 
             <main>
-                <!-- BARRA DE ÍCONOS SUPERIOR PARA CAMBIAR DE SECCIÓN SIEMPRE VISIBLE -->
-                <section class="top-secciones-bar" style="background: #111827; border: 1px solid #1f2937; border-radius: 16px; padding: 1rem; margin-bottom: 2rem;">
-                    <div style="display: flex; gap: 0.8rem; overflow-x: auto; padding-bottom: 0.2rem; justify-content: center;">
+                <!-- BARRA DE ÍCONOS SUPERIOR SIEMPRE VISIBLE PARA NAVEGAR -->
+                <section class="top-secciones-bar" style="background: #0f172a; border: 1px solid #1e293b; border-radius: 20px; padding: 1.2rem; margin-bottom: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                    <div style="display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 0.3rem; justify-content: center; align-items: center;">
     `;
 
     categorias.forEach(cat => {
         html += `
-            <button onclick="entrarASeccion('${cat.nombre.replace(/'/g, "\\'")}')" class="btn-seccion-mini" style="background: #1e293b; color: #fff; border: 1px solid #334155; padding: 0.6rem 1rem; border-radius: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; white-space: nowrap; transition: 0.2s;">
-                <span>${cat.icono || '📦'}</span> ${cat.nombre}
+            <button onclick="entrarASeccion('${cat.nombre.replace(/'/g, "\\'")}')" class="btn-seccion-mini" style="background: #1e293b; color: #fff; border: 2px solid #3b82f6; padding: 0.7rem 1.4rem; border-radius: 50px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 0.6rem; white-space: nowrap; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);">
+                <span style="font-size: 1.4rem;">${cat.icono || '📦'}</span> ${cat.nombre}
             </button>
         `;
     });
@@ -100,17 +98,20 @@ app.get('/', (req, res) => {
                     </div>
                 </section>
 
-                <!-- VISTA 1: MENÚ CENTRAL DE SECCIONES (SOLO VISIBLE AL INICIO) -->
+                <!-- VISTA 1: MENÚ CENTRAL DE SECCIONES CON TARJETAS LLAMATIVAS -->
                 <section id="vistaSecciones" class="secciones-container">
-                    <h2 style="text-align: center; font-size: 1.6rem; color: #38bdf8; margin-bottom: 1.5rem;">📂 Seleccioná una Sección</h2>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1.5rem; justify-content: center; max-width: 800px; margin: 0 auto;">
+                    <h2 style="text-align: center; font-size: 1.8rem; color: #38bdf8; margin-bottom: 2rem; font-weight: 900; letter-spacing: -0.5px;">✨ Explorar Secciones Destacadas</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1.8rem; justify-content: center; max-width: 900px; margin: 0 auto;">
     `;
 
-    categorias.forEach(cat => {
+    categorias.forEach((cat, index) => {
+        const bgGlow = cat.color || 'linear-gradient(135deg, #3b82f6, #1d4ed8)';
         html += `
-            <div onclick="entrarASeccion('${cat.nombre.replace(/'/g, "\\'")}')" style="background: #111827; border: 2px solid #1f2937; border-radius: 20px; padding: 2rem 1rem; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.25s; text-align: center;">
-                <span style="font-size: 3.5rem; margin-bottom: 0.8rem;">${cat.icono || '📦'}</span>
-                <strong style="font-size: 1.1rem; color: #ffffff;">${cat.nombre}</strong>
+            <div onclick="entrarASeccion('${cat.nombre.replace(/'/g, "\\'")}')" class="card-seccion-glow" style="background: #111827; border: 2px solid #334155; border-radius: 24px; padding: 2.2rem 1.2rem; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1); text-align: center; position: relative; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.4);">
+                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 6px; background: ${bgGlow};"></div>
+                <span class="emoji-bounce" style="font-size: 4.2rem; margin-bottom: 1rem; filter: drop-shadow(0 8px 12px rgba(0,0,0,0.4)); transition: transform 0.3s;">${cat.icono || '📦'}</span>
+                <strong style="font-size: 1.2rem; color: #ffffff; font-weight: 800;">${cat.nombre}</strong>
+                <span style="font-size: 0.8rem; color: #38bdf8; margin-top: 0.5rem; font-weight: 600;">Ver productos ➔</span>
             </div>
         `;
     });
@@ -119,13 +120,13 @@ app.get('/', (req, res) => {
                     </div>
                 </section>
 
-                <!-- VISTA 2: CATÁLOGO DE PRODUCTOS (OCULTO AL INICIO) -->
+                <!-- VISTA 2: CATÁLOGO DE PRODUCTOS FILTRADO -->
                 <section id="vistaProductos" class="catalogo" style="display: none;">
                     <div style="margin-bottom: 1.5rem;">
-                        <input type="text" id="searchInput" oninput="filtrarProductos()" placeholder="🔍 Buscar producto en esta sección..." style="width: 100%; padding: 0.85rem 1.2rem; border-radius: 12px; background: #111827; color: white; border: 1px solid #334155; font-size: 1rem;">
+                        <input type="text" id="searchInput" oninput="filtrarProductos()" placeholder="🔍 Buscar producto en esta sección..." style="width: 100%; padding: 1rem 1.4rem; border-radius: 14px; background: #111827; color: white; border: 1px solid #334155; font-size: 1rem; box-shadow: 0 4px 15px rgba(0,0,0,0.3); outline: none;">
                     </div>
 
-                    <h2 id="tituloSeccionActual" style="font-size: 1.4rem; color: #38bdf8; margin-bottom: 1.2rem; border-bottom: 1px solid #1f2937; padding-bottom: 0.5rem;"></h2>
+                    <h2 id="tituloSeccionActual" style="font-size: 1.5rem; color: #38bdf8; margin-bottom: 1.5rem; border-bottom: 2px solid #1e293b; padding-bottom: 0.6rem; font-weight: 800;"></h2>
                     <div class="product-grid" id="productGrid">
     `;
 
@@ -134,37 +135,42 @@ app.get('/', (req, res) => {
     } else {
         productos.forEach(prod => {
             const imagenUrl = prod.imagen || 'https://via.placeholder.com/300x200?text=Sin+Imagen';
-            const descripcionTexto = prod.descripcion ? `<p class="description">${prod.descripcion}</p>` : '';
+            const descripcionTexto = prod.descripcion ? `<p class="description" style="color: #94a3b8; font-size: 0.88rem; margin: 0.4rem 0;">${prod.descripcion}</p>` : '';
             const precioFormateado = formatearPrecio(prod.precio);
             const stockActual = prod.stock !== undefined ? Number(prod.stock) : 10;
             const estaAgotado = stockActual <= 0;
-            
-            let etiquetaTexto = prod.etiqueta && prod.etiqueta !== 'NINGUNA' ? prod.etiqueta : '';
-            if (estaAgotado) etiquetaTexto = 'AGOTADO';
 
-            const badgeEtiqueta = etiquetaTexto 
-                ? `<span class="badge ${estaAgotado ? 'badge-agotado' : ''}">${etiquetaTexto}</span>` 
-                : `<span class="badge">${prod.categoria}</span>`;
+            const badgeCategoria = `<span class="badge ${estaAgotado ? 'badge-agotado' : ''}">${estaAgotado ? 'AGOTADO' : prod.categoria}</span>`;
 
             const botonAgregar = estaAgotado 
-                ? `<button class="btn-agregar btn-disabled" disabled>🚫 Sin Stock</button>`
-                : `<button class="btn-agregar" onclick="agregarAlCarrito(${prod.id}, '${prod.nombre.replace(/'/g, "\\'")}', ${prod.precio}, ${stockActual})">➕ Agregar al Carrito</button>`;
+                ? `<button class="btn-agregar btn-disabled" disabled style="width:100%; padding:0.75rem; border-radius:12px; border:none; background:#374151; color:#9ca3af; font-weight:bold; cursor:not-allowed;">🚫 Sin Stock</button>`
+                : `<button class="btn-agregar" onclick="agregarAlCarrito(${prod.id}, '${prod.nombre.replace(/'/g, "\\'")}', ${prod.precio}, ${stockActual})" style="width:100%; padding:0.75rem; border-radius:12px; border:none; background:linear-gradient(135deg, #2563eb, #3b82f6); color:#fff; font-weight:bold; cursor:pointer; box-shadow:0 4px 12px rgba(37,99,235,0.3);">➕ Agregar al Carrito</button>`;
 
             html += `
-              <div class="product-card" data-categoria="${prod.categoria || ''}" data-nombre="${prod.nombre || ''}" data-descripcion="${prod.descripcion || ''}">
-                  <div class="product-image-container">
+              <div class="product-card" data-categoria="${(prod.categoria || '').trim()}" data-nombre="${prod.nombre || ''}" data-descripcion="${prod.descripcion || ''}">
+                  <div class="product-image-container" style="position: relative; width: 100%; height: 210px;">
                       <img src="${imagenUrl}" alt="${prod.nombre}" class="zoom-img" onerror="this.src='https://via.placeholder.com/300x200?text=Error+Imagen'">
-                      ${badgeEtiqueta}
-                      <button class="btn-share" onclick="compartirProducto('${prod.nombre.replace(/'/g, "\\'")}', '${prod.precio}')" title="Compartir por WhatsApp">📲</button>
+                      ${badgeCategoria}
                   </div>
-                  <div class="product-info">
-                      <h3>${prod.nombre}</h3>
-                      ${descripcionTexto}
-                      <div class="stock-info">
-                          <span class="price">$${precioFormateado}</span>
-                          <small class="stock-count">${estaAgotado ? 'Sin disponibilidad' : 'Stock: ' + stockActual}</small>
+                  <div class="product-info" style="padding: 1.2rem; display: flex; flex-direction: column; justify-content: space-between; flex: 1;">
+                      <div>
+                          <h3 style="font-size: 1.15rem; color: #fff; margin-bottom: 0.3rem; font-weight: 700;">${prod.nombre}</h3>
+                          ${descripcionTexto}
                       </div>
-                      ${botonAgregar}
+
+                      <div style="margin-top: 0.8rem;">
+                          <div class="stock-info" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
+                              <span class="price" style="font-size: 1.4rem; font-weight: 800; color: #34d399;">$${precioFormateado}</span>
+                              <small class="stock-count" style="color: #94a3b8; font-size: 0.82rem;">${estaAgotado ? 'Sin disponibilidad' : 'Stock: ' + stockActual}</small>
+                          </div>
+
+                          <!-- BOTÓN DE COMPARTIR DESTACADO EN VERDE INSTITUCIONAL -->
+                          <button class="btn-share-prominente" onclick="compartirProducto('${prod.nombre.replace(/'/g, "\\'")}', '${prod.precio}')" style="width: 100%; background: #059669; color: #ffffff; border: 1px solid #10b981; padding: 0.65rem; border-radius: 12px; font-weight: bold; font-size: 0.88rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.65rem; transition: transform 0.2s, background 0.2s;">
+                              📲 Compartir por WhatsApp
+                          </button>
+
+                          ${botonAgregar}
+                      </div>
                   </div>
               </div>
             `;
@@ -176,34 +182,34 @@ app.get('/', (req, res) => {
                 </section>
             </main>
 
-            <!-- BOTÓN FLOTANTE WHATSAPP -->
+            <!-- BOTÓN FLOTANTE WHATSAPP PRO -->
             <a href="https://wa.me/5493794655867?text=¡Hola!%20Tengo%20una%20consulta%20sobre%20Polirubro%20Virtual" class="whatsapp-float" target="_blank">
                 💬 <span>¿Tenés dudas? Hablá con nosotros</span>
             </a>
 
-            <!-- MODAL CARRITO -->
+            <!-- MODAL DEL CARRITO DE COMPRAS -->
             <div id="cartModal" class="modal" style="display:none; position:fixed; z-index:999999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.85); justify-content:center; align-items:center; padding:1rem;">
-                <div style="background:#0f172a; border:1px solid #334155; border-radius:20px; padding:1.8rem; width:100%; max-width:480px; position:relative; color:#f8fafc; box-shadow:0 20px 50px rgba(0,0,0,0.9);">
+                <div style="background:#0f172a; border:1px solid #334155; border-radius:24px; padding:2rem; width:100%; max-width:480px; position:relative; color:#f8fafc; box-shadow:0 20px 50px rgba(0,0,0,0.9);">
                     
-                    <button type="button" onclick="toggleCartModal()" style="position:absolute; top:15px; right:18px; background:none; border:none; color:#94a3b8; font-size:1.8rem; cursor:pointer; line-height:1;">&times;</button>
+                    <button type="button" onclick="toggleCartModal()" style="position:absolute; top:18px; right:20px; background:none; border:none; color:#94a3b8; font-size:1.8rem; cursor:pointer; line-height:1;">&times;</button>
                     
-                    <h2 style="font-size:1.35rem; color:#38bdf8; margin-bottom:1rem; font-weight:bold;">🛒 Tu Carrito de Compras</h2>
+                    <h2 style="font-size:1.4rem; color:#38bdf8; margin-bottom:1rem; font-weight:800;">🛒 Tu Carrito de Compras</h2>
                     
-                    <div id="cartItemsList" style="max-height:160px; overflow-y:auto; margin-bottom:1rem; padding-right:0.3rem;">
+                    <div id="cartItemsList" style="max-height:180px; overflow-y:auto; margin-bottom:1rem; padding-right:0.3rem;">
                         <p style="color:#94a3b8; text-align:center;">El carrito está vacío.</p>
                     </div>
 
                     <div id="cartOptions" style="display:none;">
-                        <div style="background:#1e293b; padding:1rem; border-radius:12px; border:1px solid #334155; margin-bottom:1rem;">
-                            <h4 style="font-size:0.9rem; color:#38bdf8; margin-bottom:0.6rem;">📋 Tus Datos para la Entrega:</h4>
-                            <input type="text" id="clienteNombre" placeholder="Tu Nombre y Apellido *" style="width:100%; padding:0.65rem 0.8rem; border-radius:8px; background:#0f172a; color:#fff; border:1px solid #475569; margin-bottom:0.5rem; outline:none;" required>
-                            <input type="text" id="clienteDireccion" placeholder="Dirección de Entrega / Barrio *" style="width:100%; padding:0.65rem 0.8rem; border-radius:8px; background:#0f172a; color:#fff; border:1px solid #475569; margin-bottom:0.5rem; outline:none;">
-                            <input type="tel" id="clienteTelefono" placeholder="Teléfono de contacto" style="width:100%; padding:0.65rem 0.8rem; border-radius:8px; background:#0f172a; color:#fff; border:1px solid #475569; outline:none;">
+                        <div style="background:#1e293b; padding:1rem; border-radius:14px; border:1px solid #334155; margin-bottom:1rem;">
+                            <h4 style="font-size:0.92rem; color:#38bdf8; margin-bottom:0.6rem; font-weight:700;">📋 Tus Datos para la Entrega:</h4>
+                            <input type="text" id="clienteNombre" placeholder="Tu Nombre y Apellido *" style="width:100%; padding:0.7rem 0.9rem; border-radius:10px; background:#0f172a; color:#fff; border:1px solid #475569; margin-bottom:0.6rem; outline:none;" required>
+                            <input type="text" id="clienteDireccion" placeholder="Dirección de Entrega / Barrio *" style="width:100%; padding:0.7rem 0.9rem; border-radius:10px; background:#0f172a; color:#fff; border:1px solid #475569; margin-bottom:0.6rem; outline:none;">
+                            <input type="tel" id="clienteTelefono" placeholder="Teléfono de contacto" style="width:100%; padding:0.7rem 0.9rem; border-radius:10px; background:#0f172a; color:#fff; border:1px solid #475569; outline:none;">
                         </div>
 
                         <div style="margin-bottom:0.8rem;">
-                            <label style="display:block; font-size:0.85rem; color:#cbd5e1; margin-bottom:0.3rem;">🚚 Zona / Forma de Entrega:</label>
-                            <select id="tipoEnvio" onchange="actualizarTotal()" style="width:100%; padding:0.65rem 0.8rem; border-radius:8px; background:#1e293b; color:#fff; border:1px solid #475569; outline:none; cursor:pointer;">
+                            <label style="display:block; font-size:0.88rem; color:#cbd5e1; margin-bottom:0.4rem; font-weight:600;">🚚 Zona / Forma de Entrega:</label>
+                            <select id="tipoEnvio" onchange="actualizarTotal()" style="width:100%; padding:0.7rem 0.9rem; border-radius:10px; background:#1e293b; color:#fff; border:1px solid #475569; outline:none; cursor:pointer;">
                                 <option value="retiro" data-costo="0">Retirar por el local (Gratis)</option>
                                 <option value="centro" data-costo="1500">Zona Centro / Cambá Cuá (+$1.500)</option>
                                 <option value="barrios_cercanos" data-costo="2000">Barrios Cercanos / Aldana / Yapeyú (+$2.000)</option>
@@ -212,8 +218,8 @@ app.get('/', (req, res) => {
                         </div>
 
                         <div style="margin-bottom:0.8rem;">
-                            <label style="display:block; font-size:0.85rem; color:#cbd5e1; margin-bottom:0.3rem;">💳 Método de Pago:</label>
-                            <select id="metodoPago" onchange="mostrarDatosTransferencia()" style="width:100%; padding:0.65rem 0.8rem; border-radius:8px; background:#1e293b; color:#fff; border:1px solid #475569; outline:none; cursor:pointer;">
+                            <label style="display:block; font-size:0.88rem; color:#cbd5e1; margin-bottom:0.4rem; font-weight:600;">💳 Método de Pago:</label>
+                            <select id="metodoPago" onchange="mostrarDatosTransferencia()" style="width:100%; padding:0.7rem 0.9rem; border-radius:10px; background:#1e293b; color:#fff; border:1px solid #475569; outline:none; cursor:pointer;">
                                 <option value="Efectivo">Efectivo al recibir</option>
                                 <option value="Mercado Pago">Mercado Pago</option>
                                 <option value="Transferencia Bancaria">Transferencia Bancaria (Alias/CBU)</option>
@@ -222,16 +228,16 @@ app.get('/', (req, res) => {
                             </select>
                         </div>
 
-                        <div id="transferInfo" style="display:none; background:#064e3b; border:1px solid #059669; padding:0.6rem 0.8rem; border-radius:8px; margin:0.6rem 0; justify-content:space-between; align-items:center;">
+                        <div id="transferInfo" style="display:none; background:#064e3b; border:1px solid #059669; padding:0.7rem 0.9rem; border-radius:10px; margin:0.8rem 0; justify-content:space-between; align-items:center;">
                             <small style="color:#a7f3d0;">🏦 <strong>Alias:</strong> POLIRUBRO.VIRTUAL.MP</small>
-                            <button type="button" onclick="copiarAlias()" style="background:#10b981; color:#fff; border:none; padding:0.3rem 0.6rem; border-radius:6px; cursor:pointer; font-size:0.75rem; font-weight:bold;">📋 Copiar</button>
+                            <button type="button" onclick="copiarAlias()" style="background:#10b981; color:#fff; border:none; padding:0.4rem 0.8rem; border-radius:8px; cursor:pointer; font-size:0.8rem; font-weight:bold;">📋 Copiar</button>
                         </div>
 
-                        <div style="text-align:right; margin:1rem 0 0.8rem 0;">
-                            <h3 style="color:#34d399; font-size:1.3rem;">Total: $<span id="cartTotalPrice">0</span></h3>
+                        <div style="text-align:right; margin:1.2rem 0 0.8rem 0;">
+                            <h3 style="color:#34d399; font-size:1.4rem; font-weight:800;">Total: $<span id="cartTotalPrice">0</span></h3>
                         </div>
 
-                        <button onclick="procesarPedido()" style="background:linear-gradient(135deg, #059669, #10b981); color:white; width:100%; padding:0.85rem; border-radius:10px; border:none; font-weight:bold; font-size:1rem; cursor:pointer; box-shadow:0 4px 12px rgba(16, 185, 129, 0.3);">
+                        <button onclick="procesarPedido()" style="background:linear-gradient(135deg, #059669, #10b981); color:white; width:100%; padding:0.9rem; border-radius:12px; border:none; font-weight:bold; font-size:1rem; cursor:pointer; box-shadow:0 4px 15px rgba(16, 185, 129, 0.35);">
                             📲 Confirmar y Enviar por WhatsApp
                         </button>
                     </div>
@@ -240,13 +246,13 @@ app.get('/', (req, res) => {
 
             <!-- MODAL QR PC -->
             <div id="optionsModal" class="modal" style="display:none; position:fixed; z-index:999999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.85); justify-content:center; align-items:center; padding:1rem;">
-                <div style="background:#0f172a; border:1px solid #334155; border-radius:20px; padding:2rem; width:100%; max-width:420px; text-align:center; position:relative; color:#fff;">
-                    <button type="button" onclick="cerrarOptionsModal()" style="position:absolute; top:15px; right:18px; background:none; border:none; color:#94a3b8; font-size:1.8rem; cursor:pointer;">&times;</button>
-                    <h2 style="font-size:1.3rem; color:#38bdf8; margin-bottom:0.5rem;">📲 Escaneá tu Pedido</h2>
-                    <p style="color:#94a3b8; font-size:0.85rem; margin-bottom:1rem;">Apuntá con tu celular para enviar el pedido por WhatsApp:</p>
+                <div style="background:#0f172a; border:1px solid #334155; border-radius:24px; padding:2rem; width:100%; max-width:420px; text-align:center; position:relative; color:#fff;">
+                    <button type="button" onclick="cerrarOptionsModal()" style="position:absolute; top:18px; right:20px; background:none; border:none; color:#94a3b8; font-size:1.8rem; cursor:pointer;">&times;</button>
+                    <h2 style="font-size:1.35rem; color:#38bdf8; margin-bottom:0.5rem; font-weight:800;">📲 Escaneá tu Pedido</h2>
+                    <p style="color:#94a3b8; font-size:0.88rem; margin-bottom:1.2rem;">Apuntá con tu celular para enviar el pedido por WhatsApp:</p>
 
-                    <div style="background:#1e293b; padding:1rem; border-radius:16px; border:1px solid #334155; display:inline-block;">
-                        <img id="qrImage" src="" alt="Código QR Pedido" style="width:200px; height:200px; border-radius:10px; border:2px solid #38bdf8;">
+                    <div style="background:#1e293b; padding:1.2rem; border-radius:18px; border:1px solid #334155; display:inline-block;">
+                        <img id="qrImage" src="" alt="Código QR Pedido" style="width:200px; height:200px; border-radius:12px; border:2px solid #38bdf8;">
                     </div>
                 </div>
             </div>
@@ -300,7 +306,6 @@ app.get('/', (req, res) => {
                         const nombreProd = normalizar(tarjeta.getAttribute('data-nombre'));
                         const descProd = normalizar(tarjeta.getAttribute('data-descripcion'));
 
-                        // Comparación estricta únicamente contra la categoría asignada
                         const coincideSeccion = (catProd === catActivaNorm);
                         const coincideBusqueda = (busqueda === '' || nombreProd.includes(busqueda) || descProd.includes(busqueda));
 
@@ -542,10 +547,9 @@ app.get('/admin', (req, res) => {
                                 </div>
                             </div>
 
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label>Sección / Categoría:</label>
-                                    <select name="categoria" class="custom-input" required>
+                            <div class="form-group">
+                                <label>Sección / Categoría:</label>
+                                <select name="categoria" class="custom-input" required>
     `;
 
     categorias.forEach(cat => {
@@ -553,21 +557,7 @@ app.get('/admin', (req, res) => {
     });
 
     html += `
-                                    </select>
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Etiqueta Promocional:</label>
-                                    <select name="etiqueta" class="custom-input">
-    `;
-
-    etiquetasValidas.forEach(et => {
-        html += `<option value="${et}">${et}</option>`;
-    });
-
-    html += `
-                                    </select>
-                                </div>
+                                </select>
                             </div>
 
                             <div class="form-group">
@@ -604,7 +594,6 @@ app.get('/admin', (req, res) => {
             const desc = prod.descripcion ? `<br><small style="color:#94a3b8;">${prod.descripcion}</small>` : '';
             const precioFormateado = formatearPrecio(prod.precio);
             const stockActual = prod.stock !== undefined ? prod.stock : 10;
-            const et = prod.etiqueta && prod.etiqueta !== 'NINGUNA' ? ` | Etiqueta: ${prod.etiqueta}` : '';
 
             html += `
                 <div class="admin-item-card">
@@ -615,7 +604,7 @@ app.get('/admin', (req, res) => {
                             <span class="badge-mini">${prod.categoria}</span>
                             <strong style="color:#34d399;">$${precioFormateado}</strong>
                         </div>
-                        <small style="color:#38bdf8;">Stock: ${stockActual} u. ${et}</small>
+                        <small style="color:#38bdf8;">Stock: ${stockActual} u.</small>
                         ${desc}
                     </div>
                     <form action="/admin/eliminar/${prod.id}" method="POST" onsubmit="return confirm('¿Seguro que querés eliminar este producto?');">
@@ -687,7 +676,7 @@ app.post('/admin/categoria/agregar', (req, res) => {
 });
 
 app.post('/admin/agregar', (req, res) => {
-    const { nombre, precio, stock, etiqueta, categoria, descripcion, imagenBase64, imagenUrl } = req.body;
+    const { nombre, precio, stock, categoria, descripcion, imagenBase64, imagenUrl } = req.body;
     let productos = leerProductos();
 
     const nuevoId = productos.length > 0 ? Math.max(...productos.map(p => p.id)) + 1 : 1;
@@ -701,7 +690,6 @@ app.post('/admin/agregar', (req, res) => {
         nombre: nombre.trim(),
         precio: Math.round(Number(precio) || 0),
         stock: Math.max(0, parseInt(stock) || 0),
-        etiqueta: etiqueta || 'NINGUNA',
         categoria: categoria || 'General',
         descripcion: descripcion ? descripcion.trim() : '',
         imagen: imagenFinal
