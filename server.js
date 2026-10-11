@@ -52,11 +52,13 @@ function formatearPrecio(monto) {
 }
 
 // ==========================================
-// 1. TIENDA PÚBLICA (VISTA CLIENTE)
+// 1. TIENDA PÚBLICA (CON DISEÑO ADAPTADO)
 // ==========================================
 app.get('/', (req, res) => {
     const productos = leerProductos();
     const categorias = leerCategorias();
+    const userAgent = req.headers['user-agent'] || '';
+    const esMovil = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
 
     let html = `
         <!DOCTYPE html>
@@ -66,6 +68,73 @@ app.get('/', (req, res) => {
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Polirubro Virtual | Tu Tienda Online</title>
             <link rel="stylesheet" href="/style.css">
+    `;
+
+    if (esMovil) {
+        html += `
+            <style>
+                body { background-color: #0b0f19 !important; padding: 0 !important; margin: 0 !important; }
+                header { padding: 1rem !important; flex-direction: column !important; text-align: center !important; gap: 0.8rem !important; }
+                header h1 { font-size: 1.6rem !important; }
+                header p { font-size: 0.85rem !important; }
+                .header-actions { width: 100% !important; display: flex !important; justify-content: center !important; }
+                button.cart-btn { width: 100% !important; padding: 0.8rem !important; font-size: 1rem !important; border-radius: 14px !important; }
+                
+                main { padding: 0.8rem !important; margin: 0.5rem auto !important; width: 100% !important; }
+                
+                .secciones-container div {
+                    display: grid !important;
+                    grid-template-columns: repeat(2, 1fr) !important;
+                    gap: 1rem !important;
+                }
+                .card-seccion-glow {
+                    padding: 1.5rem 0.8rem !important;
+                    border-radius: 18px !important;
+                }
+                .card-seccion-glow span {
+                    font-size: 3rem !important;
+                }
+                .card-seccion-glow strong {
+                    font-size: 1rem !important;
+                }
+
+                .top-secciones-bar div {
+                    display: flex !important;
+                    flex-wrap: nowrap !important;
+                    overflow-x: auto !important;
+                    gap: 0.5rem !important;
+                    padding-bottom: 0.3rem !important;
+                    justify-content: flex-start !important;
+                }
+                .btn-seccion-mini {
+                    padding: 0.6rem 1rem !important;
+                    font-size: 0.85rem !important;
+                    flex-shrink: 0 !important;
+                }
+
+                .product-grid {
+                    display: grid !important;
+                    grid-template-columns: 1fr !important;
+                    gap: 1.2rem !important;
+                }
+                .product-card {
+                    border-radius: 16px !important;
+                }
+                .product-card img {
+                    height: 220px !important;
+                }
+                
+                .whatsapp-float {
+                    bottom: 15px !important;
+                    right: 15px !important;
+                    padding: 0.6rem 1rem !important;
+                    font-size: 0.8rem !important;
+                }
+            </style>
+        `;
+    }
+
+    html += `
         </head>
         <body>
             <header>
@@ -81,8 +150,8 @@ app.get('/', (req, res) => {
             </header>
 
             <main>
-                <section class="top-secciones-bar" style="background: #0f172a; border: 1px solid #1e293b; border-radius: 16px; padding: 1rem; margin-bottom: 2rem; box-shadow: 0 8px 25px rgba(0,0,0,0.4);">
-                    <div style="display: flex; gap: 0.8rem; overflow-x: auto; padding-bottom: 0.2rem; justify-content: center; align-items: center;">
+                <section class="top-secciones-bar" style="display: none; background: #0f172a; border: 1px solid #1e293b; border-radius: 16px; padding: 0.8rem; margin-bottom: 1.5rem; box-shadow: 0 8px 25px rgba(0,0,0,0.4);">
+                    <div style="display: flex; gap: 0.8rem; overflow-x: auto; padding-bottom: 0.2rem; align-items: center;">
                         <button onclick="mostrarMenuPrincipal()" class="btn-seccion-mini" style="background: #334155; color: #38bdf8; border: 1px solid #38bdf8; padding: 0.6rem 1.2rem; border-radius: 50px; font-weight: bold; cursor: pointer; white-space: nowrap;">
                             🏠 Menú Principal
                         </button>
@@ -101,8 +170,8 @@ app.get('/', (req, res) => {
                 </section>
 
                 <section id="vistaSecciones" class="secciones-container">
-                    <h2 style="text-align: center; font-size: 1.8rem; color: #38bdf8; margin-bottom: 2rem; font-weight: 900;">✨ Explorar Secciones</h2>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1.8rem; justify-content: center; max-width: 900px; margin: 0 auto;">
+                    <h2 style="text-align: center; font-size: 1.6rem; color: #38bdf8; margin-bottom: 1.5rem; font-weight: 900;">✨ Explorar Secciones</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1.5rem; justify-content: center; max-width: 900px; margin: 0 auto;">
     `;
 
     categorias.forEach(cat => {
@@ -122,11 +191,11 @@ app.get('/', (req, res) => {
                 </section>
 
                 <section id="vistaProductos" class="catalogo" style="display: none;">
-                    <div style="margin-bottom: 1.5rem;">
-                        <input type="text" id="searchInput" oninput="filtrarProductos()" placeholder="🔍 Buscar producto en esta sección..." style="width: 100%; padding: 1rem 1.4rem; border-radius: 14px; background: #111827; color: white; border: 1px solid #334155; font-size: 1rem; outline: none;">
+                    <div style="margin-bottom: 1.2rem;">
+                        <input type="text" id="searchInput" oninput="filtrarProductos()" placeholder="🔍 Buscar producto en esta sección..." style="width: 100%; padding: 0.9rem 1.2rem; border-radius: 12px; background: #111827; color: white; border: 1px solid #334155; font-size: 1rem; outline: none;">
                     </div>
 
-                    <h2 id="tituloSeccionActual" style="font-size: 1.5rem; color: #38bdf8; margin-bottom: 1.5rem; border-bottom: 2px solid #1e293b; padding-bottom: 0.6rem; font-weight: 800;"></h2>
+                    <h2 id="tituloSeccionActual" style="font-size: 1.4rem; color: #38bdf8; margin-bottom: 1.2rem; border-bottom: 2px solid #1e293b; padding-bottom: 0.5rem; font-weight: 800;"></h2>
                     <div class="product-grid" id="productGrid">
     `;
 
@@ -186,7 +255,7 @@ app.get('/', (req, res) => {
             </a>
 
             <div id="cartModal" class="modal" style="display:none; position:fixed; z-index:999999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.85); justify-content:center; align-items:center; padding:1rem;">
-                <div style="background:#0f172a; border:1px solid #334155; border-radius:24px; padding:2rem; width:100%; max-width:480px; position:relative; color:#f8fafc; box-shadow:0 20px 50px rgba(0,0,0,0.9);">
+                <div style="background:#0f172a; border:1px solid #334155; border-radius:24px; padding:1.8rem; width:100%; max-width:480px; position:relative; color:#f8fafc; box-shadow:0 20px 50px rgba(0,0,0,0.9);">
                     <button type="button" onclick="toggleCartModal()" style="position:absolute; top:18px; right:20px; background:none; border:none; color:#94a3b8; font-size:1.8rem; cursor:pointer; line-height:1;">&times;</button>
                     <h2 style="font-size:1.4rem; color:#38bdf8; margin-bottom:1rem; font-weight:800;">🛒 Tu Carrito de Compras</h2>
                     
@@ -281,6 +350,7 @@ app.get('/', (req, res) => {
                     seccionSeleccionada = nombreCat;
                     document.getElementById('vistaSecciones').style.display = 'none';
                     document.getElementById('vistaProductos').style.display = 'block';
+                    document.querySelector('.top-secciones-bar').style.display = 'block';
                     document.getElementById('tituloSeccionActual').innerText = '📂 Sección: ' + nombreCat;
                     document.getElementById('searchInput').value = '';
                     
@@ -292,6 +362,7 @@ app.get('/', (req, res) => {
                     seccionSeleccionada = '';
                     document.getElementById('vistaSecciones').style.display = 'block';
                     document.getElementById('vistaProductos').style.display = 'none';
+                    document.querySelector('.top-secciones-bar').style.display = 'none';
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
 
@@ -613,7 +684,6 @@ app.get('/admin', (req, res) => {
                         </form>
                     </div>
 
-                    <!-- MODIFICADOR DE STOCK RÁPIDO VISIBLE -->
                     <form action="/admin/actualizar-stock/${prod.id}" method="POST" style="display:flex; align-items:center; justify-content:space-between; background:#1e293b; padding:0.6rem 0.8rem; border-radius:10px; border:1px solid #334155; width:100%;">
                         <span style="font-size:0.85rem; color:#38bdf8; font-weight:bold;">📦 Modificar Stock:</span>
                         <div style="display:flex; align-items:center; gap:0.5rem;">
@@ -670,7 +740,6 @@ app.get('/admin', (req, res) => {
     res.send(html);
 });
 
-// RUTA PARA ACTUALIZAR STOCK EN EL SERVIDOR
 app.post('/admin/actualizar-stock/:id', (req, res) => {
     const idProd = Number(req.params.id);
     const nuevoStock = Math.max(0, parseInt(req.body.nuevoStock) || 0);
