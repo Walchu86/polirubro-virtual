@@ -103,9 +103,9 @@ main, .container {
     background: #111827 !important;
     border: 1px solid #1f2937 !important;
     border-radius: 16px !important;
-    overflow: hidden !important;
+    overflow: hidden !important; /* Mantiene la imagen dentro del borde en el zoom */
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4) !important;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease !important;
     display: flex !important;
     flex-direction: column !important;
     height: 100% !important;
@@ -118,9 +118,7 @@ main, .container {
     box-shadow: 0 12px 24px rgba(59, 130, 246, 0.25) !important;
 }
 
-/* ===================================================
-   IMÁGENES ENTERAS Y CENTRADAS (NO SE RECORTAN)
-   =================================================== */
+/* IMÁGENES Y EFECTO ZOOM AL PASAR EL CURSOR */
 img,
 .product-card img,
 .card img,
@@ -130,11 +128,18 @@ img,
     height: 200px !important;
     max-height: 200px !important;
     min-height: 200px !important;
-    object-fit: contain !important; /* Muestra la imagen completa sin zoom ni recortes */
+    object-fit: cover !important;
     object-position: center !important;
-    background-color: #1f2937 !important; /* Fondo del recuadro */
-    padding: 8px !important;
+    background-color: #1f2937 !important;
     display: block !important;
+    transition: transform 0.4s ease-in-out !important; /* Movimiento suave */
+}
+
+/* Zoom progresivo en la foto al posar el cursor */
+.product-card:hover img,
+.card:hover img,
+.producto-card:hover img {
+    transform: scale(1.12) !important; 
 }
 
 /* CUERPO Y TEXTO DE LA TARJETA */
