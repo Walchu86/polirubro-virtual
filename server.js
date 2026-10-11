@@ -179,6 +179,16 @@ app.get('/', (req, res) => {
                         padding: 0.5rem 0.6rem !important;
                         font-size: 0.8rem !important;
                     }
+                    .card-seccion-glow {
+                        padding: 1.5rem 1rem !important;
+                        border-radius: 18px !important;
+                    }
+                    .card-seccion-glow span:first-of-type {
+                        font-size: 3rem !important;
+                    }
+                    .card-seccion-glow strong {
+                        font-size: 1rem !important;
+                    }
                 }
             </style>
         </head>
@@ -321,11 +331,10 @@ app.get('/', (req, res) => {
                 </div>
             </div>
 
-            <!-- MODAL CARRITO COMPACTO -->
+            <!-- MODAL CARRITO COMPACTO Y RESPONSIVO -->
             <div id="cartModal" class="modal" style="display:none; position:fixed; z-index:999999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.85); justify-content:center; align-items:center; padding:1rem;">
                 <div style="background:#0f172a; border:1px solid #334155; border-radius:24px; padding:1.5rem; width:100%; max-width:420px; position:relative; color:#f8fafc; box-shadow:0 20px 50px rgba(0,0,0,0.9); max-height:85vh; overflow-y:auto;">
                     
-                    <!-- BOTÓN ROJO PARA CERRAR Y VOLVER -->
                     <button type="button" onclick="toggleCartModal()" style="position:absolute; top:12px; right:16px; background:#ef4444; color:#fff; border:none; width:32px; height:32px; border-radius:50%; font-size:1.2rem; font-weight:bold; cursor:pointer; display:flex; align-items:center; justify-content:center;" title="Cerrar y volver">&times;</button>
                     
                     <h2 style="font-size:1.25rem; color:#38bdf8; margin-bottom:0.6rem; font-weight:800;">🛒 Tu Carrito</h2>
@@ -346,7 +355,6 @@ app.get('/', (req, res) => {
                             <input type="tel" id="clienteTelefono" placeholder="Teléfono de contacto" style="width:100%; padding:0.5rem 0.7rem; border-radius:6px; background:#0f172a; color:#fff; border:1px solid #475569; outline:none;">
                         </div>
 
-                        <!-- ZONA DE ENVÍO QUE SE OCULTA CUANDO SUPERA 20K -->
                         <div id="contenedorEnvio" style="margin-bottom:0.6rem;">
                             <label style="display:block; font-size:0.82rem; color:#cbd5e1; margin-bottom:0.3rem; font-weight:600;">🚚 Zona / Forma de Entrega:</label>
                             <select id="tipoEnvio" onchange="actualizarTotal()" style="width:100%; padding:0.5rem 0.7rem; border-radius:6px; background:#1e293b; color:#fff; border:1px solid #475569; outline:none; cursor:pointer;">
@@ -357,7 +365,6 @@ app.get('/', (req, res) => {
                             </select>
                         </div>
 
-                        <!-- CARTEL VERDE DE ENVÍO GRATIS -->
                         <div id="cartelEnvioGratis" style="display:none; background:#064e3b; border:1px solid #10b981; border-radius:8px; padding:0.6rem; text-align:center; margin-bottom:0.6rem;">
                             <span style="color:#a7f3d0; font-size:0.82rem; font-weight:bold;">🚚 Zona / Envío: <strong style="color:#fff;">🎉 ¡ENVÍO GRATIS! ($0)</strong></span>
                         </div>
@@ -660,7 +667,6 @@ app.get('/', (req, res) => {
                     const mensajeCodificado = encodeURIComponent(mensaje);
                     const esMovil = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
 
-                    // Cerramos el modal del carrito para que no quede abierto detrás
                     toggleCartModal();
 
                     if (esMovil) {
