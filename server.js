@@ -21,10 +21,17 @@ let memoriaCategorias = [
 let memoriaEstadisticas = { totalVisitas: 0, visitasMovil: 0, visitasPC: 0, secciones: {}, busquedas: {}, porDia: {} };
 
 let datosListos = false;
+let permitiGuardarVacio = false; // FRENO DE MANO SEGURIDAD
 
-function sincronizarConCloud() {
+function sincronizarConCloud(forzarGuardado = false) {
     if (!datosListos) return;
     
+    // FRENO DE MANO: Si los productos están en 0 y no proviene de un borrado voluntario del Admin, SE BLOQUEA EL GUARDADO.
+    if (memoriaProductos.length === 0 && !forzarGuardado && !permitiGuardarVacio) {
+        console.log('🛡️ Protección activada: Se evitó sobrescribir JSONBin porque el listado de productos estaba vacío.');
+        return;
+    }
+
     const payload = JSON.stringify({
         record: {
             productos: memoriaProductos,
@@ -50,7 +57,7 @@ function sincronizarConCloud() {
         res.on('data', (chunk) => body += chunk);
         res.on('end', () => {
             if (res.statusCode === 200) {
-                console.log('☁️ Sincronización con JSONBin exitosa.');
+                console.log('☁️ Sincronización con JSONBin exitosa. Total en la nube:', memoriaProductos.length);
             } else {
                 console.log('⚠️ Aviso de JSONBin (Código ' + res.statusCode + '):', body);
             }
@@ -86,10 +93,14 @@ function cargarDesdeCloud() {
                     const dataRoot = response.record || response;
                     
                     if (dataRoot) {
-                        if (Array.isArray(dataRoot.productos)) memoriaProductos = dataRoot.productos;
+                        if (Array.isArray(dataRoot.productos) && dataRoot.productos.length > 0) {
+                            memoriaProductos = dataRoot.productos;
+                            console.log('☁️ Datos cargados desde JSONBin correctamente. Total productos:', memoriaProductos.length);
+                        } else if (Array.isArray(dataRoot.productos) && dataRoot.productos.length === 0) {
+                            console.log('⚠️ JSONBin devolvió 0 productos.');
+                        }
                         if (Array.isArray(dataRoot.categorias) && dataRoot.categorias.length > 0) memoriaCategorias = dataRoot.categorias;
                         if (dataRoot.estadisticas) memoriaEstadisticas = dataRoot.estadisticas;
-                        console.log('☁️ Datos cargados desde JSONBin correctamente. Total productos:', memoriaProductos.length);
                     }
                 } else {
                     console.log('⚠️ Error al leer JSONBin (Código ' + res.statusCode + '):', body);
@@ -112,7 +123,12 @@ function cargarDesdeCloud() {
 cargarDesdeCloud();
 
 function leerProductos() { return memoriaProductos; }
-function guardarProductos(prods) { memoriaProductos = prods; sincronizarConCloud(); }
+function guardarProductos(prods, esBorradoOlimpia = false) { 
+    memoriaProductos = prods; 
+    if (prods.length === 0 && esBorradoOlimpia) permitiGuardarVacio = true;
+    sincronizarConCloud(esBorradoOlimpia); 
+    permitiGuardarVacio = false;
+}
 
 function leerCategorias() { return memoriaCategorias; }
 function guardarCategorias(cats) { memoriaCategorias = cats; sincronizarConCloud(); }
@@ -433,7 +449,6 @@ app.get('/', (req, res) => {
                 '💬 <span>¿Tenés dudas? Hablá con nosotros</span>' +
             '</a>' +
 
-            '<!-- MODAL DE BIENVENIDA SOLO AL ENTRAR (PC Y MOVIL) -->' +
             '<div id="promoWelcomeModal" class="modal" style="display:none; position:fixed; z-index:9999999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.85); justify-content:center; align-items:center; padding:1rem;">' +
                 '<div style="background: linear-gradient(135deg, #0f172a, #1e1b4b); border: 2px solid #10b981; border-radius: 28px; padding: 2.2rem 1.8rem; width: 100%; max-width: 450px; text-align: center; position: relative; color: #fff; box-shadow: 0 20px 60px rgba(16, 185, 129, 0.45);">' +
                     '<button type="button" onclick="cerrarPromoWelcome()" style="position:absolute; top:15px; right:20px; background:none; border:none; color:#94a3b8; font-size:2rem; cursor:pointer;">&times;</button>' +
@@ -1182,7 +1197,7 @@ app.post('/admin/eliminar/:id', (req, res) => {
     const idAEliminar = Number(req.params.id);
     let productos = leerProductos();
     productos = productos.filter(p => p.id !== idAEliminar);
-    guardarProductos(productos);
+    guardarProductos(productos, true);
     res.redirect('/admin');
 });
 
