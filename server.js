@@ -252,6 +252,8 @@ app.get('/', (req, res) => {
                     .btn-home-mini { grid-column: span 2 !important; text-align: center !important; justify-content: center !important; }
                     .btn-seccion-mini { justify-content: center !important; padding: 0.5rem 0.6rem !important; font-size: 0.8rem !important; }
                     .card-seccion-glow { padding: 1.2rem 0.8rem !important; border-radius: 16px !important; }
+                    .card-seccion-glow strong { font-size: 0.95rem !important; }
+                    .card-seccion-glow span.texto-accion { font-size: 0.78rem !important; }
                 }
             </style>
         </head>
@@ -460,9 +462,9 @@ app.get('/', (req, res) => {
                 </div>
             </div>
 
-            <!-- MODAL ZOOM IMAGEN -->
-            <div id="modal-imagen-zoom" onclick="cerrarZoom()" style="display:none; position:fixed; z-index:99999999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.92); justify-content:center; align-items:center; padding:1rem; box-sizing:border-box;">
-                <span onclick="cerrarZoom()" style="position:absolute; top:15px; right:20px; color:#fff; font-size:2.5rem; font-weight:bold; cursor:pointer; background:rgba(0,0,0,0.5); width:45px; height:45px; border-radius:50%; display:flex; align-items:center; justify-content:center; z-index:100000000;">&times;</span>
+            <!-- MODAL ZOOM IMAGEN (SIN AFECTAR EL HISTORIAL DE CATEGORÍAS) -->
+            <div id="modal-imagen-zoom" onclick="cerrarZoom(event)" style="display:none; position:fixed; z-index:99999999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.92); justify-content:center; align-items:center; padding:1rem; box-sizing:border-box;">
+                <span onclick="cerrarZoom(event)" style="position:absolute; top:15px; right:20px; color:#fff; font-size:2.5rem; font-weight:bold; cursor:pointer; background:rgba(0,0,0,0.5); width:45px; height:45px; border-radius:50%; display:flex; align-items:center; justify-content:center; z-index:100000000;">&times;</span>
                 <img id="img-ampliada" src="" alt="Zoom Producto" style="max-width:88%; max-height:80vh; object-fit:contain; border-radius:16px; box-shadow: 0 10px 30px rgba(0,0,0,0.8);">
             </div>
 
@@ -492,6 +494,7 @@ app.get('/', (req, res) => {
                     }
                 });
 
+                // MANEJO DEL BOTÓN "ATRÁS" DEL CELULAR (SOLO PARA CAMBIAR DE SECCIÓN)
                 window.addEventListener('popstate', function(event) {
                     const modalZoom = document.getElementById("modal-imagen-zoom");
                     if (modalZoom.style.display === "flex") {
@@ -508,17 +511,12 @@ app.get('/', (req, res) => {
                     const imgAmpliada = document.getElementById("img-ampliada");
                     imgAmpliada.src = urlImagen;
                     modal.style.display = "flex";
-                    history.pushState({ zoomOpen: true }, "");
                 }
 
-                function cerrarZoom() {
+                function cerrarZoom(event) {
+                    if (event) event.stopPropagation();
                     const modal = document.getElementById("modal-imagen-zoom");
-                    if (modal.style.display === "flex") {
-                        modal.style.display = "none";
-                        if (history.state && history.state.zoomOpen) {
-                            history.back();
-                        }
-                    }
+                    modal.style.display = "none";
                 }
 
                 function cerrarPromoWelcome() {
