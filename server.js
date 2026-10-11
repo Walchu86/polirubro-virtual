@@ -67,27 +67,39 @@ app.get('/', (req, res) => {
             <title>Polirubro Virtual | Tu Tienda Online</title>
             <link rel="stylesheet" href="/style.css">
             <style>
-                /* BANNER PROMO ENVÍO GRATIS */
+                /* ANIMACIÓN PARA EL BANNER DE ENVÍO GRATIS */
+                @keyframes promoGlow {
+                    0% { box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); transform: scale(1); }
+                    50% { box-shadow: 0 0 22px rgba(16, 185, 129, 0.8); transform: scale(1.01); }
+                    100% { box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); transform: scale(1); }
+                }
+
                 .promo-banner {
                     background: linear-gradient(90deg, #059669, #10b981, #059669);
                     color: #ffffff;
                     text-align: center;
-                    padding: 0.65rem 1rem;
+                    padding: 0.7rem 1rem;
                     font-weight: 800;
-                    font-size: 0.92rem;
+                    font-size: 0.95rem;
                     letter-spacing: 0.3px;
-                    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+                    animation: promoGlow 3s infinite ease-in-out;
                     display: flex;
                     justify-content: center;
                     align-items: center;
                     gap: 0.5rem;
+                    position: relative;
+                    z-index: 99;
                 }
+
+                /* BOTONERA ADAPTATIVA PROPORCIONAL PARA PC Y MÓVIL */
                 .top-bar-container {
                     background: #0f172a;
                     border: 1px solid #1e293b;
-                    border-radius: 18px;
-                    padding: 0.8rem 1rem;
-                    margin-bottom: 1.8rem;
+                    border-radius: 50px;
+                    padding: 0.6rem 1.2rem;
+                    margin: 0 auto 2rem auto;
+                    width: fit-content;
+                    max-width: 95%;
                     box-shadow: 0 8px 25px rgba(0,0,0,0.4);
                 }
                 .top-bar-grid {
@@ -101,22 +113,26 @@ app.get('/', (req, res) => {
                     background: linear-gradient(135deg, #0284c7, #0369a1) !important;
                     color: #ffffff !important;
                     border: 1px solid #38bdf8 !important;
-                    padding: 0.55rem 1.1rem !important;
+                    padding: 0.55rem 1.2rem !important;
                     border-radius: 50px !important;
                     font-weight: 800 !important;
-                    font-size: 0.85rem !important;
+                    font-size: 0.88rem !important;
                     cursor: pointer !important;
                     white-space: nowrap !important;
                     box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25);
+                    transition: all 0.2s;
+                }
+                .btn-home-mini:hover {
+                    transform: translateY(-2px);
                 }
                 .btn-seccion-mini {
                     background: #1e293b !important;
                     color: #f1f5f9 !important;
                     border: 1px solid #334155 !important;
-                    padding: 0.55rem 1rem !important;
+                    padding: 0.55rem 1.1rem !important;
                     border-radius: 50px !important;
                     font-weight: 700 !important;
-                    font-size: 0.85rem !important;
+                    font-size: 0.88rem !important;
                     cursor: pointer !important;
                     display: flex !important;
                     align-items: center !important;
@@ -127,12 +143,18 @@ app.get('/', (req, res) => {
                 .btn-seccion-mini:hover {
                     border-color: #38bdf8 !important;
                     color: #38bdf8 !important;
+                    transform: translateY(-2px);
                 }
 
                 @media (max-width: 768px) {
                     .promo-banner {
-                        font-size: 0.8rem !important;
-                        padding: 0.55rem 0.5rem !important;
+                        font-size: 0.82rem !important;
+                        padding: 0.6rem 0.5rem !important;
+                    }
+                    .top-bar-container {
+                        border-radius: 18px !important;
+                        width: 100% !important;
+                        padding: 0.8rem !important;
                     }
                     .top-bar-grid {
                         display: grid !important;
@@ -172,7 +194,7 @@ app.get('/', (req, res) => {
             </style>
         </head>
         <body>
-            <!-- BANNER PROMOCIONAL ENVÍO GRATIS -->
+            <!-- BANNER PROMOCIONAL ANIMADO ENVÍO GRATIS -->
             <div class="promo-banner">
                 🚚 <span>¡ENVÍO GRATIS en compras superiores a <strong>$20.000</strong>!</span>
             </div>
@@ -190,7 +212,7 @@ app.get('/', (req, res) => {
             </header>
 
             <main>
-                <!-- BARRA SUPERIOR DE ACCESO RÁPIDO Y DIRECTO A SECCIONES -->
+                <!-- BARRA SUPERIOR PROPORCIONAL Y DINÁMICA -->
                 <section class="top-bar-container">
                     <div class="top-bar-grid">
                         <button onclick="mostrarMenuPrincipal()" class="btn-home-mini">
@@ -298,6 +320,24 @@ app.get('/', (req, res) => {
                 💬 <span>¿Tenés dudas? Hablá con nosotros</span>
             </a>
 
+            <!-- POPUP PROMOCIONAL AL ENTRAR A LA WEB -->
+            <div id="promoWelcomeModal" class="modal" style="display:flex; position:fixed; z-index:9999999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.85); justify-content:center; align-items:center; padding:1rem;">
+                <div style="background: linear-gradient(135deg, #0f172a, #1e1b4b); border: 2px solid #10b981; border-radius: 28px; padding: 2.2rem 1.8rem; width: 100%; max-width: 440px; text-align: center; position: relative; color: #fff; box-shadow: 0 20px 60px rgba(16, 185, 129, 0.4);">
+                    <button type="button" onclick="cerrarPromoWelcome()" style="position:absolute; top:15px; right:20px; background:none; border:none; color:#94a3b8; font-size:2rem; cursor:pointer;">&times;</button>
+                    
+                    <div style="font-size: 3.5rem; margin-bottom: 0.5rem;">🚚🎉</div>
+                    <h2 style="font-size: 1.6rem; color: #10b981; margin-bottom: 0.8rem; font-weight: 900;">¡SÚPER PROMO DE BIENVENIDA!</h2>
+                    
+                    <p style="font-size: 1.05rem; color: #f1f5f9; line-height: 1.5; margin-bottom: 1.5rem;">
+                        Llevate tu pedido con <strong style="color: #34d399; font-size: 1.2rem;">ENVÍO GRATIS</strong> superando los <strong style="color: #38bdf8; font-size: 1.2rem;">$20.000</strong> en tu compra.
+                    </p>
+
+                    <button onclick="cerrarPromoWelcome()" style="background: linear-gradient(135deg, #059669, #10b981); color: white; width: 100%; padding: 0.95rem; border-radius: 14px; border: none; font-weight: 800; font-size: 1.05rem; cursor: pointer; box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);">
+                        🛍️ ¡Genial, empezar a comprar!
+                    </button>
+                </div>
+            </div>
+
             <!-- MODAL CARRITO -->
             <div id="cartModal" class="modal" style="display:none; position:fixed; z-index:999999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.85); justify-content:center; align-items:center; padding:1rem;">
                 <div style="background:#0f172a; border:1px solid #334155; border-radius:24px; padding:2rem; width:100%; max-width:480px; position:relative; color:#f8fafc; box-shadow:0 20px 50px rgba(0,0,0,0.9);">
@@ -384,6 +424,10 @@ app.get('/', (req, res) => {
             <script>
                 let carrito = [];
                 let seccionSeleccionada = '';
+
+                function cerrarPromoWelcome() {
+                    document.getElementById('promoWelcomeModal').style.display = 'none';
+                }
 
                 function normalizar(str) {
                     if (!str) return '';
