@@ -83,14 +83,14 @@ app.get('/', (req, res) => {
             </header>
 
             <main>
-                <!-- BARRA DE ICONOS SUPERIOR SIEMPRE VISIBLE PARA CAMBIAR DE SECCIÓN -->
+                <!-- BARRA DE ÍCONOS SUPERIOR PARA CAMBIAR DE SECCIÓN SIEMPRE VISIBLE -->
                 <section class="top-secciones-bar" style="background: #111827; border: 1px solid #1f2937; border-radius: 16px; padding: 1rem; margin-bottom: 2rem;">
                     <div style="display: flex; gap: 0.8rem; overflow-x: auto; padding-bottom: 0.2rem; justify-content: center;">
     `;
 
     categorias.forEach(cat => {
         html += `
-            <button onclick="entrarASeccion('${cat.nombre}')" class="btn-seccion-mini" style="background: #1e293b; color: #fff; border: 1px solid #334155; padding: 0.6rem 1rem; border-radius: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; white-space: nowrap; transition: 0.2s;">
+            <button onclick="entrarASeccion('${cat.nombre.replace(/'/g, "\\'")}')" class="btn-seccion-mini" style="background: #1e293b; color: #fff; border: 1px solid #334155; padding: 0.6rem 1rem; border-radius: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; white-space: nowrap; transition: 0.2s;">
                 <span>${cat.icono || '📦'}</span> ${cat.nombre}
             </button>
         `;
@@ -100,7 +100,7 @@ app.get('/', (req, res) => {
                     </div>
                 </section>
 
-                <!-- VISTA 1: MENÚ CENTRAL DE SECCIONES (SE VE AL ENTRAR) -->
+                <!-- VISTA 1: MENÚ CENTRAL DE SECCIONES (SOLO VISIBLE AL INICIO) -->
                 <section id="vistaSecciones" class="secciones-container">
                     <h2 style="text-align: center; font-size: 1.6rem; color: #38bdf8; margin-bottom: 1.5rem;">📂 Seleccioná una Sección</h2>
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1.5rem; justify-content: center; max-width: 800px; margin: 0 auto;">
@@ -108,7 +108,7 @@ app.get('/', (req, res) => {
 
     categorias.forEach(cat => {
         html += `
-            <div onclick="entrarASeccion('${cat.nombre}')" style="background: #111827; border: 2px solid #1f2937; border-radius: 20px; padding: 2rem 1rem; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.25s; text-align: center;">
+            <div onclick="entrarASeccion('${cat.nombre.replace(/'/g, "\\'")}')" style="background: #111827; border: 2px solid #1f2937; border-radius: 20px; padding: 2rem 1rem; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.25s; text-align: center;">
                 <span style="font-size: 3.5rem; margin-bottom: 0.8rem;">${cat.icono || '📦'}</span>
                 <strong style="font-size: 1.1rem; color: #ffffff;">${cat.nombre}</strong>
             </div>
@@ -267,7 +267,11 @@ app.get('/', (req, res) => {
 
                 function normalizar(str) {
                     if (!str) return '';
-                    return str.toString().toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                    return str.toString()
+                        .toLowerCase()
+                        .trim()
+                        .normalize("NFD")
+                        .replace(/[\u0300-\u036f]/g, "");
                 }
 
                 function formatoPesos(num) {
@@ -296,6 +300,7 @@ app.get('/', (req, res) => {
                         const nombreProd = normalizar(tarjeta.getAttribute('data-nombre'));
                         const descProd = normalizar(tarjeta.getAttribute('data-descripcion'));
 
+                        // Comparación estricta únicamente contra la categoría asignada
                         const coincideSeccion = (catProd === catActivaNorm);
                         const coincideBusqueda = (busqueda === '' || nombreProd.includes(busqueda) || descProd.includes(busqueda));
 
