@@ -89,7 +89,7 @@ app.get('/', (req, res) => {
             html += `
               <div class="product-card" data-categoria="${prod.categoria}">
                   <div class="product-image-container">
-                      <img src="${imagenUrl}" alt="${prod.nombre}" onerror="this.src='https://via.placeholder.com/300x200?text=Error+Imagen'">
+                      <img src="${imagenUrl}" alt="${prod.nombre}" class="zoom-img" onerror="this.src='https://via.placeholder.com/300x200?text=Error+Imagen'">
                       <span class="badge">${prod.categoria}</span>
                   </div>
                   <div class="product-info">
@@ -162,6 +162,12 @@ app.get('/', (req, res) => {
                         <img id="qrImage" src="" alt="Código QR Pedido" style="width:210px; height:210px; border-radius:12px; border:3px solid #38bdf8;">
                     </div>
                 </div>
+            </div>
+
+            <!-- MODAL PARA VER IMAGEN EN GRANDE (CELULARES) -->
+            <div id="modal-imagen-zoom" onclick="this.style.display='none'" style="display:none; position:fixed; z-index:999999; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.9); justify-content:center; align-items:center; padding:1rem;">
+                <span style="position:absolute; top:20px; right:30px; color:#fff; font-size:2.5rem; font-weight:bold; cursor:pointer;">&times;</span>
+                <img id="img-ampliada" src="" alt="Zoom Producto" style="max-width:90%; max-height:85vh; object-fit:contain; border-radius:12px; box-shadow:0 0 25px rgba(255,255,255,0.2);">
             </div>
 
             <footer>
@@ -270,6 +276,16 @@ app.get('/', (req, res) => {
                 function cerrarOptionsModal() {
                     document.getElementById('optionsModal').style.display = 'none';
                 }
+
+                // Activar zoom en dispositivos táctiles / celulares
+                document.addEventListener("click", function(e) {
+                    if (e.target.classList.contains("zoom-img")) {
+                        const modal = document.getElementById("modal-imagen-zoom");
+                        const imgAmpliada = document.getElementById("img-ampliada");
+                        imgAmpliada.src = e.target.src;
+                        modal.style.display = "flex";
+                    }
+                });
 
                 function procesarPedido() {
                     if (carrito.length === 0) return;
