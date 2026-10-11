@@ -562,7 +562,6 @@ app.get('/', (req, res) => {
                     filtrarProductos();
                     window.scrollTo({ top: 0, behavior: 'smooth' });
 
-                    // Registrar estadística de clic en sección
                     fetch('/api/stats/seccion', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -831,11 +830,9 @@ app.get('/admin', (req, res) => {
 
     const statsHoy = stats.porDia && stats.porDia[hoy] ? stats.porDia[hoy] : { total: 0, movil: 0, pc: 0, secciones: {}, busquedas: {} };
 
-    // Ordenar Secciones Más Visitadas
     const seccionesOrdenadas = Object.entries(stats.secciones || {})
         .sort((a, b) => b[1] - a[1]);
 
-    // Ordenar Términos Más Buscados
     const busquedasOrdenadas = Object.entries(stats.busquedas || {})
         .sort((a, b) => b[1] - a[1]);
 
@@ -910,7 +907,6 @@ app.get('/admin', (req, res) => {
 
             <main class="admin-container" style="max-width: 1200px; margin: 0 auto; padding: 1.5rem 1rem;">
 
-                <!-- 📊 SECCIÓN DE ESTADÍSTICAS EN TIEMPO REAL -->
                 <section class="admin-card" style="background:#0f172a; border:2px solid #38bdf8; border-radius:24px; padding:1.8rem; margin-bottom:2rem; box-shadow:0 10px 30px rgba(56,189,248,0.15);">
                     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1.5rem;">
                         <div>
@@ -941,7 +937,6 @@ app.get('/admin', (req, res) => {
                     </div>
 
                     <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:1.5rem;">
-                        <!-- TABLA SECCIONES MÁS VISITADAS -->
                         <div style="background:#1e293b; padding:1.2rem; border-radius:16px; border:1px solid #334155;">
                             <h4 style="color:#38bdf8; font-size:1rem; font-weight:800; margin-bottom:0.6rem;">📂 Secciones Más Entradas / Clics</h4>
                             ${seccionesOrdenadas.length === 0 ? '<p style="color:#94a3b8; font-size:0.85rem;">Aún no hay ingresos a secciones.</p>' : `
@@ -964,7 +959,6 @@ app.get('/admin', (req, res) => {
                             `}
                         </div>
 
-                        <!-- TABLA BÚSQUEDAS MÁS FRECUENTES -->
                         <div style="background:#1e293b; padding:1.2rem; border-radius:16px; border:1px solid #334155;">
                             <h4 style="color:#38bdf8; font-size:1rem; font-weight:800; margin-bottom:0.6rem;">🔍 Términos Más Buscados</h4>
                             ${busquedasOrdenadas.length === 0 ? '<p style="color:#94a3b8; font-size:0.85rem;">Aún no hay búsquedas registradas.</p>' : `
