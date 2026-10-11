@@ -174,7 +174,10 @@ main {
         gap: 0.8rem !important;
     }
     header h1 {
-        font-size: 1.6rem !important;
+        font-size: 1.5rem !important;
+    }
+    header p {
+        font-size: 0.82rem !important;
     }
     .header-actions {
         width: 100% !important;
@@ -183,43 +186,73 @@ main {
     }
     button.cart-btn {
         width: 100% !important;
-        padding: 0.8rem !important;
-        font-size: 1rem !important;
+        padding: 0.7rem !important;
+        font-size: 0.95rem !important;
     }
     main {
-        padding: 0.8rem !important;
-        margin: 1rem auto !important;
+        padding: 0.6rem !important;
+        margin: 0.5rem auto !important;
     }
     /* Las categorías en la pantalla principal se acomodan en 2 columnas prolijas */
     .secciones-container > div {
         grid-template-columns: repeat(2, 1fr) !important;
-        gap: 1rem !important;
+        gap: 0.8rem !important;
     }
     .card-seccion-glow {
-        padding: 1.5rem 0.8rem !important;
-        border-radius: 18px !important;
+        padding: 1.2rem 0.6rem !important;
+        border-radius: 16px !important;
     }
     .card-seccion-glow span {
-        font-size: 3rem !important;
+        font-size: 2.5rem !important;
     }
     .card-seccion-glow strong {
-        font-size: 1rem !important;
+        font-size: 0.92rem !important;
     }
-    /* Barra superior de secciones deslizable sin desbordes */
+    /* Barra superior de secciones deslizable */
     .top-secciones-bar div {
         justify-content: flex-start !important;
-        padding-bottom: 0.4rem !important;
+        padding-bottom: 0.3rem !important;
     }
-    /* Productos en una sola columna cómoda para el celular */
+    /* Productos en una sola columna con textos y botones compactos y estéticos */
     .product-grid {
         grid-template-columns: 1fr !important;
-        gap: 1.2rem !important;
+        gap: 1rem !important;
+    }
+    .product-card img {
+        height: 180px !important;
+    }
+    .product-info {
+        padding: 1rem !important;
+    }
+    .product-info h3 {
+        font-size: 1.05rem !important;
+    }
+    .product-info .description {
+        font-size: 0.82rem !important;
+    }
+    .product-info .price {
+        font-size: 1.15rem !important;
+    }
+    .product-info .stock-count {
+        font-size: 0.78rem !important;
+    }
+    /* Botones de acción del producto optimizados para celular */
+    .btn-share-prominente {
+        padding: 0.5rem !important;
+        font-size: 0.8rem !important;
+        border-radius: 10px !important;
+        margin-bottom: 0.5rem !important;
+    }
+    .product-info button.btn-agregar {
+        padding: 0.65rem !important;
+        font-size: 0.88rem !important;
+        border-radius: 10px !important;
     }
     .whatsapp-float {
-        bottom: 15px !important;
-        right: 15px !important;
-        padding: 0.6rem 1rem !important;
-        font-size: 0.8rem !important;
+        bottom: 12px !important;
+        right: 12px !important;
+        padding: 0.5rem 0.9rem !important;
+        font-size: 0.75rem !important;
     }
 }
 
