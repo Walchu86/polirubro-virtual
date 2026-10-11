@@ -674,18 +674,17 @@ app.get('/', (req, res) => {
                     cartOptions.style.display = 'block';
                     let html = '';
                     carrito.forEach(item => {
-                        html += `
-                            <div style="display:flex; justify-content:space-between; align-items:center; background:#1e293b; padding:0.5rem 0.7rem; border-radius:6px; margin-bottom:0.3rem; border:1px solid #334155;">
-                                <div>
-                                    <strong style="color:#fff; font-size:0.88rem;">${item.nombre}</strong><br>                                     <small style="color:#38bdf8;">$${formatoPesos(item.precio)} x${item.cantidad}</small>
-                                </div>
-                                <div style="display:flex; align-items:center; gap:0.3rem;">
-                                    <button onclick="cambiarCantidad(\${item.id}, -1)" style="background:#0f172a; color:#fff; border:1px solid #475569; width:22px; height:22px; border-radius:4px; font-weight:bold; cursor:pointer;">-</button>
-                                    <span style="font-weight:bold; padding:0.2rem; font-size:0.9rem;">\${item.cantidad}</span>
-                                    <button onclick="cambiarCantidad(\${item.id}, 1)" style="background:#0f172a; color:#fff; border:1px solid #475569; width:22px; height:22px; border-radius:4px; font-weight:bold; cursor:pointer;">+</button>
-                                </div>
-                            </div>
-                        `;
+                        html += '<div style="display:flex; justify-content:space-between; align-items:center; background:#1e293b; padding:0.5rem 0.7rem; border-radius:6px; margin-bottom:0.3rem; border:1px solid #334155;">' +
+                            '<div>' +
+                                '<strong style="color:#fff; font-size:0.88rem;">' + item.nombre + '</strong><br>' +
+                                '<small style="color:#38bdf8;">$' + formatoPesos(item.precio) + ' x ' + item.cantidad + '</small>' +
+                            '</div>' +
+                            '<div style="display:flex; align-items:center; gap:0.3rem;">' +
+                                '<button onclick="cambiarCantidad(' + item.id + ', -1)" style="background:#0f172a; color:#fff; border:1px solid #475569; width:22px; height:22px; border-radius:4px; font-weight:bold; cursor:pointer;">-</button>' +
+                                '<span style="font-weight:bold; padding:0.2rem; font-size:0.9rem;">' + item.cantidad + '</span>' +
+                                '<button onclick="cambiarCantidad(' + item.id + ', 1)" style="background:#0f172a; color:#fff; border:1px solid #475569; width:22px; height:22px; border-radius:4px; font-weight:bold; cursor:pointer;">+</button>' +
+                            '</div>' +
+                        '</div>';
                     });
                     cartItemsList.innerHTML = html;
                     actualizarTotal();
