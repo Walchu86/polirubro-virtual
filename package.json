@@ -1,0 +1,12 @@
+{
+  "name": "polirubro-virtual",
+  "version": "1.0.0",
+  "description": "Tienda Online Polirubro Virtual con Administrador",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
