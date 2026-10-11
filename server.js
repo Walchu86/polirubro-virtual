@@ -1,5 +1,5 @@
 const express = require('express');
-const https = require('https');
+const https = https = require('https');
 const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -905,7 +905,7 @@ app.get('/admin', (req, res) => {
 
             <div class="admin-wrapper">
                 <section style="background:#0f172a; border:1px solid #1e293b; border-radius:20px; padding:1.5rem; margin-bottom:1.8rem; box-shadow:0 8px 25px rgba(0,0,0,0.4);">
-                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1.2rem; border-bottom:1px solid #1e293b; padding-bottom:0.8rem;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1.0rem; margin-bottom:1.2rem; border-bottom:1px solid #1e293b; padding-bottom:0.8rem;">
                         <div>
                             <h2 style="margin:0; font-size:1.3rem; color:#38bdf8; font-weight:800;">📊 Estadísticas de Rendimiento</h2>
                             <small style="color:#94a3b8;">Fecha actual: ${hoy}</small>
