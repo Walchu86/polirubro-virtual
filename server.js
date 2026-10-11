@@ -11,7 +11,6 @@ app.use(express.json({ limit: '10mb' }));
 const MASTER_KEY = "\$2a\$10\$tg1ZdjhTaAMXJux9z9NikO/vNFhjVdW28wxjdimgawIO.VkiBMEUi";
 const BIN_ID = "6acba057ac6210605a28056a";
 
-// Memoria local con caché rápida para la tienda
 let memoriaProductos = [];
 let memoriaCategorias = [
     { id: 1, nombre: 'Estética', icono: '💄', color: 'linear-gradient(135deg, #ec4899, #be185d)' },
@@ -21,7 +20,6 @@ let memoriaCategorias = [
 ];
 let memoriaEstadisticas = { totalVisitas: 0, visitasMovil: 0, visitasPC: 0, secciones: {}, busquedas: {}, porDia: {} };
 
-// Función para sincronizar y guardar instantáneamente en JSONBin (con formato record)
 function sincronizarConCloud() {
     const datosASubir = JSON.stringify({
         record: {
@@ -57,7 +55,6 @@ function sincronizarConCloud() {
     req.end();
 }
 
-// Función para descargar los datos desde JSONBin al arrancar el servidor
 function cargarDesdeCloud() {
     const options = {
         hostname: 'api.jsonbin.io',
@@ -75,7 +72,6 @@ function cargarDesdeCloud() {
         res.on('end', () => {
             try {
                 const response = JSON.parse(body);
-                // JSONBin v3 devuelve los datos dentro de .record
                 const dataRoot = response.record || response;
                 if (dataRoot) {
                     if (Array.isArray(dataRoot.productos)) memoriaProductos = dataRoot.productos;
@@ -94,7 +90,6 @@ function cargarDesdeCloud() {
     req.end();
 }
 
-// Ejecutar lectura inicial al iniciar el servidor
 cargarDesdeCloud();
 
 function leerProductos() { return memoriaProductos; }
@@ -180,7 +175,6 @@ app.get('/', (req, res) => {
                     0% { transform: translateX(100%); }
                     100% { transform: translateX(-100%); }
                 }
-
                 .promo-banner {
                     background: linear-gradient(90deg, #059669, #10b981, #059669);
                     color: #ffffff;
@@ -194,14 +188,12 @@ app.get('/', (req, res) => {
                     position: relative;
                     z-index: 99;
                 }
-
                 .promo-text-marquee {
                     display: inline-block;
                     animation: marqueePC 14s linear infinite;
                     width: 100%;
                     text-align: center;
                 }
-
                 .top-bar-container {
                     background: #0f172a;
                     border: 1px solid #1e293b;
@@ -249,7 +241,6 @@ app.get('/', (req, res) => {
                     transition: all 0.2s;
                 }
                 .btn-seccion-mini:hover { border-color: #38bdf8 !important; color: #38bdf8 !important; transform: translateY(-2px); }
-
                 .product-image-container {
                     position: relative;
                     width: 100%;
@@ -263,7 +254,6 @@ app.get('/', (req, res) => {
                     padding: 6px;
                     box-sizing: border-box;
                 }
-
                 .product-image-container img.zoom-img {
                     max-width: 100% !important;
                     max-height: 100% !important;
@@ -273,9 +263,7 @@ app.get('/', (req, res) => {
                     cursor: zoom-in;
                     transition: transform 0.3s ease;
                 }
-
                 .product-image-container img.zoom-img:hover { transform: scale(1.05); }
-
                 @media (max-width: 768px) {
                     .promo-banner { font-size: 0.82rem !important; padding: 0.6rem 0.5rem !important; text-align: center !important; white-space: normal !important; }
                     .promo-text-marquee { animation: none !important; display: block !important; width: 100% !important; }
@@ -283,9 +271,6 @@ app.get('/', (req, res) => {
                     .top-bar-grid { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 0.5rem !important; }
                     .btn-home-mini { grid-column: span 2 !important; text-align: center !important; justify-content: center !important; }
                     .btn-seccion-mini { justify-content: center !important; padding: 0.5rem 0.6rem !important; font-size: 0.8rem !important; }
-                    .card-seccion-glow { padding: 1.2rem 0.8rem !important; border-radius: 16px !important; }
-                    .card-seccion-glow strong { font-size: 0.95rem !important; }
-                    .card-seccion-glow span.texto-accion { font-size: 0.78rem !important; }
                 }
             </style>
         </head>
