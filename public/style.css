@@ -1,5 +1,5 @@
 /* ===================================================
-   POLIRUBRO VIRTUAL - ESTILOS DEFINITIVOS (DARK MODE PRO)
+   POLIRUBRO VIRTUAL - ESTILOS DEFINITIVOS (ULTRA GLOW PRO)
    =================================================== */
 
 * {
@@ -17,7 +17,6 @@ body {
     min-height: 100vh;
 }
 
-/* ENCABEZADO */
 header {
     background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%);
     color: #ffffff;
@@ -38,7 +37,6 @@ header h1 {
     background: linear-gradient(90deg, #38bdf8, #818cf8, #c084fc);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    letter-spacing: -0.5px;
 }
 
 header p {
@@ -55,14 +53,9 @@ header p {
     padding: 0.6rem 1.2rem;
     border-radius: 10px;
     border: 1px solid rgba(56, 189, 248, 0.3);
-    transition: all 0.2s;
 }
 
-.admin-link:hover {
-    background: rgba(56, 189, 248, 0.2);
-}
-
-button.cart-btn, .cart-btn {
+button.cart-btn {
     background: linear-gradient(135deg, #2563eb, #4f46e5) !important;
     color: #ffffff !important;
     border: 1px solid #818cf8 !important;
@@ -71,19 +64,8 @@ button.cart-btn, .cart-btn {
     font-weight: 800 !important;
     font-size: 0.95rem !important;
     cursor: pointer !important;
-    box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4) !important;
-    transition: all 0.2s ease !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 0.5rem !important;
 }
 
-button.cart-btn:hover, .cart-btn:hover {
-    transform: translateY(-2px) !important;
-    box-shadow: 0 6px 20px rgba(79, 70, 229, 0.6) !important;
-}
-
-/* CONTENEDOR PRINCIPAL */
 main {
     max-width: 1200px;
     width: 100%;
@@ -92,208 +74,82 @@ main {
     flex: 1;
 }
 
-/* BARRA DE BÚSQUEDA */
-.search-section {
-    margin-bottom: 2rem;
+/* EFECTOS IMPACTANTES PARA LAS TARJETAS DE SECCIÓN */
+.card-seccion-glow:hover {
+    transform: translateY(-8px) scale(1.03) !important;
+    border-color: #38bdf8 !important;
+    box-shadow: 0 15px 35px rgba(56, 189, 248, 0.35) !important;
+    background: #1e293b !important;
 }
 
-.search-bar-container input {
-    width: 100%;
-    padding: 1rem 1.4rem;
-    border-radius: 14px;
-    background: #111827;
-    color: #ffffff;
-    border: 1px solid #1f2937;
-    font-size: 1.05rem;
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+.card-seccion-glow:hover .emoji-bounce {
+    transform: scale(1.15) rotate(5deg);
 }
 
-.search-bar-container input:focus {
-    border-color: #38bdf8;
-    box-shadow: 0 0 14px rgba(56, 189, 248, 0.3);
-}
-
-/* SECCIONES / ÍCONOS */
-.secciones-container {
-    margin-bottom: 2.5rem;
-}
-
-.section-title {
-    font-size: 1.15rem;
-    color: #38bdf8;
-    margin-bottom: 1rem;
-    font-weight: 700;
-}
-
-.icon-grid {
-    display: flex;
-    gap: 1rem;
-    overflow-x: auto;
-    padding-bottom: 0.8rem;
-}
-
-.icon-card {
-    background: #111827;
-    border: 1px solid #1f2937;
-    border-radius: 16px;
-    padding: 1rem 1.2rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-width: 110px;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    user-select: none;
-}
-
-.icon-card:hover {
-    background: #1f2937;
-    transform: translateY(-3px);
-    border-color: #3b82f6;
-}
-
-.icon-card.active {
-    background: linear-gradient(135deg, #2563eb, #4f46e5) !important;
+.btn-seccion-mini:hover {
+    background: linear-gradient(135deg, #2563eb, #3b82f6) !important;
     border-color: #60a5fa !important;
-    box-shadow: 0 6px 18px rgba(37, 99, 235, 0.4) !important;
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5) !important;
+    transform: translateY(-2px);
 }
 
-.icon-emoji {
-    font-size: 2.2rem;
-    margin-bottom: 0.4rem;
+.btn-share-prominente:hover {
+    transform: translateY(-2px);
+    background: #047857 !important;
+    box-shadow: 0 6px 18px rgba(16, 185, 129, 0.4);
 }
 
-.icon-label {
-    font-size: 0.88rem;
-    font-weight: 700;
-    color: #ffffff;
-    text-align: center;
-    white-space: nowrap;
-}
-
-/* GRILLA DE PRODUCTOS */
+/* GRILLA Y TARJETAS DE PRODUCTOS */
 .product-grid {
     display: grid !important;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important;
-    gap: 1.5rem !important;
+    gap: 1.8rem !important;
 }
 
 .product-card {
     background: #111827 !important;
     border: 1px solid #1f2937 !important;
-    border-radius: 16px !important;
-    overflow: visible !important;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4) !important;
-    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+    border-radius: 20px !important;
+    overflow: hidden !important;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4) !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease !important;
     display: flex !important;
     flex-direction: column !important;
     height: 100% !important;
-    position: relative !important;
 }
 
 .product-card:hover {
-    transform: translateY(-5px) !important;
+    transform: translateY(-6px) !important;
     border-color: #3b82f6 !important;
-    box-shadow: 0 12px 24px rgba(59, 130, 246, 0.25) !important;
+    box-shadow: 0 14px 30px rgba(59, 130, 246, 0.3) !important;
 }
 
-.product-image-container {
-    position: relative;
-    width: 100%;
-    height: 200px;
-}
-
-.product-card img, .zoom-img {
+.product-card img {
     width: 100% !important;
-    height: 200px !important;
+    height: 210px !important;
     object-fit: cover !important;
-    border-top-left-radius: 16px !important;
-    border-top-right-radius: 16px !important;
-    cursor: zoom-in !important;
 }
 
 .badge {
     position: absolute;
     top: 12px;
     left: 12px;
-    background: rgba(15, 23, 42, 0.85);
+    background: rgba(15, 23, 42, 0.9);
     color: #38bdf8;
-    padding: 0.3rem 0.8rem;
+    padding: 0.35rem 0.9rem;
     border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    border: 1px solid rgba(56, 189, 248, 0.3);
+    font-size: 0.78rem;
+    font-weight: 800;
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    backdrop-filter: blur(4px);
 }
 
 .badge-agotado {
-    background: rgba(220, 38, 38, 0.85) !important;
+    background: rgba(220, 38, 38, 0.9) !important;
     color: #ffffff !important;
+    border-color: #f87171 !important;
 }
 
-.btn-share {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    background: rgba(15, 23, 42, 0.85);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 50%;
-    width: 34px;
-    height: 34px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-}
-
-.product-info {
-    padding: 1.2rem !important;
-    display: flex !important;
-    flex-direction: column !important;
-    flex: 1 !important;
-    justify-content: space-between !important;
-}
-
-.product-info h3 {
-    font-size: 1.15rem;
-    font-weight: 700;
-    color: #ffffff;
-    margin-bottom: 0.5rem;
-}
-
-.stock-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.8rem;
-}
-
-.price {
-    font-size: 1.4rem;
-    font-weight: 800;
-    color: #34d399;
-}
-
-.btn-agregar {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    border-radius: 10px;
-    border: none;
-    background: linear-gradient(135deg, #2563eb, #3b82f6);
-    color: #ffffff;
-    font-weight: 700;
-    cursor: pointer;
-}
-
-.btn-disabled {
-    background: #374151 !important;
-    color: #9ca3af !important;
-    cursor: not-allowed !important;
-}
-
-/* BOTÓN FLOTANTE WHATSAPP */
 .whatsapp-float {
     position: fixed !important;
     bottom: 25px !important;
@@ -305,96 +161,13 @@ main {
     display: flex !important;
     align-items: center !important;
     gap: 0.6rem !important;
-    box-shadow: 0 8px 25px rgba(37, 211, 102, 0.5) !important;
     z-index: 99999 !important;
     text-decoration: none !important;
-    font-weight: 700 !important;
-    font-size: 0.9rem !important;
+    font-weight: 700;
+    box-shadow: 0 8px 25px rgba(37, 211, 102, 0.5) !important;
 }
 
-/* MODAL CARRITO */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 99999;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.85);
-    justify-content: center;
-    align-items: center;
-    padding: 1rem;
-}
-
-.modal-content {
-    background: #111827 !important;
-    border: 1px solid #1f2937 !important;
-    border-radius: 20px !important;
-    padding: 2rem !important;
-    width: 100% !important;
-    max-width: 520px !important;
-    position: relative !important;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8) !important;
-    color: #f8fafc !important;
-}
-
-.close-btn {
-    position: absolute !important;
-    top: 18px !important;
-    right: 20px !important;
-    background: transparent !important;
-    border: none !important;
-    color: #94a3b8 !important;
-    font-size: 1.8rem !important;
-    cursor: pointer !important;
-}
-
-.cart-items-list {
-    max-height: 180px;
-    overflow-y: auto;
-    margin: 1rem 0;
-}
-
-.cart-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #0f172a;
-    padding: 0.8rem;
-    border-radius: 12px;
-    margin-bottom: 0.6rem;
-    border: 1px solid #1e293b;
-}
-
-.cart-input, .cart-select {
-    width: 100% !important;
-    padding: 0.75rem 1rem !important;
-    border-radius: 10px !important;
-    background-color: #1e293b !important;
-    color: #ffffff !important;
-    border: 1px solid #334155 !important;
-    font-size: 0.92rem !important;
-    margin-bottom: 0.6rem !important;
-    outline: none !important;
-}
-
-.btn-checkout {
-    background: linear-gradient(135deg, #059669, #10b981);
-    color: white;
-    width: 100%;
-    padding: 0.85rem;
-    border-radius: 10px;
-    border: none;
-    font-weight: bold;
-    font-size: 1rem;
-    cursor: pointer;
-}
-
-/* ===================================================
-   PANEL ADMINISTRADOR REDISEÑADO TIPO DASHBOARD
-   =================================================== */
-
+/* ADMIN PANEL */
 .admin-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -420,14 +193,12 @@ main {
     border: 1px solid #1f2937;
     border-radius: 18px;
     padding: 1.8rem;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
 .admin-card h2 {
     font-size: 1.25rem;
     color: #38bdf8;
     margin-bottom: 1.2rem;
-    font-weight: 800;
 }
 
 .admin-form {
@@ -458,28 +229,6 @@ main {
     color: #ffffff !important;
     border: 1px solid #334155 !important;
     font-size: 0.95rem !important;
-    outline: none !important;
-    transition: border-color 0.2s, box-shadow 0.2s !important;
-}
-
-.custom-input:focus {
-    border-color: #38bdf8 !important;
-    box-shadow: 0 0 10px rgba(56, 189, 248, 0.3) !important;
-}
-
-.image-upload-box {
-    background: #0f172a;
-    padding: 1.2rem;
-    border-radius: 12px;
-    border: 1px dashed #334155;
-}
-
-.preview-img {
-    max-width: 130px;
-    max-height: 130px;
-    border-radius: 10px;
-    border: 2px solid #38bdf8;
-    object-fit: cover;
 }
 
 .btn-primary {
@@ -502,14 +251,12 @@ main {
     cursor: pointer;
 }
 
-/* LISTA ADMIN PRODUCTOS */
 .admin-product-list {
     display: flex;
     flex-direction: column;
     gap: 1rem;
     max-height: 600px;
     overflow-y: auto;
-    padding-right: 0.4rem;
 }
 
 .admin-item-card {
@@ -523,11 +270,10 @@ main {
 }
 
 .admin-item-img {
-    width: 65px;
-    height: 65px;
+    width: 60px;
+    height: 60px;
     object-fit: cover;
     border-radius: 10px;
-    border: 1px solid #334155;
 }
 
 .admin-item-info {
@@ -541,8 +287,6 @@ main {
     border-radius: 12px;
     font-size: 0.75rem;
     font-weight: 700;
-    display: inline-block;
-    margin-right: 0.4rem;
 }
 
 .btn-delete {
@@ -552,7 +296,6 @@ main {
     padding: 0.5rem 0.8rem;
     border-radius: 8px;
     cursor: pointer;
-    font-weight: bold;
 }
 
 footer {
@@ -562,5 +305,4 @@ footer {
     padding: 1.5rem;
     margin-top: auto;
     font-size: 0.85rem;
-    border-top: 1px solid #1f2937;
 }
