@@ -21,15 +21,32 @@ let memoriaCategorias = [
 let memoriaEstadisticas = { totalVisitas: 0, visitasMovil: 0, visitasPC: 0, secciones: {}, busquedas: {}, porDia: {} };
 
 let datosListos = false;
-let permitiGuardarVacio = false;
+let nubeSincronizadaOk = false;
 
 function sincronizarConCloud(forzarGuardado = false) {
     if (!datosListos) return;
     
-    if (memoriaProductos.length === 0 && !forzarGuardado && !permitiGuardarVacio) {
-        console.log('🛡️ Protección activada: Se evitó sobrescribir JSONBin porque el listado de productos estaba vacío.');
+    if (!nubeSincronizadaOk && memoriaProductos.length === 0 && !forzarGuardado) {
+        console.log('🛡️ ALERTA CRÍTICA: Bloqueo de seguridad activado. No se sincronizó con la nube aún, se evita sobreescritura.');
         return;
     }
+
+    // Análisis de imágenes en el log antes de empaquetar
+    console.log('🔍 ANALIZANDO IMÁGENES DE LOS PRODUCTOS A SUBIR:');
+    memoriaProductos.forEach((p, index) => {
+        let tipoImg = 'Sin Imagen';
+        let detalle = 'URL por defecto o vacía';
+        if (p.imagen) {
+            if (p.imagen.startsWith('data:image')) {
+                tipoImg = '📸 Base64 (Archivo local comprimido)';
+                detalle = 'Tamaño del string: ' + Math.round(p.imagen.length / 1024) + ' KB';
+            } else if (p.imagen.startsWith('http')) {
+                tipoImg = '🌐 URL Externa';
+                detalle = p.imagen;
+            }
+        }
+        console.log(`   -> [${index + 1}] Producto: "${p.nombre}" | Tipo: ${tipoImg} | Detalle: ${detalle}`);
+    });
 
     const payload = JSON.stringify({
         record: {
@@ -92,13 +109,24 @@ function cargarDesdeCloud() {
                         const response = JSON.parse(body);
                         const dataRoot = response.record || response;
                         
-                        if (dataRoot) {
-                            if (Array.isArray(dataRoot.productos)) {
-                                memoriaProductos = dataRoot.productos;
-                                console.log('☁️ Datos cargados desde JSONBin correctamente. Total productos:', memoriaProductos.length);
-                            }
-                            if (Array.isArray(dataRoot.categorias) && dataRoot.categorias.length > 0) memoriaCategorias = dataRoot.categorias;
-                            if (dataRoot.estadisticas) memoriaEstadisticas = dataRoot.estadisticas;
+                        if (dataRoot && Array.isArray(dataRoot.productos) && dataRoot.productos.length > 0) {
+                            memoriaProductos = dataRoot.productos;
+                            nubeSincronizadaOk = true;
+                            console.log('☁️ Datos RECUPERADOS desde JSONBin correctamente. Total productos:', memoriaProductos.length);
+                            
+                            // Mostrar en log qué imágenes vinieron de la nube
+                            memoriaProductos.forEach((p, idx) => {
+                                const esB64 = p.imagen && p.imagen.startsWith('data:image');
+                                console.log(`   📦 [Cloud Item ${idx + 1}] ${p.nombre} -> Imagen: ${esB64 ? 'Base64 OK (' + Math.round(p.imagen.length/1024) + ' KB)' : p.imagen}`);
+                            });
+                        } else {
+                            console.log('⚠️ JSONBin devolvió productos vacíos o estructura inválida.');
+                        }
+                        if (dataRoot && Array.isArray(dataRoot.categorias) && dataRoot.categorias.length > 0) {
+                            memoriaCategorias = dataRoot.categorias;
+                        }
+                        if (dataRoot && dataRoot.estadisticas) {
+                            memoriaEstadisticas = dataRoot.estadisticas;
                         }
                     } else {
                         console.log('⚠️ Error al leer JSONBin (Código ' + res.statusCode + '):', body);
@@ -124,9 +152,7 @@ function cargarDesdeCloud() {
 function leerProductos() { return memoriaProductos; }
 function guardarProductos(prods, esBorradoOlimpia = false) { 
     memoriaProductos = prods; 
-    if (prods.length === 0 && esBorradoOlimpia) permitiGuardarVacio = true;
     sincronizarConCloud(esBorradoOlimpia); 
-    permitiGuardarVacio = false;
 }
 
 function leerCategorias() { return memoriaCategorias; }
@@ -214,8 +240,8 @@ app.get('/', (req, res) => {
         if (productosEnOferta.length > 0) {
             tarjetasCategoriasHtml += '<div onclick="entrarASeccion(\'__OFERTAS__\')" class="card-seccion-glow card-seccion-box" style="background: linear-gradient(135deg, #1e1b4b, #311042); border: 2px solid #ec4899; border-radius: 20px; padding: 1.2rem 0.8rem; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; text-align: center; position: relative; overflow: hidden; box-shadow: 0 10px 25px rgba(236,72,153,0.3);">' +
                 '<div style="position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: linear-gradient(135deg, #ec4899, #f43f5e);"></div>' +
-                '<span class="icono-cat" style="font-size: 2.5rem; margin-bottom: 0.5rem;">🔥</span>' +
-                '<strong class="titulo-cat-card" style="font-size: 1.05rem; color: #ffffff; font-weight: 800;">¡OFERTAS IMPERDIBLES!</strong>' +
+                '<span class="icono-cat" style="font-size: 2.3rem; margin-bottom: 0.4rem;">🔥</span>' +
+                '<strong class="titulo-cat-card" style="font-size: 1rem; color: #ffffff; font-weight: 800;">¡OFERTAS IMPERDIBLES!</strong>' +
                 '<span class="texto-accion-card" style="color: #f43f5e;">Ver promos ➔</span>' +
             '</div>';
         }
@@ -225,8 +251,8 @@ app.get('/', (req, res) => {
             const bgGlow = cat.color || 'linear-gradient(135deg, #3b82f6, #1d4ed8)';
             tarjetasCategoriasHtml += '<div onclick="entrarASeccion(\'' + nomLimpio + '\')" class="card-seccion-glow card-seccion-box" style="background: #111827; border: 2px solid #334155; border-radius: 20px; padding: 1.2rem 0.8rem; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; text-align: center; position: relative; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.4);">' +
                 '<div style="position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: ' + bgGlow + ';"></div>' +
-                '<span class="icono-cat" style="font-size: 2.5rem; margin-bottom: 0.5rem;">' + (cat.icono || '📦') + '</span>' +
-                '<strong class="titulo-cat-card" style="font-size: 1.05rem; color: #ffffff; font-weight: 800;">' + cat.nombre + '</strong>' +
+                '<span class="icono-cat" style="font-size: 2.3rem; margin-bottom: 0.4rem;">' + (cat.icono || '📦') + '</span>' +
+                '<strong class="titulo-cat-card" style="font-size: 1rem; color: #ffffff; font-weight: 800;">' + cat.nombre + '</strong>' +
                 '<span class="texto-accion-card" style="color: #38bdf8;">Ver productos ➔</span>' +
             '</div>';
         });
@@ -286,7 +312,7 @@ app.get('/', (req, res) => {
         '<html lang="es">' +
         '<head>' +
             '<meta charset="UTF-8">' +
-            '<meta name="viewport" content="width=device-width, initial-scale=1.0">' +
+            '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">' +
             '<title>Polirubro Virtual | Tu Tienda Online</title>' +
             '<link rel="stylesheet" href="/style.css">' +
             '<style>' +
@@ -367,11 +393,10 @@ app.get('/', (req, res) => {
                 '}' +
                 '.btn-seccion-mini:hover { border-color: #38bdf8 !important; color: #38bdf8 !important; transform: translateY(-2px); }' +
                 '.texto-accion-card {' +
-                    'font-size: 0.8rem !important;' +
-                    'margin-top: 0.4rem !important;' +
-                    'font-weight: 600 !important;' +
-                    'display: block !important;' +
-                    'line-height: 1.2 !important;' +
+                    'font-size: 0.8rem;' +
+                    'margin-top: 0.3rem;' +
+                    'font-weight: 600;' +
+                    'display: block;' +
                 '}' +
                 '.product-image-container {' +
                     'position: relative;' +
@@ -401,10 +426,10 @@ app.get('/', (req, res) => {
                     '.top-bar-grid { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 0.5rem !important; }' +
                     '.btn-home-mini { grid-column: span 2 !important; text-align: center !important; justify-content: center !important; }' +
                     '.btn-seccion-mini { justify-content: center !important; padding: 0.5rem 0.6rem !important; font-size: 0.8rem !important; }' +
-                    '.card-seccion-box { padding: 0.8rem 0.4rem !important; min-height: 100px !important; }' +
-                    '.icono-cat { font-size: 1.7rem !important; margin-bottom: 0.2rem !important; }' +
-                    '.titulo-cat-card { font-size: 0.82rem !important; line-height: 1.1 !important; }' +
-                    '.texto-accion-card { font-size: 0.68rem !important; margin-top: 0.25rem !important; font-weight: 500 !important; opacity: 0.85 !important; letter-spacing: -0.2px !important; }' +
+                    '.card-seccion-box { padding: 0.9rem 0.4rem !important; min-height: 110px !important; }' +
+                    '.icono-cat { font-size: 1.8rem !important; margin-bottom: 0.2rem !important; }' +
+                    '.titulo-cat-card { font-size: 0.8rem !important; line-height: 1.15 !important; font-weight: 700 !important; }' +
+                    '.texto-accion-card { font-size: 0.65rem !important; margin-top: 0.2rem !important; font-weight: 500 !important; opacity: 0.9 !important; }' +
                 '}' +
             '</style>' +
         '</head>' +
@@ -952,7 +977,7 @@ app.get('/admin', (req, res) => {
             '<html lang="es">' +
             '<head>' +
                 '<meta charset="UTF-8">' +
-                '<meta name="viewport" content="width=device-width, initial-scale=1.0">' +
+                '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">' +
                 '<title>Panel Administrador | Polirubro Virtual</title>' +
                 '<link rel="stylesheet" href="/style.css">' +
                 '<style>' +
