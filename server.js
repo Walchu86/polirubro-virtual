@@ -219,6 +219,10 @@ app.get('/', (req, res) => {
                 let carrito = [];
                 let categoriaSeleccionada = 'Todas';
 
+                function normalizarTexto(txt) {
+                    return (txt || '').normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+                }
+
                 function formatoPesos(num) {
                     return Number(num || 0).toLocaleString('es-AR');
                 }
@@ -232,15 +236,17 @@ app.get('/', (req, res) => {
                 }
 
                 function filtrarProductos() {
-                    const busqueda = document.getElementById('searchInput').value.toLowerCase().trim();
+                    const busqueda = normalizarTexto(document.getElementById('searchInput').value);
                     const tarjetas = document.querySelectorAll('.product-card');
 
                     tarjetas.forEach(tarjeta => {
-                        const catProducto = tarjeta.getAttribute('data-categoria') || '';
-                        const nombre = tarjeta.getAttribute('data-nombre') || '';
-                        const descripcion = tarjeta.getAttribute('data-descripcion') || '';
+                        const catProducto = normalizarTexto(tarjeta.getAttribute('data-categoria'));
+                        const nombre = normalizarTexto(tarjeta.getAttribute('data-nombre'));
+                        const descripcion = normalizarTexto(tarjeta.getAttribute('data-descripcion'));
 
-                        const coincideCategoria = (categoriaSeleccionada === 'Todas' || catProducto.toLowerCase() === categoriaSeleccionada.toLowerCase());
+                        const catSeleccionadaNorm = normalizarTexto(categoriaSeleccionada);
+
+                        const coincideCategoria = (catSeleccionadaNorm === 'todas' || catProducto === catSeleccionadaNorm);
                         const coincideTexto = (nombre.includes(busqueda) || descripcion.includes(busqueda));
 
                         if (coincideCategoria && coincideTexto) {
