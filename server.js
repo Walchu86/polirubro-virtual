@@ -23,7 +23,7 @@ let memoriaEstadisticas = { totalVisitas: 0, visitasMovil: 0, visitasPC: 0, secc
 let datosListos = false;
 
 function sincronizarConCloud() {
-    if (!datosListos) return; // Evita sobrescribir antes de leer de la nube
+    if (!datosListos) return;
     
     const payload = JSON.stringify({
         record: {
@@ -97,7 +97,7 @@ function cargarDesdeCloud() {
             } catch (e) {
                 console.error('Error al parsear datos de JSONBin:', e.message);
             }
-            datosListos = true; // Habilita la sincronización recién ahora
+            datosListos = true;
         });
     });
 
@@ -109,7 +109,6 @@ function cargarDesdeCloud() {
     req.end();
 }
 
-// Cargar datos al iniciar el servidor de forma segura
 cargarDesdeCloud();
 
 function leerProductos() { return memoriaProductos; }
@@ -434,16 +433,20 @@ app.get('/', (req, res) => {
                 '💬 <span>¿Tenés dudas? Hablá con nosotros</span>' +
             '</a>' +
 
+            '<!-- MODAL DE BIENVENIDA SOLO AL ENTRAR (PC Y MOVIL) -->' +
             '<div id="promoWelcomeModal" class="modal" style="display:none; position:fixed; z-index:9999999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.85); justify-content:center; align-items:center; padding:1rem;">' +
-                '<div style="background: linear-gradient(135deg, #0f172a, #1e1b4b); border: 2px solid #10b981; border-radius: 28px; padding: 2.2rem 1.8rem; width: 100%; max-width: 440px; text-align: center; position: relative; color: #fff; box-shadow: 0 20px 60px rgba(16, 185, 129, 0.4);">' +
+                '<div style="background: linear-gradient(135deg, #0f172a, #1e1b4b); border: 2px solid #10b981; border-radius: 28px; padding: 2.2rem 1.8rem; width: 100%; max-width: 450px; text-align: center; position: relative; color: #fff; box-shadow: 0 20px 60px rgba(16, 185, 129, 0.45);">' +
                     '<button type="button" onclick="cerrarPromoWelcome()" style="position:absolute; top:15px; right:20px; background:none; border:none; color:#94a3b8; font-size:2rem; cursor:pointer;">&times;</button>' +
-                    '<div style="font-size: 3.5rem; margin-bottom: 0.5rem;">🚚🎉</div>' +
-                    '<h2 style="font-size: 1.6rem; color: #10b981; margin-bottom: 0.8rem; font-weight: 900;">¡SÚPER PROMO DE BIENVENIDA!</h2>' +
-                    '<p style="font-size: 1.05rem; color: #f1f5f9; line-height: 1.5; margin-bottom: 1.5rem;">' +
-                        'Llevate tu pedido con <strong style="color: #34d399; font-size: 1.2rem;">ENVÍO GRATIS EXCLUSIVO EN LA WEB</strong> superando los <strong style="color: #38bdf8; font-size: 1.2rem;">$20.000</strong> en tu compra.' +
+                    '<div style="font-size: 3.5rem; margin-bottom: 0.5rem; animation: pulse 2s infinite;">🚚🎁</div>' +
+                    '<h2 style="font-size: 1.6rem; color: #10b981; margin-bottom: 0.6rem; font-weight: 900;">¡BIENVENIDO A POLIRUBRO VIRTUAL!</h2>' +
+                    '<p style="font-size: 1.05rem; color: #f1f5f9; line-height: 1.5; margin-bottom: 1.2rem;">' +
+                        '¡Queremos regalarte el envío! Comprando en nuestra tienda web y alcanzando los <strong style="color: #38bdf8; font-size: 1.25rem;">$20.000</strong>, tu <strong style="color: #34d399; font-size: 1.25rem;">ENVÍO ES 100% GRATIS</strong>. 🥳' +
                     '</p>' +
-                    '<button onclick="cerrarPromoWelcome()" style="background: linear-gradient(135deg, #059669, #10b981); color: white; width: 100%; padding: 0.95rem; border-radius: 14px; border: none; font-weight: 800; font-size: 1.05rem; cursor: pointer;">' +
-                        '🛍️ ¡Genial, empezar a comprar!' +
+                    '<p style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 1.5rem;">' +
+                        'Aprovechá las mejores ofertas y armá tu carrito en unos pocos clics. ✨' +
+                    '</p>' +
+                    '<button onclick="cerrarPromoWelcome()" style="background: linear-gradient(135deg, #059669, #10b981); color: white; width: 100%; padding: 0.95rem; border-radius: 14px; border: none; font-weight: 800; font-size: 1.1rem; cursor: pointer; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); transition: transform 0.2s;" onmouseover="this.style.transform=\'scale(1.02)\'" onmouseout="this.style.transform=\'scale(1)\'">' +
+                        '🛍️ ¡Empezar a comprar!' +
                     '</button>' +
                 '</div>' +
             '</div>' +
@@ -536,7 +539,7 @@ app.get('/', (req, res) => {
                 'let searchTimeout = null;' +
 
                 'document.addEventListener("DOMContentLoaded", function() {' +
-                    'if (!sessionStorage.getItem("promoVisto")) {' +
+                    'if (!sessionStorage.getItem("promoBienvenidaVista")) {' +
                         'document.getElementById("promoWelcomeModal").style.display = "flex";' +
                     '}' +
                     'let ultimaSeccion = localStorage.getItem("seccionActiva");' +
@@ -575,7 +578,7 @@ app.get('/', (req, res) => {
                 '}' +
 
                 'function cerrarPromoWelcome() {' +
-                    'sessionStorage.setItem("promoVisto", "true");' +
+                    'sessionStorage.setItem("promoBienvenidaVista", "true");' +
                     'document.getElementById("promoWelcomeModal").style.display = "none";' +
                 '}' +
 
@@ -915,7 +918,7 @@ app.get('/admin', (req, res) => {
                         '<input type="number" name="nuevoStock" value="' + stockActual + '" min="0" style="width:60px; padding:0.3rem; border-radius:6px; background:#0f172a; color:#fff; border:1px solid #475569; text-align:center; font-weight:bold;">' +
                         '<button type="submit" style="background:#2563eb; color:#fff; border:none; padding:0.35rem 0.7rem; border-radius:6px; font-weight:bold; cursor:pointer; font-size:0.78rem;">💾 Guardar</button>' +
                     '</div>' +
-                'form>' +
+                '</form>' +
             '</div>';
         }).join('');
 
