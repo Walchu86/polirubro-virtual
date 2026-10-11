@@ -298,7 +298,7 @@ app.get('/', (req, res) => {
     `;
 
     categorias.forEach(cat => {
-        html += '<button onclick="entrarASeccion(\'' + cat.nombre.replace(/'/g, "\\'") + '\')" class="btn-seccion-mini"><span>' + (cat.icono || '📦') + '</span> ' + cat.nombre + '</button>';
+        html += `<button onclick="entrarASeccion('${cat.nombre.replace(/'/g, "\\'")}')" class="btn-seccion-mini"><span>${cat.icono || '📦'}</span> ${cat.nombre}</button>`;
     });
 
     html += `
@@ -674,17 +674,18 @@ app.get('/', (req, res) => {
                     cartOptions.style.display = 'block';
                     let html = '';
                     carrito.forEach(item => {
-                        html += '<div style="display:flex; justify-content:space-between; align-items:center; background:#1e293b; padding:0.5rem 0.7rem; border-radius:6px; margin-bottom:0.3rem; border:1px solid #334155;">' +
-                            '<div>' +
-                                '<strong style="color:#fff; font-size:0.88rem;">' + item.nombre + '</strong><br>' +
-                                '<small style="color:#38bdf8;">$' + formatoPesos(item.precio) + ' x ' + item.cantidad + '</small>' +
-                            '</div>' +
-                            '<div style="display:flex; align-items:center; gap:0.3rem;">' +
-                                '<button onclick="cambiarCantidad(' + item.id + ', -1)" style="background:#0f172a; color:#fff; border:1px solid #475569; width:22px; height:22px; border-radius:4px; font-weight:bold; cursor:pointer;">-</button>' +
-                                '<span style="font-weight:bold; padding:0.2rem; font-size:0.9rem;">' + item.cantidad + '</span>' +
-                                '<button onclick="cambiarCantidad(' + item.id + ', 1)" style="background:#0f172a; color:#fff; border:1px solid #475569; width:22px; height:22px; border-radius:4px; font-weight:bold; cursor:pointer;">+</button>' +
-                            '</div>' +
-                        '</div>';
+                        html += `
+                            <div style="display:flex; justify-content:space-between; align-items:center; background:#1e293b; padding:0.5rem 0.7rem; border-radius:6px; margin-bottom:0.3rem; border:1px solid #334155;">
+                                <div>
+                                    <strong style="color:#fff; font-size:0.88rem;">${item.nombre}</strong><br>                                     <small style="color:#38bdf8;">$${formatoPesos(item.precio)} x${item.cantidad}</small>
+                                </div>
+                                <div style="display:flex; align-items:center; gap:0.3rem;">
+                                    <button onclick="cambiarCantidad(${item.id}, -1)" style="background:#0f172a; color:#fff; border:1px solid #475569; width:22px; height:22px; border-radius:4px; font-weight:bold; cursor:pointer;">-</button>
+                                    <span style="font-weight:bold; padding:0.2rem; font-size:0.9rem;">${item.cantidad}</span>
+                                    <button onclick="cambiarCantidad(${item.id}, 1)" style="background:#0f172a; color:#fff; border:1px solid #475569; width:22px; height:22px; border-radius:4px; font-weight:bold; cursor:pointer;">+</button>
+                                </div>
+                            </div>
+                        `;
                     });
                     cartItemsList.innerHTML = html;
                     actualizarTotal();
@@ -709,7 +710,7 @@ app.get('/', (req, res) => {
                         promoProgress.style.background = '#1e293b';
                         promoProgress.style.borderColor = '#3b82f6';
                         promoProgress.style.color = '#38bdf8';
-                        promoProgress.innerHTML = `🚚 Agregá \$\${formatoPesos(falta)} más para tener <strong>ENVÍO GRATIS WEB</strong>`;
+                        promoProgress.innerHTML = `🚚 Agregá $${formatoPesos(falta)} más para tener <strong>ENVÍO GRATIS WEB</strong>`;
                         contenedorEnvio.style.display = 'block';
                         cartelEnvioGratis.style.display = 'none';
                     }
@@ -739,8 +740,8 @@ app.get('/', (req, res) => {
                 }
 
                 function compartirProducto(nombre, precio) {
-                    const texto = `¡Mirá este producto en Polirubro Virtual! 🛒\n*${nombre}* -$\${formatoPesos(precio)}\nPedilo acá: https://polirubro-virtual.onrender.com`;
-                    window.open(`https://api.whatsapp.com/send?text=\${encodeURIComponent(texto)}`, '_blank');
+                    const texto = `¡Mirá este producto en Polirubro Virtual! 🛒\n*${nombre}* -$${formatoPesos(precio)}\nPedilo acá: https://polirubro-virtual.onrender.com`;
+                    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(texto)}`, '_blank');
                 }
 
                 function toggleCartModal() {
@@ -787,18 +788,18 @@ app.get('/', (req, res) => {
                     let totalFinal = subtotal + costoEnvio;
 
                     let mensaje = `¡Hola! Quiero confirmar mi pedido en *Polirubro Virtual* (Vía Web):\n\n`;
-                    mensaje += `👤 *Cliente:* \${nombre}\n`;
-                    if (direccion) mensaje += `📍 *Dirección:* \${direccion}\n`;
-                    if (telefono) mensaje += `📞 *Contacto:* \${telefono}\n`;
+                    mensaje += `👤 *Cliente:* ${nombre}\n`;
+                    if (direccion) mensaje += `📍 *Dirección:* ${direccion}\n`;
+                    if (telefono) mensaje += `📞 *Contacto:* ${telefono}\n`;
                     mensaje += `\n🛒 *Detalle del Pedido:*\n`;
 
                     carrito.forEach(item => {
-                        mensaje += `- \${item.cantidad}x ${item.nombre} ($\${formatoPesos(item.precio * item.cantidad)})\n`;
+                        mensaje += `- ${item.cantidad}x ${item.nombre} ($${formatoPesos(item.precio * item.cantidad)})\n`;
                     });
 
-                    mensaje += `\n🚚 *Entrega:* \${detalleEnvioTexto}`;
-                    mensaje += `\n💳 *Pago:* \${metodoPago}`;
-                    mensaje += `\n💰 *Total a abonar:* \$\${formatoPesos(totalFinal)}\n\n¡Gracias!`;
+                    mensaje += `\n🚚 *Entrega:* ${detalleEnvioTexto}`;
+                    mensaje += `\n💳 *Pago:* ${metodoPago}`;
+                    mensaje += `\n💰 *Total a abonar:* $${formatoPesos(totalFinal)}\n\n¡Gracias!`;
 
                     const numeroWhatsApp = "5493794655867";
                     const mensajeCodificado = encodeURIComponent(mensaje);
@@ -808,7 +809,7 @@ app.get('/', (req, res) => {
                     if (esMovil) {
                         window.location.href = `https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${mensajeCodificado}`;
                     } else {
-                        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=\${encodeURIComponent("https://wa.me/" + numeroWhatsApp + "?text=" + mensajeCodificado)}`;
+                        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent("https://wa.me/" + numeroWhatsApp + "?text=" + mensajeCodificado)}`;
                         document.getElementById('qrImage').src = qrUrl;
                         document.getElementById('optionsModal').style.display = 'flex';
                     }
