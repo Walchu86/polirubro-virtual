@@ -67,8 +67,88 @@ app.get('/', (req, res) => {
             <title>Polirubro Virtual | Tu Tienda Online</title>
             <link rel="stylesheet" href="/style.css">
             <style>
-                /* REGLAS EXCLUSIVAS PARA CORREGIR EL MÓVIL AL INSTANTE */
+                /* BANNER PROMO ENVÍO GRATIS */
+                .promo-banner {
+                    background: linear-gradient(90deg, #059669, #10b981, #059669);
+                    color: #ffffff;
+                    text-align: center;
+                    padding: 0.65rem 1rem;
+                    font-weight: 800;
+                    font-size: 0.92rem;
+                    letter-spacing: 0.3px;
+                    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    gap: 0.5rem;
+                }
+                .top-bar-container {
+                    background: #0f172a;
+                    border: 1px solid #1e293b;
+                    border-radius: 18px;
+                    padding: 0.8rem 1rem;
+                    margin-bottom: 1.8rem;
+                    box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+                }
+                .top-bar-grid {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 0.6rem;
+                    justify-content: center;
+                    align-items: center;
+                }
+                .btn-home-mini {
+                    background: linear-gradient(135deg, #0284c7, #0369a1) !important;
+                    color: #ffffff !important;
+                    border: 1px solid #38bdf8 !important;
+                    padding: 0.55rem 1.1rem !important;
+                    border-radius: 50px !important;
+                    font-weight: 800 !important;
+                    font-size: 0.85rem !important;
+                    cursor: pointer !important;
+                    white-space: nowrap !important;
+                    box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25);
+                }
+                .btn-seccion-mini {
+                    background: #1e293b !important;
+                    color: #f1f5f9 !important;
+                    border: 1px solid #334155 !important;
+                    padding: 0.55rem 1rem !important;
+                    border-radius: 50px !important;
+                    font-weight: 700 !important;
+                    font-size: 0.85rem !important;
+                    cursor: pointer !important;
+                    display: flex !important;
+                    align-items: center !important;
+                    gap: 0.4rem !important;
+                    white-space: nowrap !important;
+                    transition: all 0.2s;
+                }
+                .btn-seccion-mini:hover {
+                    border-color: #38bdf8 !important;
+                    color: #38bdf8 !important;
+                }
+
                 @media (max-width: 768px) {
+                    .promo-banner {
+                        font-size: 0.8rem !important;
+                        padding: 0.55rem 0.5rem !important;
+                    }
+                    .top-bar-grid {
+                        display: grid !important;
+                        grid-template-columns: repeat(2, 1fr) !important;
+                        gap: 0.5rem !important;
+                    }
+                    .btn-home-mini {
+                        grid-column: span 2 !important;
+                        text-align: center !important;
+                        justify-content: center !important;
+                    }
+                    .btn-seccion-mini {
+                        justify-content: center !important;
+                        padding: 0.5rem 0.6rem !important;
+                        font-size: 0.8rem !important;
+                    }
                     .card-seccion-glow {
                         padding: 1.2rem 0.8rem !important;
                         border-radius: 16px !important;
@@ -78,15 +158,13 @@ app.get('/', (req, res) => {
                         margin-bottom: 0.4rem !important;
                     }
                     .card-seccion-glow strong {
-                        font-size: 1rem !important;
+                        font-size: 0.95rem !important;
                     }
-                    /* Corrige el texto gigante de "Ver productos" en las tarjetas de sección */
                     .card-seccion-glow span[style*="font-size: 0.8rem"] {
                         font-size: 0.78rem !important;
                         margin-top: 0.3rem !important;
                         display: block !important;
                     }
-                    /* Espaciado inferior para que el botón flotante de WhatsApp no tape contenido */
                     main {
                         padding-bottom: 5rem !important;
                     }
@@ -94,10 +172,15 @@ app.get('/', (req, res) => {
             </style>
         </head>
         <body>
+            <!-- BANNER PROMOCIONAL ENVÍO GRATIS -->
+            <div class="promo-banner">
+                🚚 <span>¡ENVÍO GRATIS en compras superiores a <strong>$20.000</strong>!</span>
+            </div>
+
             <header>
                 <div class="header-content">
                     <h1>🏪 Polirubro Virtual</h1>
-                    <p>Elegí una sección para explorar los productos</p>
+                    <p style="color: #38bdf8 !important; font-weight: 700;">✨ ¡Hacé clic y llevate lo que más te gusta!</p>
                 </div>
                 <div class="header-actions">
                     <button class="cart-btn" onclick="toggleCartModal()">
@@ -107,17 +190,17 @@ app.get('/', (req, res) => {
             </header>
 
             <main>
-                <!-- BARRA SUPERIOR DE ACCESO RÁPIDO A SECCIONES -->
-                <section class="top-secciones-bar" style="background: #0f172a; border: 1px solid #1e293b; border-radius: 16px; padding: 1rem; margin-bottom: 2rem; box-shadow: 0 8px 25px rgba(0,0,0,0.4);">
-                    <div style="display: flex; gap: 0.8rem; overflow-x: auto; padding-bottom: 0.2rem; justify-content: flex-start; align-items: center;">
-                        <button onclick="mostrarMenuPrincipal()" class="btn-seccion-mini" style="background: #334155; color: #38bdf8; border: 1px solid #38bdf8; padding: 0.6rem 1.2rem; border-radius: 50px; font-weight: bold; cursor: pointer; white-space: nowrap;">
-                            🏠 Menú Principal
+                <!-- BARRA SUPERIOR DE ACCESO RÁPIDO Y DIRECTO A SECCIONES -->
+                <section class="top-bar-container">
+                    <div class="top-bar-grid">
+                        <button onclick="mostrarMenuPrincipal()" class="btn-home-mini">
+                            🏠 Inicio
                         </button>
     `;
 
     categorias.forEach(cat => {
         html += `
-            <button onclick="entrarASeccion('${cat.nombre.replace(/'/g, "\\'")}')" class="btn-seccion-mini" style="background: #1e293b; color: #fff; border: 1px solid #3b82f6; padding: 0.6rem 1.2rem; border-radius: 50px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; white-space: nowrap;">
+            <button onclick="entrarASeccion('${cat.nombre.replace(/'/g, "\\'")}')" class="btn-seccion-mini">
                 <span>${cat.icono || '📦'}</span> ${cat.nombre}
             </button>
         `;
@@ -129,17 +212,17 @@ app.get('/', (req, res) => {
 
                 <!-- VISTA 1: MENÚ CENTRAL DE SECCIONES -->
                 <section id="vistaSecciones" class="secciones-container">
-                    <h2 style="text-align: center; font-size: 1.8rem; color: #38bdf8; margin-bottom: 2rem; font-weight: 900;">✨ Explorar Secciones</h2>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1.8rem; justify-content: center; max-width: 900px; margin: 0 auto;">
+                    <h2 style="text-align: center; font-size: 1.7rem; color: #38bdf8; margin-bottom: 1.8rem; font-weight: 900;">🛍️ ¿Qué estás buscando hoy?</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1.5rem; justify-content: center; max-width: 900px; margin: 0 auto;">
     `;
 
     categorias.forEach(cat => {
         const bgGlow = cat.color || 'linear-gradient(135deg, #3b82f6, #1d4ed8)';
         html += `
-            <div onclick="entrarASeccion('${cat.nombre.replace(/'/g, "\\'")}')" class="card-seccion-glow" style="background: #111827; border: 2px solid #334155; border-radius: 24px; padding: 2.2rem 1.2rem; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; text-align: center; position: relative; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.4);">
+            <div onclick="entrarASeccion('${cat.nombre.replace(/'/g, "\\'")}')" class="card-seccion-glow" style="background: #111827; border: 2px solid #334155; border-radius: 24px; padding: 2rem 1.2rem; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; text-align: center; position: relative; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.4);">
                 <div style="position: absolute; top: 0; left: 0; width: 100%; height: 6px; background: ${bgGlow};"></div>
-                <span style="font-size: 4rem; margin-bottom: 1rem;">${cat.icono || '📦'}</span>
-                <strong style="font-size: 1.2rem; color: #ffffff; font-weight: 800;">${cat.nombre}</strong>
+                <span style="font-size: 3.8rem; margin-bottom: 0.8rem;">${cat.icono || '📦'}</span>
+                <strong style="font-size: 1.15rem; color: #ffffff; font-weight: 800;">${cat.nombre}</strong>
                 <span style="font-size: 0.8rem; color: #38bdf8; margin-top: 0.5rem; font-weight: 600;">Ver productos ➔</span>
             </div>
         `;
@@ -219,8 +302,13 @@ app.get('/', (req, res) => {
             <div id="cartModal" class="modal" style="display:none; position:fixed; z-index:999999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.85); justify-content:center; align-items:center; padding:1rem;">
                 <div style="background:#0f172a; border:1px solid #334155; border-radius:24px; padding:2rem; width:100%; max-width:480px; position:relative; color:#f8fafc; box-shadow:0 20px 50px rgba(0,0,0,0.9);">
                     <button type="button" onclick="toggleCartModal()" style="position:absolute; top:18px; right:20px; background:none; border:none; color:#94a3b8; font-size:1.8rem; cursor:pointer; line-height:1;">&times;</button>
-                    <h2 style="font-size:1.4rem; color:#38bdf8; margin-bottom:1rem; font-weight:800;">🛒 Tu Carrito de Compras</h2>
+                    <h2 style="font-size:1.4rem; color:#38bdf8; margin-bottom:0.8rem; font-weight:800;">🛒 Tu Carrito de Compras</h2>
                     
+                    <!-- CARTEL INDICADOR DE ENVÍO GRATIS -->
+                    <div id="promoEnvioProgress" style="background:#1e293b; border:1px solid #3b82f6; border-radius:12px; padding:0.6rem 0.8rem; margin-bottom:1rem; text-align:center; font-size:0.85rem; font-weight:bold;">
+                        🚚 Envío gratis superando los $20.000
+                    </div>
+
                     <div id="cartItemsList" style="max-height:180px; overflow-y:auto; margin-bottom:1rem; padding-right:0.3rem;">
                         <p style="color:#94a3b8; text-align:center;">El carrito está vacío.</p>
                     </div>
@@ -421,8 +509,30 @@ app.get('/', (req, res) => {
                 function actualizarTotal() {
                     let subtotal = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
                     const tipoEnvioSelect = document.getElementById('tipoEnvio');
+                    const promoProgress = document.getElementById('promoEnvioProgress');
+
+                    // Lógica de Envío Gratis
+                    const ES_ENVIO_GRATIS = subtotal >= 20000;
+
+                    if (ES_ENVIO_GRATIS) {
+                        promoProgress.style.background = '#064e3b';
+                        promoProgress.style.borderColor = '#10b981';
+                        promoProgress.style.color = '#a7f3d0';
+                        promoProgress.innerHTML = '🎉 ¡Felicitaciones! Tenés <strong>ENVÍO GRATIS</strong> en esta compra.';
+                    } else {
+                        const falta = 20000 - subtotal;
+                        promoProgress.style.background = '#1e293b';
+                        promoProgress.style.borderColor = '#3b82f6';
+                        promoProgress.style.color = '#38bdf8';
+                        promoProgress.innerHTML = \`🚚 Agregá \$\${formatoPesos(falta)} más para tener <strong>ENVÍO GRATIS</strong>\`;
+                    }
+
                     const opcionSeleccionada = tipoEnvioSelect.options[tipoEnvioSelect.selectedIndex];
-                    const costoEnvio = Number(opcionSeleccionada.getAttribute('data-costo') || 0);
+                    let costoEnvio = Number(opcionSeleccionada.getAttribute('data-costo') || 0);
+
+                    if (ES_ENVIO_GRATIS && opcionSeleccionada.value !== 'retiro') {
+                        costoEnvio = 0;
+                    }
 
                     let total = subtotal + costoEnvio;
                     document.getElementById('cartTotalPrice').innerText = formatoPesos(total);
@@ -476,10 +586,16 @@ app.get('/', (req, res) => {
 
                     const tipoEnvioSelect = document.getElementById('tipoEnvio');
                     const opcionEnvio = tipoEnvioSelect.options[tipoEnvioSelect.selectedIndex];
-                    const costoEnvio = Number(opcionEnvio.getAttribute('data-costo') || 0);
-                    const metodoPago = document.getElementById('metodoPago').value;
-
                     let subtotal = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+
+                    const ES_ENVIO_GRATIS = subtotal >= 20000;
+                    let costoEnvio = Number(opcionEnvio.getAttribute('data-costo') || 0);
+
+                    if (ES_ENVIO_GRATIS && opcionEnvio.value !== 'retiro') {
+                        costoEnvio = 0;
+                    }
+
+                    const metodoPago = document.getElementById('metodoPago').value;
                     let totalFinal = subtotal + costoEnvio;
 
                     let mensaje = \`¡Hola! Quiero confirmar mi pedido en *Polirubro Virtual*:\\n\\n\`;
@@ -492,7 +608,12 @@ app.get('/', (req, res) => {
                         mensaje += \`- \${item.cantidad}x \${item.nombre} (\$\${formatoPesos(item.precio * item.cantidad)})\\n\`;
                     });
 
-                    mensaje += \`\\n🚚 *Entrega:* \${opcionEnvio.text}\`;
+                    let detalleEnvioTexto = opcionEnvio.text;
+                    if (ES_ENVIO_GRATIS && opcionEnvio.value !== 'retiro') {
+                        detalleEnvioTexto += " 🎉 (¡ENVÍO GRATIS APLICADO!)";
+                    }
+
+                    mensaje += \`\\n🚚 *Entrega:* \${detalleEnvioTexto}\`;
                     mensaje += \`\\n💳 *Pago:* \${metodoPago}\`;
                     mensaje += \`\\n💰 *Total a abonar:* \$\${formatoPesos(totalFinal)}\\n\\n¡Gracias!\`;
 
