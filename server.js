@@ -273,7 +273,11 @@ app.get('/', (req, res) => {
 
                 function normalizar(str) {
                     if (!str) return '';
-                    return str.toString().toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                    return str.toString()
+                        .toLowerCase()
+                        .trim()
+                        .normalize("NFD")
+                        .replace(/[\u0300-\u036f]/g, "");
                 }
 
                 function formatoPesos(num) {
@@ -286,6 +290,8 @@ app.get('/', (req, res) => {
                     document.getElementById('vistaProductos').style.display = 'block';
                     document.getElementById('tituloSeccionActual').innerText = '📂 Sección: ' + nombreCat;
                     document.getElementById('searchInput').value = '';
+                    
+                    // Filtrar productos inmediatamente
                     filtrarProductos();
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
@@ -309,13 +315,14 @@ app.get('/', (req, res) => {
                         const nombreProd = normalizar(tarjeta.getAttribute('data-nombre'));
                         const descProd = normalizar(tarjeta.getAttribute('data-descripcion'));
 
+                        // COMPARACIÓN ESTRICTA: la categoría del producto debe coincidir exactamente con la sección abierta
                         const coincideSeccion = (catProd === catActivaNorm);
                         const coincideBusqueda = (busqueda === '' || nombreProd.includes(busqueda) || descProd.includes(busqueda));
 
                         if (coincideSeccion && coincideBusqueda) {
-                            tarjeta.style.display = 'flex';
+                            tarjeta.style.setProperty('display', 'flex', 'important');
                         } else {
-                            tarjeta.style.display = 'none';
+                            tarjeta.style.setProperty('display', 'none', 'important');
                         }
                     });
                 }
