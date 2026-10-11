@@ -186,6 +186,9 @@ app.get('/', (req, res) => {
         const productos = leerProductos();
         const categorias = leerCategorias();
 
+        // Filtrar productos en oferta para mostrarlos destacados
+        const productosEnOferta = productos.filter(p => p.enOferta);
+
         let botonesCategoriasHtml = '';
         categorias.forEach(cat => {
             const nomLimpio = cat.nombre.replace(/'/g, "\\'");
@@ -193,6 +196,16 @@ app.get('/', (req, res) => {
         });
 
         let tarjetasCategoriasHtml = '';
+        // Botón especial para Ofertas en la cuadrícula de categorías
+        if (productosEnOferta.length > 0) {
+            tarjetasCategoriasHtml += '<div onclick="entrarASeccion(\'__OFERTAS__\')" class="card-seccion-glow" style="background: linear-gradient(135deg, #1e1b4b, #311042); border: 2px solid #ec4899; border-radius: 20px; padding: 1.2rem 0.8rem; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; text-align: center; position: relative; overflow: hidden; box-shadow: 0 10px 25px rgba(236,72,153,0.3);">' +
+                '<div style="position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: linear-gradient(135deg, #ec4899, #f43f5e);"></div>' +
+                '<span class="icono-cat" style="font-size: 2.5rem; margin-bottom: 0.5rem;">🔥</span>' +
+                '<strong style="font-size: 1.05rem; color: #ffffff; font-weight: 800;">¡OFERTAS IMPERDIBLES!</strong>' +
+                '<span class="texto-accion" style="font-size: 0.8rem; color: #f43f5e; margin-top: 0.4rem; font-weight: 600;">Ver promos ➔</span>' +
+            '</div>';
+        }
+
         categorias.forEach(cat => {
             const nomLimpio = cat.nombre.replace(/'/g, "\\'");
             const bgGlow = cat.color || 'linear-gradient(135deg, #3b82f6, #1d4ed8)';
@@ -210,35 +223,42 @@ app.get('/', (req, res) => {
         } else {
             productos.forEach(prod => {
                 const imagenUrl = prod.imagen || 'https://via.placeholder.com/300x200?text=Sin+Imagen';
-                const descripcionTexto = prod.descripcion ? '<p class="description" style="color: #94a3b8; font-size: 0.88rem; margin: 0.4rem 0;">' + prod.descripcion + '</p>' : '';
+                const descripcionTexto = prod.descripcion ? '<p class="description" style="color: #94a3b8; font-size: 0.78rem; margin: 0.3rem 0;">' + prod.descripcion + '</p>' : '';
                 const precioFormateado = formatearPrecio(prod.precio);
                 const stockActual = prod.stock !== undefined ? Number(prod.stock) : 10;
                 const estaAgotado = stockActual <= 0;
+                const esOferta = prod.enOferta === true;
 
                 const categoriaLimpia = (prod.categoria || 'General').trim();
-                const badgeCategoria = '<span class="badge ' + (estaAgotado ? 'badge-agotado' : '') + '">' + (estaAgotado ? 'AGOTADO' : categoriaLimpia) + '</span>';
                 
+                let badgeHtml = '<span class="badge ' + (estaAgotado ? 'badge-agotado' : '') + '">' + (estaAgotado ? 'AGOTADO' : categoriaLimpia) + '</span>';
+                if (esOferta && !estaAgotado) {
+                    badgeHtml = '<span class="badge" style="background: linear-gradient(135deg, #ef4444, #ec4899); color: #fff; font-weight: 900; animation: pulse 1.5s infinite;">🔥 ¡OFERTA!</span>';
+                }
+
                 const nomLimpio = (prod.nombre || '').replace(/'/g, "\\'");
                 const botonAgregar = estaAgotado 
-                    ? '<button class="btn-agregar btn-disabled" disabled style="width:100%; padding:0.75rem; border-radius:12px; border:none; background:#374151; color:#9ca3af; font-weight:bold; cursor:not-allowed;">🚫 Sin Stock</button>'
-                    : '<button class="btn-agregar" onclick="agregarAlCarrito(' + prod.id + ', \'' + nomLimpio + '\', ' + prod.precio + ', ' + stockActual + ')" style="width:100%; padding:0.75rem; border-radius:12px; border:none; background:linear-gradient(135deg, #2563eb, #3b82f6); color:#fff; font-weight:bold; cursor:pointer;">➕ Agregar al Carrito</button>';
+                    ? '<button class="btn-agregar btn-disabled" disabled style="width:100%; padding:0.6rem; border-radius:10px; border:none; background:#374151; color:#9ca3af; font-weight:bold; cursor:not-allowed; font-size:0.82rem;">🚫 Sin Stock</button>'
+                    : '<button class="btn-agregar" onclick="agregarAlCarrito(' + prod.id + ', \'' + nomLimpio + '\', ' + prod.precio + ', ' + stockActual + ')" style="width:100%; padding:0.6rem; border-radius:10px; border:none; background:linear-gradient(135deg, #2563eb, #3b82f6); color:#fff; font-weight:bold; cursor:pointer; font-size:0.85rem;">➕ Agregar al Carrito</button>';
 
-                productosHtml += '<div class="product-card" data-categoria="' + categoriaLimpia + '" data-nombre="' + (prod.nombre || '') + '" data-descripcion="' + (prod.descripcion || '') + '">' +
-                    '<div class="product-image-container">' +
+                const cardStyleOferta = esOferta ? 'border: 2px solid #ec4899; box-shadow: 0 4px 20px rgba(236,72,153,0.25);' : '';
+
+                productosHtml += '<div class="product-card" data-categoria="' + categoriaLimpia + '" data-oferta="' + (esOferta ? 'si' : 'no') + '" data-nombre="' + (prod.nombre || '') + '" data-descripcion="' + (prod.descripcion || '') + '" style="' + cardStyleOferta + '">' +
+                    '<div class="product-image-container" style="height: 140px !important; max-height: 140px !important;">' +
                         '<img src="' + imagenUrl + '" alt="' + (prod.nombre || '') + '" class="zoom-img" onerror="this.src=\'https://via.placeholder.com/300x200?text=Error+Imagen\'">' +
-                        badgeCategoria +
+                        badgeHtml +
                     '</div>' +
-                    '<div class="product-info" style="padding: 1.2rem; display: flex; flex-direction: column; justify-content: space-between; flex: 1;">' +
+                    '<div class="product-info" style="padding: 0.9rem; display: flex; flex-direction: column; justify-content: space-between; flex: 1;">' +
                         '<div>' +
-                            '<h3 style="font-size: 1.15rem; color: #fff; margin-bottom: 0.3rem; font-weight: 700;">' + (prod.nombre || '') + '</h3>' +
+                            '<h3 style="font-size: 0.95rem; color: #fff; margin-bottom: 0.2rem; font-weight: 700; line-height: 1.2;">' + (prod.nombre || '') + '</h3>' +
                             descripcionTexto +
                         '</div>' +
-                        '<div style="margin-top: 0.8rem;">' +
-                            '<div class="stock-info" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">' +
-                                '<span class="price" style="font-size: 1.4rem; font-weight: 800; color: #34d399;">$' + precioFormateado + '</span>' +
-                                '<small class="stock-count" style="color: #94a3b8; font-size: 0.82rem;">' + (estaAgotado ? 'Sin disponibilidad' : 'Stock: ' + stockActual) + '</small>' +
+                        '<div style="margin-top: 0.5rem;">' +
+                            '<div class="stock-info" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem;">' +
+                                '<span class="price" style="font-size: 1.15rem; font-weight: 800; color: #34d399;">$' + precioFormateado + '</span>' +
+                                '<small class="stock-count" style="color: #94a3b8; font-size: 0.75rem;">' + (estaAgotado ? 'Sin disponibilidad' : 'Stock: ' + stockActual) + '</small>' +
                             '</div>' +
-                            '<button class="btn-share-prominente" onclick="compartirProducto(\'' + nomLimpio + '\', \'' + prod.precio + '\')" style="width: 100%; background: #059669; color: #ffffff; border: 1px solid #10b981; padding: 0.65rem; border-radius: 12px; font-weight: bold; font-size: 0.88rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.65rem;">' +
+                            '<button class="btn-share-prominente" onclick="compartirProducto(\'' + nomLimpio + '\', \'' + prod.precio + '\')" style="width: 100%; background: #059669; color: #ffffff; border: 1px solid #10b981; padding: 0.5rem; border-radius: 10px; font-weight: bold; font-size: 0.78rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.4rem; margin-bottom: 0.5rem;">' +
                                 '📲 Compartir por WhatsApp' +
                             '</button>' +
                             botonAgregar +
@@ -259,6 +279,11 @@ app.get('/', (req, res) => {
                 '@keyframes marqueePC {' +
                     '0% { transform: translateX(100%); }' +
                     '100% { transform: translateX(-100%); }' +
+                '}' +
+                '@keyframes pulse {' +
+                    '0% { transform: scale(1); opacity: 1; }' +
+                    '50% { transform: scale(1.04); opacity: 0.85; }' +
+                    '100% { transform: scale(1); opacity: 1; }' +
                 '}' +
                 '.promo-banner {' +
                     'background: linear-gradient(90deg, #059669, #10b981, #059669);' +
@@ -329,8 +354,6 @@ app.get('/', (req, res) => {
                 '.product-image-container {' +
                     'position: relative;' +
                     'width: 100%;' +
-                    'height: 180px !important;' +
-                    'max-height: 180px !important;' +
                     'background: #070a12;' +
                     'overflow: hidden;' +
                     'display: flex;' +
@@ -380,6 +403,7 @@ app.get('/', (req, res) => {
                 '<section class="top-bar-container">' +
                     '<div class="top-bar-grid">' +
                         '<button onclick="mostrarMenuPrincipal()" class="btn-home-mini">🏠 Inicio</button>' +
+                        (productosEnOferta.length > 0 ? '<button onclick="entrarASeccion(\'__OFERTAS__\')" class="btn-seccion-mini" style="background: linear-gradient(135deg, #be185d, #ec4899) !important; color: #fff !important; border: 1px solid #f43f5e !important;"><span>🔥</span> Ofertas</button>' : '') +
                         botonesCategoriasHtml +
                     '</div>' +
                 '</section>' +
@@ -574,10 +598,14 @@ app.get('/', (req, res) => {
                     '}' +
                     'document.getElementById("vistaSecciones").style.display = "none";' +
                     'document.getElementById("vistaProductos").style.display = "block";' +
-                    'document.getElementById("tituloSeccionActual").innerText = "📂 Sección: " + nombreCat;' +
+                    'if (nombreCat === "__OFERTAS__") {' +
+                        'document.getElementById("tituloSeccionActual").innerText = "🔥 ¡Ofertas Imperdibles!";' +
+                    '} else {' +
+                        'document.getElementById("tituloSeccionActual").innerText = "📂 Sección: " + nombreCat;' +
+                    '}' +
                     'document.getElementById("searchInput").value = "";' +
                     'filtrarProductos();' +
-                    'if (registrarStat) {' +
+                    'if (registrarStat && nombreCat !== "__OFERTAS__") {' +
                         'fetch("/api/stats/seccion", {' +
                             'method: "POST",' +
                             'headers: { "Content-Type": "application/json" },' +
@@ -616,14 +644,21 @@ app.get('/', (req, res) => {
                 'function filtrarProductos() {' +
                     'if (!seccionSeleccionada) return;' +
                     'const busqueda = normalizar(document.getElementById("searchInput").value);' +
-                    'const catActivaNorm = normalizar(seccionSeleccionada);' +
                     'const tarjetas = document.querySelectorAll(".product-card");' +
                     'let visibles = 0;' +
                     'tarjetas.forEach(tarjeta => {' +
                         'const catProd = normalizar(tarjeta.getAttribute("data-categoria"));' +
+                        'const esOfertaProd = tarjeta.getAttribute("data-oferta");' +
                         'const nombreProd = normalizar(tarjeta.getAttribute("data-nombre"));' +
                         'const descProd = normalizar(tarjeta.getAttribute("data-descripcion"));' +
-                        'const coincideSeccion = (catProd === catActivaNorm);' +
+                        '' +
+                        'let coincideSeccion = false;' +
+                        'if (seccionSeleccionada === "__OFERTAS__") {' +
+                            'coincideSeccion = (esOfertaProd === "si");' +
+                        '} else {' +
+                            'coincideSeccion = (catProd === normalizar(seccionSeleccionada));' +
+                        '}' +
+                        '' +
                         'const coincideBusqueda = (busqueda === "" || nombreProd.includes(busqueda) || descProd.includes(busqueda));' +
                         'if (coincideSeccion && coincideBusqueda) {' +
                             'tarjeta.style.setProperty("display", "flex", "important");' +
@@ -851,7 +886,13 @@ app.get('/admin', (req, res) => {
             const desc = prod.descripcion ? '<br><small style="color:#94a3b8;">' + prod.descripcion + '</small>' : '';
             const precioFormateado = formatearPrecio(prod.precio);
             const stockActual = prod.stock !== undefined ? prod.stock : 0;
-            return '<div style="display:flex; flex-direction:column; gap:0.6rem; background:#0f172a; padding:0.9rem; border-radius:14px; border:1px solid #1e293b; margin-bottom:0.8rem;">' +
+            const esOferta = prod.enOferta === true;
+
+            const botonOfertaToggle = esOferta
+                ? '<form action="/admin/toggle-oferta/' + prod.id + '" method="POST"><button type="submit" style="background:#ec4899; color:#fff; border:none; padding:0.35rem 0.6rem; border-radius:6px; font-weight:bold; cursor:pointer; font-size:0.75rem;" title="Quitar de Ofertas">🔥 En Oferta</button></form>'
+                : '<form action="/admin/toggle-oferta/' + prod.id + '" method="POST"><button type="submit" style="background:#334155; color:#94a3b8; border:none; padding:0.35rem 0.6rem; border-radius:6px; font-weight:bold; cursor:pointer; font-size:0.75rem;" title="Marcar como Oferta">⭐ Hacer Oferta</button></form>';
+
+            return '<div style="display:flex; flex-direction:column; gap:0.6rem; background:#0f172a; padding:0.9rem; border-radius:14px; border:1px solid ' + (esOferta ? '#ec4899' : '#1e293b') + '; margin-bottom:0.8rem;">' +
                 '<div style="display:flex; align-items:center; gap:0.8rem; width:100%;">' +
                     '<img src="' + prod.imagen + '" alt="' + prod.nombre + '" style="width:50px; height:50px; object-fit:contain; border-radius:8px; background:#070a12;">' +
                     '<div style="flex:1; overflow:hidden;">' +
@@ -861,9 +902,12 @@ app.get('/admin', (req, res) => {
                             '<strong style="color:#34d399; font-size:0.9rem;">$' + precioFormateado + '</strong>' +
                         '</div>' + desc +
                     '</div>' +
-                    '<form action="/admin/eliminar/' + prod.id + '" method="POST" onsubmit="return confirm(\'¿Seguro que querés eliminar este producto?\');">' +
-                        '<button type="submit" style="background:#ef4444; color:white; border:none; padding:0.4rem 0.6rem; border-radius:8px; cursor:pointer;" title="Eliminar Producto">🗑️</button>' +
-                    '</form>' +
+                    '<div style="display:flex; flex-direction:column; gap:0.3rem; align-items:flex-end;">' +
+                        botonOfertaToggle +
+                        '<form action="/admin/eliminar/' + prod.id + '" method="POST" onsubmit="return confirm(\'¿Seguro que querés eliminar este producto?\');">' +
+                            '<button type="submit" style="background:#ef4444; color:white; border:none; padding:0.35rem 0.6rem; border-radius:6px; cursor:pointer; font-size:0.75rem;" title="Eliminar Producto">🗑️ Borrar</button>' +
+                        '</form>' +
+                    '</div>' +
                 '</div>' +
                 '<form action="/admin/actualizar-stock/' + prod.id + '" method="POST" style="display:flex; align-items:center; justify-content:space-between; background:#1e293b; padding:0.5rem 0.7rem; border-radius:8px; border:1px solid #334155;">' +
                     '<span style="font-size:0.8rem; color:#38bdf8; font-weight:bold;">📦 Stock:</span>' +
@@ -997,6 +1041,10 @@ app.get('/admin', (req, res) => {
                                             opcionesCatHTML +
                                         '</select>' +
                                     '</div>' +
+                                    '<div style="display:flex; align-items:center; gap:0.5rem; background:#1e293b; padding:0.6rem; border-radius:8px; border:1px solid #334155;">' +
+                                        '<input type="checkbox" id="enOferta" name="enOferta" value="true" style="width:18px; height:18px; cursor:pointer;">' +
+                                        '<label for="enOferta" style="font-size:0.85rem; color:#f43f5e; font-weight:bold; cursor:pointer;">🔥 Marcar como Producto en Oferta Destacada</label>' +
+                                    '</div>' +
                                     '<div>' +
                                         '<label style="font-size:0.82rem; color:#cbd5e1; display:block; margin-bottom:0.3rem;">Descripción:</label>' +
                                         '<textarea name="descripcion" rows="2" placeholder="Breve detalle..." style="width:100%; padding:0.6rem; border-radius:8px; background:#1e293b; border:1px solid #334155; color:#fff; outline:none;"></textarea>' +
@@ -1076,6 +1124,17 @@ app.post('/admin/actualizar-stock/:id', (req, res) => {
     res.redirect('/admin');
 });
 
+app.post('/admin/toggle-oferta/:id', (req, res) => {
+    const idProd = Number(req.params.id);
+    let productos = leerProductos();
+    const index = productos.findIndex(p => p.id === idProd);
+    if (index > -1) {
+        productos[index].enOferta = !productos[index].enOferta;
+        guardarProductos(productos);
+    }
+    res.redirect('/admin');
+});
+
 app.post('/admin/categoria/agregar', (req, res) => {
     const { nombreCat, iconoCat } = req.body;
     let categorias = leerCategorias();
@@ -1096,7 +1155,7 @@ app.post('/admin/categoria/eliminar/:id', (req, res) => {
 });
 
 app.post('/admin/agregar', (req, res) => {
-    const { nombre, precio, stock, categoria, descripcion, imagenBase64, imagenUrl } = req.body;
+    const { nombre, precio, stock, categoria, descripcion, imagenBase64, imagenUrl, enOferta } = req.body;
     let productos = leerProductos();
     const nuevoId = productos.length > 0 ? Math.max(...productos.map(p => p.id)) + 1 : 1;
     const imagenFinal = imagenBase64 && imagenBase64.trim() !== '' ? imagenBase64 : (imagenUrl && imagenUrl.trim() !== '' ? imagenUrl.trim() : 'https://via.placeholder.com/300x200?text=Sin+Imagen');
@@ -1108,7 +1167,8 @@ app.post('/admin/agregar', (req, res) => {
         stock: Math.max(0, parseInt(stock) || 0),
         categoria: categoria || 'General',
         descripcion: descripcion ? descripcion.trim() : '',
-        imagen: imagenFinal
+        imagen: imagenFinal,
+        enOferta: enOferta === 'true'
     });
 
     guardarProductos(productos);
