@@ -10,7 +10,7 @@
 }
 
 body {
-    background-color: #0b0f19; /* Fondo oscuro moderno */
+    background-color: #0b0f19;
     color: #f8fafc;
     display: flex;
     flex-direction: column;
@@ -103,7 +103,7 @@ main, .container {
     background: #111827 !important;
     border: 1px solid #1f2937 !important;
     border-radius: 16px !important;
-    overflow: visible !important; /* IMPORTANTE: Permite que el zoom de la imagen sobresalga */
+    overflow: hidden !important;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4) !important;
     transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease !important;
     display: flex !important;
@@ -116,11 +116,10 @@ main, .container {
     transform: translateY(-5px) !important;
     border-color: #3b82f6 !important;
     box-shadow: 0 12px 24px rgba(59, 130, 246, 0.25) !important;
-    z-index: 10 !important;
 }
 
 /* ===================================================
-   IMÁGENES Y EFECTO ZOOM FLOTANTE QUE SOBRESALE
+   EFECTO LUPA EN PC (HOVER) Y CURSOR DE ZOOM
    =================================================== */
 img,
 .product-card img,
@@ -137,20 +136,50 @@ img,
     border-top-left-radius: 16px !important;
     border-top-right-radius: 16px !important;
     display: block !important;
-    transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1) !important;
-    transform-origin: center center !important;
+    cursor: zoom-in !important; /* Cambia el cursor a una lupa con signo + en PC */
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1) !important;
 }
 
-/* Al pasar el cursor por arriba de la imagen o tarjeta: AGRANDA Y SOBRESALE */
+/* Efecto Lupa al pasar el mouse por encima en PC */
 .product-card:hover img,
 .card:hover img,
-.producto-card:hover img,
-img:hover {
-    transform: scale(1.35) !important; /* Aumenta un 35% de tamaño */
-    z-index: 9999 !important;          /* Se posiciona al frente de todo */
-    position: relative !important;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8) !important; /* Sombra estilo lupa */
-    border-radius: 12px !important;
+.producto-card:hover img {
+    transform: scale(1.4) !important; /* Zoom fuerte tipo lupa */
+}
+
+/* ===================================================
+   MODAL PARA VER IMAGEN EN GRANDE (CELULARES / TÁCTIL)
+   =================================================== */
+#modal-imagen-zoom {
+    display: none;
+    position: fixed;
+    z-index: 99999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+}
+
+#modal-imagen-zoom img {
+    max-width: 90%;
+    max-height: 85vh;
+    object-fit: contain;
+    border-radius: 12px;
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.2);
+}
+
+#modal-imagen-zoom .cerrar-modal {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    color: #ffffff;
+    font-size: 2.5rem;
+    font-weight: bold;
+    cursor: pointer;
 }
 
 /* CUERPO Y TEXTO DE LA TARJETA */
