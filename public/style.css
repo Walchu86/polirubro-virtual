@@ -1,5 +1,5 @@
 /* ===================================================
-   POLIRUBRO VIRTUAL - ESTILOS COMPLETOS (DARK MODE PRO)
+   POLIRUBRO VIRTUAL - ESTILOS DEFINITIVOS (DARK MODE)
    =================================================== */
 
 * {
@@ -45,6 +45,28 @@ header p {
     color: #94a3b8;
     font-size: 0.95rem;
     margin-top: 0.2rem;
+}
+
+/* BOTÓN DE CARRITO EN HEADER OBLIGATORIAMENTE OSCURO Y LINDO */
+button.cart-btn, .cart-btn {
+    background: linear-gradient(135deg, #2563eb, #4f46e5) !important;
+    color: #ffffff !important;
+    border: 1px solid #818cf8 !important;
+    padding: 0.7rem 1.4rem !important;
+    border-radius: 12px !important;
+    font-weight: 800 !important;
+    font-size: 0.95rem !important;
+    cursor: pointer !important;
+    box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4) !important;
+    transition: all 0.2s ease !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+}
+
+button.cart-btn:hover, .cart-btn:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(79, 70, 229, 0.6) !important;
 }
 
 /* CONTENEDOR PRINCIPAL */
@@ -105,10 +127,10 @@ main, .container {
 }
 
 .btn-categoria.active {
-    background: linear-gradient(135deg, #3b82f6, #6366f1);
-    color: #ffffff;
-    border-color: #60a5fa;
-    box-shadow: 0 0 12px rgba(59, 130, 246, 0.5);
+    background: linear-gradient(135deg, #3b82f6, #6366f1) !important;
+    color: #ffffff !important;
+    border-color: #60a5fa !important;
+    box-shadow: 0 0 12px rgba(59, 130, 246, 0.5) !important;
 }
 
 /* GRILLA DE PRODUCTOS */
@@ -140,7 +162,6 @@ main, .container {
     z-index: 10 !important;
 }
 
-/* CONTENEDOR DE IMAGEN */
 .product-image-container {
     position: relative;
     width: 100%;
@@ -150,9 +171,7 @@ main, .container {
     border-top-right-radius: 16px;
 }
 
-/* IMÁGENES Y LUPA */
-.product-card img,
-.zoom-img {
+.product-card img, .zoom-img {
     width: 100% !important;
     height: 200px !important;
     max-height: 200px !important;
@@ -177,7 +196,7 @@ main, .container {
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 15px rgba(59, 130, 246, 0.4) !important;
 }
 
-/* ETIQUETAS Y BADGES */
+/* BADGES */
 .badge {
     position: absolute;
     top: 12px;
@@ -199,7 +218,6 @@ main, .container {
     border-color: #f87171 !important;
 }
 
-/* BOTÓN COMPARTIR EN FOTO */
 .btn-share {
     position: absolute;
     top: 12px;
@@ -223,7 +241,6 @@ main, .container {
     background: #25d366;
 }
 
-/* CUERPO Y TEXTO DE TARJETA */
 .product-info {
     padding: 1.2rem !important;
     display: flex !important;
@@ -261,7 +278,6 @@ main, .container {
     color: #94a3b8;
 }
 
-/* BOTONES */
 .btn-agregar {
     width: 100%;
     padding: 0.75rem 1rem;
@@ -289,31 +305,38 @@ main, .container {
     box-shadow: none !important;
 }
 
-/* BOTÓN WHATSAPP FLOTANTE */
+/* BOTÓN FLOTANTE DE WHATSAPP EMPROLISADO */
 .whatsapp-float {
-    position: fixed;
-    bottom: 25px;
-    right: 25px;
-    width: 60px;
-    height: 60px;
-    background: #25d366;
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2rem;
-    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
-    z-index: 9999;
-    text-decoration: none;
-    transition: transform 0.2s;
+    position: fixed !important;
+    bottom: 25px !important;
+    right: 25px !important;
+    background: linear-gradient(135deg, #25d366, #128c7e) !important;
+    color: #ffffff !important;
+    padding: 0.75rem 1.25rem !important;
+    border-radius: 50px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.6rem !important;
+    box-shadow: 0 8px 25px rgba(37, 211, 102, 0.5) !important;
+    z-index: 99999 !important;
+    text-decoration: none !important;
+    font-weight: 700 !important;
+    font-size: 0.9rem !important;
+    border: 1px solid rgba(255, 255, 255, 0.25) !important;
+    white-space: nowrap !important;
+    transition: transform 0.25s ease, box-shadow 0.25s ease !important;
 }
 
 .whatsapp-float:hover {
-    transform: scale(1.1);
+    transform: translateY(-3px) scale(1.03) !important;
+    box-shadow: 0 12px 30px rgba(37, 211, 102, 0.7) !important;
 }
 
-/* MODALES Y CARRITO */
+.whatsapp-float span {
+    display: inline-block;
+}
+
+/* MODALES Y ELEMENTOS DE FORMULARIO */
 .modal {
     display: none;
     position: fixed;
@@ -393,6 +416,33 @@ main, .container {
     margin-bottom: 0.5rem;
 }
 
+.option-group label {
+    display: block;
+    font-size: 0.88rem;
+    color: #94a3b8;
+    margin-bottom: 0.4rem;
+    font-weight: 600;
+}
+
+/* DESPLEGABLES PAGO Y ENVÍO TOTALMENTE INTEGRADOS Y OSCUROS */
+select, .modal-content select {
+    width: 100% !important;
+    padding: 0.75rem 1rem !important;
+    border-radius: 10px !important;
+    background-color: #0f172a !important;
+    color: #ffffff !important;
+    border: 1px solid #334155 !important;
+    font-size: 0.92rem !important;
+    outline: none !important;
+    cursor: pointer !important;
+}
+
+select option, .modal-content select option {
+    background-color: #0f172a !important;
+    color: #ffffff !important;
+    padding: 0.5rem !important;
+}
+
 .transfer-info {
     background: #064e3b;
     border: 1px solid #059669;
@@ -437,47 +487,6 @@ main, .container {
 
 .btn-checkout:hover {
     background: linear-gradient(135deg, #047857, #059669);
-}
-
-/* ADMIN */
-.admin-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-}
-
-@media (max-width: 900px) {
-    .admin-container {
-        grid-template-columns: 1fr;
-    }
-}
-
-.form-section, .list-section {
-    background: #111827;
-    border: 1px solid #1f2937;
-    border-radius: 16px;
-    padding: 1.5rem;
-}
-
-.admin-form .form-group {
-    margin-bottom: 1rem;
-}
-
-.admin-form label {
-    display: block;
-    font-size: 0.88rem;
-    color: #94a3b8;
-    margin-bottom: 0.3rem;
-}
-
-.admin-form input, .admin-form select, .admin-form textarea {
-    width: 100%;
-    padding: 0.7rem;
-    border-radius: 8px;
-    background: #0f172a;
-    color: #ffffff;
-    border: 1px solid #334155;
-    font-size: 0.9rem;
 }
 
 footer {
