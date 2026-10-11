@@ -19,13 +19,18 @@ const categoriasPorDefecto = [
     { id: 4, nombre: 'Accesorios', icono: '📱', color: 'linear-gradient(135deg, #8b5cf6, #6d28d9)' }
 ];
 
+// ==========================================
+// FUNCIONES DE PERSISTENCIA SEGURA (NO BORRAN LO CARGADO)
+// ==========================================
 function leerCategorias() {
     if (!fs.existsSync(CATEGORIAS_FILE)) {
         guardarCategorias(categoriasPorDefecto);
         return categoriasPorDefecto;
     }
     try {
-        return JSON.parse(fs.readFileSync(CATEGORIAS_FILE, 'utf8'));
+        const contenido = fs.readFileSync(CATEGORIAS_FILE, 'utf8');
+        const parsed = JSON.parse(contenido);
+        return Array.isArray(parsed) && parsed.length > 0 ? parsed : categoriasPorDefecto;
     } catch (e) {
         return categoriasPorDefecto;
     }
@@ -36,9 +41,14 @@ function guardarCategorias(cats) {
 }
 
 function leerProductos() {
-    if (!fs.existsSync(DATA_FILE)) return [];
+    if (!fs.existsSync(DATA_FILE)) {
+        fs.writeFileSync(DATA_FILE, JSON.stringify([], null, 2), 'utf8');
+        return [];
+    }
     try {
-        return JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
+        const contenido = fs.readFileSync(DATA_FILE, 'utf8');
+        const parsed = JSON.parse(contenido);
+        return Array.isArray(parsed) ? parsed : [];
     } catch (e) {
         return [];
     }
