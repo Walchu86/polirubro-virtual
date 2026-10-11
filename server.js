@@ -429,8 +429,8 @@ app.get('/', (req, res) => {
                 💬 <span>¿Tenés dudas? Hablá con nosotros</span>
             </a>
 
-            <!-- POPUP BIENVENIDA -->
-            <div id="promoWelcomeModal" class="modal" style="display:flex; position:fixed; z-index:9999999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.85); justify-content:center; align-items:center; padding:1rem;">
+            <!-- POPUP BIENVENIDA (SOLO SE MUESTRA UNA VEZ POR SESIÓN) -->
+            <div id="promoWelcomeModal" class="modal" style="display:none; position:fixed; z-index:9999999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.85); justify-content:center; align-items:center; padding:1rem;">
                 <div style="background: linear-gradient(135deg, #0f172a, #1e1b4b); border: 2px solid #10b981; border-radius: 28px; padding: 2.2rem 1.8rem; width: 100%; max-width: 440px; text-align: center; position: relative; color: #fff; box-shadow: 0 20px 60px rgba(16, 185, 129, 0.4);">
                     <button type="button" onclick="cerrarPromoWelcome()" style="position:absolute; top:15px; right:20px; background:none; border:none; color:#94a3b8; font-size:2rem; cursor:pointer;">&times;</button>
                     <div style="font-size: 3.5rem; margin-bottom: 0.5rem;">🚚🎉</div>
@@ -536,7 +536,28 @@ app.get('/', (req, res) => {
                 let seccionSeleccionada = '';
                 let searchTimeout = null;
 
+                // INICIALIZACIÓN AL CARGAR LA PÁGINA (RECORDAR ESTADO Y PROMO)
+                document.addEventListener("DOMContentLoaded", function() {
+                    // Control de Modal de Bienvenida (Solo 1 vez por sesión de navegación)
+                    if (!sessionStorage.getItem('promoVisto')) {
+                        document.getElementById('promoWelcomeModal').style.display = 'flex';
+                    }
+
+                    // Recuperar la última sección guardada o por Hash en la URL
+                    let ultimaSeccion = localStorage.getItem('seccionActiva');
+                    if (window.location.hash) {
+                        ultimaSeccion = decodeURIComponent(window.location.hash.replace('#seccion-', ''));
+                    }
+
+                    if (ultimaSeccion && ultimaSeccion !== '') {
+                        entrarASeccion(ultimaSeccion, false);
+                    } else {
+                        mostrarMenuPrincipal(false);
+                    }
+                });
+
                 function cerrarPromoWelcome() {
+                    sessionStorage.setItem('promoVisto', 'true');
                     document.getElementById('promoWelcomeModal').style.display = 'none';
                 }
 
@@ -553,27 +574,34 @@ app.get('/', (req, res) => {
                     return Number(num || 0).toLocaleString('es-AR');
                 }
 
-                function entrarASeccion(nombreCat) {
+                function entrarASeccion(nombreCat, registrarStat = true) {
                     seccionSeleccionada = nombreCat;
+                    localStorage.setItem('seccionActiva', nombreCat);
+                    window.location.hash = 'seccion-' + encodeURIComponent(nombreCat);
+
                     document.getElementById('vistaSecciones').style.display = 'none';
                     document.getElementById('vistaProductos').style.display = 'block';
                     document.getElementById('tituloSeccionActual').innerText = '📂 Sección: ' + nombreCat;
                     document.getElementById('searchInput').value = '';
                     filtrarProductos();
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
 
-                    fetch('/api/stats/seccion', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ seccion: nombreCat })
-                    }).catch(() => {});
+                    if (registrarStat) {
+                        fetch('/api/stats/seccion', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ seccion: nombreCat })
+                        }).catch(() => {});
+                    }
                 }
 
-                function mostrarMenuPrincipal() {
+                function mostrarMenuPrincipal(limpiarHash = true) {
                     seccionSeleccionada = '';
+                    localStorage.removeItem('seccionActiva');
+                    if (limpiarHash) {
+                        history.pushState("", document.title, window.location.pathname + window.location.search);
+                    }
                     document.getElementById('vistaSecciones').style.display = 'block';
                     document.getElementById('vistaProductos').style.display = 'none';
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
 
                 function filtrarProductosConDebounce() {
