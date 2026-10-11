@@ -20,7 +20,11 @@ let memoriaCategorias = [
 ];
 let memoriaEstadisticas = { totalVisitas: 0, visitasMovil: 0, visitasPC: 0, secciones: {}, busquedas: {}, porDia: {} };
 
+let datosListos = false;
+
 function sincronizarConCloud() {
+    if (!datosListos) return; // Evita sobrescribir antes de leer de la nube
+    
     const payload = JSON.stringify({
         record: {
             productos: memoriaProductos,
@@ -61,7 +65,7 @@ function sincronizarConCloud() {
     req.end();
 }
 
-function cargarDesdeCloud(callback) {
+function cargarDesdeCloud() {
     const options = {
         hostname: 'api.jsonbin.io',
         port: 443,
@@ -85,30 +89,28 @@ function cargarDesdeCloud(callback) {
                         if (Array.isArray(dataRoot.productos)) memoriaProductos = dataRoot.productos;
                         if (Array.isArray(dataRoot.categorias) && dataRoot.categorias.length > 0) memoriaCategorias = dataRoot.categorias;
                         if (dataRoot.estadisticas) memoriaEstadisticas = dataRoot.estadisticas;
-                        console.log('☁️ Datos cargados desde JSONBin correctamente.');
+                        console.log('☁️ Datos cargados desde JSONBin correctamente. Total productos:', memoriaProductos.length);
                     }
                 } else {
                     console.log('⚠️ Error al leer JSONBin (Código ' + res.statusCode + '):', body);
                 }
-                if (callback) callback();
             } catch (e) {
                 console.error('Error al parsear datos de JSONBin:', e.message);
-                if (callback) callback();
             }
+            datosListos = true; // Habilita la sincronización recién ahora
         });
     });
 
     req.on('error', (e) => {
         console.error('Error de red al leer JSONBin:', e.message);
-        if (callback) callback();
+        datosListos = true;
     });
 
     req.end();
 }
 
-cargarDesdeCloud(() => {
-    sincronizarConCloud();
-});
+// Cargar datos al iniciar el servidor de forma segura
+cargarDesdeCloud();
 
 function leerProductos() { return memoriaProductos; }
 function guardarProductos(prods) { memoriaProductos = prods; sincronizarConCloud(); }
@@ -186,7 +188,6 @@ app.get('/', (req, res) => {
         const productos = leerProductos();
         const categorias = leerCategorias();
 
-        // Filtrar productos en oferta para mostrarlos destacados
         const productosEnOferta = productos.filter(p => p.enOferta);
 
         let botonesCategoriasHtml = '';
@@ -196,7 +197,6 @@ app.get('/', (req, res) => {
         });
 
         let tarjetasCategoriasHtml = '';
-        // Botón especial para Ofertas en la cuadrícula de categorías
         if (productosEnOferta.length > 0) {
             tarjetasCategoriasHtml += '<div onclick="entrarASeccion(\'__OFERTAS__\')" class="card-seccion-glow" style="background: linear-gradient(135deg, #1e1b4b, #311042); border: 2px solid #ec4899; border-radius: 20px; padding: 1.2rem 0.8rem; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; text-align: center; position: relative; overflow: hidden; box-shadow: 0 10px 25px rgba(236,72,153,0.3);">' +
                 '<div style="position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: linear-gradient(135deg, #ec4899, #f43f5e);"></div>' +
@@ -915,7 +915,7 @@ app.get('/admin', (req, res) => {
                         '<input type="number" name="nuevoStock" value="' + stockActual + '" min="0" style="width:60px; padding:0.3rem; border-radius:6px; background:#0f172a; color:#fff; border:1px solid #475569; text-align:center; font-weight:bold;">' +
                         '<button type="submit" style="background:#2563eb; color:#fff; border:none; padding:0.35rem 0.7rem; border-radius:6px; font-weight:bold; cursor:pointer; font-size:0.78rem;">💾 Guardar</button>' +
                     '</div>' +
-                '</form>' +
+                'form>' +
             '</div>';
         }).join('');
 
