@@ -104,7 +104,7 @@ app.get('/', (req, res) => {
                 : `<button class="btn-agregar" onclick="agregarAlCarrito(${prod.id}, '${prod.nombre.replace(/'/g, "\\'")}', ${prod.precio}, ${stockActual})">➕ Agregar al Carrito</button>`;
 
             html += `
-              <div class="product-card" data-categoria="${(prod.categoria || '').toLowerCase().trim()}" data-nombre="${prod.nombre.toLowerCase()}" data-descripcion="${(prod.descripcion || '').toLowerCase()}">
+              <div class="product-card" data-categoria="${(prod.categoria || '').trim()}" data-nombre="${prod.nombre.toLowerCase()}" data-descripcion="${(prod.descripcion || '').toLowerCase()}">
                   <div class="product-image-container">
                       <img src="${imagenUrl}" alt="${prod.nombre}" class="zoom-img" onerror="this.src='https://via.placeholder.com/300x200?text=Error+Imagen'">
                       ${badgeEtiqueta}
@@ -240,7 +240,7 @@ app.get('/', (req, res) => {
                         const nombre = tarjeta.getAttribute('data-nombre') || '';
                         const descripcion = tarjeta.getAttribute('data-descripcion') || '';
 
-                        const coincideCategoria = (categoriaSeleccionada === 'Todas' || catProducto === categoriaSeleccionada.toLowerCase().trim());
+                        const coincideCategoria = (categoriaSeleccionada === 'Todas' || catProducto.toLowerCase() === categoriaSeleccionada.toLowerCase());
                         const coincideTexto = (nombre.includes(busqueda) || descripcion.includes(busqueda));
 
                         if (coincideCategoria && coincideTexto) {
