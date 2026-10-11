@@ -103,7 +103,7 @@ main, .container {
     background: #111827 !important;
     border: 1px solid #1f2937 !important;
     border-radius: 16px !important;
-    overflow: hidden !important;
+    overflow: visible !important; /* IMPORTANTE: Permite que la imagen sobresalga */
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4) !important;
     transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease !important;
     display: flex !important;
@@ -116,10 +116,11 @@ main, .container {
     transform: translateY(-5px) !important;
     border-color: #3b82f6 !important;
     box-shadow: 0 12px 24px rgba(59, 130, 246, 0.25) !important;
+    z-index: 100 !important;
 }
 
 /* ===================================================
-   EFECTO LUPA EN PC (HOVER) Y CURSOR DE ZOOM
+   EFECTO LUPA REAL Y ZOOM QUE SOBRESALE
    =================================================== */
 img,
 .product-card img,
@@ -136,24 +137,28 @@ img,
     border-top-left-radius: 16px !important;
     border-top-right-radius: 16px !important;
     display: block !important;
-    cursor: zoom-in !important; /* Cambia el cursor a una lupa con signo + en PC */
-    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1) !important;
+    cursor: zoom-in !important; /* Cambia el icono del cursor a una lupa (+) */
+    transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.35s ease !important;
+    position: relative !important;
+    z-index: 1 !important;
 }
 
-/* Efecto Lupa al pasar el mouse por encima en PC */
-.product-card:hover img,
-.card:hover img,
-.producto-card:hover img {
-    transform: scale(1.4) !important; /* Zoom fuerte tipo lupa */
+/* AL PASAR EL CURSOR: AGRANDA Y SOBRESALE DE LA TARJETA */
+.product-card img:hover,
+.card img:hover,
+.producto-card img:hover,
+img:hover {
+    transform: scale(1.4) !important; /* Zoom del 40% */
+    z-index: 99999 !important;        /* Lo coloca al frente de todo */
+    border-radius: 12px !important;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8), 0 0 15px rgba(59, 130, 246, 0.5) !important;
 }
 
-/* ===================================================
-   MODAL PARA VER IMAGEN EN GRANDE (CELULARES / TÁCTIL)
-   =================================================== */
+/* MODAL PARA VER IMAGEN EN GRANDE (CELULAR) */
 #modal-imagen-zoom {
     display: none;
     position: fixed;
-    z-index: 99999;
+    z-index: 999999;
     left: 0;
     top: 0;
     width: 100%;
@@ -172,7 +177,7 @@ img,
     box-shadow: 0 0 25px rgba(255, 255, 255, 0.2);
 }
 
-#modal-imagen-zoom .cerrar-modal {
+.cerrar-modal {
     position: absolute;
     top: 20px;
     right: 30px;
