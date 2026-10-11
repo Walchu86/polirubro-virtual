@@ -9,8 +9,9 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(express.json({ limit: '10mb' }));
 
 const MASTER_KEY = "\$2a\$10\$tg1ZdjhTaAMXJux9z9NikO/vNFhjVdW28wxjdimgawIO.VkiBMEUi";
+const BIN_ID = "6acba057ac6210605a28056a";
 
-// Almacenamiento en memoria sincronizado con JSONBin en la nube
+// Memoria local con caché rápida para la tienda
 let memoriaProductos = [];
 let memoriaCategorias = [
     { id: 1, nombre: 'Estética', icono: '💄', color: 'linear-gradient(135deg, #ec4899, #be185d)' },
@@ -20,12 +21,8 @@ let memoriaCategorias = [
 ];
 let memoriaEstadisticas = { totalVisitas: 0, visitasMovil: 0, visitasPC: 0, secciones: {}, busquedas: {}, porDia: {} };
 
-// ID de Bin fijo o autogestionado para JSONBin.io (Usamos una estructura robusta basada en un Bin público/privado)
-// Si ya tenés un Bin ID de JSONBin, podés ponerlo acá abajo. Si está vacío, usa almacenamiento en memoria de alta disponibilidad con respaldo.
-let BIN_ID = process.env.JSONBIN_ID || ""; 
-
+// Función para sincronizar y guardar instantáneamente en JSONBin
 function sincronizarConCloud() {
-    if (!BIN_ID) return;
     const datosASubir = JSON.stringify({
         productos: memoriaProductos,
         categorias: memoriaCategorias,
@@ -40,7 +37,7 @@ function sincronizarConCloud() {
         headers: {
             'Content-Type': 'application/json',
             'X-Master-Key': MASTER_KEY,
-            'Content-Length': datosASubir.length
+            'Content-Length': Buffer.byteLength(datosASubir)
         }
     };
 
@@ -48,15 +45,53 @@ function sincronizarConCloud() {
         let body = '';
         res.on('data', (chunk) => body += chunk);
         res.on('end', () => {
-            // Sincronizado correctamente con la nube
+            // Datos guardados con éxito en la nube
         });
     });
     req.on('error', (e) => {
-        console.error('Error de sincronización con JSONBin:', e);
+        console.error('Error al sincronizar con JSONBin:', e);
     });
     req.write(datosASubir);
     req.end();
 }
+
+// Función para descargar los datos desde JSONBin al arrancar el servidor
+function cargarDesdeCloud() {
+    const options = {
+        hostname: 'api.jsonbin.io',
+        port: 443,
+        path: `/v3/b/${BIN_ID}/latest`,
+        method: 'GET',
+        headers: {
+            'X-Master-Key': MASTER_KEY
+        }
+    };
+
+    const req = https.request(options, (res) => {
+        let body = '';
+        res.on('data', (chunk) => body += chunk);
+        res.on('end', () => {
+            try {
+                const response = JSON.parse(body);
+                if (response && response.record) {
+                    if (Array.isArray(response.record.productos)) memoriaProductos = response.record.productos;
+                    if (Array.isArray(response.record.categorias) && response.record.categorias.length > 0) memoriaCategorias = response.record.categorias;
+                    if (response.record.estadisticas) memoriaEstadisticas = response.record.estadisticas;
+                    console.log('☁️ Datos cargados exitosamente desde JSONBin');
+                }
+            } catch (e) {
+                console.error('Error al parsear datos de JSONBin:', e);
+            }
+        });
+    });
+    req.on('error', (e) => {
+        console.error('Error al conectar con JSONBin para lectura:', e);
+    });
+    req.end();
+}
+
+// Ejecutar lectura inicial al iniciar el servidor
+cargarDesdeCloud();
 
 function leerProductos() { return memoriaProductos; }
 function guardarProductos(prods) { memoriaProductos = prods; sincronizarConCloud(); }
