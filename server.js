@@ -216,7 +216,7 @@ app.get('/', (req, res) => {
                 '<div style="position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: linear-gradient(135deg, #ec4899, #f43f5e);"></div>' +
                 '<span class="icono-cat" style="font-size: 2.5rem; margin-bottom: 0.5rem;">🔥</span>' +
                 '<strong class="titulo-cat-card" style="font-size: 1.05rem; color: #ffffff; font-weight: 800;">¡OFERTAS IMPERDIBLES!</strong>' +
-                '<span class="texto-accion-card" style="font-size: 0.8rem; color: #f43f5e; margin-top: 0.4rem; font-weight: 600;">Ver promos ➔</span>' +
+                '<span class="texto-accion-card" style="color: #f43f5e;">Ver promos ➔</span>' +
             '</div>';
         }
 
@@ -227,7 +227,7 @@ app.get('/', (req, res) => {
                 '<div style="position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: ' + bgGlow + ';"></div>' +
                 '<span class="icono-cat" style="font-size: 2.5rem; margin-bottom: 0.5rem;">' + (cat.icono || '📦') + '</span>' +
                 '<strong class="titulo-cat-card" style="font-size: 1.05rem; color: #ffffff; font-weight: 800;">' + cat.nombre + '</strong>' +
-                '<span class="texto-accion-card" style="font-size: 0.8rem; color: #38bdf8; margin-top: 0.4rem; font-weight: 600;">Ver productos ➔</span>' +
+                '<span class="texto-accion-card" style="color: #38bdf8;">Ver productos ➔</span>' +
             '</div>';
         });
 
@@ -290,6 +290,7 @@ app.get('/', (req, res) => {
             '<title>Polirubro Virtual | Tu Tienda Online</title>' +
             '<link rel="stylesheet" href="/style.css">' +
             '<style>' +
+                'html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }' +
                 '@keyframes marqueePC {' +
                     '0% { transform: translateX(100%); }' +
                     '100% { transform: translateX(-100%); }' +
@@ -365,6 +366,13 @@ app.get('/', (req, res) => {
                     'transition: all 0.2s;' +
                 '}' +
                 '.btn-seccion-mini:hover { border-color: #38bdf8 !important; color: #38bdf8 !important; transform: translateY(-2px); }' +
+                '.texto-accion-card {' +
+                    'font-size: 0.8rem !important;' +
+                    'margin-top: 0.4rem !important;' +
+                    'font-weight: 600 !important;' +
+                    'display: block !important;' +
+                    'line-height: 1.2 !important;' +
+                '}' +
                 '.product-image-container {' +
                     'position: relative;' +
                     'width: 100%;' +
@@ -393,10 +401,10 @@ app.get('/', (req, res) => {
                     '.top-bar-grid { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 0.5rem !important; }' +
                     '.btn-home-mini { grid-column: span 2 !important; text-align: center !important; justify-content: center !important; }' +
                     '.btn-seccion-mini { justify-content: center !important; padding: 0.5rem 0.6rem !important; font-size: 0.8rem !important; }' +
-                    '.card-seccion-box { padding: 0.9rem 0.5rem !important; }' +
-                    '.icono-cat { font-size: 1.8rem !important; margin-bottom: 0.3rem !important; }' +
-                    '.titulo-cat-card { font-size: 0.88rem !important; }' +
-                    '.texto-accion-card { font-size: 0.72rem !important; font-weight: 500 !important; margin-top: 0.2rem !important; opacity: 0.9; }' +
+                    '.card-seccion-box { padding: 0.8rem 0.4rem !important; min-height: 100px !important; }' +
+                    '.icono-cat { font-size: 1.7rem !important; margin-bottom: 0.2rem !important; }' +
+                    '.titulo-cat-card { font-size: 0.82rem !important; line-height: 1.1 !important; }' +
+                    '.texto-accion-card { font-size: 0.68rem !important; margin-top: 0.25rem !important; font-weight: 500 !important; opacity: 0.85 !important; letter-spacing: -0.2px !important; }' +
                 '}' +
             '</style>' +
         '</head>' +
@@ -1225,7 +1233,6 @@ app.post('/admin/eliminar/:id', (req, res) => {
     res.redirect('/admin');
 });
 
-// Inicializar y esperar a sincronizar ANTES de arrancar el servidor
 async function iniciarServidor() {
     await cargarDesdeCloud();
     app.listen(PORT, () => {
