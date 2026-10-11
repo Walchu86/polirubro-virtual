@@ -81,7 +81,6 @@ app.get('/', (req, res) => {
             </header>
 
             <main>
-                <!-- BARRA SUPERIOR DE ACCESO RÁPIDO A SECCIONES -->
                 <section class="top-secciones-bar" style="background: #0f172a; border: 1px solid #1e293b; border-radius: 16px; padding: 1rem; margin-bottom: 2rem; box-shadow: 0 8px 25px rgba(0,0,0,0.4);">
                     <div style="display: flex; gap: 0.8rem; overflow-x: auto; padding-bottom: 0.2rem; justify-content: center; align-items: center;">
                         <button onclick="mostrarMenuPrincipal()" class="btn-seccion-mini" style="background: #334155; color: #38bdf8; border: 1px solid #38bdf8; padding: 0.6rem 1.2rem; border-radius: 50px; font-weight: bold; cursor: pointer; white-space: nowrap;">
@@ -101,7 +100,6 @@ app.get('/', (req, res) => {
                     </div>
                 </section>
 
-                <!-- VISTA 1: MENÚ CENTRAL DE SECCIONES -->
                 <section id="vistaSecciones" class="secciones-container">
                     <h2 style="text-align: center; font-size: 1.8rem; color: #38bdf8; margin-bottom: 2rem; font-weight: 900;">✨ Explorar Secciones</h2>
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1.8rem; justify-content: center; max-width: 900px; margin: 0 auto;">
@@ -123,7 +121,6 @@ app.get('/', (req, res) => {
                     </div>
                 </section>
 
-                <!-- VISTA 2: CATÁLOGO DE PRODUCTOS -->
                 <section id="vistaProductos" class="catalogo" style="display: none;">
                     <div style="margin-bottom: 1.5rem;">
                         <input type="text" id="searchInput" oninput="filtrarProductos()" placeholder="🔍 Buscar producto en esta sección..." style="width: 100%; padding: 1rem 1.4rem; border-radius: 14px; background: #111827; color: white; border: 1px solid #334155; font-size: 1rem; outline: none;">
@@ -184,12 +181,10 @@ app.get('/', (req, res) => {
                 </section>
             </main>
 
-            <!-- BOTÓN FLOTANTE WHATSAPP -->
             <a href="https://wa.me/5493794655867?text=¡Hola!%20Tengo%20una%20consulta%20sobre%20Polirubro%20Virtual" class="whatsapp-float" target="_blank">
                 💬 <span>¿Tenés dudas? Hablá con nosotros</span>
             </a>
 
-            <!-- MODAL CARRITO -->
             <div id="cartModal" class="modal" style="display:none; position:fixed; z-index:999999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.85); justify-content:center; align-items:center; padding:1rem;">
                 <div style="background:#0f172a; border:1px solid #334155; border-radius:24px; padding:2rem; width:100%; max-width:480px; position:relative; color:#f8fafc; box-shadow:0 20px 50px rgba(0,0,0,0.9);">
                     <button type="button" onclick="toggleCartModal()" style="position:absolute; top:18px; right:20px; background:none; border:none; color:#94a3b8; font-size:1.8rem; cursor:pointer; line-height:1;">&times;</button>
@@ -244,7 +239,6 @@ app.get('/', (req, res) => {
                 </div>
             </div>
 
-            <!-- MODAL QR PC -->
             <div id="optionsModal" class="modal" style="display:none; position:fixed; z-index:999999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.85); justify-content:center; align-items:center; padding:1rem;">
                 <div style="background:#0f172a; border:1px solid #334155; border-radius:24px; padding:2rem; width:100%; max-width:420px; text-align:center; position:relative; color:#fff;">
                     <button type="button" onclick="cerrarOptionsModal()" style="position:absolute; top:18px; right:20px; background:none; border:none; color:#94a3b8; font-size:1.8rem; cursor:pointer;">&times;</button>
@@ -257,7 +251,6 @@ app.get('/', (req, res) => {
                 </div>
             </div>
 
-            <!-- MODAL ZOOM IMAGEN -->
             <div id="modal-imagen-zoom" onclick="this.style.display='none'" style="display:none; position:fixed; z-index:999999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.9); justify-content:center; align-items:center; padding:1rem;">
                 <span style="position:absolute; top:20px; right:30px; color:#fff; font-size:2.5rem; font-weight:bold; cursor:pointer;">&times;</span>
                 <img id="img-ampliada" src="" alt="Zoom Producto" style="max-width:90%; max-height:85vh; object-fit:contain; border-radius:12px;">
@@ -291,7 +284,6 @@ app.get('/', (req, res) => {
                     document.getElementById('tituloSeccionActual').innerText = '📂 Sección: ' + nombreCat;
                     document.getElementById('searchInput').value = '';
                     
-                    // Filtrar productos inmediatamente
                     filtrarProductos();
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
@@ -315,7 +307,6 @@ app.get('/', (req, res) => {
                         const nombreProd = normalizar(tarjeta.getAttribute('data-nombre'));
                         const descProd = normalizar(tarjeta.getAttribute('data-descripcion'));
 
-                        // COMPARACIÓN ESTRICTA: la categoría del producto debe coincidir exactamente con la sección abierta
                         const coincideSeccion = (catProd === catActivaNorm);
                         const coincideBusqueda = (busqueda === '' || nombreProd.includes(busqueda) || descProd.includes(busqueda));
 
@@ -603,22 +594,32 @@ app.get('/admin', (req, res) => {
         productos.forEach(prod => {
             const desc = prod.descripcion ? `<br><small style="color:#94a3b8;">${prod.descripcion}</small>` : '';
             const precioFormateado = formatearPrecio(prod.precio);
-            const stockActual = prod.stock !== undefined ? prod.stock : 10;
+            const stockActual = prod.stock !== undefined ? prod.stock : 0;
 
             html += `
-                <div class="admin-item-card">
-                    <img src="${prod.imagen}" alt="${prod.nombre}" class="admin-item-img">
-                    <div class="admin-item-info">
-                        <strong>${prod.nombre}</strong>
-                        <div>
-                            <span class="badge-mini">${prod.categoria}</span>
-                            <strong style="color:#34d399;">$${precioFormateado}</strong>
+                <div class="admin-item-card" style="display:flex; flex-direction:column; gap:0.8rem; background:#0f172a; padding:1rem; border-radius:14px; border:1px solid #1e293b; margin-bottom:1rem;">
+                    <div style="display:flex; align-items:center; gap:1rem; width:100%;">
+                        <img src="${prod.imagen}" alt="${prod.nombre}" class="admin-item-img" style="width:60px; height:60px; object-fit:cover; border-radius:10px;">
+                        <div class="admin-item-info" style="flex:1;">
+                            <strong style="color:#fff; font-size:1rem;">${prod.nombre}</strong>
+                            <div>
+                                <span class="badge-mini" style="background:rgba(56,189,248,0.15); color:#38bdf8; padding:0.2rem 0.6rem; border-radius:12px; font-size:0.75rem; font-weight:700;">${prod.categoria}</span>
+                                <strong style="color:#34d399;">$${precioFormateado}</strong>
+                            </div>
+                            ${desc}
                         </div>
-                        <small style="color:#38bdf8;">Stock: ${stockActual} u.</small>
-                        ${desc}
+                        <form action="/admin/eliminar/${prod.id}" method="POST" onsubmit="return confirm('¿Seguro que querés eliminar este producto?');">
+                            <button type="submit" class="btn-delete" style="background:#ef4444; color:white; border:none; padding:0.5rem 0.8rem; border-radius:8px; cursor:pointer;" title="Eliminar Producto">🗑️</button>
+                        </form>
                     </div>
-                    <form action="/admin/eliminar/${prod.id}" method="POST" onsubmit="return confirm('¿Seguro que querés eliminar este producto?');">
-                        <button type="submit" class="btn-delete">🗑️</button>
+
+                    <!-- MODIFICADOR DE STOCK RÁPIDO VISIBLE -->
+                    <form action="/admin/actualizar-stock/${prod.id}" method="POST" style="display:flex; align-items:center; justify-content:space-between; background:#1e293b; padding:0.6rem 0.8rem; border-radius:10px; border:1px solid #334155; width:100%;">
+                        <span style="font-size:0.85rem; color:#38bdf8; font-weight:bold;">📦 Modificar Stock:</span>
+                        <div style="display:flex; align-items:center; gap:0.5rem;">
+                            <input type="number" name="nuevoStock" value="${stockActual}" min="0" style="width:70px; padding:0.4rem; border-radius:6px; background:#0f172a; color:#fff; border:1px solid #475569; text-align:center; font-weight:bold;">
+                            <button type="submit" style="background:#2563eb; color:#fff; border:none; padding:0.4rem 0.8rem; border-radius:6px; font-weight:bold; cursor:pointer; font-size:0.8rem;">💾 Actualizar</button>
+                        </div>
                     </form>
                 </div>
             `;
@@ -667,6 +668,22 @@ app.get('/admin', (req, res) => {
         </html>
     `;
     res.send(html);
+});
+
+// RUTA PARA ACTUALIZAR STOCK EN EL SERVIDOR
+app.post('/admin/actualizar-stock/:id', (req, res) => {
+    const idProd = Number(req.params.id);
+    const nuevoStock = Math.max(0, parseInt(req.body.nuevoStock) || 0);
+
+    let productos = leerProductos();
+    const index = productos.findIndex(p => p.id === idProd);
+
+    if (index > -1) {
+        productos[index].stock = nuevoStock;
+        guardarProductos(productos);
+    }
+
+    res.redirect('/admin');
 });
 
 app.post('/admin/categoria/agregar', (req, res) => {
