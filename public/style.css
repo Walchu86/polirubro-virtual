@@ -1,5 +1,5 @@
 /* ===================================================
-   POLIRUBRO VIRTUAL - ESTILOS DEFINITIVOS (DARK MODE)
+   POLIRUBRO VIRTUAL - ESTILOS DEFINITIVOS (DARK MODE PRO)
    =================================================== */
 
 * {
@@ -47,7 +47,22 @@ header p {
     margin-top: 0.2rem;
 }
 
-/* BOTÓN DE CARRITO EN HEADER OBLIGATORIAMENTE OSCURO Y LINDO */
+.admin-link {
+    color: #38bdf8 !important;
+    text-decoration: none;
+    font-weight: bold;
+    background: rgba(56, 189, 248, 0.1);
+    padding: 0.6rem 1.2rem;
+    border-radius: 10px;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    transition: all 0.2s;
+}
+
+.admin-link:hover {
+    background: rgba(56, 189, 248, 0.2);
+}
+
+/* BOTÓN DE CARRITO */
 button.cart-btn, .cart-btn {
     background: linear-gradient(135deg, #2563eb, #4f46e5) !important;
     color: #ffffff !important;
@@ -141,7 +156,7 @@ main, .container {
     align-items: stretch !important;
 }
 
-/* TARJETA DE PRODUCTO UNIFORME */
+/* TARJETA DE PRODUCTO */
 .product-card {
     background: #111827 !important;
     border: 1px solid #1f2937 !important;
@@ -305,7 +320,7 @@ main, .container {
     box-shadow: none !important;
 }
 
-/* BOTÓN FLOTANTE DE WHATSAPP EMPROLISADO */
+/* BOTÓN FLOTANTE DE WHATSAPP PRO */
 .whatsapp-float {
     position: fixed !important;
     bottom: 25px !important;
@@ -332,11 +347,71 @@ main, .container {
     box-shadow: 0 12px 30px rgba(37, 211, 102, 0.7) !important;
 }
 
-.whatsapp-float span {
-    display: inline-block;
+/* INPUTS Y SELECTS PRO PARA ADMIN Y CARRITO */
+.form-group {
+    margin-bottom: 1.2rem;
 }
 
-/* MODALES Y ELEMENTOS DE FORMULARIO */
+.form-group label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #cbd5e1;
+    margin-bottom: 0.4rem;
+}
+
+input.custom-input, select.custom-input, textarea.custom-input,
+.customer-info-form input {
+    width: 100% !important;
+    padding: 0.75rem 1rem !important;
+    border-radius: 10px !important;
+    background-color: #0f172a !important;
+    color: #ffffff !important;
+    border: 1px solid #334155 !important;
+    font-size: 0.95rem !important;
+    outline: none !important;
+    box-shadow: none !important;
+    transition: border-color 0.2s, box-shadow 0.2s !important;
+}
+
+input.custom-input:focus, select.custom-input:focus, textarea.custom-input:focus,
+.customer-info-form input:focus {
+    border-color: #38bdf8 !important;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.3) !important;
+}
+
+select.custom-input option {
+    background-color: #0f172a !important;
+    color: #ffffff !important;
+}
+
+/* ADMIN CONTAINER */
+.admin-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+@media (max-width: 900px) {
+    .admin-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+.form-section, .list-section {
+    background: #111827;
+    border: 1px solid #1f2937;
+    border-radius: 16px;
+    padding: 1.5rem;
+}
+
+.form-section h2, .list-section h2 {
+    font-size: 1.3rem;
+    color: #38bdf8;
+    margin-bottom: 1.2rem;
+}
+
+/* MODALES */
 .modal {
     display: none;
     position: fixed;
@@ -389,58 +464,6 @@ main, .container {
     border-radius: 10px;
     margin-bottom: 0.6rem;
     border: 1px solid #1e293b;
-}
-
-.customer-info-form {
-    background: #0f172a;
-    padding: 1rem;
-    border-radius: 12px;
-    border: 1px solid #1e293b;
-    margin-bottom: 1rem;
-}
-
-.customer-info-form h4 {
-    font-size: 0.95rem;
-    color: #38bdf8;
-    margin-bottom: 0.6rem;
-}
-
-.customer-info-form input {
-    width: 100%;
-    padding: 0.65rem;
-    border-radius: 8px;
-    background: #111827;
-    color: #ffffff;
-    border: 1px solid #334155;
-    font-size: 0.88rem;
-    margin-bottom: 0.5rem;
-}
-
-.option-group label {
-    display: block;
-    font-size: 0.88rem;
-    color: #94a3b8;
-    margin-bottom: 0.4rem;
-    font-weight: 600;
-}
-
-/* DESPLEGABLES PAGO Y ENVÍO TOTALMENTE INTEGRADOS Y OSCUROS */
-select, .modal-content select {
-    width: 100% !important;
-    padding: 0.75rem 1rem !important;
-    border-radius: 10px !important;
-    background-color: #0f172a !important;
-    color: #ffffff !important;
-    border: 1px solid #334155 !important;
-    font-size: 0.92rem !important;
-    outline: none !important;
-    cursor: pointer !important;
-}
-
-select option, .modal-content select option {
-    background-color: #0f172a !important;
-    color: #ffffff !important;
-    padding: 0.5rem !important;
 }
 
 .transfer-info {
