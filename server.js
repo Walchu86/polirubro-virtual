@@ -31,23 +31,6 @@ function sincronizarConCloud(forzarGuardado = false) {
         return;
     }
 
-    // Análisis de imágenes en el log antes de empaquetar
-    console.log('🔍 ANALIZANDO IMÁGENES DE LOS PRODUCTOS A SUBIR:');
-    memoriaProductos.forEach((p, index) => {
-        let tipoImg = 'Sin Imagen';
-        let detalle = 'URL por defecto o vacía';
-        if (p.imagen) {
-            if (p.imagen.startsWith('data:image')) {
-                tipoImg = '📸 Base64 (Archivo local comprimido)';
-                detalle = 'Tamaño del string: ' + Math.round(p.imagen.length / 1024) + ' KB';
-            } else if (p.imagen.startsWith('http')) {
-                tipoImg = '🌐 URL Externa';
-                detalle = p.imagen;
-            }
-        }
-        console.log(`   -> [${index + 1}] Producto: "${p.nombre}" | Tipo: ${tipoImg} | Detalle: ${detalle}`);
-    });
-
     const payload = JSON.stringify({
         record: {
             productos: memoriaProductos,
@@ -113,12 +96,6 @@ function cargarDesdeCloud() {
                             memoriaProductos = dataRoot.productos;
                             nubeSincronizadaOk = true;
                             console.log('☁️ Datos RECUPERADOS desde JSONBin correctamente. Total productos:', memoriaProductos.length);
-                            
-                            // Mostrar en log qué imágenes vinieron de la nube
-                            memoriaProductos.forEach((p, idx) => {
-                                const esB64 = p.imagen && p.imagen.startsWith('data:image');
-                                console.log(`   📦 [Cloud Item ${idx + 1}] ${p.nombre} -> Imagen: ${esB64 ? 'Base64 OK (' + Math.round(p.imagen.length/1024) + ' KB)' : p.imagen}`);
-                            });
                         } else {
                             console.log('⚠️ JSONBin devolvió productos vacíos o estructura inválida.');
                         }
@@ -238,22 +215,22 @@ app.get('/', (req, res) => {
 
         let tarjetasCategoriasHtml = '';
         if (productosEnOferta.length > 0) {
-            tarjetasCategoriasHtml += '<div onclick="entrarASeccion(\'__OFERTAS__\')" class="card-seccion-glow card-seccion-box" style="background: linear-gradient(135deg, #1e1b4b, #311042); border: 2px solid #ec4899; border-radius: 20px; padding: 1.2rem 0.8rem; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; text-align: center; position: relative; overflow: hidden; box-shadow: 0 10px 25px rgba(236,72,153,0.3);">' +
-                '<div style="position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: linear-gradient(135deg, #ec4899, #f43f5e);"></div>' +
-                '<span class="icono-cat" style="font-size: 2.3rem; margin-bottom: 0.4rem;">🔥</span>' +
-                '<strong class="titulo-cat-card" style="font-size: 1rem; color: #ffffff; font-weight: 800;">¡OFERTAS IMPERDIBLES!</strong>' +
-                '<span class="texto-accion-card" style="color: #f43f5e;">Ver promos ➔</span>' +
+            tarjetasCategoriasHtml += '<div onclick="entrarASeccion(\'__OFERTAS__\')" class="card-seccion-glow card-seccion-box" style="background: linear-gradient(135deg, #1e1b4b, #311042); border: 2px solid #ec4899; border-radius: 16px; padding: 1rem 0.6rem; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; text-align: center; position: relative; overflow: hidden; box-shadow: 0 8px 20px rgba(236,72,153,0.25);">' +
+                '<div style="position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: linear-gradient(135deg, #ec4899, #f43f5e);"></div>' +
+                '<span class="icono-cat" style="font-size: 2rem; margin-bottom: 0.3rem;">🔥</span>' +
+                '<strong class="titulo-cat-card" style="font-size: 0.92rem; color: #ffffff; font-weight: 800; margin-bottom: 0.2rem;">¡OFERTAS!</strong>' +
+                '<span class="texto-accion-card" style="color: #f43f5e; font-size: 0.75rem; font-weight: 700;">Ver promos ➔</span>' +
             '</div>';
         }
 
         categorias.forEach(cat => {
             const nomLimpio = cat.nombre.replace(/'/g, "\\'");
             const bgGlow = cat.color || 'linear-gradient(135deg, #3b82f6, #1d4ed8)';
-            tarjetasCategoriasHtml += '<div onclick="entrarASeccion(\'' + nomLimpio + '\')" class="card-seccion-glow card-seccion-box" style="background: #111827; border: 2px solid #334155; border-radius: 20px; padding: 1.2rem 0.8rem; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; text-align: center; position: relative; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.4);">' +
-                '<div style="position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: ' + bgGlow + ';"></div>' +
-                '<span class="icono-cat" style="font-size: 2.3rem; margin-bottom: 0.4rem;">' + (cat.icono || '📦') + '</span>' +
-                '<strong class="titulo-cat-card" style="font-size: 1rem; color: #ffffff; font-weight: 800;">' + cat.nombre + '</strong>' +
-                '<span class="texto-accion-card" style="color: #38bdf8;">Ver productos ➔</span>' +
+            tarjetasCategoriasHtml += '<div onclick="entrarASeccion(\'' + nomLimpio + '\')" class="card-seccion-glow card-seccion-box" style="background: #111827; border: 1px solid #334155; border-radius: 16px; padding: 1rem 0.6rem; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; text-align: center; position: relative; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.3);">' +
+                '<div style="position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: ' + bgGlow + ';"></div>' +
+                '<span class="icono-cat" style="font-size: 2rem; margin-bottom: 0.3rem;">' + (cat.icono || '📦') + '</span>' +
+                '<strong class="titulo-cat-card" style="font-size: 0.92rem; color: #ffffff; font-weight: 800; margin-bottom: 0.2rem;">' + cat.nombre + '</strong>' +
+                '<span class="texto-accion-card" style="color: #38bdf8; font-size: 0.75rem; font-weight: 700;">Ver productos ➔</span>' +
             '</div>';
         });
 
@@ -392,12 +369,6 @@ app.get('/', (req, res) => {
                     'transition: all 0.2s;' +
                 '}' +
                 '.btn-seccion-mini:hover { border-color: #38bdf8 !important; color: #38bdf8 !important; transform: translateY(-2px); }' +
-                '.texto-accion-card {' +
-                    'font-size: 0.8rem;' +
-                    'margin-top: 0.3rem;' +
-                    'font-weight: 600;' +
-                    'display: block;' +
-                '}' +
                 '.product-image-container {' +
                     'position: relative;' +
                     'width: 100%;' +
@@ -426,10 +397,10 @@ app.get('/', (req, res) => {
                     '.top-bar-grid { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 0.5rem !important; }' +
                     '.btn-home-mini { grid-column: span 2 !important; text-align: center !important; justify-content: center !important; }' +
                     '.btn-seccion-mini { justify-content: center !important; padding: 0.5rem 0.6rem !important; font-size: 0.8rem !important; }' +
-                    '.card-seccion-box { padding: 0.9rem 0.4rem !important; min-height: 110px !important; }' +
-                    '.icono-cat { font-size: 1.8rem !important; margin-bottom: 0.2rem !important; }' +
-                    '.titulo-cat-card { font-size: 0.8rem !important; line-height: 1.15 !important; font-weight: 700 !important; }' +
-                    '.texto-accion-card { font-size: 0.65rem !important; margin-top: 0.2rem !important; font-weight: 500 !important; opacity: 0.9 !important; }' +
+                    '.card-seccion-box { padding: 0.8rem 0.4rem !important; min-height: 95px !important; }' +
+                    '.icono-cat { font-size: 1.6rem !important; margin-bottom: 0.2rem !important; }' +
+                    '.titulo-cat-card { font-size: 0.82rem !important; margin-bottom: 0.1rem !important; }' +
+                    '.texto-accion-card { font-size: 0.7rem !important; }' +
                 '}' +
             '</style>' +
         '</head>' +
@@ -460,8 +431,8 @@ app.get('/', (req, res) => {
                 '</section>' +
 
                 '<section id="vistaSecciones" class="secciones-container">' +
-                    '<h2 style="text-align: center; font-size: 1.5rem; color: #38bdf8; margin-bottom: 1.5rem; font-weight: 900;">🛍️ ¿Qué estás buscando hoy?</h2>' +
-                    '<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; justify-content: center; max-width: 900px; margin: 0 auto; padding: 0 0.5rem;">' +
+                    '<h2 style="text-align: center; font-size: 1.35rem; color: #38bdf8; margin-bottom: 1.2rem; font-weight: 900;">🛍️ ¿Qué estás buscando hoy?</h2>' +
+                    '<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.8rem; justify-content: center; max-width: 900px; margin: 0 auto; padding: 0 0.5rem;">' +
                         tarjetasCategoriasHtml +
                     '</div>' +
                 '</section>' +
@@ -1177,7 +1148,7 @@ app.get('/admin', (req, res) => {
             '</html>';
         res.send(html);
     } catch (err) {
-        console.error("Error cargando /admin:", err);
+        console.error("Error cargando /:", err);
         res.status(500).send("Error del servidor: " + err.message);
     }
 });
