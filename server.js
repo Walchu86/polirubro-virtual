@@ -836,6 +836,71 @@ app.get('/admin', (req, res) => {
     const busquedasOrdenadas = Object.entries(stats.busquedas || {})
         .sort((a, b) => b[1] - a[1]);
 
+    let filasSeccionesHTML = '';
+    if (seccionesOrdenadas.length === 0) {
+        filasSeccionesHTML = '<tr><td colspan="2" style="color:#94a3b8; font-size:0.85rem;">Aún no hay ingresos a secciones.</td></tr>';
+    } else {
+        for (let i = 0; i < seccionesOrdenadas.length; i++) {
+            const sec = seccionesOrdenadas[i][0];
+            const cant = seccionesOrdenadas[i][1];
+            filasSeccionesHTML += '<tr><td style="color:#fff; font-weight:bold;">' + sec + '</td><td style="color:#34d399; font-weight:bold; text-align:right;">' + cant + '</td></tr>';
+        }
+    }
+
+    let filasBusquedasHTML = '';
+    if (busquedasOrdenadas.length === 0) {
+        filasBusquedasHTML = '<tr><td colspan="2" style="color:#94a3b8; font-size:0.85rem;">Aún no hay búsquedas registradas.</td></tr>';
+    } else {
+        const limite = Math.min(busquedasOrdenadas.length, 10);
+        for (let i = 0; i < limite; i++) {
+            const term = busquedasOrdenadas[i][0];
+            const cant = busquedasOrdenadas[i][1];
+            filasBusquedasHTML += '<tr><td style="color:#fff; text-transform:capitalize;">' + term + '</td><td style="color:#38bdf8; font-weight:bold; text-align:right;">' + cant + '</td></tr>';
+        }
+    }
+
+    let opcionesCatHTML = '';
+    for (let i = 0; i < categorias.length; i++) {
+        const cat = categorias[i];
+        opcionesCatHTML += '<option value="' + cat.nombre + '">' + (cat.icono || '📦') + ' ' + cat.nombre + '</option>';
+    }
+
+    let listaProductosAdminHTML = '';
+    if (productos.length === 0) {
+        listaProductosAdminHTML = '<p style="color:#94a3b8;">No hay productos cargados.</p>';
+    } else {
+        for (let i = 0; i < productos.length; i++) {
+            const prod = productos[i];
+            const desc = prod.descripcion ? '<br><small style="color:#94a3b8;">' + prod.descripcion + '</small>' : '';
+            const precioFormateado = formatearPrecio(prod.precio);
+            const stockActual = prod.stock !== undefined ? prod.stock : 0;
+
+            listaProductosAdminHTML += '<div class="admin-item-card" style="display:flex; flex-direction:column; gap:0.8rem; background:#0f172a; padding:1rem; border-radius:14px; border:1px solid #1e293b; margin-bottom:1rem;">' +
+                '<div style="display:flex; align-items:center; gap:1rem; width:100%;">' +
+                    '<img src="' + prod.imagen + '" alt="' + prod.nombre + '" class="admin-item-img" style="width:60px; height:60px; object-fit:cover; border-radius:10px;">' +
+                    '<div class="admin-item-info" style="flex:1;">' +
+                        '<strong style="color:#fff; font-size:1rem;">' + prod.nombre + '</strong>' +
+                        '<div>' +
+                            '<span class="badge-mini" style="background:rgba(56,189,248,0.15); color:#38bdf8; padding:0.2rem 0.6rem; border-radius:12px; font-size:0.75rem; font-weight:700;">' + prod.categoria + '</span>' +
+                            '<strong style="color:#34d399;">\$' + precioFormateado + '</strong>' +
+                        '</div>' +
+                        desc +
+                    '</div>' +
+                    '<form action="/admin/eliminar/' + prod.id + '" method="POST" onsubmit="return confirm(\'¿Seguro que querés eliminar este producto?\');">' +
+                        '<button type="submit" class="btn-delete" style="background:#ef4444; color:white; border:none; padding:0.5rem 0.8rem; border-radius:8px; cursor:pointer;" title="Eliminar Producto">🗑️</button>' +
+                    '</form>' +
+                '</div>' +
+                '<form action="/admin/actualizar-stock/' + prod.id + '" method="POST" style="display:flex; align-items:center; justify-content:space-between; background:#1e293b; padding:0.6rem 0.8rem; border-radius:10px; border:1px solid #334155; width:100%;">' +
+                    '<span style="font-size:0.85rem; color:#38bdf8; font-weight:bold;">📦 Modificar Stock:</span>' +
+                    '<div style="display:flex; align-items:center; gap:0.5rem;">' +
+                        '<input type="number" name="nuevoStock" value="' + stockActual + '" min="0" style="width:70px; padding:0.4rem; border-radius:6px; background:#0f172a; color:#fff; border:1px solid #475569; text-align:center; font-weight:bold;">' +
+                        '<button type="submit" style="background:#2563eb; color:#fff; border:none; padding:0.4rem 0.8rem; border-radius:6px; font-weight:bold; cursor:pointer; font-size:0.8rem;">💾 Actualizar</button>' +
+                    '</div>' +
+                '</form>' +
+            '</div>';
+        }
+    }
+
     let html = `
         <!DOCTYPE html>
         <html lang="es">
@@ -907,6 +972,7 @@ app.get('/admin', (req, res) => {
 
             <main class="admin-container" style="max-width: 1200px; margin: 0 auto; padding: 1.5rem 1rem;">
 
+                <!-- 📊 SECCIÓN DE ESTADÍSTICAS -->
                 <section class="admin-card" style="background:#0f172a; border:2px solid #38bdf8; border-radius:24px; padding:1.8rem; margin-bottom:2rem; box-shadow:0 10px 30px rgba(56,189,248,0.15);">
                     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1.5rem;">
                         <div>
@@ -939,46 +1005,32 @@ app.get('/admin', (req, res) => {
                     <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:1.5rem;">
                         <div style="background:#1e293b; padding:1.2rem; border-radius:16px; border:1px solid #334155;">
                             <h4 style="color:#38bdf8; font-size:1rem; font-weight:800; margin-bottom:0.6rem;">📂 Secciones Más Entradas / Clics</h4>
-                            ${seccionesOrdenadas.length === 0 ? '<p style="color:#94a3b8; font-size:0.85rem;">Aún no hay ingresos a secciones.</p>' : `
-                                <table class="table-stats">
-                                    <thead>
-                                        <tr>
-                                            <th>Sección</th>
-                                            <th style="text-align:right;">Clics Totales</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        \${seccionesOrdenadas.map(([sec, cant]) => `
-                                            <tr>
-                                                <td style="color:#fff; font-weight:bold;">${sec}</td>
-                                                <td style="color:#34d399; font-weight:bold; text-align:right;">${cant}</td>
-                                            </tr>
-                                        `).join('')}
-                                    </tbody>
-                                </table>
-                            `}
+                            <table class="table-stats">
+                                <thead>
+                                    <tr>
+                                        <th>Sección</th>
+                                        <th style="text-align:right;">Clics Totales</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${filasSeccionesHTML}
+                                </tbody>
+                            </table>
                         </div>
 
                         <div style="background:#1e293b; padding:1.2rem; border-radius:16px; border:1px solid #334155;">
                             <h4 style="color:#38bdf8; font-size:1rem; font-weight:800; margin-bottom:0.6rem;">🔍 Términos Más Buscados</h4>
-                            ${busquedasOrdenadas.length === 0 ? '<p style="color:#94a3b8; font-size:0.85rem;">Aún no hay búsquedas registradas.</p>' : `
-                                <table class="table-stats">
-                                    <thead>
-                                        <tr>
-                                            <th>Palabra o Producto</th>
-                                            <th style="text-align:right;">Búsquedas</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        \${busquedasOrdenadas.slice(0, 10).map(([term, cant]) => `
-                                            <tr>
-                                                <td style="color:#fff; text-transform:capitalize;">${term}</td>
-                                                <td style="color:#38bdf8; font-weight:bold; text-align:right;">${cant}</td>
-                                            </tr>
-                                        `).join('')}
-                                    </tbody>
-                                </table>
-                            `}
+                            <table class="table-stats">
+                                <thead>
+                                    <tr>
+                                        <th>Palabra o Producto</th>
+                                        <th style="text-align:right;">Búsquedas</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${filasBusquedasHTML}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </section>
@@ -1024,13 +1076,7 @@ app.get('/admin', (req, res) => {
                                 <div class="form-group">
                                     <label>Sección / Categoría:</label>
                                     <select name="categoria" class="custom-input" required>
-    `;
-
-    categorias.forEach(cat => {
-        html += `<option value="${cat.nombre}">${cat.icono || '📦'} ${cat.nombre}</option>`;
-    });
-
-    html += `
+                                        ${opcionesCatHTML}
                                     </select>
                                 </div>
 
@@ -1059,46 +1105,7 @@ app.get('/admin', (req, res) => {
                         <section class="admin-card">
                             <h2>📦 Productos en Stock (${productos.length})</h2>
                             <div class="admin-product-list">
-    `;
-
-    if (productos.length === 0) {
-        html += `<p style="color:#94a3b8;">No hay productos cargados.</p>`;
-    } else {
-        productos.forEach(prod => {
-            const desc = prod.descripcion ? `<br><small style="color:#94a3b8;">${prod.descripcion}</small>` : '';
-            const precioFormateado = formatearPrecio(prod.precio);
-            const stockActual = prod.stock !== undefined ? prod.stock : 0;
-
-            html += `
-                <div class="admin-item-card" style="display:flex; flex-direction:column; gap:0.8rem; background:#0f172a; padding:1rem; border-radius:14px; border:1px solid #1e293b; margin-bottom:1rem;">
-                    <div style="display:flex; align-items:center; gap:1rem; width:100%;">
-                        <img src="${prod.imagen}" alt="${prod.nombre}" class="admin-item-img" style="width:60px; height:60px; object-fit:cover; border-radius:10px;">
-                        <div class="admin-item-info" style="flex:1;">
-                            <strong style="color:#fff; font-size:1rem;">${prod.nombre}</strong>
-                            <div>
-                                <span class="badge-mini" style="background:rgba(56,189,248,0.15); color:#38bdf8; padding:0.2rem 0.6rem; border-radius:12px; font-size:0.75rem; font-weight:700;">${prod.categoria}</span>
-                                <strong style="color:#34d399;">$${precioFormateado}</strong>
-                            </div>
-                            ${desc}
-                        </div>
-                        <form action="/admin/eliminar/${prod.id}" method="POST" onsubmit="return confirm('¿Seguro que querés eliminar este producto?');">
-                            <button type="submit" class="btn-delete" style="background:#ef4444; color:white; border:none; padding:0.5rem 0.8rem; border-radius:8px; cursor:pointer;" title="Eliminar Producto">🗑️</button>
-                        </form>
-                    </div>
-
-                    <form action="/admin/actualizar-stock/${prod.id}" method="POST" style="display:flex; align-items:center; justify-content:space-between; background:#1e293b; padding:0.6rem 0.8rem; border-radius:10px; border:1px solid #334155; width:100%;">
-                        <span style="font-size:0.85rem; color:#38bdf8; font-weight:bold;">📦 Modificar Stock:</span>
-                        <div style="display:flex; align-items:center; gap:0.5rem;">
-                            <input type="number" name="nuevoStock" value="${stockActual}" min="0" style="width:70px; padding:0.4rem; border-radius:6px; background:#0f172a; color:#fff; border:1px solid #475569; text-align:center; font-weight:bold;">
-                            <button type="submit" style="background:#2563eb; color:#fff; border:none; padding:0.4rem 0.8rem; border-radius:6px; font-weight:bold; cursor:pointer; font-size:0.8rem;">💾 Actualizar</button>
-                        </div>
-                    </form>
-                </div>
-            `;
-        });
-    }
-
-    html += `
+                                ${listaProductosAdminHTML}
                             </div>
                         </section>
                     </div>
