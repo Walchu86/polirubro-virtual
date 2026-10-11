@@ -264,22 +264,26 @@ app.get('/', (req, res) => {
                     transform: translateY(-2px);
                 }
 
-                /* ESTILOS DE IMAGEN ADAPTABLE Y PROPORCIONADA */
+                /* ESTILOS DE IMAGEN PERFECTAMENTE ENCUADRADA Y SIN CORTES */
                 .product-image-container {
                     position: relative;
                     width: 100%;
-                    height: 200px;
-                    background: #0b0f19;
+                    height: 220px;
+                    background: #070a12;
                     overflow: hidden;
                     display: flex;
                     align-items: center;
                     justify-content: center;
+                    padding: 8px;
+                    box-sizing: border-box;
                 }
 
                 .product-image-container img.zoom-img {
-                    width: 100%;
-                    height: 100%;
-                    object-fit: cover;
+                    max-width: 100%;
+                    max-height: 100%;
+                    width: auto;
+                    height: auto;
+                    object-fit: contain;
                     cursor: zoom-in;
                     transition: transform 0.3s ease;
                 }
@@ -581,16 +585,25 @@ app.get('/', (req, res) => {
                     }
 
                     if (ultimaSeccion && ultimaSeccion !== '') {
-                        entrarASeccion(ultimaSeccion, false);
+                        entrarASeccion(ultimaSeccion, false, false);
                     } else {
-                        mostrarMenuPrincipal(false);
+                        mostrarMenuPrincipal(false, false);
                     }
                 });
 
+                // MANEJO INTELIGENTE DEL BOTÓN "ATRÁS" DEL CELULAR
                 window.addEventListener('popstate', function(event) {
                     const modalZoom = document.getElementById("modal-imagen-zoom");
+                    
+                    // 1. Si el zoom de la imagen está abierto, cerrarlo primero
                     if (modalZoom.style.display === "flex") {
                         modalZoom.style.display = "none";
+                        return;
+                    }
+
+                    // 2. Si estamos dentro de una sección, volver al menú principal en lugar de salir de la página
+                    if (seccionSeleccionada !== '') {
+                        mostrarMenuPrincipal(true, false);
                     }
                 });
 
@@ -630,10 +643,15 @@ app.get('/', (req, res) => {
                     return Number(num || 0).toLocaleString('es-AR');
                 }
 
-                function entrarASeccion(nombreCat, registrarStat = true) {
+                function entrarASeccion(nombreCat, registrarStat = true, pushHistory = true) {
                     seccionSeleccionada = nombreCat;
                     localStorage.setItem('seccionActiva', nombreCat);
-                    history.replaceState(null, "", '#seccion-' + encodeURIComponent(nombreCat));
+
+                    if (pushHistory) {
+                        history.pushState({ seccionActiva: nombreCat }, "", '#seccion-' + encodeURIComponent(nombreCat));
+                    } else {
+                        history.replaceState({ seccionActiva: nombreCat }, "", '#seccion-' + encodeURIComponent(nombreCat));
+                    }
 
                     document.getElementById('vistaSecciones').style.display = 'none';
                     document.getElementById('vistaProductos').style.display = 'block';
@@ -650,12 +668,16 @@ app.get('/', (req, res) => {
                     }
                 }
 
-                function mostrarMenuPrincipal(limpiarHash = true) {
+                function mostrarMenuPrincipal(limpiarHash = true, pushHistory = true) {
                     seccionSeleccionada = '';
                     localStorage.removeItem('seccionActiva');
-                    if (limpiarHash) {
+                    
+                    if (pushHistory) {
+                        history.pushState({ menuPrincipal: true }, "", window.location.pathname);
+                    } else if (limpiarHash) {
                         history.replaceState(null, "", window.location.pathname);
                     }
+
                     document.getElementById('vistaSecciones').style.display = 'block';
                     document.getElementById('vistaProductos').style.display = 'none';
                 }
@@ -958,7 +980,7 @@ app.get('/admin', (req, res) => {
 
             listaProductosAdminHTML += '<div style="display:flex; flex-direction:column; gap:0.6rem; background:#0f172a; padding:0.9rem; border-radius:14px; border:1px solid #1e293b; margin-bottom:0.8rem;">' +
                 '<div style="display:flex; align-items:center; gap:0.8rem; width:100%;">' +
-                    '<img src="' + prod.imagen + '" alt="' + prod.nombre + '" style="width:50px; height:50px; object-fit:cover; border-radius:8px;">' +
+                    '<img src="' + prod.imagen + '" alt="' + prod.nombre + '" style="width:50px; height:50px; object-fit:contain; border-radius:8px; background:#070a12;">' +
                     '<div style="flex:1; overflow:hidden;">' +
                         '<strong style="color:#fff; font-size:0.95rem; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">' + prod.nombre + '</strong>' +
                         '<div style="display:flex; align-items:center; gap:0.5rem; margin-top:0.2rem;">' +
@@ -1187,7 +1209,7 @@ app.get('/admin', (req, res) => {
                                     <input type="file" id="fileInput" accept="image/*" onchange="convertirImagen()" style="margin-bottom:0.4rem;">
                                     <input type="url" id="urlInput" name="imagenUrl" placeholder="https://..." style="width:100%; padding:0.5rem; border-radius:8px; background:#1e293b; border:1px solid #334155; color:#fff; outline:none;">
                                     <div id="previewContainer" style="display:none; margin-top:0.5rem; text-align:center;">
-                                        <img id="imgPreview" src="" alt="Preview" style="max-width:100px; max-height:100px; border-radius:8px; border:1px solid #38bdf8;">
+                                        <img id="imgPreview" src="" alt="Preview" style="max-width:100px; max-height:100px; border-radius:8px; border:1px solid #38bdf8; background:#070a12; object-fit:contain;">
                                     </div>
                                 </div>
 
