@@ -291,6 +291,7 @@ app.get('/', (req, res) => {
                     document.getElementById('tituloSeccionActual').innerText = '📂 Sección: ' + nombreCat;
                     document.getElementById('searchInput').value = '';
                     
+                    // Filtrar productos inmediatamente
                     filtrarProductos();
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
@@ -314,6 +315,7 @@ app.get('/', (req, res) => {
                         const nombreProd = normalizar(tarjeta.getAttribute('data-nombre'));
                         const descProd = normalizar(tarjeta.getAttribute('data-descripcion'));
 
+                        // COMPARACIÓN ESTRICTA: la categoría del producto debe coincidir exactamente con la sección abierta
                         const coincideSeccion = (catProd === catActivaNorm);
                         const coincideBusqueda = (busqueda === '' || nombreProd.includes(busqueda) || descProd.includes(busqueda));
 
@@ -601,32 +603,22 @@ app.get('/admin', (req, res) => {
         productos.forEach(prod => {
             const desc = prod.descripcion ? `<br><small style="color:#94a3b8;">${prod.descripcion}</small>` : '';
             const precioFormateado = formatearPrecio(prod.precio);
-            const stockActual = prod.stock !== undefined ? prod.stock : 0;
+            const stockActual = prod.stock !== undefined ? prod.stock : 10;
 
             html += `
-                <div class="admin-item-card" style="display:flex; flex-direction:column; gap:0.8rem;">
-                    <div style="display:flex; align-items:center; gap:1rem; width:100%;">
-                        <img src="${prod.imagen}" alt="${prod.nombre}" class="admin-item-img">
-                        <div class="admin-item-info" style="flex:1;">
-                            <strong>${prod.nombre}</strong>
-                            <div>
-                                <span class="badge-mini">${prod.categoria}</span>
-                                <strong style="color:#34d399;">$${precioFormateado}</strong>
-                            </div>
-                            ${desc}
+                <div class="admin-item-card">
+                    <img src="${prod.imagen}" alt="${prod.nombre}" class="admin-item-img">
+                    <div class="admin-item-info">
+                        <strong>${prod.nombre}</strong>
+                        <div>
+                            <span class="badge-mini">${prod.categoria}</span>
+                            <strong style="color:#34d399;">$${precioFormateado}</strong>
                         </div>
-                        <form action="/admin/eliminar/${prod.id}" method="POST" onsubmit="return confirm('¿Seguro que querés eliminar este producto?');">
-                            <button type="submit" class="btn-delete" title="Eliminar Producto">🗑️</button>
-                        </form>
+                        <small style="color:#38bdf8;">Stock: ${stockActual} u.</small>
+                        ${desc}
                     </div>
-
-                    <!-- FORMULARIO RÁPIDO PARA MODIFICAR STOCK EN TIEMPO REAL -->
-                    <form action="/admin/actualizar-stock/${prod.id}" method="POST" style="display:flex; align-items:center; justify-content:space-between; background:#1e293b; padding:0.6rem 0.8rem; border-radius:10px; border:1px solid #334155; width:100%;">
-                        <span style="font-size:0.85rem; color:#38bdf8; font-weight:bold;">📦 Modificar Stock:</span>
-                        <div style="display:flex; align-items:center; gap:0.5rem;">
-                            <input type="number" name="nuevoStock" value="${stockActual}" min="0" style="width:70px; padding:0.4rem; border-radius:6px; background:#0f172a; color:#fff; border:1px solid #475569; text-align:center; font-weight:bold;">
-                            <button type="submit" style="background:#2563eb; color:#fff; border:none; padding:0.4rem 0.8rem; border-radius:6px; font-weight:bold; cursor:pointer; font-size:0.8rem;">💾 Actualizar</button>
-                        </div>
+                    <form action="/admin/eliminar/${prod.id}" method="POST" onsubmit="return confirm('¿Seguro que querés eliminar este producto?');">
+                        <button type="submit" class="btn-delete">🗑️</button>
                     </form>
                 </div>
             `;
@@ -675,22 +667,6 @@ app.get('/admin', (req, res) => {
         </html>
     `;
     res.send(html);
-});
-
-// NUEVA RUTA PARA ACTUALIZAR STOCK
-app.post('/admin/actualizar-stock/:id', (req, res) => {
-    const idProd = Number(req.params.id);
-    const nuevoStock = Math.max(0, parseInt(req.body.nuevoStock) || 0);
-
-    let productos = leerProductos();
-    const index = productos.findIndex(p => p.id === idProd);
-
-    if (index > -1) {
-        productos[index].stock = nuevoStock;
-        guardarProductos(productos);
-    }
-
-    res.redirect('/admin');
 });
 
 app.post('/admin/categoria/agregar', (req, res) => {
