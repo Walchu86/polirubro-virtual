@@ -10,6 +10,7 @@ app.use(express.json({ limit: '10mb' }));
 
 const DATA_FILE = path.join(__dirname, 'productos.json');
 const CATEGORIAS_FILE = path.join(__dirname, 'categorias.json');
+const STATS_FILE = path.join(__dirname, 'estadisticas.json');
 
 const categoriasPorDefecto = [
     { id: 1, nombre: 'Estética', icono: '💄', color: 'linear-gradient(135deg, #ec4899, #be185d)' },
@@ -47,14 +48,120 @@ function guardarProductos(prods) {
     fs.writeFileSync(DATA_FILE, JSON.stringify(prods, null, 2), 'utf8');
 }
 
+// ==========================================
+// MANEJO DE ESTADÍSTICAS PERSISTENTES
+// ==========================================
+function leerEstadisticas() {
+    const estructuraInicial = {
+        totalVisitas: 0,
+        visitasMovil: 0,
+        visitasPC: 0,
+        secciones: {},
+        busquedas: {},
+        porDia: {}
+    };
+
+    if (!fs.existsSync(STATS_FILE)) {
+        guardarEstadisticas(estructuraInicial);
+        return estructuraInicial;
+    }
+    try {
+        const stats = JSON.parse(fs.readFileSync(STATS_FILE, 'utf8'));
+        return { ...estructuraInicial, ...stats };
+    } catch (e) {
+        return estructuraInicial;
+    }
+}
+
+function guardarEstadisticas(stats) {
+    fs.writeFileSync(STATS_FILE, JSON.stringify(stats, null, 2), 'utf8');
+}
+
+function obtenerFechaHoy() {
+    const ahora = new Date();
+    const offsetArg = -3 * 60; // UTC-3 para Argentina
+    const fechaArg = new Date(ahora.getTime() + (ahora.getTimezoneOffset() + offsetArg) * 60000);
+    return fechaArg.toISOString().split('T')[0];
+}
+
+function registrarVisita(req) {
+    const userAgent = req.headers['user-agent'] || '';
+    const esMovil = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
+    const hoy = obtenerFechaHoy();
+
+    let stats = leerEstadisticas();
+
+    stats.totalVisitas = (stats.totalVisitas || 0) + 1;
+    if (esMovil) {
+        stats.visitasMovil = (stats.visitasMovil || 0) + 1;
+    } else {
+        stats.visitasPC = (stats.visitasPC || 0) + 1;
+    }
+
+    if (!stats.porDia[hoy]) {
+        stats.porDia[hoy] = { total: 0, movil: 0, pc: 0, secciones: {}, busquedas: {} };
+    }
+
+    stats.porDia[hoy].total = (stats.porDia[hoy].total || 0) + 1;
+    if (esMovil) {
+        stats.porDia[hoy].movil = (stats.porDia[hoy].movil || 0) + 1;
+    } else {
+        stats.porDia[hoy].pc = (stats.porDia[hoy].pc || 0) + 1;
+    }
+
+    guardarEstadisticas(stats);
+}
+
 function formatearPrecio(monto) {
     return Number(monto || 0).toLocaleString('es-AR');
 }
+
+// API ENDPOINTS PARA REGISTRAR ACCIONES DE CLIENTES
+app.post('/api/stats/seccion', (req, res) => {
+    const { seccion } = req.body;
+    if (!seccion) return res.json({ success: false });
+
+    const hoy = obtenerFechaHoy();
+    let stats = leerEstadisticas();
+
+    stats.secciones[seccion] = (stats.secciones[seccion] || 0) + 1;
+
+    if (!stats.porDia[hoy]) {
+        stats.porDia[hoy] = { total: 0, movil: 0, pc: 0, secciones: {}, busquedas: {} };
+    }
+    if (!stats.porDia[hoy].secciones) stats.porDia[hoy].secciones = {};
+    stats.porDia[hoy].secciones[seccion] = (stats.porDia[hoy].secciones[seccion] || 0) + 1;
+
+    guardarEstadisticas(stats);
+    res.json({ success: true });
+});
+
+app.post('/api/stats/busqueda', (req, res) => {
+    const { termino } = req.body;
+    const terminoLimpio = (termino || '').trim().toLowerCase();
+    if (!terminoLimpio || terminoLimpio.length < 2) return res.json({ success: false });
+
+    const hoy = obtenerFechaHoy();
+    let stats = leerEstadisticas();
+
+    stats.busquedas[terminoLimpio] = (stats.busquedas[terminoLimpio] || 0) + 1;
+
+    if (!stats.porDia[hoy]) {
+        stats.porDia[hoy] = { total: 0, movil: 0, pc: 0, secciones: {}, busquedas: {} };
+    }
+    if (!stats.porDia[hoy].busquedas) stats.porDia[hoy].busquedas = {};
+    stats.porDia[hoy].busquedas[terminoLimpio] = (stats.porDia[hoy].busquedas[terminoLimpio] || 0) + 1;
+
+    guardarEstadisticas(stats);
+    res.json({ success: true });
+});
 
 // ==========================================
 // 1. TIENDA PÚBLICA (VISTA CLIENTE)
 // ==========================================
 app.get('/', (req, res) => {
+    registrarVisita(req);
+
     const productos = leerProductos();
     const categorias = leerCategorias();
 
@@ -147,7 +254,6 @@ app.get('/', (req, res) => {
                     transform: translateY(-2px);
                 }
 
-                /* REGLAS ESPECÍFICAS PARA MÓVIL (CORRIGE LETRAS GIGANTES) */
                 @media (max-width: 768px) {
                     .promo-banner {
                         font-size: 0.82rem !important;
@@ -180,8 +286,6 @@ app.get('/', (req, res) => {
                         padding: 0.5rem 0.6rem !important;
                         font-size: 0.8rem !important;
                     }
-                    
-                    /* TAMAÑOS CORREGIDOS EN LAS TARJETAS PRINCIPALES DE SECCIONES */
                     .card-seccion-glow {
                         padding: 1.2rem 0.8rem !important;
                         border-radius: 16px !important;
@@ -263,7 +367,7 @@ app.get('/', (req, res) => {
 
                 <section id="vistaProductos" class="catalogo" style="display: none;">
                     <div style="margin-bottom: 1.5rem;">
-                        <input type="text" id="searchInput" oninput="filtrarProductos()" placeholder="🔍 Buscar producto en esta sección..." style="width: 100%; padding: 1rem 1.4rem; border-radius: 14px; background: #111827; color: white; border: 1px solid #334155; font-size: 1rem; outline: none;">
+                        <input type="text" id="searchInput" oninput="filtrarProductosConDebounce()" placeholder="🔍 Buscar producto en esta sección..." style="width: 100%; padding: 1rem 1.4rem; border-radius: 14px; background: #111827; color: white; border: 1px solid #334155; font-size: 1rem; outline: none;">
                     </div>
 
                     <h2 id="tituloSeccionActual" style="font-size: 1.5rem; color: #38bdf8; margin-bottom: 1.5rem; border-bottom: 2px solid #1e293b; padding-bottom: 0.6rem; font-weight: 800;"></h2>
@@ -364,7 +468,6 @@ app.get('/', (req, res) => {
                             <input type="tel" id="clienteTelefono" placeholder="Teléfono de contacto" style="width:100%; padding:0.5rem 0.7rem; border-radius:6px; background:#0f172a; color:#fff; border:1px solid #475569; outline:none;">
                         </div>
 
-                        <!-- CONTENEDOR DE SELECCIÓN DE ENVÍO -->
                         <div id="contenedorEnvio" style="margin-bottom:0.6rem;">
                             <label style="display:block; font-size:0.82rem; color:#cbd5e1; margin-bottom:0.3rem; font-weight:600;">🚚 Zona / Forma de Entrega:</label>
                             <select id="tipoEnvio" onchange="actualizarTotal()" style="width:100%; padding:0.5rem 0.7rem; border-radius:6px; background:#1e293b; color:#fff; border:1px solid #475569; outline:none; cursor:pointer;">
@@ -375,7 +478,6 @@ app.get('/', (req, res) => {
                             </select>
                         </div>
 
-                        <!-- CARTEL VERDE DE ENVÍO GRATIS -->
                         <div id="cartelEnvioGratis" style="display:none; background:#064e3b; border:1px solid #10b981; border-radius:8px; padding:0.6rem; text-align:center; margin-bottom:0.6rem;">
                             <span style="color:#a7f3d0; font-size:0.82rem; font-weight:bold;">🚚 Zona / Envío: <strong style="color:#fff;">🎉 ¡ENVÍO GRATIS APLICADO! ($0)</strong></span>
                         </div>
@@ -432,6 +534,7 @@ app.get('/', (req, res) => {
             <script>
                 let carrito = [];
                 let seccionSeleccionada = '';
+                let searchTimeout = null;
 
                 function cerrarPromoWelcome() {
                     document.getElementById('promoWelcomeModal').style.display = 'none';
@@ -458,6 +561,13 @@ app.get('/', (req, res) => {
                     document.getElementById('searchInput').value = '';
                     filtrarProductos();
                     window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                    // Registrar estadística de clic en sección
+                    fetch('/api/stats/seccion', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ seccion: nombreCat })
+                    }).catch(() => {});
                 }
 
                 function mostrarMenuPrincipal() {
@@ -465,6 +575,21 @@ app.get('/', (req, res) => {
                     document.getElementById('vistaSecciones').style.display = 'block';
                     document.getElementById('vistaProductos').style.display = 'none';
                     window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+
+                function filtrarProductosConDebounce() {
+                    filtrarProductos();
+                    clearTimeout(searchTimeout);
+                    searchTimeout = setTimeout(() => {
+                        const termino = document.getElementById('searchInput').value.trim();
+                        if (termino.length >= 2) {
+                            fetch('/api/stats/busqueda', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ termino })
+                            }).catch(() => {});
+                        }
+                    }, 1000);
                 }
 
                 function filtrarProductos() {
@@ -562,7 +687,6 @@ app.get('/', (req, res) => {
                     const cartelEnvioGratis = document.getElementById('cartelEnvioGratis');
                     const promoProgress = document.getElementById('promoEnvioProgress');
 
-                    // REGLA DE ENVÍO GRATIS SUPERANDO $20.000
                     const ES_ENVIO_GRATIS = subtotal >= 20000;
 
                     if (ES_ENVIO_GRATIS) {
@@ -697,11 +821,23 @@ app.get('/', (req, res) => {
 });
 
 // ==========================================
-// 2. PANEL ADMINISTRADOR
+// 2. PANEL ADMINISTRADOR (CON ESTADÍSTICAS)
 // ==========================================
 app.get('/admin', (req, res) => {
     const productos = leerProductos();
     const categorias = leerCategorias();
+    const stats = leerEstadisticas();
+    const hoy = obtenerFechaHoy();
+
+    const statsHoy = stats.porDia && stats.porDia[hoy] ? stats.porDia[hoy] : { total: 0, movil: 0, pc: 0, secciones: {}, busquedas: {} };
+
+    // Ordenar Secciones Más Visitadas
+    const seccionesOrdenadas = Object.entries(stats.secciones || {})
+        .sort((a, b) => b[1] - a[1]);
+
+    // Ordenar Términos Más Buscados
+    const busquedasOrdenadas = Object.entries(stats.busquedas || {})
+        .sort((a, b) => b[1] - a[1]);
 
     let html = `
         <!DOCTYPE html>
@@ -711,59 +847,189 @@ app.get('/admin', (req, res) => {
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Panel Administrador | Polirubro Virtual</title>
             <link rel="stylesheet" href="/style.css">
+            <style>
+                .stats-grid-top {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                    gap: 1rem;
+                    margin-bottom: 2rem;
+                }
+                .stat-box {
+                    background: #1e293b;
+                    border: 1px solid #334155;
+                    border-radius: 18px;
+                    padding: 1.2rem;
+                    text-align: center;
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+                }
+                .stat-box h3 {
+                    color: #94a3b8;
+                    font-size: 0.85rem;
+                    margin-bottom: 0.4rem;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                }
+                .stat-number {
+                    color: #38bdf8;
+                    font-size: 2.2rem;
+                    font-weight: 900;
+                }
+                .stat-sub {
+                    color: #34d399;
+                    font-size: 0.8rem;
+                    font-weight: 700;
+                    margin-top: 0.3rem;
+                }
+                .table-stats {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-top: 0.8rem;
+                }
+                .table-stats th, .table-stats td {
+                    padding: 0.6rem 0.8rem;
+                    text-align: left;
+                    border-bottom: 1px solid #334155;
+                    font-size: 0.88rem;
+                }
+                .table-stats th {
+                    color: #38bdf8;
+                    font-weight: 700;
+                }
+            </style>
         </head>
         <body class="admin-body">
             <header>
                 <div class="header-content">
                     <h1>⚙️ Panel de Control</h1>
-                    <p>Administrá Secciones, Productos y Stock de tu Tienda</p>
+                    <p>Administrá Secciones, Productos y Revisá tus Estadísticas de Venta</p>
                 </div>
                 <div class="header-actions">
                     <a href="/" class="admin-link" target="_blank">🌐 Ver Tienda Pública</a>
                 </div>
             </header>
 
-            <main class="admin-container">
-                <div class="admin-column">
-                    <section class="admin-card">
-                        <h2>📂 Crear Nueva Sección / Categoría</h2>
-                        <form action="/admin/categoria/agregar" method="POST" class="admin-form">
-                            <div class="form-group">
-                                <label>Nombre de la Sección:</label>
-                                <input type="text" name="nombreCat" class="custom-input" placeholder="Ej: Bazar, Ferretería, Cotillón" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Ícono Emoji (ej: 🛋️, 🔧, 🎈):</label>
-                                <input type="text" name="iconoCat" class="custom-input" placeholder="🛋️" value="📦" required>
-                            </div>
-                            <button type="submit" class="btn-primary">✨ Guardar Sección</button>
+            <main class="admin-container" style="max-width: 1200px; margin: 0 auto; padding: 1.5rem 1rem;">
+
+                <!-- 📊 SECCIÓN DE ESTADÍSTICAS EN TIEMPO REAL -->
+                <section class="admin-card" style="background:#0f172a; border:2px solid #38bdf8; border-radius:24px; padding:1.8rem; margin-bottom:2rem; box-shadow:0 10px 30px rgba(56,189,248,0.15);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1.5rem;">
+                        <div>
+                            <h2 style="color:#38bdf8; font-size:1.5rem; font-weight:900; margin:0;">📊 Métricas y Estadísticas de la Tienda</h2>
+                            <small style="color:#94a3b8;">Datos registrados en tiempo real — Hoy: ${hoy}</small>
+                        </div>
+                        <form action="/admin/estadisticas/reiniciar" method="POST" onsubmit="return confirm('¿Seguro que querés reiniciar todas las estadísticas a cero?');">
+                            <button type="submit" style="background:#ef4444; color:#fff; border:none; padding:0.55rem 1rem; border-radius:10px; font-weight:bold; cursor:pointer; font-size:0.82rem;">🔄 Reiniciar Estadísticas</button>
                         </form>
-                    </section>
+                    </div>
 
-                    <section class="admin-card">
-                        <h2>➕ Cargar Nuevo Producto</h2>
-                        <form action="/admin/agregar" method="POST" class="admin-form" id="productForm">
-                            <input type="hidden" id="imagenBase64" name="imagenBase64">
+                    <div class="stats-grid-top">
+                        <div class="stat-box">
+                            <h3>👁️ Visitas Totales</h3>
+                            <div class="stat-number">${stats.totalVisitas || 0}</div>
+                            <div class="stat-sub">📅 Hoy: ${statsHoy.total || 0} visitas</div>
+                        </div>
+                        <div class="stat-box">
+                            <h3>📱 Visitas desde Celular</h3>
+                            <div class="stat-number" style="color:#a7f3d0;">${stats.visitasMovil || 0}</div>
+                            <div class="stat-sub">📅 Hoy: ${statsHoy.movil || 0} celulares</div>
+                        </div>
+                        <div class="stat-box">
+                            <h3>💻 Visitas desde PC</h3>
+                            <div class="stat-number" style="color:#fde047;">${stats.visitasPC || 0}</div>
+                            <div class="stat-sub">📅 Hoy: ${statsHoy.pc || 0} computadoras</div>
+                        </div>
+                    </div>
 
-                            <div class="form-group">
-                                <label>Nombre del Producto:</label>
-                                <input type="text" name="nombre" class="custom-input" required placeholder="Ej: Protector Solar x 200ml">
-                            </div>
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:1.5rem;">
+                        <!-- TABLA SECCIONES MÁS VISITADAS -->
+                        <div style="background:#1e293b; padding:1.2rem; border-radius:16px; border:1px solid #334155;">
+                            <h4 style="color:#38bdf8; font-size:1rem; font-weight:800; margin-bottom:0.6rem;">📂 Secciones Más Entradas / Clics</h4>
+                            ${seccionesOrdenadas.length === 0 ? '<p style="color:#94a3b8; font-size:0.85rem;">Aún no hay ingresos a secciones.</p>' : `
+                                <table class="table-stats">
+                                    <thead>
+                                        <tr>
+                                            <th>Sección</th>
+                                            <th style="text-align:right;">Clics Totales</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        \${seccionesOrdenadas.map(([sec, cant]) => `
+                                            <tr>
+                                                <td style="color:#fff; font-weight:bold;">${sec}</td>
+                                                <td style="color:#34d399; font-weight:bold; text-align:right;">${cant}</td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            `}
+                        </div>
 
-                            <div class="form-row">
+                        <!-- TABLA BÚSQUEDAS MÁS FRECUENTES -->
+                        <div style="background:#1e293b; padding:1.2rem; border-radius:16px; border:1px solid #334155;">
+                            <h4 style="color:#38bdf8; font-size:1rem; font-weight:800; margin-bottom:0.6rem;">🔍 Términos Más Buscados</h4>
+                            ${busquedasOrdenadas.length === 0 ? '<p style="color:#94a3b8; font-size:0.85rem;">Aún no hay búsquedas registradas.</p>' : `
+                                <table class="table-stats">
+                                    <thead>
+                                        <tr>
+                                            <th>Palabra o Producto</th>
+                                            <th style="text-align:right;">Búsquedas</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        \${busquedasOrdenadas.slice(0, 10).map(([term, cant]) => `
+                                            <tr>
+                                                <td style="color:#fff; text-transform:capitalize;">${term}</td>
+                                                <td style="color:#38bdf8; font-weight:bold; text-align:right;">${cant}</td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            `}
+                        </div>
+                    </div>
+                </section>
+
+                <div class="admin-container" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:1.5rem; padding:0;">
+                    <div class="admin-column">
+                        <section class="admin-card">
+                            <h2>📂 Crear Nueva Sección / Categoría</h2>
+                            <form action="/admin/categoria/agregar" method="POST" class="admin-form">
                                 <div class="form-group">
-                                    <label>Precio ($):</label>
-                                    <input type="number" name="precio" class="custom-input" required placeholder="4000" step="1">
+                                    <label>Nombre de la Sección:</label>
+                                    <input type="text" name="nombreCat" class="custom-input" placeholder="Ej: Bazar, Ferretería, Cotillón" required>
                                 </div>
                                 <div class="form-group">
-                                    <label>Stock Disponible:</label>
-                                    <input type="number" name="stock" class="custom-input" required placeholder="10" value="10" min="0">
+                                    <label>Ícono Emoji (ej: 🛋️, 🔧, 🎈):</label>
+                                    <input type="text" name="iconoCat" class="custom-input" placeholder="🛋️" value="📦" required>
                                 </div>
-                            </div>
+                                <button type="submit" class="btn-primary">✨ Guardar Sección</button>
+                            </form>
+                        </section>
 
-                            <div class="form-group">
-                                <label>Sección / Categoría:</label>
-                                <select name="categoria" class="custom-input" required>
+                        <section class="admin-card">
+                            <h2>➕ Cargar Nuevo Producto</h2>
+                            <form action="/admin/agregar" method="POST" class="admin-form" id="productForm">
+                                <input type="hidden" id="imagenBase64" name="imagenBase64">
+
+                                <div class="form-group">
+                                    <label>Nombre del Producto:</label>
+                                    <input type="text" name="nombre" class="custom-input" required placeholder="Ej: Protector Solar x 200ml">
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Precio ($):</label>
+                                        <input type="number" name="precio" class="custom-input" required placeholder="4000" step="1">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Stock Disponible:</label>
+                                        <input type="number" name="stock" class="custom-input" required placeholder="10" value="10" min="0">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Sección / Categoría:</label>
+                                    <select name="categoria" class="custom-input" required>
     `;
 
     categorias.forEach(cat => {
@@ -771,34 +1037,34 @@ app.get('/admin', (req, res) => {
     });
 
     html += `
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label>Descripción Breve:</label>
-                                <textarea name="descripcion" class="custom-input" rows="2" placeholder="Ej: Excelente calidad."></textarea>
-                            </div>
-
-                            <div class="form-group image-upload-box">
-                                <label>🖼️ Foto del Producto:</label>
-                                <input type="file" id="fileInput" accept="image/*" onchange="convertirImagen()">
-                                <small>O usar Enlace URL:</small>
-                                <input type="url" id="urlInput" name="imagenUrl" class="custom-input" placeholder="https://ejemplo.com/foto.jpg">
-
-                                <div id="previewContainer" style="display:none; margin-top:0.8rem; text-align:center;">
-                                    <img id="imgPreview" src="" alt="Vista previa" class="preview-img">
+                                    </select>
                                 </div>
-                            </div>
 
-                            <button type="submit" class="btn-success">💾 Guardar Producto</button>
-                        </form>
-                    </section>
-                </div>
+                                <div class="form-group">
+                                    <label>Descripción Breve:</label>
+                                    <textarea name="descripcion" class="custom-input" rows="2" placeholder="Ej: Excelente calidad."></textarea>
+                                </div>
 
-                <div class="admin-column">
-                    <section class="admin-card">
-                        <h2>📦 Productos en Stock (${productos.length})</h2>
-                        <div class="admin-product-list">
+                                <div class="form-group image-upload-box">
+                                    <label>🖼️ Foto del Producto:</label>
+                                    <input type="file" id="fileInput" accept="image/*" onchange="convertirImagen()">
+                                    <small>O usar Enlace URL:</small>
+                                    <input type="url" id="urlInput" name="imagenUrl" class="custom-input" placeholder="https://ejemplo.com/foto.jpg">
+
+                                    <div id="previewContainer" style="display:none; margin-top:0.8rem; text-align:center;">
+                                        <img id="imgPreview" src="" alt="Vista previa" class="preview-img">
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn-success">💾 Guardar Producto</button>
+                            </form>
+                        </section>
+                    </div>
+
+                    <div class="admin-column">
+                        <section class="admin-card">
+                            <h2>📦 Productos en Stock (${productos.length})</h2>
+                            <div class="admin-product-list">
     `;
 
     if (productos.length === 0) {
@@ -839,8 +1105,9 @@ app.get('/admin', (req, res) => {
     }
 
     html += `
-                        </div>
-                    </section>
+                            </div>
+                        </section>
+                    </div>
                 </div>
             </main>
 
@@ -880,6 +1147,18 @@ app.get('/admin', (req, res) => {
         </html>
     `;
     res.send(html);
+});
+
+app.post('/admin/estadisticas/reiniciar', (req, res) => {
+    guardarEstadisticas({
+        totalVisitas: 0,
+        visitasMovil: 0,
+        visitasPC: 0,
+        secciones: {},
+        busquedas: {},
+        porDia: {}
+    });
+    res.redirect('/admin');
 });
 
 app.post('/admin/actualizar-stock/:id', (req, res) => {
