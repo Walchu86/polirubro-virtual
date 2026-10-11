@@ -350,32 +350,33 @@ app.get('/', (req, res) => {
                 </div>
             </div>
 
-            <!-- MODAL CARRITO -->
+            <!-- MODAL CARRITO COMPACTO Y ADAPTADO -->
             <div id="cartModal" class="modal" style="display:none; position:fixed; z-index:999999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.85); justify-content:center; align-items:center; padding:1rem;">
-                <div style="background:#0f172a; border:1px solid #334155; border-radius:24px; padding:2rem; width:100%; max-width:480px; position:relative; color:#f8fafc; box-shadow:0 20px 50px rgba(0,0,0,0.9);">
-                    <button type="button" onclick="toggleCartModal()" style="position:absolute; top:18px; right:20px; background:none; border:none; color:#94a3b8; font-size:1.8rem; cursor:pointer; line-height:1;">&times;</button>
-                    <h2 style="font-size:1.4rem; color:#38bdf8; margin-bottom:0.8rem; font-weight:800;">🛒 Tu Carrito de Compras</h2>
+                <div style="background:#0f172a; border:1px solid #334155; border-radius:24px; padding:1.8rem; width:100%; max-width:440px; position:relative; color:#f8fafc; box-shadow:0 20px 50px rgba(0,0,0,0.9); max-height:90vh; overflow-y:auto;">
+                    <button type="button" onclick="toggleCartModal()" style="position:absolute; top:15px; right:18px; background:none; border:none; color:#94a3b8; font-size:1.8rem; cursor:pointer; line-height:1;">&times;</button>
+                    <h2 style="font-size:1.3rem; color:#38bdf8; margin-bottom:0.7rem; font-weight:800;">🛒 Tu Carrito de Compras</h2>
                     
                     <!-- CARTEL INDICADOR DE ENVÍO GRATIS -->
-                    <div id="promoEnvioProgress" style="background:#1e293b; border:1px solid #3b82f6; border-radius:12px; padding:0.6rem 0.8rem; margin-bottom:1rem; text-align:center; font-size:0.85rem; font-weight:bold;">
+                    <div id="promoEnvioProgress" style="background:#1e293b; border:1px solid #3b82f6; border-radius:12px; padding:0.5rem 0.8rem; margin-bottom:0.8rem; text-align:center; font-size:0.82rem; font-weight:bold;">
                         🚚 Envío gratis superando los $20.000
                     </div>
 
-                    <div id="cartItemsList" style="max-height:180px; overflow-y:auto; margin-bottom:1rem; padding-right:0.3rem;">
+                    <div id="cartItemsList" style="max-height:140px; overflow-y:auto; margin-bottom:0.8rem; padding-right:0.3rem;">
                         <p style="color:#94a3b8; text-align:center;">El carrito está vacío.</p>
                     </div>
 
                     <div id="cartOptions" style="display:none;">
-                        <div style="background:#1e293b; padding:1rem; border-radius:14px; border:1px solid #334155; margin-bottom:1rem;">
-                            <h4 style="font-size:0.92rem; color:#38bdf8; margin-bottom:0.6rem; font-weight:700;">📋 Tus Datos para la Entrega:</h4>
-                            <input type="text" id="clienteNombre" placeholder="Tu Nombre y Apellido *" style="width:100%; padding:0.7rem 0.9rem; border-radius:10px; background:#0f172a; color:#fff; border:1px solid #475569; margin-bottom:0.6rem; outline:none;" required>
-                            <input type="text" id="clienteDireccion" placeholder="Dirección de Entrega / Barrio *" style="width:100%; padding:0.7rem 0.9rem; border-radius:10px; background:#0f172a; color:#fff; border:1px solid #475569; margin-bottom:0.6rem; outline:none;">
-                            <input type="tel" id="clienteTelefono" placeholder="Teléfono de contacto" style="width:100%; padding:0.7rem 0.9rem; border-radius:10px; background:#0f172a; color:#fff; border:1px solid #475569; outline:none;">
+                        <div style="background:#1e293b; padding:0.9rem; border-radius:12px; border:1px solid #334155; margin-bottom:0.8rem;">
+                            <h4 style="font-size:0.88rem; color:#38bdf8; margin-bottom:0.5rem; font-weight:700;">📋 Tus Datos para la Entrega:</h4>
+                            <input type="text" id="clienteNombre" placeholder="Tu Nombre y Apellido *" style="width:100%; padding:0.6rem 0.8rem; border-radius:8px; background:#0f172a; color:#fff; border:1px solid #475569; margin-bottom:0.5rem; outline:none;" required>
+                            <input type="text" id="clienteDireccion" placeholder="Dirección de Entrega / Barrio *" style="width:100%; padding:0.6rem 0.8rem; border-radius:8px; background:#0f172a; color:#fff; border:1px solid #475569; margin-bottom:0.5rem; outline:none;">
+                            <input type="tel" id="clienteTelefono" placeholder="Teléfono de contacto" style="width:100%; padding:0.6rem 0.8rem; border-radius:8px; background:#0f172a; color:#fff; border:1px solid #475569; outline:none;">
                         </div>
 
-                        <div style="margin-bottom:0.8rem;">
-                            <label style="display:block; font-size:0.88rem; color:#cbd5e1; margin-bottom:0.4rem; font-weight:600;">🚚 Zona / Forma de Entrega:</label>
-                            <select id="tipoEnvio" onchange="actualizarTotal()" style="width:100%; padding:0.7rem 0.9rem; border-radius:10px; background:#1e293b; color:#fff; border:1px solid #475569; outline:none; cursor:pointer;">
+                        <!-- CONTENEDOR DINÁMICO DE ENVÍO (APLICA IGUAL EN PC Y EN MÓVIL) -->
+                        <div id="contenedorEnvio" style="margin-bottom:0.8rem;">
+                            <label style="display:block; font-size:0.85rem; color:#cbd5e1; margin-bottom:0.3rem; font-weight:600;">🚚 Zona / Forma de Entrega:</label>
+                            <select id="tipoEnvio" onchange="actualizarTotal()" style="width:100%; padding:0.6rem 0.8rem; border-radius:8px; background:#1e293b; color:#fff; border:1px solid #475569; outline:none; cursor:pointer;">
                                 <option value="retiro" data-costo="0">Retirar por el local (Gratis)</option>
                                 <option value="centro" data-costo="1500">Zona Centro / Cambá Cuá (+$1.500)</option>
                                 <option value="barrios_cercanos" data-costo="2000">Barrios Cercanos / Aldana / Yapeyú (+$2.000)</option>
@@ -384,8 +385,8 @@ app.get('/', (req, res) => {
                         </div>
 
                         <div style="margin-bottom:0.8rem;">
-                            <label style="display:block; font-size:0.88rem; color:#cbd5e1; margin-bottom:0.4rem; font-weight:600;">💳 Método de Pago:</label>
-                            <select id="metodoPago" onchange="mostrarDatosTransferencia()" style="width:100%; padding:0.7rem 0.9rem; border-radius:10px; background:#1e293b; color:#fff; border:1px solid #475569; outline:none; cursor:pointer;">
+                            <label style="display:block; font-size:0.85rem; color:#cbd5e1; margin-bottom:0.3rem; font-weight:600;">💳 Método de Pago:</label>
+                            <select id="metodoPago" onchange="mostrarDatosTransferencia()" style="width:100%; padding:0.6rem 0.8rem; border-radius:8px; background:#1e293b; color:#fff; border:1px solid #475569; outline:none; cursor:pointer;">
                                 <option value="Efectivo">Efectivo al recibir</option>
                                 <option value="Mercado Pago">Mercado Pago</option>
                                 <option value="Transferencia Bancaria">Transferencia Bancaria (Alias/CBU)</option>
@@ -394,16 +395,16 @@ app.get('/', (req, res) => {
                             </select>
                         </div>
 
-                        <div id="transferInfo" style="display:none; background:#064e3b; border:1px solid #059669; padding:0.7rem 0.9rem; border-radius:10px; margin:0.8rem 0; justify-content:space-between; align-items:center;">
+                        <div id="transferInfo" style="display:none; background:#064e3b; border:1px solid #059669; padding:0.6rem 0.8rem; border-radius:8px; margin:0.6rem 0; justify-content:space-between; align-items:center;">
                             <small style="color:#a7f3d0;">🏦 <strong>Alias:</strong> POLIRUBRO.VIRTUAL.MP</small>
-                            <button type="button" onclick="copiarAlias()" style="background:#10b981; color:#fff; border:none; padding:0.4rem 0.8rem; border-radius:8px; cursor:pointer; font-size:0.8rem; font-weight:bold;">📋 Copiar</button>
+                            <button type="button" onclick="copiarAlias()" style="background:#10b981; color:#fff; border:none; padding:0.3rem 0.7rem; border-radius:6px; cursor:pointer; font-size:0.75rem; font-weight:bold;">📋 Copiar</button>
                         </div>
 
-                        <div style="text-align:right; margin:1.2rem 0 0.8rem 0;">
-                            <h3 style="color:#34d399; font-size:1.4rem; font-weight:800;">Total: $<span id="cartTotalPrice">0</span></h3>
+                        <div style="text-align:right; margin:1rem 0 0.6rem 0;">
+                            <h3 style="color:#34d399; font-size:1.3rem; font-weight:800;">Total: $<span id="cartTotalPrice">0</span></h3>
                         </div>
 
-                        <button onclick="procesarPedido()" style="background:linear-gradient(135deg, #059669, #10b981); color:white; width:100%; padding:0.9rem; border-radius:12px; border:none; font-weight:bold; font-size:1rem; cursor:pointer;">
+                        <button onclick="procesarPedido()" style="background:linear-gradient(135deg, #059669, #10b981); color:white; width:100%; padding:0.8rem; border-radius:10px; border:none; font-weight:bold; font-size:0.95rem; cursor:pointer;">
                             📲 Confirmar y Enviar por WhatsApp
                         </button>
                     </div>
@@ -545,15 +546,15 @@ app.get('/', (req, res) => {
                     let html = '';
                     carrito.forEach(item => {
                         html += \`
-                            <div style="display:flex; justify-content:space-between; align-items:center; background:#1e293b; padding:0.7rem 0.9rem; border-radius:10px; margin-bottom:0.5rem; border:1px solid #334155;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; background:#1e293b; padding:0.6rem 0.8rem; border-radius:8px; margin-bottom:0.4rem; border:1px solid #334155;">
                                 <div>
-                                    <strong style="color:#fff; font-size:0.95rem;">\${item.nombre}</strong><br>
+                                    <strong style="color:#fff; font-size:0.9rem;">\${item.nombre}</strong><br>
                                     <small style="color:#38bdf8;">\$\${formatoPesos(item.precio)} x \${item.cantidad}</small>
                                 </div>
                                 <div style="display:flex; align-items:center; gap:0.4rem;">
-                                    <button onclick="cambiarCantidad(\${item.id}, -1)" style="background:#0f172a; color:#fff; border:1px solid #475569; width:26px; height:26px; border-radius:6px; font-weight:bold; cursor:pointer;">-</button>
+                                    <button onclick="cambiarCantidad(\${item.id}, -1)" style="background:#0f172a; color:#fff; border:1px solid #475569; width:24px; height:24px; border-radius:6px; font-weight:bold; cursor:pointer;">-</button>
                                     <span style="font-weight:bold; padding:0 0.3rem;">\${item.cantidad}</span>
-                                    <button onclick="cambiarCantidad(\${item.id}, 1)" style="background:#0f172a; color:#fff; border:1px solid #475569; width:26px; height:26px; border-radius:6px; font-weight:bold; cursor:pointer;">+</button>
+                                    <button onclick="cambiarCantidad(\${item.id}, 1)" style="background:#0f172a; color:#fff; border:1px solid #475569; width:24px; height:24px; border-radius:6px; font-weight:bold; cursor:pointer;">+</button>
                                 </div>
                             </div>
                         \`;
@@ -564,7 +565,7 @@ app.get('/', (req, res) => {
 
                 function actualizarTotal() {
                     let subtotal = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
-                    const tipoEnvioSelect = document.getElementById('tipoEnvio');
+                    const contenedorEnvio = document.getElementById('contenedorEnvio');
                     const promoProgress = document.getElementById('promoEnvioProgress');
 
                     // Lógica de Envío Gratis
@@ -575,19 +576,39 @@ app.get('/', (req, res) => {
                         promoProgress.style.borderColor = '#10b981';
                         promoProgress.style.color = '#a7f3d0';
                         promoProgress.innerHTML = '🎉 ¡Felicitaciones! Tenés <strong>ENVÍO GRATIS</strong> en esta compra.';
+                        
+                        // Oculta el selector desplegable y pone el cartel verde fijo (en PC y Celular)
+                        contenedorEnvio.innerHTML = \`
+                            <div style="background:#064e3b; border:1px solid #10b981; border-radius:8px; padding:0.7rem; text-align:center;">
+                                <span style="color:#a7f3d0; font-size:0.88rem; font-weight:bold;">🚚 Zona / Envío: <strong style="color:#fff;">🎉 ¡ENVÍO GRATIS APLICADO! (\$0)</strong></span>
+                            </div>
+                        \`;
                     } else {
                         const falta = 20000 - subtotal;
                         promoProgress.style.background = '#1e293b';
                         promoProgress.style.borderColor = '#3b82f6';
                         promoProgress.style.color = '#38bdf8';
                         promoProgress.innerHTML = \`🚚 Agregá \$\${formatoPesos(falta)} más para tener <strong>ENVÍO GRATIS</strong>\`;
+
+                        // Muestra el selector desplegable si no alcanza los $20.000
+                        contenedorEnvio.innerHTML = \`
+                            <label style="display:block; font-size:0.85rem; color:#cbd5e1; margin-bottom:0.3rem; font-weight:600;">🚚 Zona / Forma de Entrega:</label>
+                            <select id="tipoEnvio" onchange="actualizarTotal()" style="width:100%; padding:0.6rem 0.8rem; border-radius:8px; background:#1e293b; color:#fff; border:1px solid #475569; outline:none; cursor:pointer;">
+                                <option value="retiro" data-costo="0">Retirar por el local (Gratis)</option>
+                                <option value="centro" data-costo="1500">Zona Centro / Cambá Cuá (+\$1.500)</option>
+                                <option value="barrios_cercanos" data-costo="2000">Barrios Cercanos / Aldana / Yapeyú (+\$2.000)</option>
+                                <option value="barrios_alejados" data-costo="2500">1000 Viviendas / Molina Punta / Laguna Seca (+\$2.500)</option>
+                            </select>
+                        \`;
                     }
 
-                    const opcionSeleccionada = tipoEnvioSelect.options[tipoEnvioSelect.selectedIndex];
-                    let costoEnvio = Number(opcionSeleccionada.getAttribute('data-costo') || 0);
-
-                    if (ES_ENVIO_GRATIS && opcionSeleccionada.value !== 'retiro') {
-                        costoEnvio = 0;
+                    let costoEnvio = 0;
+                    if (!ES_ENVIO_GRATIS) {
+                        const tipoEnvioSelect = document.getElementById('tipoEnvio');
+                        if (tipoEnvioSelect) {
+                            const opcionSeleccionada = tipoEnvioSelect.options[tipoEnvioSelect.selectedIndex];
+                            costoEnvio = Number(opcionSeleccionada.getAttribute('data-costo') || 0);
+                        }
                     }
 
                     let total = subtotal + costoEnvio;
@@ -640,15 +661,19 @@ app.get('/', (req, res) => {
                         return;
                     }
 
-                    const tipoEnvioSelect = document.getElementById('tipoEnvio');
-                    const opcionEnvio = tipoEnvioSelect.options[tipoEnvioSelect.selectedIndex];
                     let subtotal = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
-
                     const ES_ENVIO_GRATIS = subtotal >= 20000;
-                    let costoEnvio = Number(opcionEnvio.getAttribute('data-costo') || 0);
+                    
+                    let costoEnvio = 0;
+                    let detalleEnvioTexto = "Envío a Domicilio (¡ENVÍO GRATIS APLICADO!)";
 
-                    if (ES_ENVIO_GRATIS && opcionEnvio.value !== 'retiro') {
-                        costoEnvio = 0;
+                    if (!ES_ENVIO_GRATIS) {
+                        const tipoEnvioSelect = document.getElementById('tipoEnvio');
+                        if (tipoEnvioSelect) {
+                            const opcionEnvio = tipoEnvioSelect.options[tipoEnvioSelect.selectedIndex];
+                            costoEnvio = Number(opcionEnvio.getAttribute('data-costo') || 0);
+                            detalleEnvioTexto = opcionEnvio.text;
+                        }
                     }
 
                     const metodoPago = document.getElementById('metodoPago').value;
@@ -663,11 +688,6 @@ app.get('/', (req, res) => {
                     carrito.forEach(item => {
                         mensaje += \`- \${item.cantidad}x \${item.nombre} (\$\${formatoPesos(item.precio * item.cantidad)})\\n\`;
                     });
-
-                    let detalleEnvioTexto = opcionEnvio.text;
-                    if (ES_ENVIO_GRATIS && opcionEnvio.value !== 'retiro') {
-                        detalleEnvioTexto += " 🎉 (¡ENVÍO GRATIS APLICADO!)";
-                    }
 
                     mensaje += \`\\n🚚 *Entrega:* \${detalleEnvioTexto}\`;
                     mensaje += \`\\n💳 *Pago:* \${metodoPago}\`;
