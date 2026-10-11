@@ -71,7 +71,7 @@ app.get('/', (req, res) => {
 
     categorias.forEach((cat, index) => {
         const activeClass = index === 0 ? 'active' : '';
-        html += `<button class="btn-categoria ${activeClass}" onclick="filtrarCategoria('${cat}')">${cat}</button>`;
+        html += `<button class="btn-categoria ${activeClass}" onclick="filtrarCategoria('${cat}', this)">${cat}</button>`;
     });
 
     html += `
@@ -129,9 +129,10 @@ app.get('/', (req, res) => {
                 </section>
             </main>
 
-            <!-- BOTÓN FLOTANTE DE WHATSAPP -->
-            <a href="https://wa.me/5493794655867?text=¡Hola!%20Tengo%20una%20consulta%20sobre%20Polirubro%20Virtual" class="whatsapp-float" target="_blank" title="Hablá con nosotros">
-                💬
+            <!-- BOTÓN FLOTANTE DE WHATSAPP CON TEXTO -->
+            <a href="https://wa.me/5493794655867?text=¡Hola!%20Tengo%20una%20consulta%20sobre%20Polirubro%20Virtual" class="whatsapp-float" target="_blank">
+                <span class="wa-icon">💬</span>
+                <span class="wa-text">¿Tenés dudas? Hablá con nosotros</span>
             </a>
 
             <!-- MODAL DEL CARRITO -->
@@ -156,7 +157,7 @@ app.get('/', (req, res) => {
                         <!-- ZONAS DE ENVÍO Y PAGO -->
                         <div class="option-group">
                             <label for="tipoEnvio">🚚 Zona / Forma de Entrega:</label>
-                            <select id="tipoEnvio" onchange="actualizarTotal()">
+                            <select id="tipoEnvio" class="custom-select" onchange="actualizarTotal()">
                                 <option value="retiro" data-costo="0">Retirar por el local (Gratis)</option>
                                 <option value="centro" data-costo="1500">Zona Centro / Cambá Cuá (+$1.500)</option>
                                 <option value="barrios_cercanos" data-costo="2000">Barrios Cercanos / Aldana / Yapeyú (+$2.000)</option>
@@ -165,8 +166,8 @@ app.get('/', (req, res) => {
                         </div>
 
                         <div class="option-group">
-                            <label for="metodoPago" onchange="mostrarDatosTransferencia()">💳 Método de Pago:</label>
-                            <select id="metodoPago" onchange="mostrarDatosTransferencia()">
+                            <label for="metodoPago">💳 Método de Pago:</label>
+                            <select id="metodoPago" class="custom-select" onchange="mostrarDatosTransferencia()">
                                 <option value="Efectivo">Efectivo al recibir</option>
                                 <option value="Mercado Pago">Mercado Pago</option>
                                 <option value="Transferencia Bancaria">Transferencia Bancaria (Alias/CBU)</option>
@@ -217,18 +218,17 @@ app.get('/', (req, res) => {
 
             <script>
                 let carrito = [];
-                let categoriaActual = 'Todas';
+                let categoriaSeleccionada = 'Todas';
 
                 function formatoPesos(num) {
                     return Number(num || 0).toLocaleString('es-AR');
                 }
 
-                function filtrarCategoria(categoria) {
-                    categoriaActual = categoria;
+                function filtrarCategoria(categoria, elemento) {
+                    categoriaSeleccionada = categoria;
                     const botones = document.querySelectorAll('.btn-categoria');
-                    botones.forEach(btn => {
-                        btn.classList.toggle('active', btn.innerText === categoria);
-                    });
+                    botones.forEach(btn => btn.classList.remove('active'));
+                    if (elemento) elemento.classList.add('active');
                     filtrarProductos();
                 }
 
@@ -241,7 +241,7 @@ app.get('/', (req, res) => {
                         const nombre = tarjeta.getAttribute('data-nombre');
                         const descripcion = tarjeta.getAttribute('data-descripcion');
 
-                        const coincideCategoria = (categoriaActual === 'Todas' || catProducto === categoriaActual);
+                        const coincideCategoria = (categoriaSeleccionada === 'Todas' || catProducto.toLowerCase() === categoriaSeleccionada.toLowerCase());
                         const coincideTexto = (nombre.includes(busqueda) || descripcion.includes(busqueda));
 
                         if (coincideCategoria && coincideTexto) {
@@ -332,7 +332,7 @@ app.get('/', (req, res) => {
                 function mostrarDatosTransferencia() {
                     const metodo = document.getElementById('metodoPago').value;
                     const transferDiv = document.getElementById('transferInfo');
-                    transferDiv.style.display = metodo === 'Transferencia Bancaria' ? 'block' : 'none';
+                    transferDiv.style.display = metodo === 'Transferencia Bancaria' ? 'flex' : 'none';
                 }
 
                 function copiarAlias() {
@@ -466,7 +466,7 @@ app.get('/admin', (req, res) => {
 
                         <div class="form-group">
                             <label>Etiqueta / Badge Promocional:</label>
-                            <select name="etiqueta">
+                            <select name="etiqueta" class="custom-select">
     `;
 
     etiquetasValidas.forEach(et => {
@@ -479,7 +479,7 @@ app.get('/admin', (req, res) => {
 
                         <div class="form-group">
                             <label>Categoría:</label>
-                            <select name="categoria" required>
+                            <select name="categoria" class="custom-select" required>
     `;
 
     categoriasValidas.forEach(cat => {
