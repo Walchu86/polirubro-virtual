@@ -820,7 +820,7 @@ app.get('/', (req, res) => {
 });
 
 // ==========================================
-// 2. PANEL ADMINISTRADOR (CON ESTADÍSTICAS)
+// 2. PANEL ADMINISTRADOR (MAQUETADO LIMPIO Y ORDENADO)
 // ==========================================
 app.get('/admin', (req, res) => {
     const productos = leerProductos();
@@ -875,26 +875,26 @@ app.get('/admin', (req, res) => {
             const precioFormateado = formatearPrecio(prod.precio);
             const stockActual = prod.stock !== undefined ? prod.stock : 0;
 
-            listaProductosAdminHTML += '<div class="admin-item-card" style="display:flex; flex-direction:column; gap:0.8rem; background:#0f172a; padding:1rem; border-radius:14px; border:1px solid #1e293b; margin-bottom:1rem;">' +
-                '<div style="display:flex; align-items:center; gap:1rem; width:100%;">' +
-                    '<img src="' + prod.imagen + '" alt="' + prod.nombre + '" class="admin-item-img" style="width:60px; height:60px; object-fit:cover; border-radius:10px;">' +
-                    '<div class="admin-item-info" style="flex:1;">' +
-                        '<strong style="color:#fff; font-size:1rem;">' + prod.nombre + '</strong>' +
-                        '<div>' +
-                            '<span class="badge-mini" style="background:rgba(56,189,248,0.15); color:#38bdf8; padding:0.2rem 0.6rem; border-radius:12px; font-size:0.75rem; font-weight:700;">' + prod.categoria + '</span>' +
-                            '<strong style="color:#34d399;">\$' + precioFormateado + '</strong>' +
+            listaProductosAdminHTML += '<div style="display:flex; flex-direction:column; gap:0.6rem; background:#0f172a; padding:0.9rem; border-radius:14px; border:1px solid #1e293b; margin-bottom:0.8rem;">' +
+                '<div style="display:flex; align-items:center; gap:0.8rem; width:100%;">' +
+                    '<img src="' + prod.imagen + '" alt="' + prod.nombre + '" style="width:50px; height:50px; object-fit:cover; border-radius:8px;">' +
+                    '<div style="flex:1; overflow:hidden;">' +
+                        '<strong style="color:#fff; font-size:0.95rem; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">' + prod.nombre + '</strong>' +
+                        '<div style="display:flex; align-items:center; gap:0.5rem; margin-top:0.2rem;">' +
+                            '<span style="background:rgba(56,189,248,0.15); color:#38bdf8; padding:0.15rem 0.5rem; border-radius:10px; font-size:0.75rem; font-weight:700;">' + prod.categoria + '</span>' +
+                            '<strong style="color:#34d399; font-size:0.9rem;">\$' + precioFormateado + '</strong>' +
                         '</div>' +
                         desc +
                     '</div>' +
                     '<form action="/admin/eliminar/' + prod.id + '" method="POST" onsubmit="return confirm(\'¿Seguro que querés eliminar este producto?\');">' +
-                        '<button type="submit" class="btn-delete" style="background:#ef4444; color:white; border:none; padding:0.5rem 0.8rem; border-radius:8px; cursor:pointer;" title="Eliminar Producto">🗑️</button>' +
+                        '<button type="submit" style="background:#ef4444; color:white; border:none; padding:0.4rem 0.6rem; border-radius:8px; cursor:pointer;" title="Eliminar Producto">🗑️</button>' +
                     '</form>' +
                 '</div>' +
-                '<form action="/admin/actualizar-stock/' + prod.id + '" method="POST" style="display:flex; align-items:center; justify-content:space-between; background:#1e293b; padding:0.6rem 0.8rem; border-radius:10px; border:1px solid #334155; width:100%;">' +
-                    '<span style="font-size:0.85rem; color:#38bdf8; font-weight:bold;">📦 Modificar Stock:</span>' +
-                    '<div style="display:flex; align-items:center; gap:0.5rem;">' +
-                        '<input type="number" name="nuevoStock" value="' + stockActual + '" min="0" style="width:70px; padding:0.4rem; border-radius:6px; background:#0f172a; color:#fff; border:1px solid #475569; text-align:center; font-weight:bold;">' +
-                        '<button type="submit" style="background:#2563eb; color:#fff; border:none; padding:0.4rem 0.8rem; border-radius:6px; font-weight:bold; cursor:pointer; font-size:0.8rem;">💾 Actualizar</button>' +
+                '<form action="/admin/actualizar-stock/' + prod.id + '" method="POST" style="display:flex; align-items:center; justify-content:space-between; background:#1e293b; padding:0.5rem 0.7rem; border-radius:8px; border:1px solid #334155;">' +
+                    '<span style="font-size:0.8rem; color:#38bdf8; font-weight:bold;">📦 Stock:</span>' +
+                    '<div style="display:flex; align-items:center; gap:0.4rem;">' +
+                        '<input type="number" name="nuevoStock" value="' + stockActual + '" min="0" style="width:60px; padding:0.3rem; border-radius:6px; background:#0f172a; color:#fff; border:1px solid #475569; text-align:center; font-weight:bold;">' +
+                        '<button type="submit" style="background:#2563eb; color:#fff; border:none; padding:0.35rem 0.7rem; border-radius:6px; font-weight:bold; cursor:pointer; font-size:0.78rem;">💾 Guardar</button>' +
                     '</div>' +
                 '</form>' +
             '</div>';
@@ -910,106 +910,122 @@ app.get('/admin', (req, res) => {
             <title>Panel Administrador | Polirubro Virtual</title>
             <link rel="stylesheet" href="/style.css">
             <style>
-                .stats-grid-top {
-                    display: grid;
-                    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                    gap: 1rem;
-                    margin-bottom: 2rem;
+                body.admin-body {
+                    background-color: #0b0f19 !important;
+                    color: #f8fafc !important;
+                    font-family: system-ui, -apple-system, sans-serif !important;
                 }
-                .stat-box {
+                .admin-wrapper {
+                    max-width: 1250px;
+                    margin: 0 auto;
+                    padding: 1.5rem 1rem;
+                }
+                .grid-stats-cards {
+                    display: grid;
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: 1rem;
+                    margin-bottom: 1.5rem;
+                }
+                .stat-box-clean {
                     background: #1e293b;
                     border: 1px solid #334155;
-                    border-radius: 18px;
-                    padding: 1.2rem;
+                    border-radius: 16px;
+                    padding: 1.2rem 1rem;
                     text-align: center;
-                    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
                 }
-                .stat-box h3 {
+                .stat-box-clean h3 {
                     color: #94a3b8;
-                    font-size: 0.85rem;
-                    margin-bottom: 0.4rem;
+                    font-size: 0.82rem;
+                    margin: 0 0 0.3rem 0;
                     text-transform: uppercase;
-                    letter-spacing: 0.5px;
                 }
-                .stat-number {
-                    color: #38bdf8;
-                    font-size: 2.2rem;
+                .stat-box-clean .num {
+                    font-size: 2rem;
                     font-weight: 900;
+                    color: #38bdf8;
                 }
-                .stat-sub {
+                .stat-box-clean .sub {
+                    font-size: 0.78rem;
                     color: #34d399;
-                    font-size: 0.8rem;
                     font-weight: 700;
-                    margin-top: 0.3rem;
+                    margin-top: 0.2rem;
                 }
-                .table-stats {
+                .table-clean {
                     width: 100%;
                     border-collapse: collapse;
-                    margin-top: 0.8rem;
                 }
-                .table-stats th, .table-stats td {
-                    padding: 0.6rem 0.8rem;
-                    text-align: left;
+                .table-clean th, .table-clean td {
+                    padding: 0.5rem 0.7rem;
                     border-bottom: 1px solid #334155;
-                    font-size: 0.88rem;
+                    font-size: 0.85rem;
                 }
-                .table-stats th {
-                    color: #38bdf8;
-                    font-weight: 700;
+                .admin-two-columns {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 1.5rem;
+                    align-items: start;
+                }
+                @media (max-width: 900px) {
+                    .grid-stats-cards {
+                        grid-template-columns: 1fr;
+                    }
+                    .admin-two-columns {
+                        grid-template-columns: 1fr;
+                    }
                 }
             </style>
         </head>
         <body class="admin-body">
-            <header>
-                <div class="header-content">
-                    <h1>⚙️ Panel de Control</h1>
-                    <p>Administrá Secciones, Productos y Revisá tus Estadísticas de Venta</p>
-                </div>
-                <div class="header-actions">
-                    <a href="/" class="admin-link" target="_blank">🌐 Ver Tienda Pública</a>
+            <header style="background:#0f172a; padding:1.2rem; border-bottom:1px solid #1e293b; text-align:center;">
+                <h1 style="margin:0; font-size:1.6rem; color:#fff;">⚙️ Panel de Control Administrador</h1>
+                <p style="margin:0.3rem 0 0 0; color:#38bdf8; font-size:0.9rem;">Gestioná productos, secciones y monitoreá métricas en tiempo real</p>
+                <div style="margin-top:0.8rem;">
+                    <a href="/" target="_blank" style="background:#0284c7; color:#fff; padding:0.4rem 1rem; border-radius:20px; text-decoration:none; font-weight:bold; font-size:0.85rem;">🌐 Ir a la Tienda Pública</a>
                 </div>
             </header>
 
-            <main class="admin-container" style="max-width: 1200px; margin: 0 auto; padding: 1.5rem 1rem;">
+            <div class="admin-wrapper">
 
-                <!-- 📊 SECCIÓN DE ESTADÍSTICAS -->
-                <section class="admin-card" style="background:#0f172a; border:2px solid #38bdf8; border-radius:24px; padding:1.8rem; margin-bottom:2rem; box-shadow:0 10px 30px rgba(56,189,248,0.15);">
-                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1.5rem;">
+                <!-- BLOQUE 1: MÉTRICAS (ANCHO COMPLETO HORIZONTAL) -->
+                <section style="background:#0f172a; border:1px solid #1e293b; border-radius:20px; padding:1.5rem; margin-bottom:1.8rem; box-shadow:0 8px 25px rgba(0,0,0,0.4);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1.2rem; border-bottom:1px solid #1e293b; padding-bottom:0.8rem;">
                         <div>
-                            <h2 style="color:#38bdf8; font-size:1.5rem; font-weight:900; margin:0;">📊 Métricas y Estadísticas de la Tienda</h2>
-                            <small style="color:#94a3b8;">Datos registrados en tiempo real — Hoy: ${hoy}</small>
+                            <h2 style="margin:0; font-size:1.3rem; color:#38bdf8; font-weight:800;">📊 Estadísticas de Rendimiento</h2>
+                            <small style="color:#94a3b8;">Fecha actual: ${hoy}</small>
                         </div>
                         <form action="/admin/estadisticas/reiniciar" method="POST" onsubmit="return confirm('¿Seguro que querés reiniciar todas las estadísticas a cero?');">
-                            <button type="submit" style="background:#ef4444; color:#fff; border:none; padding:0.55rem 1rem; border-radius:10px; font-weight:bold; cursor:pointer; font-size:0.82rem;">🔄 Reiniciar Estadísticas</button>
+                            <button type="submit" style="background:#ef4444; color:#fff; border:none; padding:0.5rem 0.9rem; border-radius:8px; font-weight:bold; cursor:pointer; font-size:0.8rem;">🔄 Reiniciar Contadores</button>
                         </form>
                     </div>
 
-                    <div class="stats-grid-top">
-                        <div class="stat-box">
+                    <!-- TARJETAS DE CONTADORES -->
+                    <div class="grid-stats-cards">
+                        <div class="stat-box-clean">
                             <h3>👁️ Visitas Totales</h3>
-                            <div class="stat-number">${stats.totalVisitas || 0}</div>
-                            <div class="stat-sub">📅 Hoy: ${statsHoy.total || 0} visitas</div>
+                            <div class="num">${stats.totalVisitas || 0}</div>
+                            <div class="sub">📅 Hoy: ${statsHoy.total || 0}</div>
                         </div>
-                        <div class="stat-box">
-                            <h3>📱 Visitas desde Celular</h3>
-                            <div class="stat-number" style="color:#a7f3d0;">${stats.visitasMovil || 0}</div>
-                            <div class="stat-sub">📅 Hoy: ${statsHoy.movil || 0} celulares</div>
+                        <div class="stat-box-clean">
+                            <h3>📱 Desde Celular</h3>
+                            <div class="num" style="color:#a7f3d0;">${stats.visitasMovil || 0}</div>
+                            <div class="sub">📅 Hoy: ${statsHoy.movil || 0}</div>
                         </div>
-                        <div class="stat-box">
-                            <h3>💻 Visitas desde PC</h3>
-                            <div class="stat-number" style="color:#fde047;">${stats.visitasPC || 0}</div>
-                            <div class="stat-sub">📅 Hoy: ${statsHoy.pc || 0} computadoras</div>
+                        <div class="stat-box-clean">
+                            <h3>💻 Desde Computadora</h3>
+                            <div class="num" style="color:#fde047;">${stats.visitasPC || 0}</div>
+                            <div class="sub">📅 Hoy: ${statsHoy.pc || 0}</div>
                         </div>
                     </div>
 
-                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:1.5rem;">
-                        <div style="background:#1e293b; padding:1.2rem; border-radius:16px; border:1px solid #334155;">
-                            <h4 style="color:#38bdf8; font-size:1rem; font-weight:800; margin-bottom:0.6rem;">📂 Secciones Más Entradas / Clics</h4>
-                            <table class="table-stats">
+                    <!-- TABLAS DE SECCIONES Y BÚSQUEDAS -->
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:1.2rem;">
+                        <div style="background:#1e293b; padding:1rem; border-radius:12px; border:1px solid #334155;">
+                            <h4 style="margin:0 0 0.6rem 0; color:#38bdf8; font-size:0.95rem;">📂 Clics por Sección</h4>
+                            <table class="table-clean">
                                 <thead>
-                                    <tr>
+                                    <tr style="color:#94a3b8; text-align:left;">
                                         <th>Sección</th>
-                                        <th style="text-align:right;">Clics Totales</th>
+                                        <th style="text-align:right;">Clics</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -1018,13 +1034,13 @@ app.get('/admin', (req, res) => {
                             </table>
                         </div>
 
-                        <div style="background:#1e293b; padding:1.2rem; border-radius:16px; border:1px solid #334155;">
-                            <h4 style="color:#38bdf8; font-size:1rem; font-weight:800; margin-bottom:0.6rem;">🔍 Términos Más Buscados</h4>
-                            <table class="table-stats">
+                        <div style="background:#1e293b; padding:1rem; border-radius:12px; border:1px solid #334155;">
+                            <h4 style="margin:0 0 0.6rem 0; color:#38bdf8; font-size:0.95rem;">🔍 Búsquedas Frecuentes</h4>
+                            <table class="table-clean">
                                 <thead>
-                                    <tr>
-                                        <th>Palabra o Producto</th>
-                                        <th style="text-align:right;">Búsquedas</th>
+                                    <tr style="color:#94a3b8; text-align:left;">
+                                        <th>Término</th>
+                                        <th style="text-align:right;">Cant.</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -1035,82 +1051,84 @@ app.get('/admin', (req, res) => {
                     </div>
                 </section>
 
-                <div class="admin-container" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:1.5rem; padding:0;">
-                    <div class="admin-column">
-                        <section class="admin-card">
-                            <h2>📂 Crear Nueva Sección / Categoría</h2>
-                            <form action="/admin/categoria/agregar" method="POST" class="admin-form">
-                                <div class="form-group">
-                                    <label>Nombre de la Sección:</label>
-                                    <input type="text" name="nombreCat" class="custom-input" placeholder="Ej: Bazar, Ferretería, Cotillón" required>
+                <!-- BLOQUE 2: FORMULARIOS Y PRODUCTOS EN 2 COLUMNAS PAREJAS -->
+                <div class="admin-two-columns">
+                    
+                    <!-- COLUMNA IZQUIERDA: FORMULARIOS -->
+                    <div style="display:flex; flex-direction:column; gap:1.5rem;">
+                        <section style="background:#0f172a; border:1px solid #1e293b; border-radius:18px; padding:1.2rem;">
+                            <h3 style="margin:0 0 1rem 0; font-size:1.1rem; color:#38bdf8;">📂 Crear Nueva Sección</h3>
+                            <form action="/admin/categoria/agregar" method="POST" style="display:flex; flex-direction:column; gap:0.8rem;">
+                                <div>
+                                    <label style="font-size:0.82rem; color:#cbd5e1; display:block; margin-bottom:0.3rem;">Nombre:</label>
+                                    <input type="text" name="nombreCat" placeholder="Ej: Bazar, Ferretería" required style="width:100%; padding:0.6rem; border-radius:8px; background:#1e293b; border:1px solid #334155; color:#fff; outline:none;">
                                 </div>
-                                <div class="form-group">
-                                    <label>Ícono Emoji (ej: 🛋️, 🔧, 🎈):</label>
-                                    <input type="text" name="iconoCat" class="custom-input" placeholder="🛋️" value="📦" required>
+                                <div>
+                                    <label style="font-size:0.82rem; color:#cbd5e1; display:block; margin-bottom:0.3rem;">Emoji:</label>
+                                    <input type="text" name="iconoCat" value="📦" required style="width:100%; padding:0.6rem; border-radius:8px; background:#1e293b; border:1px solid #334155; color:#fff; outline:none;">
                                 </div>
-                                <button type="submit" class="btn-primary">✨ Guardar Sección</button>
+                                <button type="submit" style="background:#2563eb; color:#fff; border:none; padding:0.7rem; border-radius:8px; font-weight:bold; cursor:pointer;">✨ Guardar Sección</button>
                             </form>
                         </section>
 
-                        <section class="admin-card">
-                            <h2>➕ Cargar Nuevo Producto</h2>
-                            <form action="/admin/agregar" method="POST" class="admin-form" id="productForm">
+                        <section style="background:#0f172a; border:1px solid #1e293b; border-radius:18px; padding:1.2rem;">
+                            <h3 style="margin:0 0 1rem 0; font-size:1.1rem; color:#38bdf8;">➕ Cargar Nuevo Producto</h3>
+                            <form action="/admin/agregar" method="POST" id="productForm" style="display:flex; flex-direction:column; gap:0.8rem;">
                                 <input type="hidden" id="imagenBase64" name="imagenBase64">
 
-                                <div class="form-group">
-                                    <label>Nombre del Producto:</label>
-                                    <input type="text" name="nombre" class="custom-input" required placeholder="Ej: Protector Solar x 200ml">
+                                <div>
+                                    <label style="font-size:0.82rem; color:#cbd5e1; display:block; margin-bottom:0.3rem;">Nombre del Producto:</label>
+                                    <input type="text" name="nombre" required placeholder="Ej: Protector Solar" style="width:100%; padding:0.6rem; border-radius:8px; background:#1e293b; border:1px solid #334155; color:#fff; outline:none;">
                                 </div>
 
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>Precio ($):</label>
-                                        <input type="number" name="precio" class="custom-input" required placeholder="4000" step="1">
+                                <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem;">
+                                    <div>
+                                        <label style="font-size:0.82rem; color:#cbd5e1; display:block; margin-bottom:0.3rem;">Precio ($):</label>
+                                        <input type="number" name="precio" required placeholder="4000" style="width:100%; padding:0.6rem; border-radius:8px; background:#1e293b; border:1px solid #334155; color:#fff; outline:none;">
                                     </div>
-                                    <div class="form-group">
-                                        <label>Stock Disponible:</label>
-                                        <input type="number" name="stock" class="custom-input" required placeholder="10" value="10" min="0">
+                                    <div>
+                                        <label style="font-size:0.82rem; color:#cbd5e1; display:block; margin-bottom:0.3rem;">Stock:</label>
+                                        <input type="number" name="stock" required value="10" min="0" style="width:100%; padding:0.6rem; border-radius:8px; background:#1e293b; border:1px solid #334155; color:#fff; outline:none;">
                                     </div>
                                 </div>
 
-                                <div class="form-group">
-                                    <label>Sección / Categoría:</label>
-                                    <select name="categoria" class="custom-input" required>
+                                <div>
+                                    <label style="font-size:0.82rem; color:#cbd5e1; display:block; margin-bottom:0.3rem;">Sección:</label>
+                                    <select name="categoria" required style="width:100%; padding:0.6rem; border-radius:8px; background:#1e293b; border:1px solid #334155; color:#fff; outline:none;">
                                         ${opcionesCatHTML}
                                     </select>
                                 </div>
 
-                                <div class="form-group">
-                                    <label>Descripción Breve:</label>
-                                    <textarea name="descripcion" class="custom-input" rows="2" placeholder="Ej: Excelente calidad."></textarea>
+                                <div>
+                                    <label style="font-size:0.82rem; color:#cbd5e1; display:block; margin-bottom:0.3rem;">Descripción:</label>
+                                    <textarea name="descripcion" rows="2" placeholder="Breve detalle..." style="width:100%; padding:0.6rem; border-radius:8px; background:#1e293b; border:1px solid #334155; color:#fff; outline:none;"></textarea>
                                 </div>
 
-                                <div class="form-group image-upload-box">
-                                    <label>🖼️ Foto del Producto:</label>
-                                    <input type="file" id="fileInput" accept="image/*" onchange="convertirImagen()">
-                                    <small>O usar Enlace URL:</small>
-                                    <input type="url" id="urlInput" name="imagenUrl" class="custom-input" placeholder="https://ejemplo.com/foto.jpg">
-
-                                    <div id="previewContainer" style="display:none; margin-top:0.8rem; text-align:center;">
-                                        <img id="imgPreview" src="" alt="Vista previa" class="preview-img">
+                                <div>
+                                    <label style="font-size:0.82rem; color:#cbd5e1; display:block; margin-bottom:0.3rem;">🖼️ Imagen (Archivo o URL):</label>
+                                    <input type="file" id="fileInput" accept="image/*" onchange="convertirImagen()" style="margin-bottom:0.4rem;">
+                                    <input type="url" id="urlInput" name="imagenUrl" placeholder="https://..." style="width:100%; padding:0.5rem; border-radius:8px; background:#1e293b; border:1px solid #334155; color:#fff; outline:none;">
+                                    <div id="previewContainer" style="display:none; margin-top:0.5rem; text-align:center;">
+                                        <img id="imgPreview" src="" alt="Preview" style="max-width:100px; max-height:100px; border-radius:8px; border:1px solid #38bdf8;">
                                     </div>
                                 </div>
 
-                                <button type="submit" class="btn-success">💾 Guardar Producto</button>
+                                <button type="submit" style="background:#10b981; color:#fff; border:none; padding:0.8rem; border-radius:8px; font-weight:bold; cursor:pointer;">💾 Guardar Producto</button>
                             </form>
                         </section>
                     </div>
 
-                    <div class="admin-column">
-                        <section class="admin-card">
-                            <h2>📦 Productos en Stock (${productos.length})</h2>
-                            <div class="admin-product-list">
-                                ${listaProductosAdminHTML}
-                            </div>
-                        </section>
-                    </div>
+                    <!-- COLUMNA DERECHA: LISTA DE PRODUCTOS -->
+                    <section style="background:#0f172a; border:1px solid #1e293b; border-radius:18px; padding:1.2rem;">
+                        <h3 style="margin:0 0 1rem 0; font-size:1.1rem; color:#38bdf8;">📦 Productos Cargados (${productos.length})</h3>
+                        <div>
+                            ${listaProductosAdminHTML}
+                        </div>
+                    </section>
+
                 </div>
-            </main>
+
+            </div>
 
             <script>
                 function convertirImagen() {
