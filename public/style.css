@@ -320,7 +320,7 @@ main, .container {
     box-shadow: none !important;
 }
 
-/* BOTÓN FLOTANTE DE WHATSAPP PRO */
+/* BOTÓN FLOTANTE DE WHATSAPP */
 .whatsapp-float {
     position: fixed !important;
     bottom: 25px !important;
@@ -347,71 +347,7 @@ main, .container {
     box-shadow: 0 12px 30px rgba(37, 211, 102, 0.7) !important;
 }
 
-/* INPUTS Y SELECTS PRO PARA ADMIN Y CARRITO */
-.form-group {
-    margin-bottom: 1.2rem;
-}
-
-.form-group label {
-    display: block;
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: #cbd5e1;
-    margin-bottom: 0.4rem;
-}
-
-input.custom-input, select.custom-input, textarea.custom-input,
-.customer-info-form input {
-    width: 100% !important;
-    padding: 0.75rem 1rem !important;
-    border-radius: 10px !important;
-    background-color: #0f172a !important;
-    color: #ffffff !important;
-    border: 1px solid #334155 !important;
-    font-size: 0.95rem !important;
-    outline: none !important;
-    box-shadow: none !important;
-    transition: border-color 0.2s, box-shadow 0.2s !important;
-}
-
-input.custom-input:focus, select.custom-input:focus, textarea.custom-input:focus,
-.customer-info-form input:focus {
-    border-color: #38bdf8 !important;
-    box-shadow: 0 0 10px rgba(56, 189, 248, 0.3) !important;
-}
-
-select.custom-input option {
-    background-color: #0f172a !important;
-    color: #ffffff !important;
-}
-
-/* ADMIN CONTAINER */
-.admin-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-}
-
-@media (max-width: 900px) {
-    .admin-container {
-        grid-template-columns: 1fr;
-    }
-}
-
-.form-section, .list-section {
-    background: #111827;
-    border: 1px solid #1f2937;
-    border-radius: 16px;
-    padding: 1.5rem;
-}
-
-.form-section h2, .list-section h2 {
-    font-size: 1.3rem;
-    color: #38bdf8;
-    margin-bottom: 1.2rem;
-}
-
-/* MODALES */
+/* MODAL Y FORMULARIO DE CARRITO - TOTALMENTE EMPROLISADO */
 .modal {
     display: none;
     position: fixed;
@@ -427,29 +363,47 @@ select.custom-input option {
 }
 
 .modal-content {
-    background: #111827;
-    border: 1px solid #1f2937;
-    border-radius: 20px;
-    padding: 2rem;
-    width: 100%;
-    max-width: 520px;
-    position: relative;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-    color: #f8fafc;
+    background: #111827 !important;
+    border: 1px solid #1f2937 !important;
+    border-radius: 20px !important;
+    padding: 2rem !important;
+    width: 100% !important;
+    max-width: 520px !important;
+    position: relative !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8) !important;
+    color: #f8fafc !important;
 }
 
-.close-btn {
-    position: absolute;
-    top: 15px;
-    right: 20px;
-    color: #94a3b8;
-    font-size: 1.8rem;
-    font-weight: bold;
-    cursor: pointer;
+.modal-title {
+    font-size: 1.4rem;
+    color: #ffffff;
+    margin-bottom: 1rem;
+    font-weight: 800;
+}
+
+/* BOTÓN DE CERRAR LIMPIO */
+button.close-btn, .close-btn {
+    position: absolute !important;
+    top: 18px !important;
+    right: 20px !important;
+    background: transparent !important;
+    border: none !important;
+    color: #94a3b8 !important;
+    font-size: 1.8rem !important;
+    font-weight: 300 !important;
+    cursor: pointer !important;
+    line-height: 1 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    transition: color 0.2s !important;
+}
+
+button.close-btn:hover, .close-btn:hover {
+    color: #ef4444 !important;
 }
 
 .cart-items-list {
-    max-height: 200px;
+    max-height: 180px;
     overflow-y: auto;
     margin: 1rem 0;
     padding-right: 0.5rem;
@@ -461,9 +415,83 @@ select.custom-input option {
     align-items: center;
     background: #0f172a;
     padding: 0.8rem;
-    border-radius: 10px;
+    border-radius: 12px;
     margin-bottom: 0.6rem;
     border: 1px solid #1e293b;
+}
+
+.cart-item-controls button {
+    background: #1e293b;
+    color: #ffffff;
+    border: 1px solid #334155;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.customer-info-form {
+    background: #0f172a;
+    padding: 1rem;
+    border-radius: 12px;
+    border: 1px solid #1e293b;
+    margin-bottom: 1rem;
+}
+
+.customer-info-form h4 {
+    font-size: 0.95rem;
+    color: #38bdf8;
+    margin-bottom: 0.7rem;
+}
+
+/* INPUTS DEL CARRITO EMPROLISADOS CON BORDE Y FONDO DEFINIDO */
+.cart-input, .customer-info-form input {
+    width: 100% !important;
+    padding: 0.75rem 1rem !important;
+    border-radius: 10px !important;
+    background-color: #1e293b !important;
+    color: #ffffff !important;
+    border: 1px solid #334155 !important;
+    font-size: 0.92rem !important;
+    margin-bottom: 0.6rem !important;
+    outline: none !important;
+    transition: border-color 0.2s, box-shadow 0.2s !important;
+}
+
+.cart-input:focus, .customer-info-form input:focus {
+    border-color: #38bdf8 !important;
+    box-shadow: 0 0 8px rgba(56, 189, 248, 0.3) !important;
+}
+
+.option-group {
+    margin-bottom: 0.8rem;
+}
+
+.option-group label {
+    display: block;
+    font-size: 0.88rem;
+    color: #cbd5e1;
+    margin-bottom: 0.4rem;
+    font-weight: 600;
+}
+
+/* DESPLEGABLES DEL CARRITO CON FONDO OSCURO DEFINIDO */
+.cart-select {
+    width: 100% !important;
+    padding: 0.75rem 1rem !important;
+    border-radius: 10px !important;
+    background-color: #1e293b !important;
+    color: #ffffff !important;
+    border: 1px solid #334155 !important;
+    font-size: 0.92rem !important;
+    outline: none !important;
+    cursor: pointer !important;
+}
+
+.cart-select option {
+    background-color: #0f172a !important;
+    color: #ffffff !important;
 }
 
 .transfer-info {
@@ -510,6 +538,37 @@ select.custom-input option {
 
 .btn-checkout:hover {
     background: linear-gradient(135deg, #047857, #059669);
+}
+
+/* ADMIN STYLES */
+.custom-input {
+    width: 100% !important;
+    padding: 0.75rem 1rem !important;
+    border-radius: 10px !important;
+    background-color: #0f172a !important;
+    color: #ffffff !important;
+    border: 1px solid #334155 !important;
+    font-size: 0.95rem !important;
+    outline: none !important;
+}
+
+.admin-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+@media (max-width: 900px) {
+    .admin-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+.form-section, .list-section {
+    background: #111827;
+    border: 1px solid #1f2937;
+    border-radius: 16px;
+    padding: 1.5rem;
 }
 
 footer {
