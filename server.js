@@ -72,54 +72,54 @@ function sincronizarConCloud(forzarGuardado = false) {
 }
 
 function cargarDesdeCloud() {
-    const options = {
-        hostname: 'api.jsonbin.io',
-        port: 443,
-        path: '/v3/b/' + BIN_ID + '/latest',
-        method: 'GET',
-        headers: {
-            'X-Master-Key': MASTER_KEY
-        }
-    };
-
-    const req = https.request(options, (res) => {
-        let body = '';
-        res.on('data', (chunk) => body += chunk);
-        res.on('end', () => {
-            try {
-                if (res.statusCode === 200) {
-                    const response = JSON.parse(body);
-                    const dataRoot = response.record || response;
-                    
-                    if (dataRoot) {
-                        if (Array.isArray(dataRoot.productos) && dataRoot.productos.length > 0) {
-                            memoriaProductos = dataRoot.productos;
-                            console.log('☁️ Datos cargados desde JSONBin correctamente. Total productos:', memoriaProductos.length);
-                        } else if (Array.isArray(dataRoot.productos) && dataRoot.productos.length === 0) {
-                            console.log('⚠️ JSONBin devolvió 0 productos.');
-                        }
-                        if (Array.isArray(dataRoot.categorias) && dataRoot.categorias.length > 0) memoriaCategorias = dataRoot.categorias;
-                        if (dataRoot.estadisticas) memoriaEstadisticas = dataRoot.estadisticas;
-                    }
-                } else {
-                    console.log('⚠️ Error al leer JSONBin (Código ' + res.statusCode + '):', body);
-                }
-            } catch (e) {
-                console.error('Error al parsear datos de JSONBin:', e.message);
+    return new Promise((resolve) => {
+        const options = {
+            hostname: 'api.jsonbin.io',
+            port: 443,
+            path: '/v3/b/' + BIN_ID + '/latest',
+            method: 'GET',
+            headers: {
+                'X-Master-Key': MASTER_KEY
             }
-            datosListos = true;
+        };
+
+        const req = https.request(options, (res) => {
+            let body = '';
+            res.on('data', (chunk) => body += chunk);
+            res.on('end', () => {
+                try {
+                    if (res.statusCode === 200) {
+                        const response = JSON.parse(body);
+                        const dataRoot = response.record || response;
+                        
+                        if (dataRoot) {
+                            if (Array.isArray(dataRoot.productos)) {
+                                memoriaProductos = dataRoot.productos;
+                                console.log('☁️ Datos cargados desde JSONBin correctamente. Total productos:', memoriaProductos.length);
+                            }
+                            if (Array.isArray(dataRoot.categorias) && dataRoot.categorias.length > 0) memoriaCategorias = dataRoot.categorias;
+                            if (dataRoot.estadisticas) memoriaEstadisticas = dataRoot.estadisticas;
+                        }
+                    } else {
+                        console.log('⚠️ Error al leer JSONBin (Código ' + res.statusCode + '):', body);
+                    }
+                } catch (e) {
+                    console.error('Error al parsear datos de JSONBin:', e.message);
+                }
+                datosListos = true;
+                resolve();
+            });
         });
-    });
 
-    req.on('error', (e) => {
-        console.error('Error de red al leer JSONBin:', e.message);
-        datosListos = true;
-    });
+        req.on('error', (e) => {
+            console.error('Error de red al leer JSONBin:', e.message);
+            datosListos = true;
+            resolve();
+        });
 
-    req.end();
+        req.end();
+    });
 }
-
-cargarDesdeCloud();
 
 function leerProductos() { return memoriaProductos; }
 function guardarProductos(prods, esBorradoOlimpia = false) { 
@@ -1225,7 +1225,13 @@ app.post('/admin/eliminar/:id', (req, res) => {
     res.redirect('/admin');
 });
 
-app.listen(PORT, () => {
-    console.log(`🚀 Polirubro Virtual funcionando en http://localhost:${PORT}`);
-    console.log(`⚙️ Panel Administrador en http://localhost:${PORT}/admin`);
-});
+// Inicializar y esperar a sincronizar ANTES de arrancar el servidor
+async function iniciarServidor() {
+    await cargarDesdeCloud();
+    app.listen(PORT, () => {
+        console.log(`🚀 Polirubro Virtual funcionando en http://localhost:${PORT}`);
+        console.log(`⚙️ Panel Administrador en http://localhost:${PORT}/admin`);
+    });
+}
+
+iniciarServidor();
