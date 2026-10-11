@@ -19,6 +19,7 @@ let memoriaCategorias = [
     { id: 4, nombre: 'Accesorios', icono: '📱', color: 'linear-gradient(135deg, #8b5cf6, #6d28d9)' }
 ];
 let memoriaEstadisticas = { totalVisitas: 0, visitasMovil: 0, visitasPC: 0, secciones: {}, busquedas: {}, porDia: {} };
+let jsonBinConectado = false;
 
 function sincronizarConCloud() {
     const datosASubir = JSON.stringify({
@@ -45,10 +46,17 @@ function sincronizarConCloud() {
         let body = '';
         res.on('data', (chunk) => body += chunk);
         res.on('end', () => {
-            console.log('☁️ Sincronizado con JSONBin:', res.statusCode);
+            if (res.statusCode === 200) {
+                jsonBinConectado = true;
+                console.log('☁️ Sincronizado con JSONBin: OK');
+            } else {
+                jsonBinConectado = false;
+                console.log('⚠️ Sincronizado con JSONBin, código:', res.statusCode);
+            }
         });
     });
     req.on('error', (e) => {
+        jsonBinConectado = false;
         console.error('Error al sincronizar con JSONBin:', e);
     });
     req.write(datosASubir);
@@ -77,14 +85,17 @@ function cargarDesdeCloud() {
                     if (Array.isArray(dataRoot.productos)) memoriaProductos = dataRoot.productos;
                     if (Array.isArray(dataRoot.categorias) && dataRoot.categorias.length > 0) memoriaCategorias = dataRoot.categorias;
                     if (dataRoot.estadisticas) memoriaEstadisticas = dataRoot.estadisticas;
+                    jsonBinConectado = true;
                     console.log('☁️ Datos cargados exitosamente desde JSONBin');
                 }
             } catch (e) {
+                jsonBinConectado = false;
                 console.error('Error al parsear datos de JSONBin:', e);
             }
         });
     });
     req.on('error', (e) => {
+        jsonBinConectado = false;
         console.error('Error al conectar con JSONBin para lectura:', e);
     });
     req.end();
@@ -161,6 +172,67 @@ app.get('/', (req, res) => {
     registrarVisita(req);
     const productos = leerProductos();
     const categorias = leerCategorias();
+
+    let botonesCategoriasHtml = '';
+    categorias.forEach(cat => {
+        botonesCategoriasHtml += `<button onclick="entrarASeccion('${cat.nombre.replace(/'/g, "\\'")}')" class="btn-seccion-mini"><span>${cat.icono || '📦'}</span> ${cat.nombre}</button>`;
+    });
+
+    let tarjetasCategoriasHtml = '';
+    categorias.forEach(cat => {
+        const bgGlow = cat.color || 'linear-gradient(135deg, #3b82f6, #1d4ed8)';
+        tarjetasCategoriasHtml += `
+            <div onclick="entrarASeccion('${cat.nombre.replace(/'/g, "\\'")}')" class="card-seccion-glow" style="background: #111827; border: 2px solid #334155; border-radius: 20px; padding: 1.2rem 0.8rem; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; text-align: center; position: relative; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.4);">
+                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: ${bgGlow};"></div>
+                <span class="icono-cat" style="font-size: 2.5rem; margin-bottom: 0.5rem;">${cat.icono || '📦'}</span>
+                <strong style="font-size: 1.05rem; color: #ffffff; font-weight: 800;">${cat.nombre}</strong>
+                <span class="texto-accion" style="font-size: 0.8rem; color: #38bdf8; margin-top: 0.4rem; font-weight: 600;">Ver productos ➔</span>
+            </div>
+        `;
+    });
+
+    let productosHtml = '';
+    if (productos.length === 0) {
+        productosHtml = `<p class="no-products">No hay productos cargados en este momento.</p>`;
+    } else {
+        productos.forEach(prod => {
+            const imagenUrl = prod.imagen || 'https://via.placeholder.com/300x200?text=Sin+Imagen';
+            const descripcionTexto = prod.descripcion ? `<p class="description" style="color: #94a3b8; font-size: 0.88rem; margin: 0.4rem 0;">${prod.descripcion}</p>` : '';
+            const precioFormateado = formatearPrecio(prod.precio);
+            const stockActual = prod.stock !== undefined ? Number(prod.stock) : 10;
+            const estaAgotado = stockActual <= 0;
+
+            const badgeCategoria = `<span class="badge ${estaAgotado ? 'badge-agotado' : ''}">${estaAgotado ? 'AGOTADO' : prod.categoria}</span>`;
+            const botonAgregar = estaAgotado 
+                ? `<button class="btn-agregar btn-disabled" disabled style="width:100%; padding:0.75rem; border-radius:12px; border:none; background:#374151; color:#9ca3af; font-weight:bold; cursor:not-allowed;">🚫 Sin Stock</button>`
+                : `<button class="btn-agregar" onclick="agregarAlCarrito(${prod.id}, '${prod.nombre.replace(/'/g, "\\'")}', ${prod.precio}, ${stockActual})" style="width:100%; padding:0.75rem; border-radius:12px; border:none; background:linear-gradient(135deg, #2563eb, #3b82f6); color:#fff; font-weight:bold; cursor:pointer;">➕ Agregar al Carrito</button>`;
+
+            productosHtml += `
+              <div class="product-card" data-categoria="${(prod.categoria || '').trim()}" data-nombre="${prod.nombre || ''}" data-descripcion="${prod.descripcion || ''}">
+                  <div class="product-image-container">
+                      <img src="${imagenUrl}" alt="${prod.nombre}" class="zoom-img" onerror="this.src='https://via.placeholder.com/300x200?text=Error+Imagen'">
+                      ${badgeCategoria}
+                  </div>
+                  <div class="product-info" style="padding: 1.2rem; display: flex; flex-direction: column; justify-content: space-between; flex: 1;">
+                      <div>
+                          <h3 style="font-size: 1.15rem; color: #fff; margin-bottom: 0.3rem; font-weight: 700;">${prod.nombre}</h3>
+                          ${descripcionTexto}
+                      </div>
+                      <div style="margin-top: 0.8rem;">
+                          <div class="stock-info" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
+                              <span class="price" style="font-size: 1.4rem; font-weight: 800; color: #34d399;">$${precioFormateado}</span>
+                              <small class="stock-count" style="color: #94a3b8; font-size: 0.82rem;">${estaAgotado ? 'Sin disponibilidad' : 'Stock: ' + stockActual}</small>
+                          </div>
+                          <button class="btn-share-prominente" onclick="compartirProducto('${prod.nombre.replace(/'/g, "\\'")}', '${prod.precio}')" style="width: 100%; background: #059669; color: #ffffff; border: 1px solid #10b981; padding: 0.65rem; border-radius: 12px; font-weight: bold; font-size: 0.88rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.65rem;">
+                              📲 Compartir por WhatsApp
+                          </button>
+                          ${botonAgregar}
+                      </div>
+                  </div>
+              </div>
+            `;
+        });
+    }
 
     let html = `
         <!DOCTYPE html>
@@ -295,34 +367,14 @@ app.get('/', (req, res) => {
                 <section class="top-bar-container">
                     <div class="top-bar-grid">
                         <button onclick="mostrarMenuPrincipal()" class="btn-home-mini">🏠 Inicio</button>
-    `;
-
-    categorias.forEach(cat => {
-        html += `<button onclick="entrarASeccion('${cat.nombre.replace(/'/g, "\\'")}')" class="btn-seccion-mini"><span>${cat.icono || '📦'}</span> ${cat.nombre}</button>`;
-    });
-
-    html += `
+                        ${botonesCategoriasHtml}
                     </div>
                 </section>
 
                 <section id="vistaSecciones" class="secciones-container">
                     <h2 style="text-align: center; font-size: 1.5rem; color: #38bdf8; margin-bottom: 1.5rem; font-weight: 900;">🛍️ ¿Qué estás buscando hoy?</h2>
                     <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; justify-content: center; max-width: 900px; margin: 0 auto; padding: 0 0.5rem;">
-    `;
-
-    categorias.forEach(cat => {
-        const bgGlow = cat.color || 'linear-gradient(135deg, #3b82f6, #1d4ed8)';
-        html += `
-            <div onclick="entrarASeccion('${cat.nombre.replace(/'/g, "\\'")}')" class="card-seccion-glow" style="background: #111827; border: 2px solid #334155; border-radius: 20px; padding: 1.2rem 0.8rem; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; text-align: center; position: relative; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.4);">
-                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: ${bgGlow};"></div>
-                <span class="icono-cat" style="font-size: 2.5rem; margin-bottom: 0.5rem;">${cat.icono || '📦'}</span>
-                <strong style="font-size: 1.05rem; color: #ffffff; font-weight: 800;">${cat.nombre}</strong>
-                <span class="texto-accion" style="font-size: 0.8rem; color: #38bdf8; margin-top: 0.4rem; font-weight: 600;">Ver productos ➔</span>
-            </div>
-        `;
-    });
-
-    html += `
+                        ${tarjetasCategoriasHtml}
                     </div>
                 </section>
 
@@ -333,54 +385,7 @@ app.get('/', (req, res) => {
 
                     <h2 id="tituloSeccionActual" style="font-size: 1.5rem; color: #38bdf8; margin-bottom: 1.5rem; border-bottom: 2px solid #1e293b; padding-bottom: 0.6rem; font-weight: 800;"></h2>
                     <div class="product-grid" id="productGrid">
-    `;
-
-    if (productos.length === 0) {
-        html += `<p class="no-products">No hay productos cargados en este momento.</p>`;
-    } else {
-        productos.forEach(prod => {
-            const imagenUrl = prod.imagen || 'https://via.placeholder.com/300x200?text=Sin+Imagen';
-            const descripcionTexto = prod.descripcion ? `<p class="description" style="color: #94a3b8; font-size: 0.88rem; margin: 0.4rem 0;">${prod.descripcion}</p>` : '';
-            const precioFormateado = formatearPrecio(prod.precio);
-            const stockActual = prod.stock !== undefined ? Number(prod.stock) : 10;
-            const estaAgotado = stockActual <= 0;
-
-            const badgeCategoria = `<span class="badge ${estaAgotado ? 'badge-agotado' : ''}">${estaAgotado ? 'AGOTADO' : prod.categoria}</span>`;
-            const botonAgregar = estaAgotado 
-                ? `<button class="btn-agregar btn-disabled" disabled style="width:100%; padding:0.75rem; border-radius:12px; border:none; background:#374151; color:#9ca3af; font-weight:bold; cursor:not-allowed;">🚫 Sin Stock</button>`
-                : `<button class="btn-agregar" onclick="agregarAlCarrito(${prod.id}, '${prod.nombre.replace(/'/g, "\\'")}', ${prod.precio}, ${stockActual})" style="width:100%; padding:0.75rem; border-radius:12px; border:none; background:linear-gradient(135deg, #2563eb, #3b82f6); color:#fff; font-weight:bold; cursor:pointer;">➕ Agregar al Carrito</button>`;
-
-            html += `
-              <div class="product-card" data-categoria="${(prod.categoria || '').trim()}" data-nombre="${prod.nombre || ''}" data-descripcion="${prod.descripcion || ''}">
-                  <div class="product-image-container">
-                      <img src="${imagenUrl}" alt="${prod.nombre}" class="zoom-img" onerror="this.src='https://via.placeholder.com/300x200?text=Error+Imagen'">
-                      ${badgeCategoria}
-                  </div>
-                  <div class="product-info" style="padding: 1.2rem; display: flex; flex-direction: column; justify-content: space-between; flex: 1;">
-                      <div>
-                          <h3 style="font-size: 1.15rem; color: #fff; margin-bottom: 0.3rem; font-weight: 700;">${prod.nombre}</h3>
-                          ${descripcionTexto}
-                      </div>
-
-                      <div style="margin-top: 0.8rem;">
-                          <div class="stock-info" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
-                              <span class="price" style="font-size: 1.4rem; font-weight: 800; color: #34d399;">$${precioFormateado}</span>
-                              <small class="stock-count" style="color: #94a3b8; font-size: 0.82rem;">${estaAgotado ? 'Sin disponibilidad' : 'Stock: ' + stockActual}</small>
-                          </div>
-
-                          <button class="btn-share-prominente" onclick="compartirProducto('${prod.nombre.replace(/'/g, "\\'")}', '${prod.precio}')" style="width: 100%; background: #059669; color: #ffffff; border: 1px solid #10b981; padding: 0.65rem; border-radius: 12px; font-weight: bold; font-size: 0.88rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.65rem;">
-                              📲 Compartir por WhatsApp
-                          </button>
-
-                          ${botonAgregar}
-                      </div>
-                  </div>
-              </div>
-            `;
-        });
-    }
-
-    html += `
+                        ${productosHtml}
                     </div>
                 </section>
             </main>
@@ -674,18 +679,17 @@ app.get('/', (req, res) => {
                     cartOptions.style.display = 'block';
                     let html = '';
                     carrito.forEach(item => {
-                        html += `
-                            <div style="display:flex; justify-content:space-between; align-items:center; background:#1e293b; padding:0.5rem 0.7rem; border-radius:6px; margin-bottom:0.3rem; border:1px solid #334155;">
-                                <div>
-                                    <strong style="color:#fff; font-size:0.88rem;">${item.nombre}</strong><br>                                     <small style="color:#38bdf8;">$${formatoPesos(item.precio)} x${item.cantidad}</small>
-                                </div>
-                                <div style="display:flex; align-items:center; gap:0.3rem;">
-                                    <button type="button" onclick="cambiarCantidad(${item.id}, -1)" style="background:#0f172a; color:#fff; border:1px solid #475569; width:22px; height:22px; border-radius:4px; font-weight:bold; cursor:pointer;">-</button>
-                                    <span style="font-weight:bold; padding:0.2rem; font-size:0.9rem;">${item.cantidad}</span>
-                                    <button type="button" onclick="cambiarCantidad(${item.id}, 1)" style="background:#0f172a; color:#fff; border:1px solid #475569; width:22px; height:22px; border-radius:4px; font-weight:bold; cursor:pointer;">+</button>
-                                </div>
-                            </div>
-                        `;
+                        html += '<div style="display:flex; justify-content:space-between; align-items:center; background:#1e293b; padding:0.5rem 0.7rem; border-radius:6px; margin-bottom:0.3rem; border:1px solid #334155;">' +
+                            '<div>' +
+                                '<strong style="color:#fff; font-size:0.88rem;">' + item.nombre + '</strong><br>' +
+                                '<small style="color:#38bdf8;">$' + formatoPesos(item.precio) + ' x ' + item.cantidad + '</small>' +
+                            '</div>' +
+                            '<div style="display:flex; align-items:center; gap:0.3rem;">' +
+                                '<button onclick="cambiarCantidad(' + item.id + ', -1)" style="background:#0f172a; color:#fff; border:1px solid #475569; width:22px; height:22px; border-radius:4px; font-weight:bold; cursor:pointer;">-</button>' +
+                                '<span style="font-weight:bold; padding:0.2rem; font-size:0.9rem;">' + item.cantidad + '</span>' +
+                                '<button onclick="cambiarCantidad(' + item.id + ', 1)" style="background:#0f172a; color:#fff; border:1px solid #475569; width:22px; height:22px; border-radius:4px; font-weight:bold; cursor:pointer;">+</button>' +
+                            '</div>' +
+                        '</div>';
                     });
                     cartItemsList.innerHTML = html;
                     actualizarTotal();
@@ -710,7 +714,7 @@ app.get('/', (req, res) => {
                         promoProgress.style.background = '#1e293b';
                         promoProgress.style.borderColor = '#3b82f6';
                         promoProgress.style.color = '#38bdf8';
-                        promoProgress.innerHTML = `🚚 Agregá $${formatoPesos(falta)} más para tener <strong>ENVÍO GRATIS WEB</strong>`;
+                        promoProgress.innerHTML = `🚚 Agregá \$\${formatoPesos(falta)} más para tener <strong>ENVÍO GRATIS WEB</strong>`;
                         contenedorEnvio.style.display = 'block';
                         cartelEnvioGratis.style.display = 'none';
                     }
@@ -740,8 +744,8 @@ app.get('/', (req, res) => {
                 }
 
                 function compartirProducto(nombre, precio) {
-                    const texto = `¡Mirá este producto en Polirubro Virtual! 🛒\n*${nombre}* -$${formatoPesos(precio)}\nPedilo acá: https://polirubro-virtual.onrender.com`;
-                    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(texto)}`, '_blank');
+                    const texto = `¡Mirá este producto en Polirubro Virtual! 🛒\n*${nombre}* -$\${formatoPesos(precio)}\nPedilo acá: https://polirubro-virtual.onrender.com`;
+                    window.open(`https://api.whatsapp.com/send?text=\${encodeURIComponent(texto)}`, '_blank');
                 }
 
                 function toggleCartModal() {
@@ -788,18 +792,18 @@ app.get('/', (req, res) => {
                     let totalFinal = subtotal + costoEnvio;
 
                     let mensaje = `¡Hola! Quiero confirmar mi pedido en *Polirubro Virtual* (Vía Web):\n\n`;
-                    mensaje += `👤 *Cliente:* ${nombre}\n`;
-                    if (direccion) mensaje += `📍 *Dirección:* ${direccion}\n`;
-                    if (telefono) mensaje += `📞 *Contacto:* ${telefono}\n`;
+                    mensaje += `👤 *Cliente:* \${nombre}\n`;
+                    if (direccion) mensaje += `📍 *Dirección:* \${direccion}\n`;
+                    if (telefono) mensaje += `📞 *Contacto:* \${telefono}\n`;
                     mensaje += `\n🛒 *Detalle del Pedido:*\n`;
 
                     carrito.forEach(item => {
-                        mensaje += `- ${item.cantidad}x ${item.nombre} ($${formatoPesos(item.precio * item.cantidad)})\n`;
+                        mensaje += `- \${item.cantidad}x ${item.nombre} ($\${formatoPesos(item.precio * item.cantidad)})\n`;
                     });
 
-                    mensaje += `\n🚚 *Entrega:* ${detalleEnvioTexto}`;
-                    mensaje += `\n💳 *Pago:* ${metodoPago}`;
-                    mensaje += `\n💰 *Total a abonar:* $${formatoPesos(totalFinal)}\n\n¡Gracias!`;
+                    mensaje += `\n🚚 *Entrega:* \${detalleEnvioTexto}`;
+                    mensaje += `\n💳 *Pago:* \${metodoPago}`;
+                    mensaje += `\n💰 *Total a abonar:* \$\${formatoPesos(totalFinal)}\n\n¡Gracias!`;
 
                     const numeroWhatsApp = "5493794655867";
                     const mensajeCodificado = encodeURIComponent(mensaje);
@@ -809,7 +813,7 @@ app.get('/', (req, res) => {
                     if (esMovil) {
                         window.location.href = `https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${mensajeCodificado}`;
                     } else {
-                        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent("https://wa.me/" + numeroWhatsApp + "?text=" + mensajeCodificado)}`;
+                        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=\${encodeURIComponent("https://wa.me/" + numeroWhatsApp + "?text=" + mensajeCodificado)}`;
                         document.getElementById('qrImage').src = qrUrl;
                         document.getElementById('optionsModal').style.display = 'flex';
                     }
@@ -873,6 +877,10 @@ app.get('/admin', (req, res) => {
         '</div>';
     }).join('');
 
+    const estadoJsonBinHtml = jsonBinConectado 
+        ? '<div style="background: rgba(16, 185, 129, 0.15); border: 1px solid #10b981; color: #34d399; padding: 0.7rem 1rem; border-radius: 12px; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; font-size: 0.9rem; font-weight: bold;"><span>☁️ Estado de la Nube: Conectado a JSONBin (ID: ' + BIN_ID.substring(0,6) + '...)</span><span style="background: #10b981; color: #fff; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.75rem;">Sincronizado</span></div>'
+        : '<div style="background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #fca5a5; padding: 0.7rem 1rem; border-radius: 12px; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; font-size: 0.9rem; font-weight: bold;"><span>⚠️ Estado de la Nube: Sin conexión confirmada con JSONBin (Usando memoria local)</span><span style="background: #ef4444; color: #fff; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.75rem;">Verificar API</span></div>';
+
     let html = `
         <!DOCTYPE html>
         <html lang="es">
@@ -905,6 +913,8 @@ app.get('/admin', (req, res) => {
             </header>
 
             <div class="admin-wrapper">
+                ${estadoJsonBinHtml}
+
                 <section style="background:#0f172a; border:1px solid #1e293b; border-radius:20px; padding:1.5rem; margin-bottom:1.8rem; box-shadow:0 8px 25px rgba(0,0,0,0.4);">
                     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1.2rem; border-bottom:1px solid #1e293b; padding-bottom:0.8rem;">
                         <div>
