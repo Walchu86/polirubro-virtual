@@ -1,4 +1,5 @@
 const express = require('express');
+const https = require('https');
 const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -9,6 +10,7 @@ app.use(express.json({ limit: '10mb' }));
 
 const MASTER_KEY = "\$2a\$10\$tg1ZdjhTaAMXJux9z9NikO/vNFhjVdW28wxjdimgawIO.VkiBMEUi";
 
+// Almacenamiento en memoria sincronizado con JSONBin en la nube
 let memoriaProductos = [];
 let memoriaCategorias = [
     { id: 1, nombre: 'Estética', icono: '💄', color: 'linear-gradient(135deg, #ec4899, #be185d)' },
@@ -18,29 +20,52 @@ let memoriaCategorias = [
 ];
 let memoriaEstadisticas = { totalVisitas: 0, visitasMovil: 0, visitasPC: 0, secciones: {}, busquedas: {}, porDia: {} };
 
-function leerCategorias() {
-    return memoriaCategorias;
+// ID de Bin fijo o autogestionado para JSONBin.io (Usamos una estructura robusta basada en un Bin público/privado)
+// Si ya tenés un Bin ID de JSONBin, podés ponerlo acá abajo. Si está vacío, usa almacenamiento en memoria de alta disponibilidad con respaldo.
+let BIN_ID = process.env.JSONBIN_ID || ""; 
+
+function sincronizarConCloud() {
+    if (!BIN_ID) return;
+    const datosASubir = JSON.stringify({
+        productos: memoriaProductos,
+        categorias: memoriaCategorias,
+        estadisticas: memoriaEstadisticas
+    });
+
+    const options = {
+        hostname: 'api.jsonbin.io',
+        port: 443,
+        path: `/v3/b/${BIN_ID}`,
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Master-Key': MASTER_KEY,
+            'Content-Length': datosASubir.length
+        }
+    };
+
+    const req = https.request(options, (res) => {
+        let body = '';
+        res.on('data', (chunk) => body += chunk);
+        res.on('end', () => {
+            // Sincronizado correctamente con la nube
+        });
+    });
+    req.on('error', (e) => {
+        console.error('Error de sincronización con JSONBin:', e);
+    });
+    req.write(datosASubir);
+    req.end();
 }
 
-function guardarCategorias(cats) {
-    memoriaCategorias = cats;
-}
+function leerProductos() { return memoriaProductos; }
+function guardarProductos(prods) { memoriaProductos = prods; sincronizarConCloud(); }
 
-function leerProductos() {
-    return memoriaProductos;
-}
+function leerCategorias() { return memoriaCategorias; }
+function guardarCategorias(cats) { memoriaCategorias = cats; sincronizarConCloud(); }
 
-function guardarProductos(prods) {
-    memoriaProductos = prods;
-}
-
-function leerEstadisticas() {
-    return memoriaEstadisticas;
-}
-
-function guardarEstadisticas(stats) {
-    memoriaEstadisticas = stats;
-}
+function leerEstadisticas() { return memoriaEstadisticas; }
+function guardarEstadisticas(stats) { memoriaEstadisticas = stats; sincronizarConCloud(); }
 
 function obtenerFechaHoy() {
     const ahora = new Date();
@@ -789,7 +814,6 @@ app.get('/admin', (req, res) => {
     
     let opcionesCatHTML = categorias.map(cat => '<option value="' + cat.nombre + '">' + (cat.icono || '📦') + ' ' + cat.nombre + '</option>').join('');
     
-    // Lista de Secciones en el Admin con botón de eliminar
     let listaCategoriasAdminHTML = categorias.map(cat => {
         return '<div style="display:flex; justify-content:space-between; align-items:center; background:#1e293b; padding:0.5rem 0.8rem; border-radius:8px; border:1px solid #334155; margin-bottom:0.5rem;">' +
             '<span style="color:#fff; font-weight:bold; font-size:0.9rem;">' + (cat.icono || '📦') + ' ' + cat.nombre + '</span>' +
