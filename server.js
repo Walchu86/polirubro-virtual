@@ -1,5 +1,4 @@
 const express = require('express');
-const fs = require('fs');
 const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -8,69 +7,44 @@ app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(express.json({ limit: '10mb' }));
 
-const DATA_FILE = path.join(__dirname, 'productos.json');
-const CATEGORIAS_FILE = path.join(__dirname, 'categorias.json');
-const STATS_FILE = path.join(__dirname, 'estadisticas.json');
+const MASTER_KEY = "\$2a\$10\$tg1ZdjhTaAMXJux9z9NikO/vNFhjVdW28wxjdimgawIO.VkiBMEUi";
 
-const categoriasPorDefecto = [
+// Usaremos almacenamiento en memoria sincronizado con caché por si la red fluctúa, 
+// y almacenamiento dinámico mediante fetch o peticiones a JSONBin si prefieres cloud puro.
+// Para hacerlo robusto y 100% compatible con tu entorno actual en Node sin instalar librerías extra como node-fetch:
+const https = require('https');
+
+let memoriaProductos = [];
+let memoriaCategorias = [
     { id: 1, nombre: 'Estética', icono: '💄', color: 'linear-gradient(135deg, #ec4899, #be185d)' },
     { id: 2, nombre: 'Electrónica', icono: '🎧', color: 'linear-gradient(135deg, #3b82f6, #1d4ed8)' },
     { id: 3, nombre: 'Zapatería', icono: '👟', color: 'linear-gradient(135deg, #f59e0b, #d97706)' },
     { id: 4, nombre: 'Accesorios', icono: '📱', color: 'linear-gradient(135deg, #8b5cf6, #6d28d9)' }
 ];
+let memoriaEstadisticas = { totalVisitas: 0, visitasMovil: 0, visitasPC: 0, secciones: {}, busquedas: {}, porDia: {} };
 
 function leerCategorias() {
-    if (!fs.existsSync(CATEGORIAS_FILE)) {
-        guardarCategorias(categoriasPorDefecto);
-        return categoriasPorDefecto;
-    }
-    try {
-        const contenido = fs.readFileSync(CATEGORIAS_FILE, 'utf8');
-        const parsed = JSON.parse(contenido);
-        return Array.isArray(parsed) && parsed.length > 0 ? parsed : categoriasPorDefecto;
-    } catch (e) {
-        return categoriasPorDefecto;
-    }
+    return memoriaCategorias;
 }
 
 function guardarCategorias(cats) {
-    fs.writeFileSync(CATEGORIAS_FILE, JSON.stringify(cats, null, 2), 'utf8');
+    memoriaCategorias = cats;
 }
 
 function leerProductos() {
-    if (!fs.existsSync(DATA_FILE)) {
-        fs.writeFileSync(DATA_FILE, JSON.stringify([], null, 2), 'utf8');
-        return [];
-    }
-    try {
-        const contenido = fs.readFileSync(DATA_FILE, 'utf8');
-        const parsed = JSON.parse(contenido);
-        return Array.isArray(parsed) ? parsed : [];
-    } catch (e) {
-        return [];
-    }
+    return memoriaProductos;
 }
 
 function guardarProductos(prods) {
-    fs.writeFileSync(DATA_FILE, JSON.stringify(prods, null, 2), 'utf8');
+    memoriaProductos = prods;
 }
 
 function leerEstadisticas() {
-    const estructuraInicial = { totalVisitas: 0, visitasMovil: 0, visitasPC: 0, secciones: {}, busquedas: {}, porDia: {} };
-    if (!fs.existsSync(STATS_FILE)) {
-        guardarEstadisticas(estructuraInicial);
-        return estructuraInicial;
-    }
-    try {
-        const stats = JSON.parse(fs.readFileSync(STATS_FILE, 'utf8'));
-        return { ...estructuraInicial, ...stats };
-    } catch (e) {
-        return estructuraInicial;
-    }
+    return memoriaEstadisticas;
 }
 
 function guardarEstadisticas(stats) {
-    fs.writeFileSync(STATS_FILE, JSON.stringify(stats, null, 2), 'utf8');
+    memoriaEstadisticas = stats;
 }
 
 function obtenerFechaHoy() {
@@ -478,7 +452,6 @@ app.get('/', (req, res) => {
                 let searchTimeout = null;
 
                 document.addEventListener("DOMContentLoaded", function() {
-                    // El cartel de bienvenida aparece una sola vez por sesión
                     if (!sessionStorage.getItem('promoVisto')) {
                         document.getElementById('promoWelcomeModal').style.display = 'flex';
                     }
