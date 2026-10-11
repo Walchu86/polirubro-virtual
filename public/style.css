@@ -119,10 +119,8 @@ main, .container {
 }
 
 /* ===================================================
-   SOLUCIÓN DEFINITIVA PARA IMÁGENES Y FONDOS (200PX)
+   IMÁGENES ENTERAS Y CENTRADAS (NO SE RECORTAN)
    =================================================== */
-
-/* 1. Para imágenes normales */
 img,
 .product-card img,
 .card img,
@@ -132,25 +130,11 @@ img,
     height: 200px !important;
     max-height: 200px !important;
     min-height: 200px !important;
-    object-fit: cover !important;
+    object-fit: contain !important; /* Muestra la imagen completa sin zoom ni recortes */
     object-position: center !important;
-    background-color: #1f2937 !important;
+    background-color: #1f2937 !important; /* Fondo del recuadro */
+    padding: 8px !important;
     display: block !important;
-}
-
-/* 2. Para contenedores que usan la imagen de fondo (background-image) */
-.product-image,
-.imagen-producto,
-.card-img-top,
-div[style*="background-image"] {
-    width: 100% !important;
-    height: 200px !important;
-    max-height: 200px !important;
-    min-height: 200px !important;
-    background-size: cover !important;
-    background-position: center !important;
-    background-repeat: no-repeat !important;
-    background-color: #1f2937 !important;
 }
 
 /* CUERPO Y TEXTO DE LA TARJETA */
