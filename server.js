@@ -739,7 +739,7 @@ app.get('/', (req, res) => {
                 }
 
                 function compartirProducto(nombre, precio) {
-                    const texto = `¡Mirá este producto en Polirubro Virtual! 🛒\n*${nombre}* - \$${formatoPesos(precio)}\nPedilo acá: https://polirubro-virtual.onrender.com`;
+                    const texto = `¡Mirá este producto en Polirubro Virtual! 🛒\n*${nombre}* -$\${formatoPesos(precio)}\nPedilo acá: https://polirubro-virtual.onrender.com`;
                     window.open(`https://api.whatsapp.com/send?text=\${encodeURIComponent(texto)}`, '_blank');
                 }
 
@@ -793,7 +793,7 @@ app.get('/', (req, res) => {
                     mensaje += `\n🛒 *Detalle del Pedido:*\n`;
 
                     carrito.forEach(item => {
-                        mensaje += `- \${item.cantidad}x ${item.nombre} (\$${formatoPesos(item.precio * item.cantidad)})\n`;
+                        mensaje += `- \${item.cantidad}x ${item.nombre} ($\${formatoPesos(item.precio * item.cantidad)})\n`;
                     });
 
                     mensaje += `\n🚚 *Entrega:* \${detalleEnvioTexto}`;
