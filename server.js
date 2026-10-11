@@ -21,12 +21,14 @@ let memoriaCategorias = [
 ];
 let memoriaEstadisticas = { totalVisitas: 0, visitasMovil: 0, visitasPC: 0, secciones: {}, busquedas: {}, porDia: {} };
 
-// Función para sincronizar y guardar instantáneamente en JSONBin
+// Función para sincronizar y guardar instantáneamente en JSONBin (con formato record)
 function sincronizarConCloud() {
     const datosASubir = JSON.stringify({
-        productos: memoriaProductos,
-        categorias: memoriaCategorias,
-        estadisticas: memoriaEstadisticas
+        record: {
+            productos: memoriaProductos,
+            categorias: memoriaCategorias,
+            estadisticas: memoriaEstadisticas
+        }
     });
 
     const options = {
@@ -45,7 +47,7 @@ function sincronizarConCloud() {
         let body = '';
         res.on('data', (chunk) => body += chunk);
         res.on('end', () => {
-            // Datos guardados con éxito en la nube
+            console.log('☁️ Sincronizado con JSONBin:', res.statusCode);
         });
     });
     req.on('error', (e) => {
@@ -73,10 +75,12 @@ function cargarDesdeCloud() {
         res.on('end', () => {
             try {
                 const response = JSON.parse(body);
-                if (response && response.record) {
-                    if (Array.isArray(response.record.productos)) memoriaProductos = response.record.productos;
-                    if (Array.isArray(response.record.categorias) && response.record.categorias.length > 0) memoriaCategorias = response.record.categorias;
-                    if (response.record.estadisticas) memoriaEstadisticas = response.record.estadisticas;
+                // JSONBin v3 devuelve los datos dentro de .record
+                const dataRoot = response.record || response;
+                if (dataRoot) {
+                    if (Array.isArray(dataRoot.productos)) memoriaProductos = dataRoot.productos;
+                    if (Array.isArray(dataRoot.categorias) && dataRoot.categorias.length > 0) memoriaCategorias = dataRoot.categorias;
+                    if (dataRoot.estadisticas) memoriaEstadisticas = dataRoot.estadisticas;
                     console.log('☁️ Datos cargados exitosamente desde JSONBin');
                 }
             } catch (e) {
@@ -246,7 +250,6 @@ app.get('/', (req, res) => {
                 }
                 .btn-seccion-mini:hover { border-color: #38bdf8 !important; color: #38bdf8 !important; transform: translateY(-2px); }
 
-                /* CONTENEDOR DE IMAGEN ESTRICTAMENTE ACOTADO Y PROPORCIONADO */
                 .product-image-container {
                     position: relative;
                     width: 100%;
@@ -686,11 +689,10 @@ app.get('/', (req, res) => {
                     cartOptions.style.display = 'block';
                     let html = '';
                     carrito.forEach(item => {
-                        html += \`
+                        html += `
                             <div style="display:flex; justify-content:space-between; align-items:center; background:#1e293b; padding:0.5rem 0.7rem; border-radius:6px; margin-bottom:0.3rem; border:1px solid #334155;">
                                 <div>
-                                    <strong style="color:#fff; font-size:0.88rem;">\${item.nombre}</strong><br>
-                                    <small style="color:#38bdf8;">\$\${formatoPesos(item.precio)} x \${item.cantidad}</small>
+                                    <strong style="color:#fff; font-size:0.88rem;">${item.nombre}</strong><br>                                     <small style="color:#38bdf8;">$${formatoPesos(item.precio)} x${item.cantidad}</small>
                                 </div>
                                 <div style="display:flex; align-items:center; gap:0.3rem;">
                                     <button onclick="cambiarCantidad(\${item.id}, -1)" style="background:#0f172a; color:#fff; border:1px solid #475569; width:22px; height:22px; border-radius:4px; font-weight:bold; cursor:pointer;">-</button>
@@ -698,7 +700,7 @@ app.get('/', (req, res) => {
                                     <button onclick="cambiarCantidad(\${item.id}, 1)" style="background:#0f172a; color:#fff; border:1px solid #475569; width:22px; height:22px; border-radius:4px; font-weight:bold; cursor:pointer;">+</button>
                                 </div>
                             </div>
-                        \`;
+                        `;
                     });
                     cartItemsList.innerHTML = html;
                     actualizarTotal();
@@ -723,7 +725,7 @@ app.get('/', (req, res) => {
                         promoProgress.style.background = '#1e293b';
                         promoProgress.style.borderColor = '#3b82f6';
                         promoProgress.style.color = '#38bdf8';
-                        promoProgress.innerHTML = \`🚚 Agregá \$\${formatoPesos(falta)} más para tener <strong>ENVÍO GRATIS WEB</strong>\`;
+                        promoProgress.innerHTML = `🚚 Agregá \$\${formatoPesos(falta)} más para tener <strong>ENVÍO GRATIS WEB</strong>`;
                         contenedorEnvio.style.display = 'block';
                         cartelEnvioGratis.style.display = 'none';
                     }
@@ -753,8 +755,8 @@ app.get('/', (req, res) => {
                 }
 
                 function compartirProducto(nombre, precio) {
-                    const texto = \`¡Mirá este producto en Polirubro Virtual! 🛒\\n*\${nombre}* - \$\${formatoPesos(precio)}\\nPedilo acá: https://polirubro-virtual.onrender.com\`;
-                    window.open(\`https://api.whatsapp.com/send?text=\${encodeURIComponent(texto)}\`, '_blank');
+                    const texto = `¡Mirá este producto en Polirubro Virtual! 🛒\n*${nombre}* -$\${formatoPesos(precio)}\nPedilo acá: https://polirubro-virtual.onrender.com`;
+                    window.open(`https://api.whatsapp.com/send?text=\${encodeURIComponent(texto)}`, '_blank');
                 }
 
                 function toggleCartModal() {
@@ -800,19 +802,19 @@ app.get('/', (req, res) => {
                     const metodoPago = document.getElementById('metodoPago').value;
                     let totalFinal = subtotal + costoEnvio;
 
-                    let mensaje = \`¡Hola! Quiero confirmar mi pedido en *Polirubro Virtual* (Vía Web):\\n\\n\`;
-                    mensaje += \`👤 *Cliente:* \${nombre}\\n\`;
-                    if (direccion) mensaje += \`📍 *Dirección:* \${direccion}\\n\`;
-                    if (telefono) mensaje += \`📞 *Contacto:* \${telefono}\\n\`;
-                    mensaje += \`\\n🛒 *Detalle del Pedido:*\\n\`;
+                    let mensaje = `¡Hola! Quiero confirmar mi pedido en *Polirubro Virtual* (Vía Web):\n\n`;
+                    mensaje += `👤 *Cliente:* \${nombre}\n`;
+                    if (direccion) mensaje += `📍 *Dirección:* \${direccion}\n`;
+                    if (telefono) mensaje += `📞 *Contacto:* \${telefono}\n`;
+                    mensaje += `\n🛒 *Detalle del Pedido:*\n`;
 
                     carrito.forEach(item => {
-                        mensaje += \`- \${item.cantidad}x \${item.nombre} (\$\${formatoPesos(item.precio * item.cantidad)})\\n\`;
+                        mensaje += `- \${item.cantidad}x ${item.nombre} ($\${formatoPesos(item.precio * item.cantidad)})\n`;
                     });
 
-                    mensaje += \`\\n🚚 *Entrega:* \${detalleEnvioTexto}\`;
-                    mensaje += \`\\n💳 *Pago:* \${metodoPago}\`;
-                    mensaje += \`\\n💰 *Total a abonar:* \$\${formatoPesos(totalFinal)}\\n\\n¡Gracias!\`;
+                    mensaje += `\n🚚 *Entrega:* \${detalleEnvioTexto}`;
+                    mensaje += `\n💳 *Pago:* \${metodoPago}`;
+                    mensaje += `\n💰 *Total a abonar:* \$\${formatoPesos(totalFinal)}\n\n¡Gracias!`;
 
                     const numeroWhatsApp = "5493794655867";
                     const mensajeCodificado = encodeURIComponent(mensaje);
@@ -820,9 +822,9 @@ app.get('/', (req, res) => {
 
                     toggleCartModal();
                     if (esMovil) {
-                        window.location.href = \`https://api.whatsapp.com/send?phone=\${numeroWhatsApp}&text=\${mensajeCodificado}\`;
+                        window.location.href = `https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${mensajeCodificado}`;
                     } else {
-                        const qrUrl = \`https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=\${encodeURIComponent("https://wa.me/" + numeroWhatsApp + "?text=" + mensajeCodificado)}\`;
+                        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=\${encodeURIComponent("https://wa.me/" + numeroWhatsApp + "?text=" + mensajeCodificado)}`;
                         document.getElementById('qrImage').src = qrUrl;
                         document.getElementById('optionsModal').style.display = 'flex';
                     }
