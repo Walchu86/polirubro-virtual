@@ -714,7 +714,7 @@ app.get('/', (req, res) => {
                         promoProgress.style.background = '#1e293b';
                         promoProgress.style.borderColor = '#3b82f6';
                         promoProgress.style.color = '#38bdf8';
-                        promoProgress.innerHTML = `🚚 Agregá \$\${formatoPesos(falta)} más para tener <strong>ENVÍO GRATIS WEB</strong>`;
+                        promoProgress.innerHTML = '🚚 Agregá $' + formatoPesos(falta) + ' más para tener <strong>ENVÍO GRATIS WEB</strong>';
                         contenedorEnvio.style.display = 'block';
                         cartelEnvioGratis.style.display = 'none';
                     }
@@ -744,8 +744,8 @@ app.get('/', (req, res) => {
                 }
 
                 function compartirProducto(nombre, precio) {
-                    const texto = `¡Mirá este producto en Polirubro Virtual! 🛒\n*${nombre}* -$\${formatoPesos(precio)}\nPedilo acá: https://polirubro-virtual.onrender.com`;
-                    window.open(`https://api.whatsapp.com/send?text=\${encodeURIComponent(texto)}`, '_blank');
+                    const texto = '¡Mirá este producto en Polirubro Virtual! 🛒\n*' + nombre + '* - $' + formatoPesos(precio) + '\nPedilo acá: https://polirubro-virtual.onrender.com';
+                    window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(texto), '_blank');
                 }
 
                 function toggleCartModal() {
@@ -791,19 +791,19 @@ app.get('/', (req, res) => {
                     const metodoPago = document.getElementById('metodoPago').value;
                     let totalFinal = subtotal + costoEnvio;
 
-                    let mensaje = `¡Hola! Quiero confirmar mi pedido en *Polirubro Virtual* (Vía Web):\n\n`;
-                    mensaje += `👤 *Cliente:* \${nombre}\n`;
-                    if (direccion) mensaje += `📍 *Dirección:* \${direccion}\n`;
-                    if (telefono) mensaje += `📞 *Contacto:* \${telefono}\n`;
-                    mensaje += `\n🛒 *Detalle del Pedido:*\n`;
+                    let mensaje = '¡Hola! Quiero confirmar mi pedido en *Polirubro Virtual* (Vía Web):\n\n';
+                    mensaje += '👤 *Cliente:* ' + nombre + '\n';
+                    if (direccion) mensaje += '📍 *Dirección:* ' + direccion + '\n';
+                    if (telefono) mensaje += '📞 *Contacto:* ' + telefono + '\n';
+                    mensaje += '\n🛒 *Detalle del Pedido:*\n';
 
                     carrito.forEach(item => {
-                        mensaje += `- \${item.cantidad}x ${item.nombre} ($\${formatoPesos(item.precio * item.cantidad)})\n`;
+                        mensaje += '- ' + item.cantidad + 'x ' + item.nombre + ' ($' + formatoPesos(item.precio * item.cantidad) + ')\n';
                     });
 
-                    mensaje += `\n🚚 *Entrega:* \${detalleEnvioTexto}`;
-                    mensaje += `\n💳 *Pago:* \${metodoPago}`;
-                    mensaje += `\n💰 *Total a abonar:* \$\${formatoPesos(totalFinal)}\n\n¡Gracias!`;
+                    mensaje += '\n🚚 *Entrega:* ' + detalleEnvioTexto;
+                    mensaje += '\n💳 *Pago:* ' + metodoPago;
+                    mensaje += '\n💰 *Total a abonar:* $' + formatoPesos(totalFinal) + '\n\n¡Gracias!';
 
                     const numeroWhatsApp = "5493794655867";
                     const mensajeCodificado = encodeURIComponent(mensaje);
@@ -811,9 +811,9 @@ app.get('/', (req, res) => {
 
                     toggleCartModal();
                     if (esMovil) {
-                        window.location.href = `https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${mensajeCodificado}`;
+                        window.location.href = 'https://api.whatsapp.com/send?phone=' + numeroWhatsApp + '&text=' + mensajeCodificado;
                     } else {
-                        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=\${encodeURIComponent("https://wa.me/" + numeroWhatsApp + "?text=" + mensajeCodificado)}`;
+                        const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' + encodeURIComponent("https://wa.me/" + numeroWhatsApp + "?text=" + mensajeCodificado);
                         document.getElementById('qrImage').src = qrUrl;
                         document.getElementById('optionsModal').style.display = 'flex';
                     }
