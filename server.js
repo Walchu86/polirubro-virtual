@@ -21,12 +21,11 @@ let memoriaCategorias = [
 let memoriaEstadisticas = { totalVisitas: 0, visitasMovil: 0, visitasPC: 0, secciones: {}, busquedas: {}, porDia: {} };
 
 let datosListos = false;
-let permitiGuardarVacio = false; // FRENO DE MANO SEGURIDAD
+let permitiGuardarVacio = false;
 
 function sincronizarConCloud(forzarGuardado = false) {
     if (!datosListos) return;
     
-    // FRENO DE MANO: Si los productos están en 0 y no proviene de un borrado voluntario del Admin, SE BLOQUEA EL GUARDADO.
     if (memoriaProductos.length === 0 && !forzarGuardado && !permitiGuardarVacio) {
         console.log('🛡️ Protección activada: Se evitó sobrescribir JSONBin porque el listado de productos estaba vacío.');
         return;
@@ -1069,7 +1068,7 @@ app.get('/admin', (req, res) => {
                                     '</div>' +
                                     '<div>' +
                                         '<label style="font-size:0.82rem; color:#cbd5e1; display:block; margin-bottom:0.3rem;">🖼️ Imagen (Archivo o URL):</label>' +
-                                        '<input type="file" id="fileInput" accept="image/*" onchange="convertirImagen()" style="margin-bottom:0.4rem;">' +
+                                        '<input type="file" id="fileInput" accept="image/*" onchange="comprimirYConvertirImagen()" style="margin-bottom:0.4rem;">' +
                                         '<input type="url" id="urlInput" name="imagenUrl" placeholder="https://..." style="width:100%; padding:0.5rem; border-radius:8px; background:#1e293b; border:1px solid #334155; color:#fff; outline:none;">' +
                                         '<div id="previewContainer" style="display:none; margin-top:0.5rem; text-align:center;">' +
                                             '<img id="imgPreview" src="" alt="Preview" style="max-width:100px; max-height:100px; border-radius:8px; border:1px solid #38bdf8; background:#070a12; object-fit:contain;">' +
@@ -1088,21 +1087,43 @@ app.get('/admin', (req, res) => {
                 '</div>' +
 
                 '<script>' +
-                    'function convertirImagen() {' +
+                    'function comprimirYConvertirImagen() {' +
                         'const fileInput = document.getElementById("fileInput");' +
                         'const file = fileInput.files[0];' +
-                        'const preview = document.getElementById("imgPreview");' +
-                        'const previewContainer = document.getElementById("previewContainer");' +
-                        'const hiddenInput = document.getElementById("imagenBase64");' +
-                        'if (file) {' +
-                            'const reader = new FileReader();' +
-                            'reader.onload = function(e) {' +
-                                'hiddenInput.value = e.target.result;' +
-                                'preview.src = e.target.result;' +
-                                'previewContainer.style.display = "block";' +
+                        'if (!file) return;' +
+                        'const reader = new FileReader();' +
+                        'reader.onload = function(e) {' +
+                            'const img = new Image();' +
+                            'img.src = e.target.result;' +
+                            'img.onload = function() {' +
+                                'const canvas = document.createElement("canvas");' +
+                                'const MAX_WIDTH = 500;' +
+                                'const MAX_HEIGHT = 500;' +
+                                'let width = img.width;' +
+                                'let height = img.height;' +
+                                'if (width > height) {' +
+                                    'if (width > MAX_WIDTH) {' +
+                                        'height *= MAX_WIDTH / width;' +
+                                        'width = MAX_WIDTH;' +
+                                    '}' +
+                                '} else {' +
+                                    'if (height > MAX_HEIGHT) {' +
+                                        'width *= MAX_HEIGHT / height;' +
+                                        'height = MAX_HEIGHT;' +
+                                    '}' +
+                                '}' +
+                                'canvas.width = width;' +
+                                'canvas.height = height;' +
+                                'const ctx = canvas.getContext("2d");' +
+                                'ctx.drawImage(img, 0, 0, width, height);' +
+                                // Comprime fuertemente a JPEG con calidad 0.7 para que pese poquísimo (aprox 15-25kb)
+                                'const dataUrl = canvas.toDataURL("image/jpeg", 0.7);' +
+                                'document.getElementById("imagenBase64").value = dataUrl;' +
+                                'document.getElementById("imgPreview").src = dataUrl;' +
+                                'document.getElementById("previewContainer").style.display = "block";' +
                             '};' +
-                            'reader.readAsDataURL(file);' +
-                        '}' +
+                        '};' +
+                        'reader.readAsDataURL(file);' +
                     '}' +
                     'document.getElementById("urlInput").addEventListener("input", function() {' +
                         'const url = this.value.trim();' +
