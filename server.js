@@ -147,6 +147,7 @@ app.get('/', (req, res) => {
                     transform: translateY(-2px);
                 }
 
+                /* REGLAS ESPECÍFICAS PARA MÓVIL (CORRIGE LETRAS GIGANTES) */
                 @media (max-width: 768px) {
                     .promo-banner {
                         font-size: 0.82rem !important;
@@ -179,15 +180,23 @@ app.get('/', (req, res) => {
                         padding: 0.5rem 0.6rem !important;
                         font-size: 0.8rem !important;
                     }
+                    
+                    /* TAMAÑOS CORREGIDOS EN LAS TARJETAS PRINCIPALES DE SECCIONES */
                     .card-seccion-glow {
-                        padding: 1.5rem 1rem !important;
-                        border-radius: 18px !important;
+                        padding: 1.2rem 0.8rem !important;
+                        border-radius: 16px !important;
                     }
-                    .card-seccion-glow span:first-of-type {
-                        font-size: 3rem !important;
+                    .card-seccion-glow span.icono-cat {
+                        font-size: 2.2rem !important;
+                        margin-bottom: 0.3rem !important;
                     }
                     .card-seccion-glow strong {
-                        font-size: 1rem !important;
+                        font-size: 0.95rem !important;
+                    }
+                    .card-seccion-glow span.texto-accion {
+                        font-size: 0.78rem !important;
+                        margin-top: 0.3rem !important;
+                        line-height: 1.1 !important;
                     }
                 }
             </style>
@@ -232,18 +241,18 @@ app.get('/', (req, res) => {
                 </section>
 
                 <section id="vistaSecciones" class="secciones-container">
-                    <h2 style="text-align: center; font-size: 1.7rem; color: #38bdf8; margin-bottom: 1.8rem; font-weight: 900;">🛍️ ¿Qué estás buscando hoy?</h2>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1.5rem; justify-content: center; max-width: 900px; margin: 0 auto;">
+                    <h2 style="text-align: center; font-size: 1.5rem; color: #38bdf8; margin-bottom: 1.5rem; font-weight: 900;">🛍️ ¿Qué estás buscando hoy?</h2>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; justify-content: center; max-width: 900px; margin: 0 auto; padding: 0 0.5rem;">
     `;
 
     categorias.forEach(cat => {
         const bgGlow = cat.color || 'linear-gradient(135deg, #3b82f6, #1d4ed8)';
         html += `
-            <div onclick="entrarASeccion('${cat.nombre.replace(/'/g, "\\'")}')" class="card-seccion-glow" style="background: #111827; border: 2px solid #334155; border-radius: 24px; padding: 2rem 1.2rem; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; text-align: center; position: relative; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.4);">
-                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 6px; background: ${bgGlow};"></div>
-                <span style="font-size: 3.8rem; margin-bottom: 0.8rem;">${cat.icono || '📦'}</span>
-                <strong style="font-size: 1.15rem; color: #ffffff; font-weight: 800;">${cat.nombre}</strong>
-                <span style="font-size: 0.8rem; color: #38bdf8; margin-top: 0.5rem; font-weight: 600;">Ver productos ➔</span>
+            <div onclick="entrarASeccion('${cat.nombre.replace(/'/g, "\\'")}')" class="card-seccion-glow" style="background: #111827; border: 2px solid #334155; border-radius: 20px; padding: 1.2rem 0.8rem; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; text-align: center; position: relative; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.4);">
+                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: ${bgGlow};"></div>
+                <span class="icono-cat" style="font-size: 2.5rem; margin-bottom: 0.5rem;">${cat.icono || '📦'}</span>
+                <strong style="font-size: 1.05rem; color: #ffffff; font-weight: 800;">${cat.nombre}</strong>
+                <span class="texto-accion" style="font-size: 0.8rem; color: #38bdf8; margin-top: 0.4rem; font-weight: 600;">Ver productos ➔</span>
             </div>
         `;
     });
@@ -331,7 +340,7 @@ app.get('/', (req, res) => {
                 </div>
             </div>
 
-            <!-- MODAL CARRITO COMPACTO Y RESPONSIVO -->
+            <!-- MODAL CARRITO COMPACTO -->
             <div id="cartModal" class="modal" style="display:none; position:fixed; z-index:999999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.85); justify-content:center; align-items:center; padding:1rem;">
                 <div style="background:#0f172a; border:1px solid #334155; border-radius:24px; padding:1.5rem; width:100%; max-width:420px; position:relative; color:#f8fafc; box-shadow:0 20px 50px rgba(0,0,0,0.9); max-height:85vh; overflow-y:auto;">
                     
@@ -355,6 +364,7 @@ app.get('/', (req, res) => {
                             <input type="tel" id="clienteTelefono" placeholder="Teléfono de contacto" style="width:100%; padding:0.5rem 0.7rem; border-radius:6px; background:#0f172a; color:#fff; border:1px solid #475569; outline:none;">
                         </div>
 
+                        <!-- CONTENEDOR DE SELECCIÓN DE ENVÍO -->
                         <div id="contenedorEnvio" style="margin-bottom:0.6rem;">
                             <label style="display:block; font-size:0.82rem; color:#cbd5e1; margin-bottom:0.3rem; font-weight:600;">🚚 Zona / Forma de Entrega:</label>
                             <select id="tipoEnvio" onchange="actualizarTotal()" style="width:100%; padding:0.5rem 0.7rem; border-radius:6px; background:#1e293b; color:#fff; border:1px solid #475569; outline:none; cursor:pointer;">
@@ -365,8 +375,9 @@ app.get('/', (req, res) => {
                             </select>
                         </div>
 
+                        <!-- CARTEL VERDE DE ENVÍO GRATIS -->
                         <div id="cartelEnvioGratis" style="display:none; background:#064e3b; border:1px solid #10b981; border-radius:8px; padding:0.6rem; text-align:center; margin-bottom:0.6rem;">
-                            <span style="color:#a7f3d0; font-size:0.82rem; font-weight:bold;">🚚 Zona / Envío: <strong style="color:#fff;">🎉 ¡ENVÍO GRATIS! ($0)</strong></span>
+                            <span style="color:#a7f3d0; font-size:0.82rem; font-weight:bold;">🚚 Zona / Envío: <strong style="color:#fff;">🎉 ¡ENVÍO GRATIS APLICADO! ($0)</strong></span>
                         </div>
 
                         <div style="margin-bottom:0.6rem;">
@@ -551,6 +562,7 @@ app.get('/', (req, res) => {
                     const cartelEnvioGratis = document.getElementById('cartelEnvioGratis');
                     const promoProgress = document.getElementById('promoEnvioProgress');
 
+                    // REGLA DE ENVÍO GRATIS SUPERANDO $20.000
                     const ES_ENVIO_GRATIS = subtotal >= 20000;
 
                     if (ES_ENVIO_GRATIS) {
