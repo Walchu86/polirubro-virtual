@@ -24,10 +24,9 @@ function guardarProductos(productos) {
     fs.writeFileSync(DATA_FILE, JSON.stringify(productos, null, 2), 'utf8');
 }
 
-// Función helper para formatear precios en pesos argentinos sin fallas de decimales
+// Función limpia y exacta para formatear precios en pesos argentinos
 function formatearPrecio(monto) {
-    const numero = Math.round(Number(monto) || 0);
-    return numero.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    return Number(monto || 0).toLocaleString('es-AR');
 }
 
 const categoriasValidas = ['Estética', 'Electrónica', 'Zapatería', 'Accesorios'];
@@ -98,7 +97,7 @@ app.get('/', (req, res) => {
                       ${descripcionTexto}
                       <p class="price">$${precioFormateado}</p>
                       <button class="btn-agregar" onclick="agregarAlCarrito(${prod.id}, '${prod.nombre.replace(/'/g, "\\'")}', ${prod.precio})">
-                         ➕ Agregar al Carrito
+                          ➕ Agregar al Carrito
                       </button>
                   </div>
               </div>
@@ -174,7 +173,7 @@ app.get('/', (req, res) => {
                 const COSTO_ENVIO = 2500;
 
                 function formatoPesos(num) {
-                    return Math.round(Number(num) || 0).toString().replace(/\\B(?=(\\d{3})+(?!\\d))/g, ".");
+                    return Number(num || 0).toLocaleString('es-AR');
                 }
 
                 function filtrarCategoria(categoria) {
@@ -238,7 +237,7 @@ app.get('/', (req, res) => {
                     cartOptions.style.display = 'block';
                     let html = '';
                     carrito.forEach(item => {
-                        html += \`
+                        html += `
                             <div class="cart-item">
                                 <div>
                                     <strong>\${item.nombre}</strong><br>
@@ -250,7 +249,7 @@ app.get('/', (req, res) => {
                                     <button onclick="cambiarCantidad(\${item.id}, 1)">+</button>
                                 </div>
                             </div>
-                        \`;
+                        `;
                     });
                     cartItemsList.innerHTML = html;
                     actualizarTotal();
@@ -359,8 +358,8 @@ app.get('/admin', (req, res) => {
                         </div>
 
                         <div class="form-group">
-                            <label>Precio en $ (ejemplo: 1500 sin puntos ni comas):</label>
-                            <input type="number" name="precio" required placeholder="1500" step="1">
+                            <label>Precio en $ (ejemplo: 4000 sin puntos ni comas):</label>
+                            <input type="number" name="precio" required placeholder="4000" step="1">
                         </div>
 
                         <div class="form-group">
