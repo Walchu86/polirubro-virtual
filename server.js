@@ -8,7 +8,7 @@ app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(express.json({ limit: '10mb' }));
 
-const MASTER_KEY = "\$2a\$10\$tg1ZdjhTaAMXJux9z9NikO/vNFhjVdW28wxjdimgawIO.VkiBMEUi";
+const MASTER_KEY = "\$2a\$10\$tg1ZdjhTaaMXJux9z9NikO/nVFhjVdV28wxjdimgawIO.VkiBMEUi";
 const BIN_ID = "6acba057ac6210605a28056a";
 
 let memoriaProductos = [];
@@ -22,10 +22,12 @@ let memoriaEstadisticas = { totalVisitas: 0, visitasMovil: 0, visitasPC: 0, secc
 let jsonBinConectado = false;
 
 function sincronizarConCloud() {
-    const datosASubir = JSON.stringify({
-        productos: memoriaProductos,
-        categorias: memoriaCategorias,
-        estadisticas: memoriaEstadisticas
+    const payload = JSON.stringify({
+        record: {
+            productos: memoriaProductos,
+            categorias: memoriaCategorias,
+            estadisticas: memoriaEstadisticas
+        }
     });
 
     const options = {
@@ -36,7 +38,7 @@ function sincronizarConCloud() {
         headers: {
             'Content-Type': 'application/json',
             'X-Master-Key': MASTER_KEY,
-            'Content-Length': Buffer.byteLength(datosASubir)
+            'Content-Length': Buffer.byteLength(payload)
         }
     };
 
@@ -46,18 +48,20 @@ function sincronizarConCloud() {
         res.on('end', () => {
             if (res.statusCode === 200) {
                 jsonBinConectado = true;
-                console.log('☁️ Sincronizado con JSONBin: OK');
+                console.log('☁️ Sincronización con JSONBin exitosa.');
             } else {
                 jsonBinConectado = false;
-                console.log('⚠️ Sincronizado con JSONBin, código:', res.statusCode, body);
+                console.log('⚠️ Aviso de JSONBin (Código ' + res.statusCode + '):', body);
             }
         });
     });
+
     req.on('error', (e) => {
         jsonBinConectado = false;
-        console.error('Error al sincronizar con JSONBin:', e);
+        console.error('Error de conexión con JSONBin:', e.message);
     });
-    req.write(datosASubir);
+
+    req.write(payload);
     req.end();
 }
 
@@ -77,36 +81,38 @@ function cargarDesdeCloud(callback) {
         res.on('data', (chunk) => body += chunk);
         res.on('end', () => {
             try {
-                const response = JSON.parse(body);
-                // JSONBin v3 almacena los datos reales dentro de .record
-                const dataRoot = response.record || response;
-                
-                if (dataRoot) {
-                    if (Array.isArray(dataRoot.productos)) memoriaProductos = dataRoot.productos;
-                    if (Array.isArray(dataRoot.categorias) && dataRoot.categorias.length > 0) memoriaCategorias = dataRoot.categorias;
-                    if (dataRoot.estadisticas) memoriaEstadisticas = dataRoot.estadisticas;
-                    jsonBinConectado = true;
-                    console.log('☁️ Datos cargados exitosamente desde JSONBin:', dataRoot);
+                if (res.statusCode === 200) {
+                    const response = JSON.parse(body);
+                    const dataRoot = response.record || response;
+                    
+                    if (dataRoot) {
+                        if (Array.isArray(dataRoot.productos)) memoriaProductos = dataRoot.productos;
+                        if (Array.isArray(dataRoot.categorias) && dataRoot.categorias.length > 0) memoriaCategorias = dataRoot.categorias;
+                        if (dataRoot.estadisticas) memoriaEstadisticas = dataRoot.estadisticas;
+                        jsonBinConectado = true;
+                        console.log('☁️ Datos descargados y sincronizados desde JSONBin correctamente.');
+                    }
+                } else {
+                    jsonBinConectado = false;
                 }
-                if (callback) callback(true);
+                if (callback) callback();
             } catch (e) {
                 jsonBinConectado = false;
-                console.error('Error al parsear datos de JSONBin:', e);
-                if (callback) callback(false);
+                if (callback) callback();
             }
         });
     });
-    req.on('error', (e) => {
+
+    req.on('error', () => {
         jsonBinConectado = false;
-        console.error('Error al conectar con JSONBin para lectura:', e);
-        if (callback) callback(false);
+        if (callback) callback();
     });
+
     req.end();
 }
 
 // Cargar al iniciar el servidor
 cargarDesdeCloud(() => {
-    // Si el bin estaba completamente vacío en la nube, hacemos una sincronización inicial
     sincronizarConCloud();
 });
 
@@ -899,7 +905,7 @@ app.get('/admin', (req, res) => {
 
     const estadoJsonBinHtml = jsonBinConectado 
         ? '<div style="background: rgba(16, 185, 129, 0.15); border: 1px solid #10b981; color: #34d399; padding: 0.7rem 1rem; border-radius: 12px; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; font-size: 0.9rem; font-weight: bold;"><span>☁️ Estado de la Nube: Conectado a JSONBin (ID: ' + BIN_ID.substring(0,6) + '...)</span>' + botonVerificarHtml + '</div>'
-        : '<div style="background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #fca5a5; padding: 0.7rem 1rem; border-radius: 12px; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; font-size: 0.9rem; font-weight: bold;"><span>⚠️ Estado de la Nube: Sin conexión confirmada (Usando memoria local)</span>' + botonVerificarHtml + '</div>';
+        : '<div style="background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #fca5a5; padding: 0.7rem 1rem; border-radius: 12px; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; font-size: 0.9rem; font-weight: bold;"><span>⚠️ Estado de la Nube: Sincronizando o esperando respuesta...</span>' + botonVerificarHtml + '</div>';
 
     let html = `
         <!DOCTYPE html>
