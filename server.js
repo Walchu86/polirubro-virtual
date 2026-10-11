@@ -23,11 +23,9 @@ let jsonBinConectado = false;
 
 function sincronizarConCloud() {
     const datosASubir = JSON.stringify({
-        record: {
-            productos: memoriaProductos,
-            categorias: memoriaCategorias,
-            estadisticas: memoriaEstadisticas
-        }
+        productos: memoriaProductos,
+        categorias: memoriaCategorias,
+        estadisticas: memoriaEstadisticas
     });
 
     const options = {
@@ -51,7 +49,7 @@ function sincronizarConCloud() {
                 console.log('☁️ Sincronizado con JSONBin: OK');
             } else {
                 jsonBinConectado = false;
-                console.log('⚠️ Sincronizado con JSONBin, código:', res.statusCode);
+                console.log('⚠️ Sincronizado con JSONBin, código:', res.statusCode, body);
             }
         });
     });
@@ -80,13 +78,15 @@ function cargarDesdeCloud(callback) {
         res.on('end', () => {
             try {
                 const response = JSON.parse(body);
+                // JSONBin v3 almacena los datos reales dentro de .record
                 const dataRoot = response.record || response;
+                
                 if (dataRoot) {
                     if (Array.isArray(dataRoot.productos)) memoriaProductos = dataRoot.productos;
                     if (Array.isArray(dataRoot.categorias) && dataRoot.categorias.length > 0) memoriaCategorias = dataRoot.categorias;
                     if (dataRoot.estadisticas) memoriaEstadisticas = dataRoot.estadisticas;
                     jsonBinConectado = true;
-                    console.log('☁️ Datos cargados exitosamente desde JSONBin');
+                    console.log('☁️ Datos cargados exitosamente desde JSONBin:', dataRoot);
                 }
                 if (callback) callback(true);
             } catch (e) {
@@ -104,7 +104,11 @@ function cargarDesdeCloud(callback) {
     req.end();
 }
 
-cargarDesdeCloud();
+// Cargar al iniciar el servidor
+cargarDesdeCloud(() => {
+    // Si el bin estaba completamente vacío en la nube, hacemos una sincronización inicial
+    sincronizarConCloud();
+});
 
 function leerProductos() { return memoriaProductos; }
 function guardarProductos(prods) { memoriaProductos = prods; sincronizarConCloud(); }
@@ -1083,6 +1087,7 @@ app.get('/admin', (req, res) => {
 
 app.post('/admin/sincronizar', (req, res) => {
     cargarDesdeCloud(() => {
+        sincronizarConCloud();
         res.redirect('/admin');
     });
 });
