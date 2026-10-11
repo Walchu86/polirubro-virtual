@@ -24,12 +24,12 @@ function guardarProductos(productos) {
     fs.writeFileSync(DATA_FILE, JSON.stringify(productos, null, 2), 'utf8');
 }
 
-// Función limpia y exacta para formatear precios en pesos argentinos
 function formatearPrecio(monto) {
     return Number(monto || 0).toLocaleString('es-AR');
 }
 
 const categoriasValidas = ['Estética', 'Electrónica', 'Zapatería', 'Accesorios'];
+const etiquetasValidas = ['NINGUNA', 'NUEVO', 'PROMO', 'DESTACADO', 'ÚLTIMOS STOCK'];
 
 // ==========================================
 // 1. TIENDA PÚBLICA (VISTA CLIENTE)
@@ -61,8 +61,11 @@ app.get('/', (req, res) => {
             </header>
 
             <main>
+                <!-- BUSCADOR Y FILTROS -->
                 <section class="filtros-container">
-                    <h3>Filtrar por Categoría:</h3>
+                    <div class="search-bar-container">
+                        <input type="text" id="searchInput" oninput="filtrarProductos()" placeholder="🔍 Buscar producto por nombre o palabra clave...">
+                    </div>
                     <div class="categoria-buttons">
     `;
 
@@ -86,19 +89,35 @@ app.get('/', (req, res) => {
             const imagenUrl = prod.imagen || 'https://via.placeholder.com/300x200?text=Sin+Imagen';
             const descripcionTexto = prod.descripcion ? `<p class="description">${prod.descripcion}</p>` : '';
             const precioFormateado = formatearPrecio(prod.precio);
+            const stockActual = prod.stock !== undefined ? Number(prod.stock) : 10;
+            const estaAgotado = stockActual <= 0;
+            
+            let etiquetaTexto = prod.etiqueta && prod.etiqueta !== 'NINGUNA' ? prod.etiqueta : '';
+            if (estaAgotado) etiquetaTexto = 'AGOTADO';
+
+            const badgeEtiqueta = etiquetaTexto 
+                ? `<span class="badge ${estaAgotado ? 'badge-agotado' : ''}">${etiquetaTexto}</span>` 
+                : `<span class="badge">${prod.categoria}</span>`;
+
+            const botonAgregar = estaAgotado 
+                ? `<button class="btn-agregar btn-disabled" disabled>🚫 Sin Stock</button>`
+                : `<button class="btn-agregar" onclick="agregarAlCarrito(${prod.id}, '${prod.nombre.replace(/'/g, "\\'")}', ${prod.precio}, ${stockActual})">➕ Agregar al Carrito</button>`;
+
             html += `
-              <div class="product-card" data-categoria="${prod.categoria}">
+              <div class="product-card" data-categoria="${prod.categoria}" data-nombre="${prod.nombre.toLowerCase()}" data-descripcion="${(prod.descripcion || '').toLowerCase()}">
                   <div class="product-image-container">
                       <img src="${imagenUrl}" alt="${prod.nombre}" class="zoom-img" onerror="this.src='https://via.placeholder.com/300x200?text=Error+Imagen'">
-                      <span class="badge">${prod.categoria}</span>
+                      ${badgeEtiqueta}
+                      <button class="btn-share" onclick="compartirProducto('${prod.nombre.replace(/'/g, "\\'")}', '${prod.precio}')" title="Compartir por WhatsApp">📲</button>
                   </div>
                   <div class="product-info">
                       <h3>${prod.nombre}</h3>
                       ${descripcionTexto}
-                      <p class="price">$${precioFormateado}</p>
-                      <button class="btn-agregar" onclick="agregarAlCarrito(${prod.id}, '${prod.nombre.replace(/'/g, "\\'")}', ${prod.precio})">
-                          ➕ Agregar al Carrito
-                      </button>
+                      <div class="stock-info">
+                          <span class="price">$${precioFormateado}</span>
+                          <small class="stock-count">${estaAgotado ? 'Sin disponibilidad' : 'Stock: ' + stockActual}</small>
+                      </div>
+                      ${botonAgregar}
                   </div>
               </div>
             `;
@@ -109,6 +128,11 @@ app.get('/', (req, res) => {
                     </div>
                 </section>
             </main>
+
+            <!-- BOTÓN FLOTANTE DE WHATSAPP -->
+            <a href="https://wa.me/5493794655867?text=¡Hola!%20Tengo%20una%20consulta%20sobre%20Polirubro%20Virtual" class="whatsapp-float" target="_blank" title="Hablá con nosotros">
+                💬
+            </a>
 
             <!-- MODAL DEL CARRITO -->
             <div id="cartModal" class="modal">
@@ -121,23 +145,40 @@ app.get('/', (req, res) => {
                     </div>
 
                     <div class="cart-options" id="cartOptions" style="display:none;">
+                        <!-- DATOS DEL CLIENTE -->
+                        <div class="customer-info-form">
+                            <h4>📋 Tus Datos para la Entrega:</h4>
+                            <input type="text" id="clienteNombre" placeholder="Tu Nombre y Apellido *" required>
+                            <input type="text" id="clienteDireccion" placeholder="Dirección de Entrega / Barrio *">
+                            <input type="tel" id="clienteTelefono" placeholder="Teléfono de contacto">
+                        </div>
+
+                        <!-- ZONAS DE ENVÍO Y PAGO -->
                         <div class="option-group">
-                            <label for="tipoEnvio">🚚 Tipo de Entrega:</label>
+                            <label for="tipoEnvio">🚚 Zona / Forma de Entrega:</label>
                             <select id="tipoEnvio" onchange="actualizarTotal()">
-                                <option value="retiro">Retirar por el local (Gratis)</option>
-                                <option value="envio">Envío a domicilio (+$2.500)</option>
+                                <option value="retiro" data-costo="0">Retirar por el local (Gratis)</option>
+                                <option value="centro" data-costo="1500">Zona Centro / Cambá Cuá (+$1.500)</option>
+                                <option value="barrios_cercanos" data-costo="2000">Barrios Cercanos / Aldana / Yapeyú (+$2.000)</option>
+                                <option value="barrios_alejados" data-costo="2500">1000 Viviendas / Molina Punta / Laguna Seca (+$2.500)</option>
                             </select>
                         </div>
 
                         <div class="option-group">
-                            <label for="metodoPago">💳 Método de Pago:</label>
-                            <select id="metodoPago">
+                            <label for="metodoPago" onchange="mostrarDatosTransferencia()">💳 Método de Pago:</label>
+                            <select id="metodoPago" onchange="mostrarDatosTransferencia()">
+                                <option value="Efectivo">Efectivo al recibir</option>
                                 <option value="Mercado Pago">Mercado Pago</option>
-                                <option value="Personal Pay">Personal Pay</option>
-                                <option value="Brubank">Brubank</option>
-                                <option value="Ualá">Ualá</option>
                                 <option value="Transferencia Bancaria">Transferencia Bancaria (Alias/CBU)</option>
+                                <option value="Personal Pay">Personal Pay</option>
+                                <option value="Ualá">Ualá</option>
                             </select>
+                        </div>
+
+                        <!-- DATOS CBU SI ELIGE TRANSFERENCIA -->
+                        <div id="transferInfo" class="transfer-info" style="display:none;">
+                            <small>🏦 <strong>Alias CBU:</strong> POLIRUBRO.VIRTUAL.MP</small>
+                            <button type="button" class="btn-copy" onclick="copiarAlias()">📋 Copiar Alias</button>
                         </div>
 
                         <div class="cart-total">
@@ -145,7 +186,7 @@ app.get('/', (req, res) => {
                         </div>
 
                         <button class="btn-checkout" onclick="procesarPedido()">
-                            📲 Finalizar Compra
+                            📲 Confirmar y Enviar por WhatsApp
                         </button>
                     </div>
                 </div>
@@ -176,27 +217,34 @@ app.get('/', (req, res) => {
 
             <script>
                 let carrito = [];
-                const COSTO_ENVIO = 2500;
+                let categoriaActual = 'Todas';
 
                 function formatoPesos(num) {
                     return Number(num || 0).toLocaleString('es-AR');
                 }
 
                 function filtrarCategoria(categoria) {
-                    const tarjetas = document.querySelectorAll('.product-card');
+                    categoriaActual = categoria;
                     const botones = document.querySelectorAll('.btn-categoria');
-
                     botones.forEach(btn => {
-                        if (btn.innerText === categoria) {
-                            btn.classList.add('active');
-                        } else {
-                            btn.classList.remove('active');
-                        }
+                        btn.classList.toggle('active', btn.innerText === categoria);
                     });
+                    filtrarProductos();
+                }
+
+                function filtrarProductos() {
+                    const busqueda = document.getElementById('searchInput').value.toLowerCase().trim();
+                    const tarjetas = document.querySelectorAll('.product-card');
 
                     tarjetas.forEach(tarjeta => {
                         const catProducto = tarjeta.getAttribute('data-categoria');
-                        if (categoria === 'Todas' || catProducto === categoria) {
+                        const nombre = tarjeta.getAttribute('data-nombre');
+                        const descripcion = tarjeta.getAttribute('data-descripcion');
+
+                        const coincideCategoria = (categoriaActual === 'Todas' || catProducto === categoriaActual);
+                        const coincideTexto = (nombre.includes(busqueda) || descripcion.includes(busqueda));
+
+                        if (coincideCategoria && coincideTexto) {
                             tarjeta.style.display = 'flex';
                         } else {
                             tarjeta.style.display = 'none';
@@ -204,12 +252,17 @@ app.get('/', (req, res) => {
                     });
                 }
 
-                function agregarAlCarrito(id, nombre, precio) {
+                function agregarAlCarrito(id, nombre, precio, stockMax) {
                     const index = carrito.findIndex(item => item.id === id);
                     if (index > -1) {
-                        carrito[index].cantidad += 1;
+                        if (carrito[index].cantidad < stockMax) {
+                            carrito[index].cantidad += 1;
+                        } else {
+                            alert('Alcanzaste el límite de stock disponible de este producto.');
+                            return;
+                        }
                     } else {
-                        carrito.push({ id, nombre, precio: Number(precio), cantidad: 1 });
+                        carrito.push({ id, nombre, precio: Number(precio), cantidad: 1, stockMax });
                     }
                     actualizarVistaCarrito();
                     alert('¡Producto agregado al carrito!');
@@ -218,7 +271,12 @@ app.get('/', (req, res) => {
                 function cambiarCantidad(id, cambio) {
                     const index = carrito.findIndex(item => item.id === id);
                     if (index > -1) {
-                        carrito[index].cantidad += cambio;
+                        const nuevaCant = carrito[index].cantidad + cambio;
+                        if (nuevaCant > carrito[index].stockMax) {
+                            alert('No hay más stock disponible.');
+                            return;
+                        }
+                        carrito[index].cantidad = nuevaCant;
                         if (carrito[index].cantidad <= 0) {
                             carrito.splice(index, 1);
                         }
@@ -243,7 +301,7 @@ app.get('/', (req, res) => {
                     cartOptions.style.display = 'block';
                     let html = '';
                     carrito.forEach(item => {
-                        html += `
+                        html += \`
                             <div class="cart-item">
                                 <div>
                                     <strong>\${item.nombre}</strong><br>
@@ -255,7 +313,7 @@ app.get('/', (req, res) => {
                                     <button onclick="cambiarCantidad(\${item.id}, 1)">+</button>
                                 </div>
                             </div>
-                        `;
+                        \`;
                     });
                     cartItemsList.innerHTML = html;
                     actualizarTotal();
@@ -263,9 +321,28 @@ app.get('/', (req, res) => {
 
                 function actualizarTotal() {
                     let subtotal = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
-                    const tipoEnvio = document.getElementById('tipoEnvio').value;
-                    let total = tipoEnvio === 'envio' ? subtotal + COSTO_ENVIO : subtotal;
+                    const tipoEnvioSelect = document.getElementById('tipoEnvio');
+                    const opcionSeleccionada = tipoEnvioSelect.options[tipoEnvioSelect.selectedIndex];
+                    const costoEnvio = Number(opcionSeleccionada.getAttribute('data-costo') || 0);
+
+                    let total = subtotal + costoEnvio;
                     document.getElementById('cartTotalPrice').innerText = formatoPesos(total);
+                }
+
+                function mostrarDatosTransferencia() {
+                    const metodo = document.getElementById('metodoPago').value;
+                    const transferDiv = document.getElementById('transferInfo');
+                    transferDiv.style.display = metodo === 'Transferencia Bancaria' ? 'block' : 'none';
+                }
+
+                function copiarAlias() {
+                    navigator.clipboard.writeText('POLIRUBRO.VIRTUAL.MP');
+                    alert('¡Alias copiado al portapapeles!');
+                }
+
+                function compartirProducto(nombre, precio) {
+                    const texto = \`¡Mirá este producto en Polirubro Virtual! 🛒\\n*\${nombre}* - \$\${formatoPesos(precio)}\\nPedilo directamente acá: https://polirubro-virtual.onrender.com\`;
+                    window.open(\`https://api.whatsapp.com/send?text=\${encodeURIComponent(texto)}\`, '_blank');
                 }
 
                 function toggleCartModal() {
@@ -277,7 +354,6 @@ app.get('/', (req, res) => {
                     document.getElementById('optionsModal').style.display = 'none';
                 }
 
-                // Activar zoom en dispositivos táctiles / celulares
                 document.addEventListener("click", function(e) {
                     if (e.target.classList.contains("zoom-img")) {
                         const modal = document.getElementById("modal-imagen-zoom");
@@ -290,33 +366,39 @@ app.get('/', (req, res) => {
                 function procesarPedido() {
                     if (carrito.length === 0) return;
 
-                    const tipoEnvioSelect = document.getElementById('tipoEnvio');
-                    const metodoPagoSelect = document.getElementById('metodoPago');
-                    
-                    const tipoEnvioTexto = tipoEnvioSelect.value === 'envio' ? 'Envío a domicilio (+$2.500)' : 'Retiro por el local';
-                    const metodoPago = metodoPagoSelect.value;
-                    
-                    let subtotal = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
-                    let costoEnvioActual = tipoEnvioSelect.value === 'envio' ? COSTO_ENVIO : 0;
-                    let totalFinal = subtotal + costoEnvioActual;
+                    const nombre = document.getElementById('clienteNombre').value.trim();
+                    const direccion = document.getElementById('clienteDireccion').value.trim();
+                    const telefono = document.getElementById('clienteTelefono').value.trim();
 
-                    let mensaje = "¡Hola! Quiero confirmar el siguiente pedido en *Polirubro Virtual*:\\n\\n";
+                    if (!nombre) {
+                        alert('Por favor, ingresá tu Nombre y Apellido.');
+                        return;
+                    }
+
+                    const tipoEnvioSelect = document.getElementById('tipoEnvio');
+                    const opcionEnvio = tipoEnvioSelect.options[tipoEnvioSelect.selectedIndex];
+                    const costoEnvio = Number(opcionEnvio.getAttribute('data-costo') || 0);
+                    const metodoPago = document.getElementById('metodoPago').value;
+
+                    let subtotal = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+                    let totalFinal = subtotal + costoEnvio;
+
+                    let mensaje = \`¡Hola! Quiero confirmar el siguiente pedido en *Polirubro Virtual*:\\n\\n\`;
+                    mensaje += \`👤 *Cliente:* \${nombre}\\n\`;
+                    if (direccion) mensaje += \`📍 *Dirección:* \${direccion}\\n\`;
+                    if (telefono) mensaje += \`📞 *Contacto:* \${telefono}\\n\`;
+                    mensaje += \`\\n🛒 *Detalle del Pedido:*\\n\`;
+
                     carrito.forEach(item => {
                         mensaje += \`- \${item.cantidad}x \${item.nombre} (\$\${formatoPesos(item.precio * item.cantidad)})\\n\`;
                     });
 
-                    mensaje += \`\\n🚚 *Entrega:* \${tipoEnvioTexto}\`;
+                    mensaje += \`\\n🚚 *Entrega:* \${opcionEnvio.text}\`;
                     mensaje += \`\\n💳 *Pago:* \${metodoPago}\`;
-                    
-                    if (metodoPago === 'Transferencia Bancaria') {
-                        mensaje += \`\\n🏦 _(Solicito los datos de CBU/Alias para realizar la transferencia y adjuntar el comprobante)_\`;
-                    }
-
-                    mensaje += \`\\n💰 *Total a abonar:* \$\${formatoPesos(totalFinal)}\\n\\n¡Espero las instrucciones para coordinar!\`;
+                    mensaje += \`\\n💰 *Total a abonar:* \$\${formatoPesos(totalFinal)}\\n\\n¡Espero tus instrucciones para coordinar!\`;
 
                     const numeroWhatsApp = "5493794655867";
                     const mensajeCodificado = encodeURIComponent(mensaje);
-
                     const esMovil = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
                     if (esMovil) {
@@ -324,7 +406,6 @@ app.get('/', (req, res) => {
                     } else {
                         const qrUrl = \`https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=\${encodeURIComponent("https://wa.me/" + numeroWhatsApp + "?text=" + mensajeCodificado)}\`;
                         document.getElementById('qrImage').src = qrUrl;
-                        
                         toggleCartModal();
                         document.getElementById('optionsModal').style.display = 'flex';
                     }
@@ -355,7 +436,7 @@ app.get('/admin', (req, res) => {
             <header>
                 <div class="header-content">
                     <h1>⚙️ Panel de Control</h1>
-                    <p>Administrá los productos de Polirubro Virtual</p>
+                    <p>Administrá stock, precios y etiquetas de Polirubro Virtual</p>
                 </div>
                 <div class="header-actions">
                     <a href="/" class="admin-link" target="_blank">🌐 Ver Tienda Pública</a>
@@ -374,8 +455,26 @@ app.get('/admin', (req, res) => {
                         </div>
 
                         <div class="form-group">
-                            <label>Precio en $ (ejemplo: 4000 sin puntos ni comas):</label>
+                            <label>Precio en $ (ejemplo: 4000):</label>
                             <input type="number" name="precio" required placeholder="4000" step="1">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Stock Disponible (Cantidad):</label>
+                            <input type="number" name="stock" required placeholder="10" value="10" min="0">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Etiqueta / Badge Promocional:</label>
+                            <select name="etiqueta">
+    `;
+
+    etiquetasValidas.forEach(et => {
+        html += `<option value="${et}">${et}</option>`;
+    });
+
+    html += `
+                            </select>
                         </div>
 
                         <div class="form-group">
@@ -393,20 +492,18 @@ app.get('/admin', (req, res) => {
 
                         <div class="form-group">
                             <label>Descripción Breve (opcional):</label>
-                            <textarea name="descripcion" rows="2" placeholder="Ej: Excelente calidad, incluye accesorios e instrucciones."></textarea>
+                            <textarea name="descripcion" rows="2" placeholder="Ej: Excelente calidad, incluye accesorios."></textarea>
                         </div>
 
                         <div class="form-group" style="background:#0f172a; padding:1rem; border-radius:12px; border:1px solid #334155;">
                             <label>🖼️ Foto del Producto:</label>
-                            <small style="color:#94a3b8; display:block; margin-bottom:0.5rem;">Cargá un archivo desde tu PC o pegá un enlace directo:</small>
-                            
+                            <small style="color:#94a3b8; display:block; margin-bottom:0.5rem;">Cargá un archivo desde tu PC o pegá un enlace URL:</small>
                             <input type="file" id="fileInput" accept="image/*" style="margin-bottom:0.8rem;" onchange="convertirImagen()">
-                            
                             <label style="font-size:0.85rem; color:#cbd5e1;">O usar Enlace URL:</label>
                             <input type="url" id="urlInput" name="imagenUrl" placeholder="https://ejemplo.com/foto.jpg">
 
                             <div id="previewContainer" style="display:none; margin-top:1rem; text-align:center;">
-                                <small style="color:#38bdf8; display:block;">Vista previa de la foto:</small>
+                                <small style="color:#38bdf8; display:block;">Vista previa:</small>
                                 <img id="imgPreview" src="" alt="Vista previa" style="max-width:140px; max-height:140px; border-radius:10px; border:2px solid #38bdf8; margin-top:0.4rem; object-fit:cover;">
                             </div>
                         </div>
@@ -428,6 +525,9 @@ app.get('/admin', (req, res) => {
         productos.forEach(prod => {
             const desc = prod.descripcion ? `<br><small style="color:#94a3b8;">${prod.descripcion}</small>` : '';
             const precioFormateado = formatearPrecio(prod.precio);
+            const stockActual = prod.stock !== undefined ? prod.stock : 10;
+            const et = prod.etiqueta && prod.etiqueta !== 'NINGUNA' ? ` | Etiqueta: ${prod.etiqueta}` : '';
+
             html += `
                 <div class="cart-item" style="background:#0f172a; padding:1rem; border-radius:14px; border:1px solid #334155;">
                     <div style="display:flex; align-items:center; gap:1rem;">
@@ -436,6 +536,7 @@ app.get('/admin', (req, res) => {
                             <strong style="color:#f8fafc; font-size:1.05rem;">${prod.nombre}</strong><br>
                             <span class="badge" style="position:static; display:inline-block; margin:0.3rem 0;">${prod.categoria}</span>
                             <strong style="color:#34d399; margin-left:0.5rem;">$${precioFormateado}</strong>
+                            <br><small style="color:#38bdf8;">Stock: ${stockActual} unidades ${et}</small>
                             ${desc}
                         </div>
                     </div>
@@ -493,7 +594,7 @@ app.get('/admin', (req, res) => {
 });
 
 app.post('/admin/agregar', (req, res) => {
-    const { nombre, precio, categoria, descripcion, imagenBase64, imagenUrl } = req.body;
+    const { nombre, precio, stock, etiqueta, categoria, descripcion, imagenBase64, imagenUrl } = req.body;
     let productos = leerProductos();
 
     const nuevoId = productos.length > 0 ? Math.max(...productos.map(p => p.id)) + 1 : 1;
@@ -506,6 +607,8 @@ app.post('/admin/agregar', (req, res) => {
         id: nuevoId,
         nombre: nombre.trim(),
         precio: Math.round(Number(precio) || 0),
+        stock: Math.max(0, parseInt(stock) || 0),
+        etiqueta: etiqueta || 'NINGUNA',
         categoria,
         descripcion: descripcion ? descripcion.trim() : '',
         imagen: imagenFinal
