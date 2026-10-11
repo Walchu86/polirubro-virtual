@@ -212,22 +212,22 @@ app.get('/', (req, res) => {
 
         let tarjetasCategoriasHtml = '';
         if (productosEnOferta.length > 0) {
-            tarjetasCategoriasHtml += '<div onclick="entrarASeccion(\'__OFERTAS__\')" class="card-seccion-glow" style="background: linear-gradient(135deg, #1e1b4b, #311042); border: 2px solid #ec4899; border-radius: 20px; padding: 1.2rem 0.8rem; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; text-align: center; position: relative; overflow: hidden; box-shadow: 0 10px 25px rgba(236,72,153,0.3);">' +
+            tarjetasCategoriasHtml += '<div onclick="entrarASeccion(\'__OFERTAS__\')" class="card-seccion-glow card-seccion-box" style="background: linear-gradient(135deg, #1e1b4b, #311042); border: 2px solid #ec4899; border-radius: 20px; padding: 1.2rem 0.8rem; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; text-align: center; position: relative; overflow: hidden; box-shadow: 0 10px 25px rgba(236,72,153,0.3);">' +
                 '<div style="position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: linear-gradient(135deg, #ec4899, #f43f5e);"></div>' +
                 '<span class="icono-cat" style="font-size: 2.5rem; margin-bottom: 0.5rem;">🔥</span>' +
-                '<strong style="font-size: 1.05rem; color: #ffffff; font-weight: 800;">¡OFERTAS IMPERDIBLES!</strong>' +
-                '<span class="texto-accion" style="font-size: 0.8rem; color: #f43f5e; margin-top: 0.4rem; font-weight: 600;">Ver promos ➔</span>' +
+                '<strong class="titulo-cat-card" style="font-size: 1.05rem; color: #ffffff; font-weight: 800;">¡OFERTAS IMPERDIBLES!</strong>' +
+                '<span class="texto-accion-card" style="font-size: 0.8rem; color: #f43f5e; margin-top: 0.4rem; font-weight: 600;">Ver promos ➔</span>' +
             '</div>';
         }
 
         categorias.forEach(cat => {
             const nomLimpio = cat.nombre.replace(/'/g, "\\'");
             const bgGlow = cat.color || 'linear-gradient(135deg, #3b82f6, #1d4ed8)';
-            tarjetasCategoriasHtml += '<div onclick="entrarASeccion(\'' + nomLimpio + '\')" class="card-seccion-glow" style="background: #111827; border: 2px solid #334155; border-radius: 20px; padding: 1.2rem 0.8rem; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; text-align: center; position: relative; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.4);">' +
+            tarjetasCategoriasHtml += '<div onclick="entrarASeccion(\'' + nomLimpio + '\')" class="card-seccion-glow card-seccion-box" style="background: #111827; border: 2px solid #334155; border-radius: 20px; padding: 1.2rem 0.8rem; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; text-align: center; position: relative; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.4);">' +
                 '<div style="position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: ' + bgGlow + ';"></div>' +
                 '<span class="icono-cat" style="font-size: 2.5rem; margin-bottom: 0.5rem;">' + (cat.icono || '📦') + '</span>' +
-                '<strong style="font-size: 1.05rem; color: #ffffff; font-weight: 800;">' + cat.nombre + '</strong>' +
-                '<span class="texto-accion" style="font-size: 0.8rem; color: #38bdf8; margin-top: 0.4rem; font-weight: 600;">Ver productos ➔</span>' +
+                '<strong class="titulo-cat-card" style="font-size: 1.05rem; color: #ffffff; font-weight: 800;">' + cat.nombre + '</strong>' +
+                '<span class="texto-accion-card" style="font-size: 0.8rem; color: #38bdf8; margin-top: 0.4rem; font-weight: 600;">Ver productos ➔</span>' +
             '</div>';
         });
 
@@ -393,6 +393,10 @@ app.get('/', (req, res) => {
                     '.top-bar-grid { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 0.5rem !important; }' +
                     '.btn-home-mini { grid-column: span 2 !important; text-align: center !important; justify-content: center !important; }' +
                     '.btn-seccion-mini { justify-content: center !important; padding: 0.5rem 0.6rem !important; font-size: 0.8rem !important; }' +
+                    '.card-seccion-box { padding: 0.9rem 0.5rem !important; }' +
+                    '.icono-cat { font-size: 1.8rem !important; margin-bottom: 0.3rem !important; }' +
+                    '.titulo-cat-card { font-size: 0.88rem !important; }' +
+                    '.texto-accion-card { font-size: 0.72rem !important; font-weight: 500 !important; margin-top: 0.2rem !important; opacity: 0.9; }' +
                 '}' +
             '</style>' +
         '</head>' +
@@ -1116,7 +1120,6 @@ app.get('/admin', (req, res) => {
                                 'canvas.height = height;' +
                                 'const ctx = canvas.getContext("2d");' +
                                 'ctx.drawImage(img, 0, 0, width, height);' +
-                                // Comprime fuertemente a JPEG con calidad 0.7 para que pese poquísimo (aprox 15-25kb)
                                 'const dataUrl = canvas.toDataURL("image/jpeg", 0.7);' +
                                 'document.getElementById("imagenBase64").value = dataUrl;' +
                                 'document.getElementById("imgPreview").src = dataUrl;' +
