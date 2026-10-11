@@ -11,13 +11,11 @@ app.use(express.json({ limit: '10mb' }));
 const DATA_FILE = path.join(__dirname, 'productos.json');
 const CATEGORIAS_FILE = path.join(__dirname, 'categorias.json');
 
-// Categorías por defecto si no existe el archivo
 const categoriasPorDefecto = [
-    { id: 1, nombre: 'Todas', icono: '🏪' },
-    { id: 2, nombre: 'Estética', icono: '💄' },
-    { id: 3, nombre: 'Electrónica', icono: '🎧' },
-    { id: 4, nombre: 'Zapatería', icono: '👟' },
-    { id: 5, nombre: 'Accesorios', icono: '📱' }
+    { id: 1, nombre: 'Estética', icono: '💄' },
+    { id: 2, nombre: 'Electrónica', icono: '🎧' },
+    { id: 3, nombre: 'Zapatería', icono: '👟' },
+    { id: 4, nombre: 'Accesorios', icono: '📱' }
 ];
 
 function leerCategorias() {
@@ -75,35 +73,44 @@ app.get('/', (req, res) => {
             <header>
                 <div class="header-content">
                     <h1>🏪 Polirubro Virtual</h1>
-                    <p>Todo lo que buscás, lo encontrás... ¡Lo cliqueás y te lo llevás!</p>
+                    <p>Elegí una sección para explorar los productos</p>
                 </div>
                 <div class="header-actions">
                     <button class="cart-btn" onclick="toggleCartModal()">
-                        🛒 Carrito ( <span id="cartCount">0</span> )
+                        🛒 Carrito (<span id="cartCount">0</span>)
                     </button>
                 </div>
             </header>
 
             <main>
-                <!-- BARRA DE BÚSQUEDA -->
-                <section class="search-section">
-                    <div class="search-bar-container">
-                        <input type="text" id="searchInput" oninput="filtrarProductos()" placeholder="🔍 Buscar por nombre o palabra clave...">
+                <!-- BARRA DE ICONOS SUPERIOR SIEMPRE VISIBLE PARA CAMBIAR DE SECCIÓN -->
+                <section class="top-secciones-bar" style="background: #111827; border: 1px solid #1f2937; border-radius: 16px; padding: 1rem; margin-bottom: 2rem;">
+                    <div style="display: flex; gap: 0.8rem; overflow-x: auto; padding-bottom: 0.2rem; justify-content: center;">
+    `;
+
+    categorias.forEach(cat => {
+        html += `
+            <button onclick="entrarASeccion('${cat.nombre}')" class="btn-seccion-mini" style="background: #1e293b; color: #fff; border: 1px solid #334155; padding: 0.6rem 1rem; border-radius: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; white-space: nowrap; transition: 0.2s;">
+                <span>${cat.icono || '📦'}</span> ${cat.nombre}
+            </button>
+        `;
+    });
+
+    html += `
                     </div>
                 </section>
 
-                <!-- SECCIONES EN TARJETAS DE ÍCONOS -->
-                <section class="secciones-container">
-                    <h3 class="section-title">📂 Explorar por Secciones</h3>
-                    <div class="icon-grid">
+                <!-- VISTA 1: MENÚ CENTRAL DE SECCIONES (SE VE AL ENTRAR) -->
+                <section id="vistaSecciones" class="secciones-container">
+                    <h2 style="text-align: center; font-size: 1.6rem; color: #38bdf8; margin-bottom: 1.5rem;">📂 Seleccioná una Sección</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1.5rem; justify-content: center; max-width: 800px; margin: 0 auto;">
     `;
 
-    categorias.forEach((cat, index) => {
-        const activeClass = index === 0 ? 'active' : '';
+    categorias.forEach(cat => {
         html += `
-            <div class="icon-card ${activeClass}" data-catname="${cat.nombre}" onclick="seleccionarSeccion('${cat.nombre}', this)">
-                <span class="icon-emoji">${cat.icono || '📦'}</span>
-                <span class="icon-label">${cat.nombre}</span>
+            <div onclick="entrarASeccion('${cat.nombre}')" style="background: #111827; border: 2px solid #1f2937; border-radius: 20px; padding: 2rem 1rem; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.25s; text-align: center;">
+                <span style="font-size: 3.5rem; margin-bottom: 0.8rem;">${cat.icono || '📦'}</span>
+                <strong style="font-size: 1.1rem; color: #ffffff;">${cat.nombre}</strong>
             </div>
         `;
     });
@@ -112,8 +119,13 @@ app.get('/', (req, res) => {
                     </div>
                 </section>
 
-                <!-- CATÁLOGO DE PRODUCTOS -->
-                <section class="catalogo">
+                <!-- VISTA 2: CATÁLOGO DE PRODUCTOS (OCULTO AL INICIO) -->
+                <section id="vistaProductos" class="catalogo" style="display: none;">
+                    <div style="margin-bottom: 1.5rem;">
+                        <input type="text" id="searchInput" oninput="filtrarProductos()" placeholder="🔍 Buscar producto en esta sección..." style="width: 100%; padding: 0.85rem 1.2rem; border-radius: 12px; background: #111827; color: white; border: 1px solid #334155; font-size: 1rem;">
+                    </div>
+
+                    <h2 id="tituloSeccionActual" style="font-size: 1.4rem; color: #38bdf8; margin-bottom: 1.2rem; border-bottom: 1px solid #1f2937; padding-bottom: 0.5rem;"></h2>
                     <div class="product-grid" id="productGrid">
     `;
 
@@ -170,26 +182,28 @@ app.get('/', (req, res) => {
             </a>
 
             <!-- MODAL CARRITO -->
-            <div id="cartModal" class="modal">
-                <div class="modal-content">
-                    <button type="button" class="close-btn" onclick="toggleCartModal()">&times;</button>
-                    <h2 class="modal-title">🛒 Tu Carrito de Compras</h2>
+            <div id="cartModal" class="modal" style="display:none; position:fixed; z-index:999999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.85); justify-content:center; align-items:center; padding:1rem;">
+                <div style="background:#0f172a; border:1px solid #334155; border-radius:20px; padding:1.8rem; width:100%; max-width:480px; position:relative; color:#f8fafc; box-shadow:0 20px 50px rgba(0,0,0,0.9);">
                     
-                    <div id="cartItemsList" class="cart-items-list">
-                        <p class="empty-cart">El carrito está vacío.</p>
+                    <button type="button" onclick="toggleCartModal()" style="position:absolute; top:15px; right:18px; background:none; border:none; color:#94a3b8; font-size:1.8rem; cursor:pointer; line-height:1;">&times;</button>
+                    
+                    <h2 style="font-size:1.35rem; color:#38bdf8; margin-bottom:1rem; font-weight:bold;">🛒 Tu Carrito de Compras</h2>
+                    
+                    <div id="cartItemsList" style="max-height:160px; overflow-y:auto; margin-bottom:1rem; padding-right:0.3rem;">
+                        <p style="color:#94a3b8; text-align:center;">El carrito está vacío.</p>
                     </div>
 
-                    <div class="cart-options" id="cartOptions" style="display:none;">
-                        <div class="customer-info-form">
-                            <h4>📋 Tus Datos para la Entrega:</h4>
-                            <input type="text" id="clienteNombre" class="cart-input" placeholder="Tu Nombre y Apellido *" required>
-                            <input type="text" id="clienteDireccion" class="cart-input" placeholder="Dirección de Entrega / Barrio *">
-                            <input type="tel" id="clienteTelefono" class="cart-input" placeholder="Teléfono de contacto">
+                    <div id="cartOptions" style="display:none;">
+                        <div style="background:#1e293b; padding:1rem; border-radius:12px; border:1px solid #334155; margin-bottom:1rem;">
+                            <h4 style="font-size:0.9rem; color:#38bdf8; margin-bottom:0.6rem;">📋 Tus Datos para la Entrega:</h4>
+                            <input type="text" id="clienteNombre" placeholder="Tu Nombre y Apellido *" style="width:100%; padding:0.65rem 0.8rem; border-radius:8px; background:#0f172a; color:#fff; border:1px solid #475569; margin-bottom:0.5rem; outline:none;" required>
+                            <input type="text" id="clienteDireccion" placeholder="Dirección de Entrega / Barrio *" style="width:100%; padding:0.65rem 0.8rem; border-radius:8px; background:#0f172a; color:#fff; border:1px solid #475569; margin-bottom:0.5rem; outline:none;">
+                            <input type="tel" id="clienteTelefono" placeholder="Teléfono de contacto" style="width:100%; padding:0.65rem 0.8rem; border-radius:8px; background:#0f172a; color:#fff; border:1px solid #475569; outline:none;">
                         </div>
 
-                        <div class="option-group">
-                            <label for="tipoEnvio">🚚 Zona / Forma de Entrega:</label>
-                            <select id="tipoEnvio" class="cart-select" onchange="actualizarTotal()">
+                        <div style="margin-bottom:0.8rem;">
+                            <label style="display:block; font-size:0.85rem; color:#cbd5e1; margin-bottom:0.3rem;">🚚 Zona / Forma de Entrega:</label>
+                            <select id="tipoEnvio" onchange="actualizarTotal()" style="width:100%; padding:0.65rem 0.8rem; border-radius:8px; background:#1e293b; color:#fff; border:1px solid #475569; outline:none; cursor:pointer;">
                                 <option value="retiro" data-costo="0">Retirar por el local (Gratis)</option>
                                 <option value="centro" data-costo="1500">Zona Centro / Cambá Cuá (+$1.500)</option>
                                 <option value="barrios_cercanos" data-costo="2000">Barrios Cercanos / Aldana / Yapeyú (+$2.000)</option>
@@ -197,9 +211,9 @@ app.get('/', (req, res) => {
                             </select>
                         </div>
 
-                        <div class="option-group">
-                            <label for="metodoPago">💳 Método de Pago:</label>
-                            <select id="metodoPago" class="cart-select" onchange="mostrarDatosTransferencia()">
+                        <div style="margin-bottom:0.8rem;">
+                            <label style="display:block; font-size:0.85rem; color:#cbd5e1; margin-bottom:0.3rem;">💳 Método de Pago:</label>
+                            <select id="metodoPago" onchange="mostrarDatosTransferencia()" style="width:100%; padding:0.65rem 0.8rem; border-radius:8px; background:#1e293b; color:#fff; border:1px solid #475569; outline:none; cursor:pointer;">
                                 <option value="Efectivo">Efectivo al recibir</option>
                                 <option value="Mercado Pago">Mercado Pago</option>
                                 <option value="Transferencia Bancaria">Transferencia Bancaria (Alias/CBU)</option>
@@ -208,16 +222,16 @@ app.get('/', (req, res) => {
                             </select>
                         </div>
 
-                        <div id="transferInfo" class="transfer-info" style="display:none;">
-                            <small>🏦 <strong>Alias CBU:</strong> POLIRUBRO.VIRTUAL.MP</small>
-                            <button type="button" class="btn-copy" onclick="copiarAlias()">📋 Copiar Alias</button>
+                        <div id="transferInfo" style="display:none; background:#064e3b; border:1px solid #059669; padding:0.6rem 0.8rem; border-radius:8px; margin:0.6rem 0; justify-content:space-between; align-items:center;">
+                            <small style="color:#a7f3d0;">🏦 <strong>Alias:</strong> POLIRUBRO.VIRTUAL.MP</small>
+                            <button type="button" onclick="copiarAlias()" style="background:#10b981; color:#fff; border:none; padding:0.3rem 0.6rem; border-radius:6px; cursor:pointer; font-size:0.75rem; font-weight:bold;">📋 Copiar</button>
                         </div>
 
-                        <div class="cart-total">
-                            <h3>Total a Pagar: $<span id="cartTotalPrice">0</span></h3>
+                        <div style="text-align:right; margin:1rem 0 0.8rem 0;">
+                            <h3 style="color:#34d399; font-size:1.3rem;">Total: $<span id="cartTotalPrice">0</span></h3>
                         </div>
 
-                        <button class="btn-checkout" onclick="procesarPedido()">
+                        <button onclick="procesarPedido()" style="background:linear-gradient(135deg, #059669, #10b981); color:white; width:100%; padding:0.85rem; border-radius:10px; border:none; font-weight:bold; font-size:1rem; cursor:pointer; box-shadow:0 4px 12px rgba(16, 185, 129, 0.3);">
                             📲 Confirmar y Enviar por WhatsApp
                         </button>
                     </div>
@@ -225,20 +239,20 @@ app.get('/', (req, res) => {
             </div>
 
             <!-- MODAL QR PC -->
-            <div id="optionsModal" class="modal">
-                <div class="modal-content" style="text-align:center;">
-                    <button type="button" class="close-btn" onclick="cerrarOptionsModal()">&times;</button>
-                    <h2>📲 Escaneá para enviar tu Pedido</h2>
-                    <p style="color:#94a3b8; font-size:0.9rem; margin-bottom:1.2rem;">Apuntá con la cámara de tu celular para abrir WhatsApp:</p>
+            <div id="optionsModal" class="modal" style="display:none; position:fixed; z-index:999999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.85); justify-content:center; align-items:center; padding:1rem;">
+                <div style="background:#0f172a; border:1px solid #334155; border-radius:20px; padding:2rem; width:100%; max-width:420px; text-align:center; position:relative; color:#fff;">
+                    <button type="button" onclick="cerrarOptionsModal()" style="position:absolute; top:15px; right:18px; background:none; border:none; color:#94a3b8; font-size:1.8rem; cursor:pointer;">&times;</button>
+                    <h2 style="font-size:1.3rem; color:#38bdf8; margin-bottom:0.5rem;">📲 Escaneá tu Pedido</h2>
+                    <p style="color:#94a3b8; font-size:0.85rem; margin-bottom:1rem;">Apuntá con tu celular para enviar el pedido por WhatsApp:</p>
 
-                    <div style="background:#0f172a; padding:1.5rem; border-radius:20px; border:1px solid #334155; display:inline-block;">
-                        <img id="qrImage" src="" alt="Código QR Pedido" style="width:210px; height:210px; border-radius:12px; border:3px solid #38bdf8;">
+                    <div style="background:#1e293b; padding:1rem; border-radius:16px; border:1px solid #334155; display:inline-block;">
+                        <img id="qrImage" src="" alt="Código QR Pedido" style="width:200px; height:200px; border-radius:10px; border:2px solid #38bdf8;">
                     </div>
                 </div>
             </div>
 
             <!-- MODAL ZOOM IMAGEN -->
-            <div id="modal-imagen-zoom" onclick="this.style.display='none'" style="display:none; position:fixed; z-index:999999; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.9); justify-content:center; align-items:center; padding:1rem;">
+            <div id="modal-imagen-zoom" onclick="this.style.display='none'" style="display:none; position:fixed; z-index:999999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.9); justify-content:center; align-items:center; padding:1rem;">
                 <span style="position:absolute; top:20px; right:30px; color:#fff; font-size:2.5rem; font-weight:bold; cursor:pointer;">&times;</span>
                 <img id="img-ampliada" src="" alt="Zoom Producto" style="max-width:90%; max-height:85vh; object-fit:contain; border-radius:12px;">
             </div>
@@ -249,7 +263,7 @@ app.get('/', (req, res) => {
 
             <script>
                 let carrito = [];
-                let seccionActiva = 'Todas';
+                let seccionSeleccionada = '';
 
                 function normalizar(str) {
                     if (!str) return '';
@@ -260,18 +274,21 @@ app.get('/', (req, res) => {
                     return Number(num || 0).toLocaleString('es-AR');
                 }
 
-                function seleccionarSeccion(nombreCat, el) {
-                    seccionActiva = nombreCat;
-                    document.querySelectorAll('.icon-card').forEach(card => card.classList.remove('active'));
-                    if (el) el.classList.add('active');
+                function entrarASeccion(nombreCat) {
+                    seccionSeleccionada = nombreCat;
+                    document.getElementById('vistaSecciones').style.display = 'none';
+                    document.getElementById('vistaProductos').style.display = 'block';
+                    document.getElementById('tituloSeccionActual').innerText = '📂 Sección: ' + nombreCat;
+                    document.getElementById('searchInput').value = '';
                     filtrarProductos();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
 
                 function filtrarProductos() {
-                    const inputVal = document.getElementById('searchInput') ? document.getElementById('searchInput').value : '';
-                    const busqueda = normalizar(inputVal);
-                    const catActivaNorm = normalizar(seccionActiva);
+                    if (!seccionSeleccionada) return;
 
+                    const busqueda = normalizar(document.getElementById('searchInput').value);
+                    const catActivaNorm = normalizar(seccionSeleccionada);
                     const tarjetas = document.querySelectorAll('.product-card');
 
                     tarjetas.forEach(tarjeta => {
@@ -279,7 +296,7 @@ app.get('/', (req, res) => {
                         const nombreProd = normalizar(tarjeta.getAttribute('data-nombre'));
                         const descProd = normalizar(tarjeta.getAttribute('data-descripcion'));
 
-                        const coincideSeccion = (catActivaNorm === 'todas' || catProd === catActivaNorm);
+                        const coincideSeccion = (catProd === catActivaNorm);
                         const coincideBusqueda = (busqueda === '' || nombreProd.includes(busqueda) || descProd.includes(busqueda));
 
                         if (coincideSeccion && coincideBusqueda) {
@@ -331,7 +348,7 @@ app.get('/', (req, res) => {
                     cartCount.innerText = totalItems;
 
                     if (carrito.length === 0) {
-                        cartItemsList.innerHTML = '<p class="empty-cart">El carrito está vacío.</p>';
+                        cartItemsList.innerHTML = '<p style="color:#94a3b8; text-align:center;">El carrito está vacío.</p>';
                         cartOptions.style.display = 'none';
                         return;
                     }
@@ -340,15 +357,15 @@ app.get('/', (req, res) => {
                     let html = '';
                     carrito.forEach(item => {
                         html += \`
-                            <div class="cart-item">
+                            <div style="display:flex; justify-content:space-between; align-items:center; background:#1e293b; padding:0.7rem 0.9rem; border-radius:10px; margin-bottom:0.5rem; border:1px solid #334155;">
                                 <div>
-                                    <strong>\${item.nombre}</strong><br>
-                                    <small>\$\${formatoPesos(item.precio)} x \${item.cantidad}</small>
+                                    <strong style="color:#fff; font-size:0.95rem;">\${item.nombre}</strong><br>
+                                    <small style="color:#38bdf8;">\$\${formatoPesos(item.precio)} x \${item.cantidad}</small>
                                 </div>
-                                <div class="cart-item-controls">
-                                    <button onclick="cambiarCantidad(\${item.id}, -1)">-</button>
-                                    <span>\${item.cantidad}</span>
-                                    <button onclick="cambiarCantidad(\${item.id}, 1)">+</button>
+                                <div style="display:flex; align-items:center; gap:0.4rem;">
+                                    <button onclick="cambiarCantidad(\${item.id}, -1)" style="background:#0f172a; color:#fff; border:1px solid #475569; width:26px; height:26px; border-radius:6px; font-weight:bold; cursor:pointer;">-</button>
+                                    <span style="font-weight:bold; padding:0 0.3rem;">\${item.cantidad}</span>
+                                    <button onclick="cambiarCantidad(\${item.id}, 1)" style="background:#0f172a; color:#fff; border:1px solid #475569; width:26px; height:26px; border-radius:6px; font-weight:bold; cursor:pointer;">+</button>
                                 </div>
                             </div>
                         \`;
@@ -460,7 +477,7 @@ app.get('/', (req, res) => {
 // ==========================================
 app.get('/admin', (req, res) => {
     const productos = leerProductos();
-    const categorias = leerCategorias().filter(c => c.nombre !== 'Todas');
+    const categorias = leerCategorias();
 
     let html = `
         <!DOCTYPE html>
@@ -483,9 +500,7 @@ app.get('/admin', (req, res) => {
             </header>
 
             <main class="admin-container">
-                <!-- COLUMNA IZQUIERDA: CREAR SECCIÓN Y AGREGAR PRODUCTO -->
                 <div class="admin-column">
-                    <!-- CREAR SECCIÓN -->
                     <section class="admin-card">
                         <h2>📂 Crear Nueva Sección / Categoría</h2>
                         <form action="/admin/categoria/agregar" method="POST" class="admin-form">
@@ -501,7 +516,6 @@ app.get('/admin', (req, res) => {
                         </form>
                     </section>
 
-                    <!-- CARGAR PRODUCTO -->
                     <section class="admin-card">
                         <h2>➕ Cargar Nuevo Producto</h2>
                         <form action="/admin/agregar" method="POST" class="admin-form" id="productForm">
@@ -572,7 +586,6 @@ app.get('/admin', (req, res) => {
                     </section>
                 </div>
 
-                <!-- COLUMNA DERECHA: LISTADO DE PRODUCTOS -->
                 <div class="admin-column">
                     <section class="admin-card">
                         <h2>📦 Productos en Stock (${productos.length})</h2>
@@ -652,7 +665,6 @@ app.get('/admin', (req, res) => {
     res.send(html);
 });
 
-// GUARDAR CATEGORÍA NUEVA
 app.post('/admin/categoria/agregar', (req, res) => {
     const { nombreCat, iconoCat } = req.body;
     let categorias = leerCategorias();
@@ -669,7 +681,6 @@ app.post('/admin/categoria/agregar', (req, res) => {
     res.redirect('/admin');
 });
 
-// GUARDAR PRODUCTO
 app.post('/admin/agregar', (req, res) => {
     const { nombre, precio, stock, etiqueta, categoria, descripcion, imagenBase64, imagenUrl } = req.body;
     let productos = leerProductos();
@@ -695,7 +706,6 @@ app.post('/admin/agregar', (req, res) => {
     res.redirect('/admin');
 });
 
-// ELIMINAR PRODUCTO
 app.post('/admin/eliminar/:id', (req, res) => {
     const idAEliminar = Number(req.params.id);
     let productos = leerProductos();
