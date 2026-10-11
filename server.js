@@ -37,7 +37,6 @@ function guardarCategorias(cats) {
     fs.writeFileSync(CATEGORIAS_FILE, JSON.stringify(cats, null, 2), 'utf8');
 }
 
-// PERSISTENCIA BLINDADA Y SEGURA: Respeta 100% lo que ya tenés cargado
 function leerProductos() {
     if (!fs.existsSync(DATA_FILE)) {
         fs.writeFileSync(DATA_FILE, JSON.stringify([], null, 2), 'utf8');
@@ -373,8 +372,8 @@ app.get('/', (req, res) => {
                 💬 <span>¿Tenés dudas? Hablá con nosotros</span>
             </a>
 
-            <!-- MODAL BIENVENIDA (APARECE SIEMPRE AL ENTRAR A LA WEB) -->
-            <div id="promoWelcomeModal" class="modal" style="display:flex; position:fixed; z-index:9999999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.85); justify-content:center; align-items:center; padding:1rem;">
+            <!-- MODAL BIENVENIDA -->
+            <div id="promoWelcomeModal" class="modal" style="display:none; position:fixed; z-index:9999999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.85); justify-content:center; align-items:center; padding:1rem;">
                 <div style="background: linear-gradient(135deg, #0f172a, #1e1b4b); border: 2px solid #10b981; border-radius: 28px; padding: 2.2rem 1.8rem; width: 100%; max-width: 440px; text-align: center; position: relative; color: #fff; box-shadow: 0 20px 60px rgba(16, 185, 129, 0.4);">
                     <button type="button" onclick="cerrarPromoWelcome()" style="position:absolute; top:15px; right:20px; background:none; border:none; color:#94a3b8; font-size:2rem; cursor:pointer;">&times;</button>
                     <div style="font-size: 3.5rem; margin-bottom: 0.5rem;">🚚🎉</div>
@@ -479,8 +478,10 @@ app.get('/', (req, res) => {
                 let searchTimeout = null;
 
                 document.addEventListener("DOMContentLoaded", function() {
-                    // El cartel de bienvenida aparece siempre al entrar a la web
-                    document.getElementById('promoWelcomeModal').style.display = 'flex';
+                    // El cartel de bienvenida aparece una sola vez por sesión
+                    if (!sessionStorage.getItem('promoVisto')) {
+                        document.getElementById('promoWelcomeModal').style.display = 'flex';
+                    }
 
                     let ultimaSeccion = localStorage.getItem('seccionActiva');
                     if (window.location.hash && window.location.hash.startsWith('#seccion-')) {
@@ -519,6 +520,7 @@ app.get('/', (req, res) => {
                 }
 
                 function cerrarPromoWelcome() {
+                    sessionStorage.setItem('promoVisto', 'true');
                     document.getElementById('promoWelcomeModal').style.display = 'none';
                 }
 
@@ -682,7 +684,6 @@ app.get('/', (req, res) => {
                     const ES_ENVIO_GRATIS = subtotal >= 20000;
 
                     if (ES_ENVIO_GRATIS) {
-                        promoProgress.style.display = 'block';
                         promoProgress.style.background = '#064e3b';
                         promoProgress.style.borderColor = '#10b981';
                         promoProgress.style.color = '#a7f3d0';
@@ -691,7 +692,6 @@ app.get('/', (req, res) => {
                         cartelEnvioGratis.style.display = 'block';
                     } else {
                         const falta = 20000 - subtotal;
-                        promoProgress.style.display = 'block';
                         promoProgress.style.background = '#1e293b';
                         promoProgress.style.borderColor = '#3b82f6';
                         promoProgress.style.color = '#38bdf8';
