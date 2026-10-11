@@ -9,11 +9,6 @@ app.use(express.json({ limit: '10mb' }));
 
 const MASTER_KEY = "\$2a\$10\$tg1ZdjhTaAMXJux9z9NikO/vNFhjVdW28wxjdimgawIO.VkiBMEUi";
 
-// Usaremos almacenamiento en memoria sincronizado con caché por si la red fluctúa, 
-// y almacenamiento dinámico mediante fetch o peticiones a JSONBin si prefieres cloud puro.
-// Para hacerlo robusto y 100% compatible con tu entorno actual en Node sin instalar librerías extra como node-fetch:
-const https = require('https');
-
 let memoriaProductos = [];
 let memoriaCategorias = [
     { id: 1, nombre: 'Estética', icono: '💄', color: 'linear-gradient(135deg, #ec4899, #be185d)' },
@@ -234,7 +229,7 @@ app.get('/', (req, res) => {
         <body>
             <div class="promo-banner">
                 <div class="promo-text-marquee">
-                    🚚 <span>¡ENVÍO GRATIS en compras superiores a <strong>$20.000</strong>!</span> 🛍️ <span>¡Aprovechá tus beneficios hoy!</span>
+                    🚚 <span>¡ENVÍO GRATIS comprando exclusivamente en la WEB superando los <strong>$20.000</strong>!</span> 🛍️ <span>¡Aprovechá tus beneficios hoy!</span>
                 </div>
             </div>
 
@@ -353,7 +348,7 @@ app.get('/', (req, res) => {
                     <div style="font-size: 3.5rem; margin-bottom: 0.5rem;">🚚🎉</div>
                     <h2 style="font-size: 1.6rem; color: #10b981; margin-bottom: 0.8rem; font-weight: 900;">¡SÚPER PROMO DE BIENVENIDA!</h2>
                     <p style="font-size: 1.05rem; color: #f1f5f9; line-height: 1.5; margin-bottom: 1.5rem;">
-                        Llevate tu pedido con <strong style="color: #34d399; font-size: 1.2rem;">ENVÍO GRATIS</strong> superando los <strong style="color: #38bdf8; font-size: 1.2rem;">$20.000</strong> en tu compra.
+                        Llevate tu pedido con <strong style="color: #34d399; font-size: 1.2rem;">ENVÍO GRATIS EXCLUSIVO EN LA WEB</strong> superando los <strong style="color: #38bdf8; font-size: 1.2rem;">$20.000</strong> en tu compra.
                     </p>
                     <button onclick="cerrarPromoWelcome()" style="background: linear-gradient(135deg, #059669, #10b981); color: white; width: 100%; padding: 0.95rem; border-radius: 14px; border: none; font-weight: 800; font-size: 1.05rem; cursor: pointer;">
                         🛍️ ¡Genial, empezar a comprar!
@@ -368,7 +363,7 @@ app.get('/', (req, res) => {
                     <h2 style="font-size:1.25rem; color:#38bdf8; margin-bottom:0.6rem; font-weight:800;">🛒 Tu Carrito</h2>
                     
                     <div id="promoEnvioProgress" style="background:#1e293b; border:1px solid #3b82f6; border-radius:10px; padding:0.4rem 0.6rem; margin-bottom:0.6rem; text-align:center; font-size:0.8rem; font-weight:bold;">
-                        🚚 Envío gratis superando los $20.000
+                        🚚 Envío gratis exclusivo en la Web superando los $20.000
                     </div>
 
                     <div id="cartItemsList" style="max-height:120px; overflow-y:auto; margin-bottom:0.6rem; padding-right:0.2rem;">
@@ -394,7 +389,7 @@ app.get('/', (req, res) => {
                         </div>
 
                         <div id="cartelEnvioGratis" style="display:none; background:#064e3b; border:1px solid #10b981; border-radius:8px; padding:0.6rem; text-align:center; margin-bottom:0.6rem;">
-                            <span style="color:#a7f3d0; font-size:0.82rem; font-weight:bold;">🚚 Zona / Envío: <strong style="color:#fff;">🎉 ¡ENVÍO GRATIS APLICADO! ($0)</strong></span>
+                            <span style="color:#a7f3d0; font-size:0.82rem; font-weight:bold;">🚚 Zona / Envío: <strong style="color:#fff;">🎉 ¡ENVÍO GRATIS WEB APLICADO! ($0)</strong></span>
                         </div>
 
                         <div style="margin-bottom:0.6rem;">
@@ -660,7 +655,7 @@ app.get('/', (req, res) => {
                         promoProgress.style.background = '#064e3b';
                         promoProgress.style.borderColor = '#10b981';
                         promoProgress.style.color = '#a7f3d0';
-                        promoProgress.innerHTML = '🎉 ¡Felicitaciones! Tenés <strong>ENVÍO GRATIS</strong> en esta compra.';
+                        promoProgress.innerHTML = '🎉 ¡Felicitaciones! Tenés <strong>ENVÍO GRATIS WEB</strong> en esta compra.';
                         contenedorEnvio.style.display = 'none';
                         cartelEnvioGratis.style.display = 'block';
                     } else {
@@ -668,7 +663,7 @@ app.get('/', (req, res) => {
                         promoProgress.style.background = '#1e293b';
                         promoProgress.style.borderColor = '#3b82f6';
                         promoProgress.style.color = '#38bdf8';
-                        promoProgress.innerHTML = \`🚚 Agregá \$\${formatoPesos(falta)} más para tener <strong>ENVÍO GRATIS</strong>\`;
+                        promoProgress.innerHTML = \`🚚 Agregá \$\${formatoPesos(falta)} más para tener <strong>ENVÍO GRATIS WEB</strong>\`;
                         contenedorEnvio.style.display = 'block';
                         cartelEnvioGratis.style.display = 'none';
                     }
@@ -731,7 +726,7 @@ app.get('/', (req, res) => {
                     let subtotal = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
                     const ES_ENVIO_GRATIS = subtotal >= 20000;
                     let costoEnvio = 0;
-                    let detalleEnvioTexto = "Envío a Domicilio (¡ENVÍO GRATIS APLICADO!)";
+                    let detalleEnvioTexto = "Envío a Domicilio (¡ENVÍO GRATIS WEB APLICADO!)";
 
                     if (!ES_ENVIO_GRATIS) {
                         const tipoEnvioSelect = document.getElementById('tipoEnvio');
@@ -745,7 +740,7 @@ app.get('/', (req, res) => {
                     const metodoPago = document.getElementById('metodoPago').value;
                     let totalFinal = subtotal + costoEnvio;
 
-                    let mensaje = \`¡Hola! Quiero confirmar mi pedido en *Polirubro Virtual*:\\n\\n\`;
+                    let mensaje = \`¡Hola! Quiero confirmar mi pedido en *Polirubro Virtual* (Vía Web):\\n\\n\`;
                     mensaje += \`👤 *Cliente:* \${nombre}\\n\`;
                     if (direccion) mensaje += \`📍 *Dirección:* \${direccion}\\n\`;
                     if (telefono) mensaje += \`📞 *Contacto:* \${telefono}\\n\`;
@@ -791,7 +786,18 @@ app.get('/admin', (req, res) => {
 
     let filasSeccionesHTML = seccionesOrdenadas.length === 0 ? '<tr><td colspan="2" style="color:#94a3b8; font-size:0.85rem;">Aún no hay ingresos a secciones.</td></tr>' : seccionesOrdenadas.map(([sec, cant]) => '<tr><td style="color:#fff; font-weight:bold;">' + sec + '</td><td style="color:#34d399; font-weight:bold; text-align:right;">' + cant + '</td></tr>').join('');
     let filasBusquedasHTML = busquedasOrdenadas.length === 0 ? '<tr><td colspan="2" style="color:#94a3b8; font-size:0.85rem;">Aún no hay búsquedas registradas.</td></tr>' : busquedasOrdenadas.slice(0, 10).map(([term, cant]) => '<tr><td style="color:#fff; text-transform:capitalize;">' + term + '</td><td style="color:#38bdf8; font-weight:bold; text-align:right;">' + cant + '</td></tr>').join('');
+    
     let opcionesCatHTML = categorias.map(cat => '<option value="' + cat.nombre + '">' + (cat.icono || '📦') + ' ' + cat.nombre + '</option>').join('');
+    
+    // Lista de Secciones en el Admin con botón de eliminar
+    let listaCategoriasAdminHTML = categorias.map(cat => {
+        return '<div style="display:flex; justify-content:space-between; align-items:center; background:#1e293b; padding:0.5rem 0.8rem; border-radius:8px; border:1px solid #334155; margin-bottom:0.5rem;">' +
+            '<span style="color:#fff; font-weight:bold; font-size:0.9rem;">' + (cat.icono || '📦') + ' ' + cat.nombre + '</span>' +
+            '<form action="/admin/categoria/eliminar/' + cat.id + '" method="POST" onsubmit="return confirm(\'¿Seguro querés eliminar la sección ' + cat.nombre + '?\');">' +
+                '<button type="submit" style="background:#ef4444; color:white; border:none; padding:0.3rem 0.6rem; border-radius:6px; cursor:pointer; font-size:0.75rem;" title="Eliminar Sección">🗑️ Borrar</button>' +
+            '</form>' +
+        '</div>';
+    }).join('');
 
     let listaProductosAdminHTML = productos.length === 0 ? '<p style="color:#94a3b8;">No hay productos cargados.</p>' : productos.map(prod => {
         const desc = prod.descripcion ? '<br><small style="color:#94a3b8;">' + prod.descripcion + '</small>' : '';
@@ -903,10 +909,10 @@ app.get('/admin', (req, res) => {
                 <div class="admin-two-columns">
                     <div style="display:flex; flex-direction:column; gap:1.5rem;">
                         <section style="background:#0f172a; border:1px solid #1e293b; border-radius:18px; padding:1.2rem;">
-                            <h3 style="margin:0 0 1rem 0; font-size:1.1rem; color:#38bdf8;">📂 Crear Nueva Sección</h3>
-                            <form action="/admin/categoria/agregar" method="POST" style="display:flex; flex-direction:column; gap:0.8rem;">
+                            <h3 style="margin:0 0 1rem 0; font-size:1.1rem; color:#38bdf8;">📂 Gestionar Secciones</h3>
+                            <form action="/admin/categoria/agregar" method="POST" style="display:flex; flex-direction:column; gap:0.8rem; margin-bottom:1.2rem; border-bottom:1px solid #1e293b; padding-bottom:1.2rem;">
                                 <div>
-                                    <label style="font-size:0.82rem; color:#cbd5e1; display:block; margin-bottom:0.3rem;">Nombre:</label>
+                                    <label style="font-size:0.82rem; color:#cbd5e1; display:block; margin-bottom:0.3rem;">Nueva Sección:</label>
                                     <input type="text" name="nombreCat" placeholder="Ej: Bazar, Ferretería" required style="width:100%; padding:0.6rem; border-radius:8px; background:#1e293b; border:1px solid #334155; color:#fff; outline:none;">
                                 </div>
                                 <div>
@@ -915,6 +921,9 @@ app.get('/admin', (req, res) => {
                                 </div>
                                 <button type="submit" style="background:#2563eb; color:#fff; border:none; padding:0.7rem; border-radius:8px; font-weight:bold; cursor:pointer;">✨ Guardar Sección</button>
                             </form>
+                            
+                            <h4 style="margin:0 0 0.6rem 0; font-size:0.95rem; color:#94a3b8;">Secciones Existentes:</h4>
+                            <div>${listaCategoriasAdminHTML}</div>
                         </section>
 
                         <section style="background:#0f172a; border:1px solid #1e293b; border-radius:18px; padding:1.2rem;">
@@ -1025,6 +1034,14 @@ app.post('/admin/categoria/agregar', (req, res) => {
         categorias.push({ id: nuevoId, nombre: nombreCat.trim(), icono: iconoCat ? iconoCat.trim() : '📦' });
         guardarCategorias(categorias);
     }
+    res.redirect('/admin');
+});
+
+app.post('/admin/categoria/eliminar/:id', (req, res) => {
+    const idAEliminar = Number(req.params.id);
+    let categorias = leerCategorias();
+    categorias = categorias.filter(c => c.id !== idAEliminar);
+    guardarCategorias(categorias);
     res.redirect('/admin');
 });
 
