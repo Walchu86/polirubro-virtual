@@ -67,28 +67,31 @@ app.get('/', (req, res) => {
             <title>Polirubro Virtual | Tu Tienda Online</title>
             <link rel="stylesheet" href="/style.css">
             <style>
-                /* ANIMACIÓN PARA EL BANNER DE ENVÍO GRATIS */
-                @keyframes promoGlow {
-                    0% { box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); transform: scale(1); }
-                    50% { box-shadow: 0 0 22px rgba(16, 185, 129, 0.8); transform: scale(1.01); }
-                    100% { box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); transform: scale(1); }
+                /* ANIMACIÓN DE MARQUESINA QUE VA Y VIENE PARA LA PC */
+                @keyframes marqueePC {
+                    0% { transform: translateX(100%); }
+                    100% { transform: translateX(-100%); }
                 }
 
                 .promo-banner {
                     background: linear-gradient(90deg, #059669, #10b981, #059669);
                     color: #ffffff;
-                    text-align: center;
                     padding: 0.7rem 1rem;
                     font-weight: 800;
                     font-size: 0.95rem;
-                    letter-spacing: 0.3px;
-                    animation: promoGlow 3s infinite ease-in-out;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    gap: 0.5rem;
+                    letter-spacing: 0.4px;
+                    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+                    overflow: hidden;
+                    white-space: nowrap;
                     position: relative;
                     z-index: 99;
+                }
+
+                .promo-text-marquee {
+                    display: inline-block;
+                    animation: marqueePC 14s linear infinite;
+                    width: 100%;
+                    text-align: center;
                 }
 
                 /* BOTONERA ADAPTATIVA PROPORCIONAL PARA PC Y MÓVIL */
@@ -150,6 +153,13 @@ app.get('/', (req, res) => {
                     .promo-banner {
                         font-size: 0.82rem !important;
                         padding: 0.6rem 0.5rem !important;
+                        text-align: center !important;
+                        white-space: normal !important;
+                    }
+                    .promo-text-marquee {
+                        animation: none !important;
+                        display: block !important;
+                        width: 100% !important;
                     }
                     .top-bar-container {
                         border-radius: 18px !important;
@@ -194,9 +204,11 @@ app.get('/', (req, res) => {
             </style>
         </head>
         <body>
-            <!-- BANNER PROMOCIONAL ANIMADO ENVÍO GRATIS -->
+            <!-- BANNER PROMOCIONAL CON MOVIMIENTO EN PC -->
             <div class="promo-banner">
-                🚚 <span>¡ENVÍO GRATIS en compras superiores a <strong>$20.000</strong>!</span>
+                <div class="promo-text-marquee">
+                    🚚 <span>¡ENVÍO GRATIS en compras superiores a <strong>$20.000</strong>!</span> 🛍️ <span>¡Aprovechá tus beneficios hoy!</span>
+                </div>
             </div>
 
             <header>
@@ -633,7 +645,7 @@ app.get('/', (req, res) => {
                     let subtotal = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
 
                     const ES_ENVIO_GRATIS = subtotal >= 20000;
-                    let costoEnvio = Number(opcionEnvio.getAttribute('data-costo') || 0);
+                    let costoEnvio = Number(opcionSeleccionada.getAttribute('data-costo') || 0);
 
                     if (ES_ENVIO_GRATIS && opcionEnvio.value !== 'retiro') {
                         costoEnvio = 0;
