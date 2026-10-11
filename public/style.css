@@ -91,15 +91,15 @@ main, .container {
 }
 
 /* GRILLA DE PRODUCTOS */
-.products-grid, .grid, #productos-lista {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 1.5rem;
-    align-items: stretch;
+.products-grid, .grid, #productos-lista, #productosContainer {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important;
+    gap: 1.5rem !important;
+    align-items: stretch !important;
 }
 
 /* TARJETA DE PRODUCTO UNIFORME */
-.product-card, .card, .producto-card {
+.product-card, .card, .producto-card, div[class*="card"] {
     background: #111827 !important;
     border: 1px solid #1f2937 !important;
     border-radius: 16px !important;
@@ -109,7 +109,7 @@ main, .container {
     display: flex !important;
     flex-direction: column !important;
     height: 100% !important;
-    position: relative;
+    position: relative !important;
 }
 
 .product-card:hover, .card:hover, .producto-card:hover {
@@ -118,13 +118,16 @@ main, .container {
     box-shadow: 0 12px 24px rgba(59, 130, 246, 0.25) !important;
 }
 
-/* IMÁGENES PERFECTAS Y PAREJAS (HASTA 200PX) */
+/* ===================================================
+   SOLUCIÓN DEFINITIVA PARA IMÁGENES Y FONDOS (200PX)
+   =================================================== */
+
+/* 1. Para imágenes normales */
 img,
 .product-card img,
 .card img,
 .producto-card img,
-.card-img,
-div img {
+.card-img {
     width: 100% !important;
     height: 200px !important;
     max-height: 200px !important;
@@ -135,8 +138,23 @@ div img {
     display: block !important;
 }
 
+/* 2. Para contenedores que usan la imagen de fondo (background-image) */
+.product-image,
+.imagen-producto,
+.card-img-top,
+div[style*="background-image"] {
+    width: 100% !important;
+    height: 200px !important;
+    max-height: 200px !important;
+    min-height: 200px !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    background-color: #1f2937 !important;
+}
+
 /* CUERPO Y TEXTO DE LA TARJETA */
-.product-info, .card-body {
+.product-info, .card-body, div[class*="info"], div[class*="body"] {
     padding: 1.2rem !important;
     display: flex !important;
     flex-direction: column !important;
