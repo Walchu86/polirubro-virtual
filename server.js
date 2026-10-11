@@ -9,26 +9,50 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(express.json({ limit: '10mb' }));
 
 const DATA_FILE = path.join(__dirname, 'productos.json');
+const CATEGORIAS_FILE = path.join(__dirname, 'categorias.json');
+
+// Categorías por defecto si no existe el archivo
+const categoriasPorDefecto = [
+    { id: 1, nombre: 'Todas', icono: '🏪' },
+    { id: 2, nombre: 'Estética', icono: '💄' },
+    { id: 3, nombre: 'Electrónica', icono: '🎧' },
+    { id: 4, nombre: 'Zapatería', icono: '👟' },
+    { id: 5, nombre: 'Accesorios', icono: '📱' }
+];
+
+function leerCategorias() {
+    if (!fs.existsSync(CATEGORIAS_FILE)) {
+        guardarCategorias(categoriasPorDefecto);
+        return categoriasPorDefecto;
+    }
+    try {
+        return JSON.parse(fs.readFileSync(CATEGORIAS_FILE, 'utf8'));
+    } catch (e) {
+        return categoriasPorDefecto;
+    }
+}
+
+function guardarCategorias(cats) {
+    fs.writeFileSync(CATEGORIAS_FILE, JSON.stringify(cats, null, 2), 'utf8');
+}
 
 function leerProductos() {
     if (!fs.existsSync(DATA_FILE)) return [];
-    const data = fs.readFileSync(DATA_FILE, 'utf8');
     try {
-        return JSON.parse(data);
+        return JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
     } catch (e) {
         return [];
     }
 }
 
-function guardarProductos(productos) {
-    fs.writeFileSync(DATA_FILE, JSON.stringify(productos, null, 2), 'utf8');
+function guardarProductos(prods) {
+    fs.writeFileSync(DATA_FILE, JSON.stringify(prods, null, 2), 'utf8');
 }
 
 function formatearPrecio(monto) {
     return Number(monto || 0).toLocaleString('es-AR');
 }
 
-const categoriasValidas = ['Estética', 'Electrónica', 'Zapatería', 'Accesorios'];
 const etiquetasValidas = ['NINGUNA', 'NUEVO', 'PROMO', 'DESTACADO', 'ÚLTIMOS STOCK'];
 
 // ==========================================
@@ -36,7 +60,7 @@ const etiquetasValidas = ['NINGUNA', 'NUEVO', 'PROMO', 'DESTACADO', 'ÚLTIMOS ST
 // ==========================================
 app.get('/', (req, res) => {
     const productos = leerProductos();
-    const categorias = ['Todas', ...categoriasValidas];
+    const categorias = leerCategorias();
 
     let html = `
         <!DOCTYPE html>
@@ -61,23 +85,34 @@ app.get('/', (req, res) => {
             </header>
 
             <main>
-                <!-- BUSCADOR Y FILTROS -->
-                <section class="filtros-container">
+                <!-- BARRA DE BÚSQUEDA -->
+                <section class="search-section">
                     <div class="search-bar-container">
-                        <input type="text" id="searchInput" oninput="filtrarProductos()" placeholder="🔍 Buscar producto por nombre o palabra clave...">
+                        <input type="text" id="searchInput" oninput="filtrarProductos()" placeholder="🔍 Buscar por nombre o palabra clave...">
                     </div>
-                    <div class="categoria-buttons">
+                </section>
+
+                <!-- SECCIONES EN TARJETAS DE ÍCONOS -->
+                <section class="secciones-container">
+                    <h3 class="section-title">📂 Explorar por Secciones</h3>
+                    <div class="icon-grid">
     `;
 
     categorias.forEach((cat, index) => {
         const activeClass = index === 0 ? 'active' : '';
-        html += `<button class="btn-categoria ${activeClass}" onclick="filtrarCategoria('${cat}', this)">${cat}</button>`;
+        html += `
+            <div class="icon-card ${activeClass}" data-catname="${cat.nombre}" onclick="seleccionarSeccion('${cat.nombre}', this)">
+                <span class="icon-emoji">${cat.icono || '📦'}</span>
+                <span class="icon-label">${cat.nombre}</span>
+            </div>
+        `;
     });
 
     html += `
                     </div>
                 </section>
 
+                <!-- CATÁLOGO DE PRODUCTOS -->
                 <section class="catalogo">
                     <div class="product-grid" id="productGrid">
     `;
@@ -129,12 +164,12 @@ app.get('/', (req, res) => {
                 </section>
             </main>
 
-            <!-- BOTÓN FLOTANTE DE WHATSAPP -->
+            <!-- BOTÓN FLOTANTE WHATSAPP -->
             <a href="https://wa.me/5493794655867?text=¡Hola!%20Tengo%20una%20consulta%20sobre%20Polirubro%20Virtual" class="whatsapp-float" target="_blank">
                 💬 <span>¿Tenés dudas? Hablá con nosotros</span>
             </a>
 
-            <!-- MODAL DEL CARRITO -->
+            <!-- MODAL CARRITO -->
             <div id="cartModal" class="modal">
                 <div class="modal-content">
                     <button type="button" class="close-btn" onclick="toggleCartModal()">&times;</button>
@@ -145,7 +180,6 @@ app.get('/', (req, res) => {
                     </div>
 
                     <div class="cart-options" id="cartOptions" style="display:none;">
-                        <!-- DATOS DEL CLIENTE -->
                         <div class="customer-info-form">
                             <h4>📋 Tus Datos para la Entrega:</h4>
                             <input type="text" id="clienteNombre" class="cart-input" placeholder="Tu Nombre y Apellido *" required>
@@ -153,7 +187,6 @@ app.get('/', (req, res) => {
                             <input type="tel" id="clienteTelefono" class="cart-input" placeholder="Teléfono de contacto">
                         </div>
 
-                        <!-- ZONAS DE ENVÍO Y PAGO -->
                         <div class="option-group">
                             <label for="tipoEnvio">🚚 Zona / Forma de Entrega:</label>
                             <select id="tipoEnvio" class="cart-select" onchange="actualizarTotal()">
@@ -175,7 +208,6 @@ app.get('/', (req, res) => {
                             </select>
                         </div>
 
-                        <!-- DATOS CBU SI ELIGE TRANSFERENCIA -->
                         <div id="transferInfo" class="transfer-info" style="display:none;">
                             <small>🏦 <strong>Alias CBU:</strong> POLIRUBRO.VIRTUAL.MP</small>
                             <button type="button" class="btn-copy" onclick="copiarAlias()">📋 Copiar Alias</button>
@@ -192,12 +224,12 @@ app.get('/', (req, res) => {
                 </div>
             </div>
 
-            <!-- MODAL CÓDIGO QR PARA PC -->
+            <!-- MODAL QR PC -->
             <div id="optionsModal" class="modal">
                 <div class="modal-content" style="text-align:center;">
                     <button type="button" class="close-btn" onclick="cerrarOptionsModal()">&times;</button>
                     <h2>📲 Escaneá para enviar tu Pedido</h2>
-                    <p style="color:#94a3b8; font-size:0.9rem; margin-bottom:1.2rem;">Apuntá con la cámara de tu celular para abrir WhatsApp y enviar el pedido al instante:</p>
+                    <p style="color:#94a3b8; font-size:0.9rem; margin-bottom:1.2rem;">Apuntá con la cámara de tu celular para abrir WhatsApp:</p>
 
                     <div style="background:#0f172a; padding:1.5rem; border-radius:20px; border:1px solid #334155; display:inline-block;">
                         <img id="qrImage" src="" alt="Código QR Pedido" style="width:210px; height:210px; border-radius:12px; border:3px solid #38bdf8;">
@@ -208,7 +240,7 @@ app.get('/', (req, res) => {
             <!-- MODAL ZOOM IMAGEN -->
             <div id="modal-imagen-zoom" onclick="this.style.display='none'" style="display:none; position:fixed; z-index:999999; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.9); justify-content:center; align-items:center; padding:1rem;">
                 <span style="position:absolute; top:20px; right:30px; color:#fff; font-size:2.5rem; font-weight:bold; cursor:pointer;">&times;</span>
-                <img id="img-ampliada" src="" alt="Zoom Producto" style="max-width:90%; max-height:85vh; object-fit:contain; border-radius:12px; box-shadow:0 0 25px rgba(255,255,255,0.2);">
+                <img id="img-ampliada" src="" alt="Zoom Producto" style="max-width:90%; max-height:85vh; object-fit:contain; border-radius:12px;">
             </div>
 
             <footer>
@@ -217,44 +249,40 @@ app.get('/', (req, res) => {
 
             <script>
                 let carrito = [];
-                let categoriaSeleccionada = 'Todas';
+                let seccionActiva = 'Todas';
 
-                function normalizarTexto(str) {
+                function normalizar(str) {
                     if (!str) return '';
-                    return str.toString()
-                        .toLowerCase()
-                        .trim()
-                        .normalize("NFD")
-                        .replace(/[\u0300-\u036f]/g, "");
+                    return str.toString().toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
                 }
 
                 function formatoPesos(num) {
                     return Number(num || 0).toLocaleString('es-AR');
                 }
 
-                function filtrarCategoria(categoria, elemento) {
-                    categoriaSeleccionada = categoria;
-                    const botones = document.querySelectorAll('.btn-categoria');
-                    botones.forEach(btn => btn.classList.remove('active'));
-                    if (elemento) elemento.classList.add('active');
+                function seleccionarSeccion(nombreCat, el) {
+                    seccionActiva = nombreCat;
+                    document.querySelectorAll('.icon-card').forEach(card => card.classList.remove('active'));
+                    if (el) el.classList.add('active');
                     filtrarProductos();
                 }
 
                 function filtrarProductos() {
                     const inputVal = document.getElementById('searchInput') ? document.getElementById('searchInput').value : '';
-                    const busqueda = normalizarTexto(inputVal);
-                    const catSeleccionadaNorm = normalizarTexto(categoriaSeleccionada);
+                    const busqueda = normalizar(inputVal);
+                    const catActivaNorm = normalizar(seccionActiva);
+
                     const tarjetas = document.querySelectorAll('.product-card');
 
                     tarjetas.forEach(tarjeta => {
-                        const catProducto = normalizarTexto(tarjeta.getAttribute('data-categoria'));
-                        const nombre = normalizarTexto(tarjeta.getAttribute('data-nombre'));
-                        const descripcion = normalizarTexto(tarjeta.getAttribute('data-descripcion'));
+                        const catProd = normalizar(tarjeta.getAttribute('data-categoria'));
+                        const nombreProd = normalizar(tarjeta.getAttribute('data-nombre'));
+                        const descProd = normalizar(tarjeta.getAttribute('data-descripcion'));
 
-                        const coincideCategoria = (catSeleccionadaNorm === 'todas' || catProducto === catSeleccionadaNorm);
-                        const coincideTexto = (busqueda === '' || nombre.includes(busqueda) || descripcion.includes(busqueda));
+                        const coincideSeccion = (catActivaNorm === 'todas' || catProd === catActivaNorm);
+                        const coincideBusqueda = (busqueda === '' || nombreProd.includes(busqueda) || descProd.includes(busqueda));
 
-                        if (coincideCategoria && coincideTexto) {
+                        if (coincideSeccion && coincideBusqueda) {
                             tarjeta.style.display = 'flex';
                         } else {
                             tarjeta.style.display = 'none';
@@ -268,7 +296,7 @@ app.get('/', (req, res) => {
                         if (carrito[index].cantidad < stockMax) {
                             carrito[index].cantidad += 1;
                         } else {
-                            alert('Alcanzaste el límite de stock disponible de este producto.');
+                            alert('Alcanzaste el límite de stock disponible.');
                             return;
                         }
                     } else {
@@ -283,7 +311,7 @@ app.get('/', (req, res) => {
                     if (index > -1) {
                         const nuevaCant = carrito[index].cantidad + cambio;
                         if (nuevaCant > carrito[index].stockMax) {
-                            alert('No hay más stock disponible.');
+                            alert('No hay más stock.');
                             return;
                         }
                         carrito[index].cantidad = nuevaCant;
@@ -347,11 +375,11 @@ app.get('/', (req, res) => {
 
                 function copiarAlias() {
                     navigator.clipboard.writeText('POLIRUBRO.VIRTUAL.MP');
-                    alert('¡Alias copiado al portapapeles!');
+                    alert('¡Alias copiado!');
                 }
 
                 function compartirProducto(nombre, precio) {
-                    const texto = \`¡Mirá este producto en Polirubro Virtual! 🛒\\n*\${nombre}* - \$\${formatoPesos(precio)}\\nPedilo directamente acá: https://polirubro-virtual.onrender.com\`;
+                    const texto = \`¡Mirá este producto en Polirubro Virtual! 🛒\\n*\${nombre}* - \$\${formatoPesos(precio)}\\nPedilo acá: https://polirubro-virtual.onrender.com\`;
                     window.open(\`https://api.whatsapp.com/send?text=\${encodeURIComponent(texto)}\`, '_blank');
                 }
 
@@ -381,7 +409,7 @@ app.get('/', (req, res) => {
                     const telefono = document.getElementById('clienteTelefono').value.trim();
 
                     if (!nombre) {
-                        alert('Por favor, ingresá tu Nombre y Apellido.');
+                        alert('Por favor, ingresá tu Nombre.');
                         return;
                     }
 
@@ -393,7 +421,7 @@ app.get('/', (req, res) => {
                     let subtotal = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
                     let totalFinal = subtotal + costoEnvio;
 
-                    let mensaje = \`¡Hola! Quiero confirmar el siguiente pedido en *Polirubro Virtual*:\\n\\n\`;
+                    let mensaje = \`¡Hola! Quiero confirmar mi pedido en *Polirubro Virtual*:\\n\\n\`;
                     mensaje += \`👤 *Cliente:* \${nombre}\\n\`;
                     if (direccion) mensaje += \`📍 *Dirección:* \${direccion}\\n\`;
                     if (telefono) mensaje += \`📞 *Contacto:* \${telefono}\\n\`;
@@ -405,7 +433,7 @@ app.get('/', (req, res) => {
 
                     mensaje += \`\\n🚚 *Entrega:* \${opcionEnvio.text}\`;
                     mensaje += \`\\n💳 *Pago:* \${metodoPago}\`;
-                    mensaje += \`\\n💰 *Total a abonar:* \$\${formatoPesos(totalFinal)}\\n\\n¡Espero tus instrucciones para coordinar!\`;
+                    mensaje += \`\\n💰 *Total a abonar:* \$\${formatoPesos(totalFinal)}\\n\\n¡Gracias!\`;
 
                     const numeroWhatsApp = "5493794655867";
                     const mensajeCodificado = encodeURIComponent(mensaje);
@@ -432,6 +460,7 @@ app.get('/', (req, res) => {
 // ==========================================
 app.get('/admin', (req, res) => {
     const productos = leerProductos();
+    const categorias = leerCategorias().filter(c => c.nombre !== 'Todas');
 
     let html = `
         <!DOCTYPE html>
@@ -446,7 +475,7 @@ app.get('/admin', (req, res) => {
             <header>
                 <div class="header-content">
                     <h1>⚙️ Panel de Control</h1>
-                    <p>Administrá stock, precios y etiquetas de Polirubro Virtual</p>
+                    <p>Administrá Secciones, Productos y Stock de tu Tienda</p>
                 </div>
                 <div class="header-actions">
                     <a href="/" class="admin-link" target="_blank">🌐 Ver Tienda Pública</a>
@@ -454,29 +483,63 @@ app.get('/admin', (req, res) => {
             </header>
 
             <main class="admin-container">
-                <section class="form-section">
-                    <h2>➕ Cargar Nuevo Producto</h2>
-                    <form action="/admin/agregar" method="POST" class="admin-form" id="productForm">
-                        <input type="hidden" id="imagenBase64" name="imagenBase64">
+                <!-- COLUMNA IZQUIERDA: CREAR SECCIÓN Y AGREGAR PRODUCTO -->
+                <div class="admin-column">
+                    <!-- CREAR SECCIÓN -->
+                    <section class="admin-card">
+                        <h2>📂 Crear Nueva Sección / Categoría</h2>
+                        <form action="/admin/categoria/agregar" method="POST" class="admin-form">
+                            <div class="form-group">
+                                <label>Nombre de la Sección:</label>
+                                <input type="text" name="nombreCat" class="custom-input" placeholder="Ej: Bazar, Ferretería, Cotillón" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Ícono Emoji (ej: 🛋️, 🔧, 🎈):</label>
+                                <input type="text" name="iconoCat" class="custom-input" placeholder="🛋️" value="📦" required>
+                            </div>
+                            <button type="submit" class="btn-primary">✨ Guardar Sección</button>
+                        </form>
+                    </section>
 
-                        <div class="form-group">
-                            <label>Nombre del Producto:</label>
-                            <input type="text" name="nombre" class="custom-input" required placeholder="Ej: Protector Solar x 200ml">
-                        </div>
+                    <!-- CARGAR PRODUCTO -->
+                    <section class="admin-card">
+                        <h2>➕ Cargar Nuevo Producto</h2>
+                        <form action="/admin/agregar" method="POST" class="admin-form" id="productForm">
+                            <input type="hidden" id="imagenBase64" name="imagenBase64">
 
-                        <div class="form-group">
-                            <label>Precio en $ (ejemplo: 4000):</label>
-                            <input type="number" name="precio" class="custom-input" required placeholder="4000" step="1">
-                        </div>
+                            <div class="form-group">
+                                <label>Nombre del Producto:</label>
+                                <input type="text" name="nombre" class="custom-input" required placeholder="Ej: Protector Solar x 200ml">
+                            </div>
 
-                        <div class="form-group">
-                            <label>Stock Disponible (Cantidad):</label>
-                            <input type="number" name="stock" class="custom-input" required placeholder="10" value="10" min="0">
-                        </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Precio ($):</label>
+                                    <input type="number" name="precio" class="custom-input" required placeholder="4000" step="1">
+                                </div>
+                                <div class="form-group">
+                                    <label>Stock Disponible:</label>
+                                    <input type="number" name="stock" class="custom-input" required placeholder="10" value="10" min="0">
+                                </div>
+                            </div>
 
-                        <div class="form-group">
-                            <label>Etiqueta / Badge Promocional:</label>
-                            <select name="etiqueta" class="custom-input">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Sección / Categoría:</label>
+                                    <select name="categoria" class="custom-input" required>
+    `;
+
+    categorias.forEach(cat => {
+        html += `<option value="${cat.nombre}">${cat.icono || '📦'} ${cat.nombre}</option>`;
+    });
+
+    html += `
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Etiqueta Promocional:</label>
+                                    <select name="etiqueta" class="custom-input">
     `;
 
     etiquetasValidas.forEach(et => {
@@ -484,49 +547,36 @@ app.get('/admin', (req, res) => {
     });
 
     html += `
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Categoría:</label>
-                            <select name="categoria" class="custom-input" required>
-    `;
-
-    categoriasValidas.forEach(cat => {
-        html += `<option value="${cat}">${cat}</option>`;
-    });
-
-    html += `
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Descripción Breve (opcional):</label>
-                            <textarea name="descripcion" class="custom-input" rows="2" placeholder="Ej: Excelente calidad, incluye accesorios."></textarea>
-                        </div>
-
-                        <div class="form-group" style="background:#0f172a; padding:1rem; border-radius:12px; border:1px solid #334155;">
-                            <label>🖼️ Foto del Producto:</label>
-                            <small style="color:#94a3b8; display:block; margin-bottom:0.5rem;">Cargá un archivo desde tu PC o pegá un enlace URL:</small>
-                            <input type="file" id="fileInput" accept="image/*" style="margin-bottom:0.8rem;" onchange="convertirImagen()">
-                            <label style="font-size:0.85rem; color:#cbd5e1;">O usar Enlace URL:</label>
-                            <input type="url" id="urlInput" name="imagenUrl" class="custom-input" placeholder="https://ejemplo.com/foto.jpg">
-
-                            <div id="previewContainer" style="display:none; margin-top:1rem; text-align:center;">
-                                <small style="color:#38bdf8; display:block;">Vista previa:</small>
-                                <img id="imgPreview" src="" alt="Vista previa" style="max-width:140px; max-height:140px; border-radius:10px; border:2px solid #38bdf8; margin-top:0.4rem; object-fit:cover;">
+                                    </select>
+                                </div>
                             </div>
-                        </div>
 
-                        <button type="submit" class="btn-checkout" style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); width:100%; margin-top:1rem;">
-                            💾 Guardar Producto
-                        </button>
-                    </form>
-                </section>
+                            <div class="form-group">
+                                <label>Descripción Breve:</label>
+                                <textarea name="descripcion" class="custom-input" rows="2" placeholder="Ej: Excelente calidad."></textarea>
+                            </div>
 
-                <section class="list-section">
-                    <h2>📦 Productos en Stock (${productos.length})</h2>
-                    <div class="admin-product-list" style="display:flex; flex-direction:column; gap:1rem; max-height:650px; overflow-y:auto; padding-right:0.5rem;">
+                            <div class="form-group image-upload-box">
+                                <label>🖼️ Foto del Producto:</label>
+                                <input type="file" id="fileInput" accept="image/*" onchange="convertirImagen()">
+                                <small>O usar Enlace URL:</small>
+                                <input type="url" id="urlInput" name="imagenUrl" class="custom-input" placeholder="https://ejemplo.com/foto.jpg">
+
+                                <div id="previewContainer" style="display:none; margin-top:0.8rem; text-align:center;">
+                                    <img id="imgPreview" src="" alt="Vista previa" class="preview-img">
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn-success">💾 Guardar Producto</button>
+                        </form>
+                    </section>
+                </div>
+
+                <!-- COLUMNA DERECHA: LISTADO DE PRODUCTOS -->
+                <div class="admin-column">
+                    <section class="admin-card">
+                        <h2>📦 Productos en Stock (${productos.length})</h2>
+                        <div class="admin-product-list">
     `;
 
     if (productos.length === 0) {
@@ -539,21 +589,19 @@ app.get('/admin', (req, res) => {
             const et = prod.etiqueta && prod.etiqueta !== 'NINGUNA' ? ` | Etiqueta: ${prod.etiqueta}` : '';
 
             html += `
-                <div class="cart-item" style="background:#0f172a; padding:1rem; border-radius:14px; border:1px solid #334155;">
-                    <div style="display:flex; align-items:center; gap:1rem;">
-                        <img src="${prod.imagen}" alt="${prod.nombre}" style="width:60px; height:60px; object-fit:cover; border-radius:10px; border:1px solid #334155;">
+                <div class="admin-item-card">
+                    <img src="${prod.imagen}" alt="${prod.nombre}" class="admin-item-img">
+                    <div class="admin-item-info">
+                        <strong>${prod.nombre}</strong>
                         <div>
-                            <strong style="color:#f8fafc; font-size:1.05rem;">${prod.nombre}</strong><br>
-                            <span class="badge" style="position:static; display:inline-block; margin:0.3rem 0;">${prod.categoria}</span>
-                            <strong style="color:#34d399; margin-left:0.5rem;">$${precioFormateado}</strong>
-                            <br><small style="color:#38bdf8;">Stock: ${stockActual} unidades ${et}</small>
-                            ${desc}
+                            <span class="badge-mini">${prod.categoria}</span>
+                            <strong style="color:#34d399;">$${precioFormateado}</strong>
                         </div>
+                        <small style="color:#38bdf8;">Stock: ${stockActual} u. ${et}</small>
+                        ${desc}
                     </div>
                     <form action="/admin/eliminar/${prod.id}" method="POST" onsubmit="return confirm('¿Seguro que querés eliminar este producto?');">
-                        <button type="submit" style="background:#ef4444; color:white; border:none; padding:0.5rem 0.8rem; border-radius:8px; cursor:pointer; font-weight:bold;">
-                            🗑️
-                        </button>
+                        <button type="submit" class="btn-delete">🗑️</button>
                     </form>
                 </div>
             `;
@@ -561,8 +609,9 @@ app.get('/admin', (req, res) => {
     }
 
     html += `
-                    </div>
-                </section>
+                        </div>
+                    </section>
+                </div>
             </main>
 
             <script>
@@ -603,6 +652,24 @@ app.get('/admin', (req, res) => {
     res.send(html);
 });
 
+// GUARDAR CATEGORÍA NUEVA
+app.post('/admin/categoria/agregar', (req, res) => {
+    const { nombreCat, iconoCat } = req.body;
+    let categorias = leerCategorias();
+
+    if (nombreCat && nombreCat.trim() !== '') {
+        const nuevoId = categorias.length > 0 ? Math.max(...categorias.map(c => c.id)) + 1 : 1;
+        categorias.push({
+            id: nuevoId,
+            nombre: nombreCat.trim(),
+            icono: iconoCat ? iconoCat.trim() : '📦'
+        });
+        guardarCategorias(categorias);
+    }
+    res.redirect('/admin');
+});
+
+// GUARDAR PRODUCTO
 app.post('/admin/agregar', (req, res) => {
     const { nombre, precio, stock, etiqueta, categoria, descripcion, imagenBase64, imagenUrl } = req.body;
     let productos = leerProductos();
@@ -619,7 +686,7 @@ app.post('/admin/agregar', (req, res) => {
         precio: Math.round(Number(precio) || 0),
         stock: Math.max(0, parseInt(stock) || 0),
         etiqueta: etiqueta || 'NINGUNA',
-        categoria,
+        categoria: categoria || 'General',
         descripcion: descripcion ? descripcion.trim() : '',
         imagen: imagenFinal
     });
@@ -628,6 +695,7 @@ app.post('/admin/agregar', (req, res) => {
     res.redirect('/admin');
 });
 
+// ELIMINAR PRODUCTO
 app.post('/admin/eliminar/:id', (req, res) => {
     const idAEliminar = Number(req.params.id);
     let productos = leerProductos();
