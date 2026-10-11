@@ -645,7 +645,7 @@ app.get('/', (req, res) => {
                     let subtotal = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
 
                     const ES_ENVIO_GRATIS = subtotal >= 20000;
-                    let costoEnvio = Number(opcionSeleccionada.getAttribute('data-costo') || 0);
+                    let costoEnvio = Number(opcionEnvio.getAttribute('data-costo') || 0);
 
                     if (ES_ENVIO_GRATIS && opcionEnvio.value !== 'retiro') {
                         costoEnvio = 0;
