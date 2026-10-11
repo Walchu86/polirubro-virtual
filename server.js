@@ -63,7 +63,7 @@ function sincronizarConCloud() {
     req.end();
 }
 
-function cargarDesdeCloud() {
+function cargarDesdeCloud(callback) {
     const options = {
         hostname: 'api.jsonbin.io',
         port: 443,
@@ -88,15 +88,18 @@ function cargarDesdeCloud() {
                     jsonBinConectado = true;
                     console.log('☁️ Datos cargados exitosamente desde JSONBin');
                 }
+                if (callback) callback(true);
             } catch (e) {
                 jsonBinConectado = false;
                 console.error('Error al parsear datos de JSONBin:', e);
+                if (callback) callback(false);
             }
         });
     });
     req.on('error', (e) => {
         jsonBinConectado = false;
         console.error('Error al conectar con JSONBin para lectura:', e);
+        if (callback) callback(false);
     });
     req.end();
 }
@@ -193,7 +196,7 @@ app.get('/', (req, res) => {
 
     let productosHtml = '';
     if (productos.length === 0) {
-        productosHtml = `<p class="no-products">No hay productos cargados en este momento.</p>`;
+        productosHtml = `<p class="no-products" style="color: #94a3b8; text-align: center; grid-column: span 2; padding: 2rem;">No hay productos cargados en este momento.</p>`;
     } else {
         productos.forEach(prod => {
             const imagenUrl = prod.imagen || 'https://via.placeholder.com/300x200?text=Sin+Imagen';
@@ -202,13 +205,14 @@ app.get('/', (req, res) => {
             const stockActual = prod.stock !== undefined ? Number(prod.stock) : 10;
             const estaAgotado = stockActual <= 0;
 
-            const badgeCategoria = `<span class="badge ${estaAgotado ? 'badge-agotado' : ''}">${estaAgotado ? 'AGOTADO' : prod.categoria}</span>`;
+            const categoriaLimpia = (prod.categoria || 'General').trim();
+            const badgeCategoria = `<span class="badge ${estaAgotado ? 'badge-agotado' : ''}">${estaAgotado ? 'AGOTADO' : categoriaLimpia}</span>`;
             const botonAgregar = estaAgotado 
                 ? `<button class="btn-agregar btn-disabled" disabled style="width:100%; padding:0.75rem; border-radius:12px; border:none; background:#374151; color:#9ca3af; font-weight:bold; cursor:not-allowed;">🚫 Sin Stock</button>`
                 : `<button class="btn-agregar" onclick="agregarAlCarrito(${prod.id}, '${prod.nombre.replace(/'/g, "\\'")}', ${prod.precio}, ${stockActual})" style="width:100%; padding:0.75rem; border-radius:12px; border:none; background:linear-gradient(135deg, #2563eb, #3b82f6); color:#fff; font-weight:bold; cursor:pointer;">➕ Agregar al Carrito</button>`;
 
             productosHtml += `
-              <div class="product-card" data-categoria="${(prod.categoria || '').trim()}" data-nombre="${prod.nombre || ''}" data-descripcion="${prod.descripcion || ''}">
+              <div class="product-card" data-categoria="${categoriaLimpia}" data-nombre="${prod.nombre || ''}" data-descripcion="${prod.descripcion || ''}">
                   <div class="product-image-container">
                       <img src="${imagenUrl}" alt="${prod.nombre}" class="zoom-img" onerror="this.src='https://via.placeholder.com/300x200?text=Error+Imagen'">
                       ${badgeCategoria}
@@ -386,6 +390,9 @@ app.get('/', (req, res) => {
                     <h2 id="tituloSeccionActual" style="font-size: 1.5rem; color: #38bdf8; margin-bottom: 1.5rem; border-bottom: 2px solid #1e293b; padding-bottom: 0.6rem; font-weight: 800;"></h2>
                     <div class="product-grid" id="productGrid">
                         ${productosHtml}
+                    </div>
+                    <div id="mensajeSinResultados" style="display: none; text-align: center; color: #94a3b8; padding: 2rem; font-size: 1rem; grid-column: span 2;">
+                        No hay productos disponibles en esta sección por el momento.
                     </div>
                 </section>
             </main>
@@ -613,6 +620,7 @@ app.get('/', (req, res) => {
                     const busqueda = normalizar(document.getElementById('searchInput').value);
                     const catActivaNorm = normalizar(seccionSeleccionada);
                     const tarjetas = document.querySelectorAll('.product-card');
+                    let visibles = 0;
 
                     tarjetas.forEach(tarjeta => {
                         const catProd = normalizar(tarjeta.getAttribute('data-categoria'));
@@ -624,10 +632,16 @@ app.get('/', (req, res) => {
 
                         if (coincideSeccion && coincideBusqueda) {
                             tarjeta.style.setProperty('display', 'flex', 'important');
+                            visibles++;
                         } else {
                             tarjeta.style.setProperty('display', 'none', 'important');
                         }
                     });
+
+                    const mensajeVacio = document.getElementById('mensajeSinResultados');
+                    if (mensajeVacio) {
+                        mensajeVacio.style.display = visibles === 0 ? 'block' : 'none';
+                    }
                 }
 
                 function agregarAlCarrito(id, nombre, precio, stockMax) {
@@ -877,9 +891,11 @@ app.get('/admin', (req, res) => {
         '</div>';
     }).join('');
 
+    const botonVerificarHtml = '<form action="/admin/sincronizar" method="POST" style="margin:0;"><button type="submit" style="background:#10b981; color:#fff; border:none; padding:0.35rem 0.8rem; border-radius:6px; font-weight:bold; cursor:pointer; font-size:0.8rem;">🔄 Forzar Conexión</button></form>';
+
     const estadoJsonBinHtml = jsonBinConectado 
-        ? '<div style="background: rgba(16, 185, 129, 0.15); border: 1px solid #10b981; color: #34d399; padding: 0.7rem 1rem; border-radius: 12px; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; font-size: 0.9rem; font-weight: bold;"><span>☁️ Estado de la Nube: Conectado a JSONBin (ID: ' + BIN_ID.substring(0,6) + '...)</span><span style="background: #10b981; color: #fff; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.75rem;">Sincronizado</span></div>'
-        : '<div style="background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #fca5a5; padding: 0.7rem 1rem; border-radius: 12px; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; font-size: 0.9rem; font-weight: bold;"><span>⚠️ Estado de la Nube: Sin conexión confirmada con JSONBin (Usando memoria local)</span><span style="background: #ef4444; color: #fff; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.75rem;">Verificar API</span></div>';
+        ? '<div style="background: rgba(16, 185, 129, 0.15); border: 1px solid #10b981; color: #34d399; padding: 0.7rem 1rem; border-radius: 12px; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; font-size: 0.9rem; font-weight: bold;"><span>☁️ Estado de la Nube: Conectado a JSONBin (ID: ' + BIN_ID.substring(0,6) + '...)</span>' + botonVerificarHtml + '</div>'
+        : '<div style="background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #fca5a5; padding: 0.7rem 1rem; border-radius: 12px; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; font-size: 0.9rem; font-weight: bold;"><span>⚠️ Estado de la Nube: Sin conexión confirmada (Usando memoria local)</span>' + botonVerificarHtml + '</div>';
 
     let html = `
         <!DOCTYPE html>
@@ -1063,6 +1079,12 @@ app.get('/admin', (req, res) => {
         </html>
     `;
     res.send(html);
+});
+
+app.post('/admin/sincronizar', (req, res) => {
+    cargarDesdeCloud(() => {
+        res.redirect('/admin');
+    });
 });
 
 app.post('/admin/estadisticas/reiniciar', (req, res) => {
