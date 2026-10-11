@@ -54,7 +54,7 @@ app.get('/', (req, res) => {
                     <p>Todo lo que buscás, lo encontrás... ¡Lo cliqueás y te lo llevás!</p>
                 </div>
                 <div class="header-actions">
-                    <button class="cart-summary-btn" onclick="toggleCartModal()">
+                    <button class="cart-btn" onclick="toggleCartModal()">
                         🛒 Carrito (<span id="cartCount">0</span>)
                     </button>
                 </div>
@@ -104,7 +104,7 @@ app.get('/', (req, res) => {
                 : `<button class="btn-agregar" onclick="agregarAlCarrito(${prod.id}, '${prod.nombre.replace(/'/g, "\\'")}', ${prod.precio}, ${stockActual})">➕ Agregar al Carrito</button>`;
 
             html += `
-              <div class="product-card" data-categoria="${prod.categoria}" data-nombre="${prod.nombre.toLowerCase()}" data-descripcion="${(prod.descripcion || '').toLowerCase()}">
+              <div class="product-card" data-categoria="${(prod.categoria || '').toLowerCase().trim()}" data-nombre="${prod.nombre.toLowerCase()}" data-descripcion="${(prod.descripcion || '').toLowerCase()}">
                   <div class="product-image-container">
                       <img src="${imagenUrl}" alt="${prod.nombre}" class="zoom-img" onerror="this.src='https://via.placeholder.com/300x200?text=Error+Imagen'">
                       ${badgeEtiqueta}
@@ -129,10 +129,9 @@ app.get('/', (req, res) => {
                 </section>
             </main>
 
-            <!-- BOTÓN FLOTANTE DE WHATSAPP CON TEXTO -->
+            <!-- BOTÓN FLOTANTE DE WHATSAPP PRO -->
             <a href="https://wa.me/5493794655867?text=¡Hola!%20Tengo%20una%20consulta%20sobre%20Polirubro%20Virtual" class="whatsapp-float" target="_blank">
-                <span class="wa-icon">💬</span>
-                <span class="wa-text">¿Tenés dudas? Hablá con nosotros</span>
+                💬 <span>¿Tenés dudas? Hablá con nosotros</span>
             </a>
 
             <!-- MODAL DEL CARRITO -->
@@ -157,7 +156,7 @@ app.get('/', (req, res) => {
                         <!-- ZONAS DE ENVÍO Y PAGO -->
                         <div class="option-group">
                             <label for="tipoEnvio">🚚 Zona / Forma de Entrega:</label>
-                            <select id="tipoEnvio" class="custom-select" onchange="actualizarTotal()">
+                            <select id="tipoEnvio" onchange="actualizarTotal()">
                                 <option value="retiro" data-costo="0">Retirar por el local (Gratis)</option>
                                 <option value="centro" data-costo="1500">Zona Centro / Cambá Cuá (+$1.500)</option>
                                 <option value="barrios_cercanos" data-costo="2000">Barrios Cercanos / Aldana / Yapeyú (+$2.000)</option>
@@ -167,7 +166,7 @@ app.get('/', (req, res) => {
 
                         <div class="option-group">
                             <label for="metodoPago">💳 Método de Pago:</label>
-                            <select id="metodoPago" class="custom-select" onchange="mostrarDatosTransferencia()">
+                            <select id="metodoPago" onchange="mostrarDatosTransferencia()">
                                 <option value="Efectivo">Efectivo al recibir</option>
                                 <option value="Mercado Pago">Mercado Pago</option>
                                 <option value="Transferencia Bancaria">Transferencia Bancaria (Alias/CBU)</option>
@@ -237,11 +236,11 @@ app.get('/', (req, res) => {
                     const tarjetas = document.querySelectorAll('.product-card');
 
                     tarjetas.forEach(tarjeta => {
-                        const catProducto = tarjeta.getAttribute('data-categoria');
-                        const nombre = tarjeta.getAttribute('data-nombre');
-                        const descripcion = tarjeta.getAttribute('data-descripcion');
+                        const catProducto = tarjeta.getAttribute('data-categoria') || '';
+                        const nombre = tarjeta.getAttribute('data-nombre') || '';
+                        const descripcion = tarjeta.getAttribute('data-descripcion') || '';
 
-                        const coincideCategoria = (categoriaSeleccionada === 'Todas' || catProducto.toLowerCase() === categoriaSeleccionada.toLowerCase());
+                        const coincideCategoria = (categoriaSeleccionada === 'Todas' || catProducto === categoriaSeleccionada.toLowerCase().trim());
                         const coincideTexto = (nombre.includes(busqueda) || descripcion.includes(busqueda));
 
                         if (coincideCategoria && coincideTexto) {
@@ -466,7 +465,7 @@ app.get('/admin', (req, res) => {
 
                         <div class="form-group">
                             <label>Etiqueta / Badge Promocional:</label>
-                            <select name="etiqueta" class="custom-select">
+                            <select name="etiqueta">
     `;
 
     etiquetasValidas.forEach(et => {
@@ -479,7 +478,7 @@ app.get('/admin', (req, res) => {
 
                         <div class="form-group">
                             <label>Categoría:</label>
-                            <select name="categoria" class="custom-select" required>
+                            <select name="categoria" required>
     `;
 
     categoriasValidas.forEach(cat => {
