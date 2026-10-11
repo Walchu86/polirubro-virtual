@@ -19,9 +19,6 @@ const categoriasPorDefecto = [
     { id: 4, nombre: 'Accesorios', icono: '📱', color: 'linear-gradient(135deg, #8b5cf6, #6d28d9)' }
 ];
 
-// ==========================================
-// FUNCIONES DE PERSISTENCIA SEGURA (NO BORRAN LO CARGADO)
-// ==========================================
 function leerCategorias() {
     if (!fs.existsSync(CATEGORIAS_FILE)) {
         guardarCategorias(categoriasPorDefecto);
@@ -58,19 +55,8 @@ function guardarProductos(prods) {
     fs.writeFileSync(DATA_FILE, JSON.stringify(prods, null, 2), 'utf8');
 }
 
-// ==========================================
-// MANEJO DE ESTADÍSTICAS PERSISTENTES
-// ==========================================
 function leerEstadisticas() {
-    const estructuraInicial = {
-        totalVisitas: 0,
-        visitasMovil: 0,
-        visitasPC: 0,
-        secciones: {},
-        busquedas: {},
-        porDia: {}
-    };
-
+    const estructuraInicial = { totalVisitas: 0, visitasMovil: 0, visitasPC: 0, secciones: {}, busquedas: {}, porDia: {} };
     if (!fs.existsSync(STATS_FILE)) {
         guardarEstadisticas(estructuraInicial);
         return estructuraInicial;
@@ -89,7 +75,7 @@ function guardarEstadisticas(stats) {
 
 function obtenerFechaHoy() {
     const ahora = new Date();
-    const offsetArg = -3 * 60; // UTC-3 para Argentina
+    const offsetArg = -3 * 60;
     const fechaArg = new Date(ahora.getTime() + (ahora.getTimezoneOffset() + offsetArg) * 60000);
     return fechaArg.toISOString().split('T')[0];
 }
@@ -100,24 +86,14 @@ function registrarVisita(req) {
     const hoy = obtenerFechaHoy();
 
     let stats = leerEstadisticas();
-
     stats.totalVisitas = (stats.totalVisitas || 0) + 1;
-    if (esMovil) {
-        stats.visitasMovil = (stats.visitasMovil || 0) + 1;
-    } else {
-        stats.visitasPC = (stats.visitasPC || 0) + 1;
-    }
+    if (esMovil) stats.visitasMovil = (stats.visitasMovil || 0) + 1;
+    else stats.visitasPC = (stats.visitasPC || 0) + 1;
 
-    if (!stats.porDia[hoy]) {
-        stats.porDia[hoy] = { total: 0, movil: 0, pc: 0, secciones: {}, busquedas: {} };
-    }
-
+    if (!stats.porDia[hoy]) stats.porDia[hoy] = { total: 0, movil: 0, pc: 0, secciones: {}, busquedas: {} };
     stats.porDia[hoy].total = (stats.porDia[hoy].total || 0) + 1;
-    if (esMovil) {
-        stats.porDia[hoy].movil = (stats.porDia[hoy].movil || 0) + 1;
-    } else {
-        stats.porDia[hoy].pc = (stats.porDia[hoy].pc || 0) + 1;
-    }
+    if (esMovil) stats.porDia[hoy].movil = (stats.porDia[hoy].movil || 0) + 1;
+    else stats.porDia[hoy].pc = (stats.porDia[hoy].pc || 0) + 1;
 
     guardarEstadisticas(stats);
 }
@@ -126,22 +102,15 @@ function formatearPrecio(monto) {
     return Number(monto || 0).toLocaleString('es-AR');
 }
 
-// API ENDPOINTS PARA REGISTRAR ACCIONES DE CLIENTES
 app.post('/api/stats/seccion', (req, res) => {
     const { seccion } = req.body;
     if (!seccion) return res.json({ success: false });
-
     const hoy = obtenerFechaHoy();
     let stats = leerEstadisticas();
-
     stats.secciones[seccion] = (stats.secciones[seccion] || 0) + 1;
-
-    if (!stats.porDia[hoy]) {
-        stats.porDia[hoy] = { total: 0, movil: 0, pc: 0, secciones: {}, busquedas: {} };
-    }
+    if (!stats.porDia[hoy]) stats.porDia[hoy] = { total: 0, movil: 0, pc: 0, secciones: {}, busquedas: {} };
     if (!stats.porDia[hoy].secciones) stats.porDia[hoy].secciones = {};
     stats.porDia[hoy].secciones[seccion] = (stats.porDia[hoy].secciones[seccion] || 0) + 1;
-
     guardarEstadisticas(stats);
     res.json({ success: true });
 });
@@ -150,28 +119,18 @@ app.post('/api/stats/busqueda', (req, res) => {
     const { termino } = req.body;
     const terminoLimpio = (termino || '').trim().toLowerCase();
     if (!terminoLimpio || terminoLimpio.length < 2) return res.json({ success: false });
-
     const hoy = obtenerFechaHoy();
     let stats = leerEstadisticas();
-
     stats.busquedas[terminoLimpio] = (stats.busquedas[terminoLimpio] || 0) + 1;
-
-    if (!stats.porDia[hoy]) {
-        stats.porDia[hoy] = { total: 0, movil: 0, pc: 0, secciones: {}, busquedas: {} };
-    }
+    if (!stats.porDia[hoy]) stats.porDia[hoy] = { total: 0, movil: 0, pc: 0, secciones: {}, busquedas: {} };
     if (!stats.porDia[hoy].busquedas) stats.porDia[hoy].busquedas = {};
     stats.porDia[hoy].busquedas[terminoLimpio] = (stats.porDia[hoy].busquedas[terminoLimpio] || 0) + 1;
-
     guardarEstadisticas(stats);
     res.json({ success: true });
 });
 
-// ==========================================
-// 1. TIENDA PÚBLICA (VISTA CLIENTE)
-// ==========================================
 app.get('/', (req, res) => {
     registrarVisita(req);
-
     const productos = leerProductos();
     const categorias = leerCategorias();
 
@@ -240,9 +199,7 @@ app.get('/', (req, res) => {
                     box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25);
                     transition: all 0.2s;
                 }
-                .btn-home-mini:hover {
-                    transform: translateY(-2px);
-                }
+                .btn-home-mini:hover { transform: translateY(-2px); }
                 .btn-seccion-mini {
                     background: #1e293b !important;
                     color: #f1f5f9 !important;
@@ -258,88 +215,43 @@ app.get('/', (req, res) => {
                     white-space: nowrap !important;
                     transition: all 0.2s;
                 }
-                .btn-seccion-mini:hover {
-                    border-color: #38bdf8 !important;
-                    color: #38bdf8 !important;
-                    transform: translateY(-2px);
-                }
+                .btn-seccion-mini:hover { border-color: #38bdf8 !important; color: #38bdf8 !important; transform: translateY(-2px); }
 
-                /* ESTILOS DE IMAGEN PERFECTAMENTE ENCUADRADA Y SIN CORTES */
+                /* CONTENEDOR DE IMAGEN ESTRICTAMENTE ACOTADO Y PROPORCIONADO */
                 .product-image-container {
                     position: relative;
                     width: 100%;
-                    height: 220px;
+                    height: 180px !important;
+                    max-height: 180px !important;
                     background: #070a12;
                     overflow: hidden;
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    padding: 8px;
+                    padding: 6px;
                     box-sizing: border-box;
                 }
 
                 .product-image-container img.zoom-img {
-                    max-width: 100%;
-                    max-height: 100%;
-                    width: auto;
-                    height: auto;
-                    object-fit: contain;
+                    max-width: 100% !important;
+                    max-height: 100% !important;
+                    width: auto !important;
+                    height: auto !important;
+                    object-fit: contain !important;
                     cursor: zoom-in;
                     transition: transform 0.3s ease;
                 }
 
-                .product-image-container img.zoom-img:hover {
-                    transform: scale(1.05);
-                }
+                .product-image-container img.zoom-img:hover { transform: scale(1.05); }
 
                 @media (max-width: 768px) {
-                    .promo-banner {
-                        font-size: 0.82rem !important;
-                        padding: 0.6rem 0.5rem !important;
-                        text-align: center !important;
-                        white-space: normal !important;
-                    }
-                    .promo-text-marquee {
-                        animation: none !important;
-                        display: block !important;
-                        width: 100% !important;
-                    }
-                    .top-bar-container {
-                        border-radius: 18px !important;
-                        width: 100% !important;
-                        padding: 0.8rem !important;
-                    }
-                    .top-bar-grid {
-                        display: grid !important;
-                        grid-template-columns: repeat(2, 1fr) !important;
-                        gap: 0.5rem !important;
-                    }
-                    .btn-home-mini {
-                        grid-column: span 2 !important;
-                        text-align: center !important;
-                        justify-content: center !important;
-                    }
-                    .btn-seccion-mini {
-                        justify-content: center !important;
-                        padding: 0.5rem 0.6rem !important;
-                        font-size: 0.8rem !important;
-                    }
-                    .card-seccion-glow {
-                        padding: 1.2rem 0.8rem !important;
-                        border-radius: 16px !important;
-                    }
-                    .card-seccion-glow span.icono-cat {
-                        font-size: 2.2rem !important;
-                        margin-bottom: 0.3rem !important;
-                    }
-                    .card-seccion-glow strong {
-                        font-size: 0.95rem !important;
-                    }
-                    .card-seccion-glow span.texto-accion {
-                        font-size: 0.78rem !important;
-                        margin-top: 0.3rem !important;
-                        line-height: 1.1 !important;
-                    }
+                    .promo-banner { font-size: 0.82rem !important; padding: 0.6rem 0.5rem !important; text-align: center !important; white-space: normal !important; }
+                    .promo-text-marquee { animation: none !important; display: block !important; width: 100% !important; }
+                    .top-bar-container { border-radius: 18px !important; width: 100% !important; padding: 0.8rem !important; }
+                    .top-bar-grid { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 0.5rem !important; }
+                    .btn-home-mini { grid-column: span 2 !important; text-align: center !important; justify-content: center !important; }
+                    .btn-seccion-mini { justify-content: center !important; padding: 0.5rem 0.6rem !important; font-size: 0.8rem !important; }
+                    .card-seccion-glow { padding: 1.2rem 0.8rem !important; border-radius: 16px !important; }
                 }
             </style>
         </head>
@@ -356,26 +268,18 @@ app.get('/', (req, res) => {
                     <p style="color: #38bdf8 !important; font-weight: 700;">✨ ¡Hacé clic y llevate lo que más te gusta!</p>
                 </div>
                 <div class="header-actions">
-                    <button class="cart-btn" onclick="toggleCartModal()">
-                        🛒 Carrito (<span id="cartCount">0</span>)
-                    </button>
+                    <button class="cart-btn" onclick="toggleCartModal()">🛒 Carrito (<span id="cartCount">0</span>)</button>
                 </div>
             </header>
 
             <main>
                 <section class="top-bar-container">
                     <div class="top-bar-grid">
-                        <button onclick="mostrarMenuPrincipal()" class="btn-home-mini">
-                            🏠 Inicio
-                        </button>
+                        <button onclick="mostrarMenuPrincipal()" class="btn-home-mini">🏠 Inicio</button>
     `;
 
     categorias.forEach(cat => {
-        html += `
-            <button onclick="entrarASeccion('${cat.nombre.replace(/'/g, "\\'")}')" class="btn-seccion-mini">
-                <span>${cat.icono || '📦'}</span> ${cat.nombre}
-            </button>
-        `;
+        html += `<button onclick="entrarASeccion('${cat.nombre.replace(/'/g, "\\'")}')" class="btn-seccion-mini"><span>${cat.icono || '📦'}</span> ${cat.nombre}</button>`;
     });
 
     html += `
@@ -423,7 +327,6 @@ app.get('/', (req, res) => {
             const estaAgotado = stockActual <= 0;
 
             const badgeCategoria = `<span class="badge ${estaAgotado ? 'badge-agotado' : ''}">${estaAgotado ? 'AGOTADO' : prod.categoria}</span>`;
-
             const botonAgregar = estaAgotado 
                 ? `<button class="btn-agregar btn-disabled" disabled style="width:100%; padding:0.75rem; border-radius:12px; border:none; background:#374151; color:#9ca3af; font-weight:bold; cursor:not-allowed;">🚫 Sin Stock</button>`
                 : `<button class="btn-agregar" onclick="agregarAlCarrito(${prod.id}, '${prod.nombre.replace(/'/g, "\\'")}', ${prod.precio}, ${stockActual})" style="width:100%; padding:0.75rem; border-radius:12px; border:none; background:linear-gradient(135deg, #2563eb, #3b82f6); color:#fff; font-weight:bold; cursor:pointer;">➕ Agregar al Carrito</button>`;
@@ -467,7 +370,7 @@ app.get('/', (req, res) => {
                 💬 <span>¿Tenés dudas? Hablá con nosotros</span>
             </a>
 
-            <!-- POPUP BIENVENIDA -->
+            <!-- MODAL BIENVENIDA -->
             <div id="promoWelcomeModal" class="modal" style="display:none; position:fixed; z-index:9999999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.85); justify-content:center; align-items:center; padding:1rem;">
                 <div style="background: linear-gradient(135deg, #0f172a, #1e1b4b); border: 2px solid #10b981; border-radius: 28px; padding: 2.2rem 1.8rem; width: 100%; max-width: 440px; text-align: center; position: relative; color: #fff; box-shadow: 0 20px 60px rgba(16, 185, 129, 0.4);">
                     <button type="button" onclick="cerrarPromoWelcome()" style="position:absolute; top:15px; right:20px; background:none; border:none; color:#94a3b8; font-size:2rem; cursor:pointer;">&times;</button>
@@ -485,9 +388,7 @@ app.get('/', (req, res) => {
             <!-- MODAL CARRITO COMPACTO -->
             <div id="cartModal" class="modal" style="display:none; position:fixed; z-index:999999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.85); justify-content:center; align-items:center; padding:1rem;">
                 <div style="background:#0f172a; border:1px solid #334155; border-radius:24px; padding:1.5rem; width:100%; max-width:420px; position:relative; color:#f8fafc; box-shadow:0 20px 50px rgba(0,0,0,0.9); max-height:85vh; overflow-y:auto;">
-                    
-                    <button type="button" onclick="toggleCartModal()" style="position:absolute; top:12px; right:16px; background:#ef4444; color:#fff; border:none; width:32px; height:32px; border-radius:50%; font-size:1.2rem; font-weight:bold; cursor:pointer; display:flex; align-items:center; justify-content:center;" title="Cerrar y volver">&times;</button>
-                    
+                    <button type="button" onclick="toggleCartModal()" style="position:absolute; top:12px; right:16px; background:#ef4444; color:#fff; border:none; width:32px; height:32px; border-radius:50%; font-size:1.2rem; font-weight:bold; cursor:pointer; display:flex; align-items:center; justify-content:center;">&times;</button>
                     <h2 style="font-size:1.25rem; color:#38bdf8; margin-bottom:0.6rem; font-weight:800;">🛒 Tu Carrito</h2>
                     
                     <div id="promoEnvioProgress" style="background:#1e293b; border:1px solid #3b82f6; border-radius:10px; padding:0.4rem 0.6rem; margin-bottom:0.6rem; text-align:center; font-size:0.8rem; font-weight:bold;">
@@ -591,17 +492,12 @@ app.get('/', (req, res) => {
                     }
                 });
 
-                // MANEJO INTELIGENTE DEL BOTÓN "ATRÁS" DEL CELULAR
                 window.addEventListener('popstate', function(event) {
                     const modalZoom = document.getElementById("modal-imagen-zoom");
-                    
-                    // 1. Si el zoom de la imagen está abierto, cerrarlo primero
                     if (modalZoom.style.display === "flex") {
                         modalZoom.style.display = "none";
                         return;
                     }
-
-                    // 2. Si estamos dentro de una sección, volver al menú principal en lugar de salir de la página
                     if (seccionSeleccionada !== '') {
                         mostrarMenuPrincipal(true, false);
                     }
@@ -632,11 +528,7 @@ app.get('/', (req, res) => {
 
                 function normalizar(str) {
                     if (!str) return '';
-                    return str.toString()
-                        .toLowerCase()
-                        .trim()
-                        .normalize("NFD")
-                        .replace(/[\u0300-\u036f]/g, "");
+                    return str.toString().toLowerCase().trim().normalize("NFD").replace(/[\\u0300-\\u036f]/g, "");
                 }
 
                 function formatoPesos(num) {
@@ -791,7 +683,6 @@ app.get('/', (req, res) => {
                     const contenedorEnvio = document.getElementById('contenedorEnvio');
                     const cartelEnvioGratis = document.getElementById('cartelEnvioGratis');
                     const promoProgress = document.getElementById('promoEnvioProgress');
-
                     const ES_ENVIO_GRATIS = subtotal >= 20000;
 
                     if (ES_ENVIO_GRATIS) {
@@ -799,7 +690,6 @@ app.get('/', (req, res) => {
                         promoProgress.style.borderColor = '#10b981';
                         promoProgress.style.color = '#a7f3d0';
                         promoProgress.innerHTML = '🎉 ¡Felicitaciones! Tenés <strong>ENVÍO GRATIS</strong> en esta compra.';
-                        
                         contenedorEnvio.style.display = 'none';
                         cartelEnvioGratis.style.display = 'block';
                     } else {
@@ -808,7 +698,6 @@ app.get('/', (req, res) => {
                         promoProgress.style.borderColor = '#3b82f6';
                         promoProgress.style.color = '#38bdf8';
                         promoProgress.innerHTML = \`🚚 Agregá \$\${formatoPesos(falta)} más para tener <strong>ENVÍO GRATIS</strong>\`;
-
                         contenedorEnvio.style.display = 'block';
                         cartelEnvioGratis.style.display = 'none';
                     }
@@ -859,7 +748,6 @@ app.get('/', (req, res) => {
 
                 function procesarPedido() {
                     if (carrito.length === 0) return;
-
                     const nombre = document.getElementById('clienteNombre').value.trim();
                     const direccion = document.getElementById('clienteDireccion').value.trim();
                     const telefono = document.getElementById('clienteTelefono').value.trim();
@@ -871,7 +759,6 @@ app.get('/', (req, res) => {
 
                     let subtotal = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
                     const ES_ENVIO_GRATIS = subtotal >= 20000;
-                    
                     let costoEnvio = 0;
                     let detalleEnvioTexto = "Envío a Domicilio (¡ENVÍO GRATIS APLICADO!)";
 
@@ -906,7 +793,6 @@ app.get('/', (req, res) => {
                     const esMovil = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
 
                     toggleCartModal();
-
                     if (esMovil) {
                         window.location.href = \`https://api.whatsapp.com/send?phone=\${numeroWhatsApp}&text=\${mensajeCodificado}\`;
                     } else {
@@ -922,9 +808,6 @@ app.get('/', (req, res) => {
     res.send(html);
 });
 
-// ==========================================
-// 2. PANEL ADMINISTRADOR
-// ==========================================
 app.get('/admin', (req, res) => {
     const productos = leerProductos();
     const categorias = leerCategorias();
@@ -932,77 +815,40 @@ app.get('/admin', (req, res) => {
     const hoy = obtenerFechaHoy();
 
     const statsHoy = stats.porDia && stats.porDia[hoy] ? stats.porDia[hoy] : { total: 0, movil: 0, pc: 0, secciones: {}, busquedas: {} };
+    const seccionesOrdenadas = Object.entries(stats.secciones || {}).sort((a, b) => b[1] - a[1]);
+    const busquedasOrdenadas = Object.entries(stats.busquedas || {}).sort((a, b) => b[1] - a[1]);
 
-    const seccionesOrdenadas = Object.entries(stats.secciones || {})
-        .sort((a, b) => b[1] - a[1]);
+    let filasSeccionesHTML = seccionesOrdenadas.length === 0 ? '<tr><td colspan="2" style="color:#94a3b8; font-size:0.85rem;">Aún no hay ingresos a secciones.</td></tr>' : seccionesOrdenadas.map(([sec, cant]) => '<tr><td style="color:#fff; font-weight:bold;">' + sec + '</td><td style="color:#34d399; font-weight:bold; text-align:right;">' + cant + '</td></tr>').join('');
+    let filasBusquedasHTML = busquedasOrdenadas.length === 0 ? '<tr><td colspan="2" style="color:#94a3b8; font-size:0.85rem;">Aún no hay búsquedas registradas.</td></tr>' : busquedasOrdenadas.slice(0, 10).map(([term, cant]) => '<tr><td style="color:#fff; text-transform:capitalize;">' + term + '</td><td style="color:#38bdf8; font-weight:bold; text-align:right;">' + cant + '</td></tr>').join('');
+    let opcionesCatHTML = categorias.map(cat => '<option value="' + cat.nombre + '">' + (cat.icono || '📦') + ' ' + cat.nombre + '</option>').join('');
 
-    const busquedasOrdenadas = Object.entries(stats.busquedas || {})
-        .sort((a, b) => b[1] - a[1]);
-
-    let filasSeccionesHTML = '';
-    if (seccionesOrdenadas.length === 0) {
-        filasSeccionesHTML = '<tr><td colspan="2" style="color:#94a3b8; font-size:0.85rem;">Aún no hay ingresos a secciones.</td></tr>';
-    } else {
-        for (let i = 0; i < seccionesOrdenadas.length; i++) {
-            const sec = seccionesOrdenadas[i][0];
-            const cant = seccionesOrdenadas[i][1];
-            filasSeccionesHTML += '<tr><td style="color:#fff; font-weight:bold;">' + sec + '</td><td style="color:#34d399; font-weight:bold; text-align:right;">' + cant + '</td></tr>';
-        }
-    }
-
-    let filasBusquedasHTML = '';
-    if (busquedasOrdenadas.length === 0) {
-        filasBusquedasHTML = '<tr><td colspan="2" style="color:#94a3b8; font-size:0.85rem;">Aún no hay búsquedas registradas.</td></tr>';
-    } else {
-        const limite = Math.min(busquedasOrdenadas.length, 10);
-        for (let i = 0; i < limite; i++) {
-            const term = busquedasOrdenadas[i][0];
-            const cant = busquedasOrdenadas[i][1];
-            filasBusquedasHTML += '<tr><td style="color:#fff; text-transform:capitalize;">' + term + '</td><td style="color:#38bdf8; font-weight:bold; text-align:right;">' + cant + '</td></tr>';
-        }
-    }
-
-    let opcionesCatHTML = '';
-    for (let i = 0; i < categorias.length; i++) {
-        const cat = categorias[i];
-        opcionesCatHTML += '<option value="' + cat.nombre + '">' + (cat.icono || '📦') + ' ' + cat.nombre + '</option>';
-    }
-
-    let listaProductosAdminHTML = '';
-    if (productos.length === 0) {
-        listaProductosAdminHTML = '<p style="color:#94a3b8;">No hay productos cargados.</p>';
-    } else {
-        for (let i = 0; i < productos.length; i++) {
-            const prod = productos[i];
-            const desc = prod.descripcion ? '<br><small style="color:#94a3b8;">' + prod.descripcion + '</small>' : '';
-            const precioFormateado = formatearPrecio(prod.precio);
-            const stockActual = prod.stock !== undefined ? prod.stock : 0;
-
-            listaProductosAdminHTML += '<div style="display:flex; flex-direction:column; gap:0.6rem; background:#0f172a; padding:0.9rem; border-radius:14px; border:1px solid #1e293b; margin-bottom:0.8rem;">' +
-                '<div style="display:flex; align-items:center; gap:0.8rem; width:100%;">' +
-                    '<img src="' + prod.imagen + '" alt="' + prod.nombre + '" style="width:50px; height:50px; object-fit:contain; border-radius:8px; background:#070a12;">' +
-                    '<div style="flex:1; overflow:hidden;">' +
-                        '<strong style="color:#fff; font-size:0.95rem; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">' + prod.nombre + '</strong>' +
-                        '<div style="display:flex; align-items:center; gap:0.5rem; margin-top:0.2rem;">' +
-                            '<span style="background:rgba(56,189,248,0.15); color:#38bdf8; padding:0.15rem 0.5rem; border-radius:10px; font-size:0.75rem; font-weight:700;">' + prod.categoria + '</span>' +
-                            '<strong style="color:#34d399; font-size:0.9rem;">\$' + precioFormateado + '</strong>' +
-                        '</div>' +
-                        desc +
-                    '</div>' +
-                    '<form action="/admin/eliminar/' + prod.id + '" method="POST" onsubmit="return confirm(\'¿Seguro que querés eliminar este producto?\');">' +
-                        '<button type="submit" style="background:#ef4444; color:white; border:none; padding:0.4rem 0.6rem; border-radius:8px; cursor:pointer;" title="Eliminar Producto">🗑️</button>' +
-                    '</form>' +
+    let listaProductosAdminHTML = productos.length === 0 ? '<p style="color:#94a3b8;">No hay productos cargados.</p>' : productos.map(prod => {
+        const desc = prod.descripcion ? '<br><small style="color:#94a3b8;">' + prod.descripcion + '</small>' : '';
+        const precioFormateado = formatearPrecio(prod.precio);
+        const stockActual = prod.stock !== undefined ? prod.stock : 0;
+        return '<div style="display:flex; flex-direction:column; gap:0.6rem; background:#0f172a; padding:0.9rem; border-radius:14px; border:1px solid #1e293b; margin-bottom:0.8rem;">' +
+            '<div style="display:flex; align-items:center; gap:0.8rem; width:100%;">' +
+                '<img src="' + prod.imagen + '" alt="' + prod.nombre + '" style="width:50px; height:50px; object-fit:contain; border-radius:8px; background:#070a12;">' +
+                '<div style="flex:1; overflow:hidden;">' +
+                    '<strong style="color:#fff; font-size:0.95rem; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">' + prod.nombre + '</strong>' +
+                    '<div style="display:flex; align-items:center; gap:0.5rem; margin-top:0.2rem;">' +
+                        '<span style="background:rgba(56,189,248,0.15); color:#38bdf8; padding:0.15rem 0.5rem; border-radius:10px; font-size:0.75rem; font-weight:700;">' + prod.categoria + '</span>' +
+                        '<strong style="color:#34d399; font-size:0.9rem;">\$' + precioFormateado + '</strong>' +
+                    '</div>' + desc +
                 '</div>' +
-                '<form action="/admin/actualizar-stock/' + prod.id + '" method="POST" style="display:flex; align-items:center; justify-content:space-between; background:#1e293b; padding:0.5rem 0.7rem; border-radius:8px; border:1px solid #334155;">' +
-                    '<span style="font-size:0.8rem; color:#38bdf8; font-weight:bold;">📦 Stock:</span>' +
-                    '<div style="display:flex; align-items:center; gap:0.4rem;">' +
-                        '<input type="number" name="nuevoStock" value="' + stockActual + '" min="0" style="width:60px; padding:0.3rem; border-radius:6px; background:#0f172a; color:#fff; border:1px solid #475569; text-align:center; font-weight:bold;">' +
-                        '<button type="submit" style="background:#2563eb; color:#fff; border:none; padding:0.35rem 0.7rem; border-radius:6px; font-weight:bold; cursor:pointer; font-size:0.78rem;">💾 Guardar</button>' +
-                    '</div>' +
+                '<form action="/admin/eliminar/' + prod.id + '" method="POST" onsubmit="return confirm(\'¿Seguro que querés eliminar este producto?\');">' +
+                    '<button type="submit" style="background:#ef4444; color:white; border:none; padding:0.4rem 0.6rem; border-radius:8px; cursor:pointer;" title="Eliminar Producto">🗑️</button>' +
                 '</form>' +
-            '</div>';
-        }
-    }
+            '</div>' +
+            '<form action="/admin/actualizar-stock/' + prod.id + '" method="POST" style="display:flex; align-items:center; justify-content:space-between; background:#1e293b; padding:0.5rem 0.7rem; border-radius:8px; border:1px solid #334155;">' +
+                '<span style="font-size:0.8rem; color:#38bdf8; font-weight:bold;">📦 Stock:</span>' +
+                '<div style="display:flex; align-items:center; gap:0.4rem;">' +
+                    '<input type="number" name="nuevoStock" value="' + stockActual + '" min="0" style="width:60px; padding:0.3rem; border-radius:6px; background:#0f172a; color:#fff; border:1px solid #475569; text-align:center; font-weight:bold;">' +
+                    '<button type="submit" style="background:#2563eb; color:#fff; border:none; padding:0.35rem 0.7rem; border-radius:6px; font-weight:bold; cursor:pointer; font-size:0.78rem;">💾 Guardar</button>' +
+                '</div>' +
+            '</form>' +
+        '</div>';
+    }).join('');
 
     let html = `
         <!DOCTYPE html>
@@ -1013,69 +859,17 @@ app.get('/admin', (req, res) => {
             <title>Panel Administrador | Polirubro Virtual</title>
             <link rel="stylesheet" href="/style.css">
             <style>
-                body.admin-body {
-                    background-color: #0b0f19 !important;
-                    color: #f8fafc !important;
-                    font-family: system-ui, -apple-system, sans-serif !important;
-                }
-                .admin-wrapper {
-                    max-width: 1250px;
-                    margin: 0 auto;
-                    padding: 1.5rem 1rem;
-                }
-                .grid-stats-cards {
-                    display: grid;
-                    grid-template-columns: repeat(3, 1fr);
-                    gap: 1rem;
-                    margin-bottom: 1.5rem;
-                }
-                .stat-box-clean {
-                    background: #1e293b;
-                    border: 1px solid #334155;
-                    border-radius: 16px;
-                    padding: 1.2rem 1rem;
-                    text-align: center;
-                }
-                .stat-box-clean h3 {
-                    color: #94a3b8;
-                    font-size: 0.82rem;
-                    margin: 0 0 0.3rem 0;
-                    text-transform: uppercase;
-                }
-                .stat-box-clean .num {
-                    font-size: 2rem;
-                    font-weight: 900;
-                    color: #38bdf8;
-                }
-                .stat-box-clean .sub {
-                    font-size: 0.78rem;
-                    color: #34d399;
-                    font-weight: 700;
-                    margin-top: 0.2rem;
-                }
-                .table-clean {
-                    width: 100%;
-                    border-collapse: collapse;
-                }
-                .table-clean th, .table-clean td {
-                    padding: 0.5rem 0.7rem;
-                    border-bottom: 1px solid #334155;
-                    font-size: 0.85rem;
-                }
-                .admin-two-columns {
-                    display: grid;
-                    grid-template-columns: 1fr 1fr;
-                    gap: 1.5rem;
-                    align-items: start;
-                }
-                @media (max-width: 900px) {
-                    .grid-stats-cards {
-                        grid-template-columns: 1fr;
-                    }
-                    .admin-two-columns {
-                        grid-template-columns: 1fr;
-                    }
-                }
+                body.admin-body { background-color: #0b0f19 !important; color: #f8fafc !important; font-family: system-ui, -apple-system, sans-serif !important; }
+                .admin-wrapper { max-width: 1250px; margin: 0 auto; padding: 1.5rem 1rem; }
+                .grid-stats-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+                .stat-box-clean { background: #1e293b; border: 1px solid #334155; border-radius: 16px; padding: 1.2rem 1rem; text-align: center; }
+                .stat-box-clean h3 { color: #94a3b8; font-size: 0.82rem; margin: 0 0 0.3rem 0; text-transform: uppercase; }
+                .stat-box-clean .num { font-size: 2rem; font-weight: 900; color: #38bdf8; }
+                .stat-box-clean .sub { font-size: 0.78rem; color: #34d399; font-weight: 700; margin-top: 0.2rem; }
+                .table-clean { width: 100%; border-collapse: collapse; }
+                .table-clean th, .table-clean td { padding: 0.5rem 0.7rem; border-bottom: 1px solid #334155; font-size: 0.85rem; }
+                .admin-two-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; align-items: start; }
+                @media (max-width: 900px) { .grid-stats-cards { grid-template-columns: 1fr; } .admin-two-columns { grid-template-columns: 1fr; } }
             </style>
         </head>
         <body class="admin-body">
@@ -1088,8 +882,6 @@ app.get('/admin', (req, res) => {
             </header>
 
             <div class="admin-wrapper">
-
-                <!-- BLOQUE 1: MÉTRICAS -->
                 <section style="background:#0f172a; border:1px solid #1e293b; border-radius:20px; padding:1.5rem; margin-bottom:1.8rem; box-shadow:0 8px 25px rgba(0,0,0,0.4);">
                     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1.2rem; border-bottom:1px solid #1e293b; padding-bottom:0.8rem;">
                         <div>
@@ -1123,38 +915,21 @@ app.get('/admin', (req, res) => {
                         <div style="background:#1e293b; padding:1rem; border-radius:12px; border:1px solid #334155;">
                             <h4 style="margin:0 0 0.6rem 0; color:#38bdf8; font-size:0.95rem;">📂 Clics por Sección</h4>
                             <table class="table-clean">
-                                <thead>
-                                    <tr style="color:#94a3b8; text-align:left;">
-                                        <th>Sección</th>
-                                        <th style="text-align:right;">Clics</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${filasSeccionesHTML}
-                                </tbody>
+                                <thead><tr style="color:#94a3b8; text-align:left;"><th>Sección</th><th style="text-align:right;">Clics</th></tr></thead>
+                                <tbody>${filasSeccionesHTML}</tbody>
                             </table>
                         </div>
-
                         <div style="background:#1e293b; padding:1rem; border-radius:12px; border:1px solid #334155;">
                             <h4 style="margin:0 0 0.6rem 0; color:#38bdf8; font-size:0.95rem;">🔍 Búsquedas Frecuentes</h4>
                             <table class="table-clean">
-                                <thead>
-                                    <tr style="color:#94a3b8; text-align:left;">
-                                        <th>Término</th>
-                                        <th style="text-align:right;">Cant.</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${filasBusquedasHTML}
-                                </tbody>
+                                <thead><tr style="color:#94a3b8; text-align:left;"><th>Término</th><th style="text-align:right;">Cant.</th></tr></thead>
+                                <tbody>${filasBusquedasHTML}</tbody>
                             </table>
                         </div>
                     </div>
                 </section>
 
-                <!-- BLOQUE 2: FORMULARIOS Y PRODUCTOS -->
                 <div class="admin-two-columns">
-                    
                     <div style="display:flex; flex-direction:column; gap:1.5rem;">
                         <section style="background:#0f172a; border:1px solid #1e293b; border-radius:18px; padding:1.2rem;">
                             <h3 style="margin:0 0 1rem 0; font-size:1.1rem; color:#38bdf8;">📂 Crear Nueva Sección</h3>
@@ -1175,12 +950,10 @@ app.get('/admin', (req, res) => {
                             <h3 style="margin:0 0 1rem 0; font-size:1.1rem; color:#38bdf8;">➕ Cargar Nuevo Producto</h3>
                             <form action="/admin/agregar" method="POST" id="productForm" style="display:flex; flex-direction:column; gap:0.8rem;">
                                 <input type="hidden" id="imagenBase64" name="imagenBase64">
-
                                 <div>
                                     <label style="font-size:0.82rem; color:#cbd5e1; display:block; margin-bottom:0.3rem;">Nombre del Producto:</label>
                                     <input type="text" name="nombre" required placeholder="Ej: Protector Solar" style="width:100%; padding:0.6rem; border-radius:8px; background:#1e293b; border:1px solid #334155; color:#fff; outline:none;">
                                 </div>
-
                                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem;">
                                     <div>
                                         <label style="font-size:0.82rem; color:#cbd5e1; display:block; margin-bottom:0.3rem;">Precio ($):</label>
@@ -1191,19 +964,16 @@ app.get('/admin', (req, res) => {
                                         <input type="number" name="stock" required value="10" min="0" style="width:100%; padding:0.6rem; border-radius:8px; background:#1e293b; border:1px solid #334155; color:#fff; outline:none;">
                                     </div>
                                 </div>
-
                                 <div>
                                     <label style="font-size:0.82rem; color:#cbd5e1; display:block; margin-bottom:0.3rem;">Sección:</label>
                                     <select name="categoria" required style="width:100%; padding:0.6rem; border-radius:8px; background:#1e293b; border:1px solid #334155; color:#fff; outline:none;">
                                         ${opcionesCatHTML}
                                     </select>
                                 </div>
-
                                 <div>
                                     <label style="font-size:0.82rem; color:#cbd5e1; display:block; margin-bottom:0.3rem;">Descripción:</label>
                                     <textarea name="descripcion" rows="2" placeholder="Breve detalle..." style="width:100%; padding:0.6rem; border-radius:8px; background:#1e293b; border:1px solid #334155; color:#fff; outline:none;"></textarea>
                                 </div>
-
                                 <div>
                                     <label style="font-size:0.82rem; color:#cbd5e1; display:block; margin-bottom:0.3rem;">🖼️ Imagen (Archivo o URL):</label>
                                     <input type="file" id="fileInput" accept="image/*" onchange="convertirImagen()" style="margin-bottom:0.4rem;">
@@ -1212,7 +982,6 @@ app.get('/admin', (req, res) => {
                                         <img id="imgPreview" src="" alt="Preview" style="max-width:100px; max-height:100px; border-radius:8px; border:1px solid #38bdf8; background:#070a12; object-fit:contain;">
                                     </div>
                                 </div>
-
                                 <button type="submit" style="background:#10b981; color:#fff; border:none; padding:0.8rem; border-radius:8px; font-weight:bold; cursor:pointer;">💾 Guardar Producto</button>
                             </form>
                         </section>
@@ -1220,13 +989,9 @@ app.get('/admin', (req, res) => {
 
                     <section style="background:#0f172a; border:1px solid #1e293b; border-radius:18px; padding:1.2rem;">
                         <h3 style="margin:0 0 1rem 0; font-size:1.1rem; color:#38bdf8;">📦 Productos Cargados (${productos.length})</h3>
-                        <div>
-                            ${listaProductosAdminHTML}
-                        </div>
+                        <div>${listaProductosAdminHTML}</div>
                     </section>
-
                 </div>
-
             </div>
 
             <script>
@@ -1236,7 +1001,6 @@ app.get('/admin', (req, res) => {
                     const preview = document.getElementById('imgPreview');
                     const previewContainer = document.getElementById('previewContainer');
                     const hiddenInput = document.getElementById('imagenBase64');
-
                     if (file) {
                         const reader = new FileReader();
                         reader.onload = function(e) {
@@ -1247,13 +1011,11 @@ app.get('/admin', (req, res) => {
                         reader.readAsDataURL(file);
                     }
                 }
-
                 document.getElementById('urlInput').addEventListener('input', function() {
                     const url = this.value.trim();
                     const preview = document.getElementById('imgPreview');
                     const previewContainer = document.getElementById('previewContainer');
                     const hiddenInput = document.getElementById('imagenBase64');
-
                     if (url) {
                         hiddenInput.value = '';
                         preview.src = url;
@@ -1268,43 +1030,28 @@ app.get('/admin', (req, res) => {
 });
 
 app.post('/admin/estadisticas/reiniciar', (req, res) => {
-    guardarEstadisticas({
-        totalVisitas: 0,
-        visitasMovil: 0,
-        visitasPC: 0,
-        secciones: {},
-        busquedas: {},
-        porDia: {}
-    });
+    guardarEstadisticas({ totalVisitas: 0, visitasMovil: 0, visitasPC: 0, secciones: {}, busquedas: {}, porDia: {} });
     res.redirect('/admin');
 });
 
 app.post('/admin/actualizar-stock/:id', (req, res) => {
     const idProd = Number(req.params.id);
     const nuevoStock = Math.max(0, parseInt(req.body.nuevoStock) || 0);
-
     let productos = leerProductos();
     const index = productos.findIndex(p => p.id === idProd);
-
     if (index > -1) {
         productos[index].stock = nuevoStock;
         guardarProductos(productos);
     }
-
     res.redirect('/admin');
 });
 
 app.post('/admin/categoria/agregar', (req, res) => {
     const { nombreCat, iconoCat } = req.body;
     let categorias = leerCategorias();
-
     if (nombreCat && nombreCat.trim() !== '') {
         const nuevoId = categorias.length > 0 ? Math.max(...categorias.map(c => c.id)) + 1 : 1;
-        categorias.push({
-            id: nuevoId,
-            nombre: nombreCat.trim(),
-            icono: iconoCat ? iconoCat.trim() : '📦'
-        });
+        categorias.push({ id: nuevoId, nombre: nombreCat.trim(), icono: iconoCat ? iconoCat.trim() : '📦' });
         guardarCategorias(categorias);
     }
     res.redirect('/admin');
@@ -1313,12 +1060,8 @@ app.post('/admin/categoria/agregar', (req, res) => {
 app.post('/admin/agregar', (req, res) => {
     const { nombre, precio, stock, categoria, descripcion, imagenBase64, imagenUrl } = req.body;
     let productos = leerProductos();
-
     const nuevoId = productos.length > 0 ? Math.max(...productos.map(p => p.id)) + 1 : 1;
-    
-    const imagenFinal = imagenBase64 && imagenBase64.trim() !== '' 
-        ? imagenBase64 
-        : (imagenUrl && imagenUrl.trim() !== '' ? imagenUrl.trim() : 'https://via.placeholder.com/300x200?text=Sin+Imagen');
+    const imagenFinal = imagenBase64 && imagenBase64.trim() !== '' ? imagenBase64 : (imagenUrl && imagenUrl.trim() !== '' ? imagenUrl.trim() : 'https://via.placeholder.com/300x200?text=Sin+Imagen');
 
     productos.push({
         id: nuevoId,
@@ -1337,7 +1080,6 @@ app.post('/admin/agregar', (req, res) => {
 app.post('/admin/eliminar/:id', (req, res) => {
     const idAEliminar = Number(req.params.id);
     let productos = leerProductos();
-
     productos = productos.filter(p => p.id !== idAEliminar);
     guardarProductos(productos);
     res.redirect('/admin');
