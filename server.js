@@ -55,7 +55,7 @@ app.get('/', (req, res) => {
                 </div>
                 <div class="header-actions">
                     <button class="cart-btn" onclick="toggleCartModal()">
-                        🛒 Carrito (<span id="cartCount">0</span>)
+                        🛒 Carrito ( <span id="cartCount">0</span> )
                     </button>
                 </div>
             </header>
@@ -104,7 +104,7 @@ app.get('/', (req, res) => {
                 : `<button class="btn-agregar" onclick="agregarAlCarrito(${prod.id}, '${prod.nombre.replace(/'/g, "\\'")}', ${prod.precio}, ${stockActual})">➕ Agregar al Carrito</button>`;
 
             html += `
-              <div class="product-card" data-categoria="${(prod.categoria || '').trim()}" data-nombre="${prod.nombre.toLowerCase()}" data-descripcion="${(prod.descripcion || '').toLowerCase()}">
+              <div class="product-card" data-categoria="${prod.categoria || ''}" data-nombre="${prod.nombre.toLowerCase()}" data-descripcion="${(prod.descripcion || '').toLowerCase()}">
                   <div class="product-image-container">
                       <img src="${imagenUrl}" alt="${prod.nombre}" class="zoom-img" onerror="this.src='https://via.placeholder.com/300x200?text=Error+Imagen'">
                       ${badgeEtiqueta}
@@ -156,7 +156,7 @@ app.get('/', (req, res) => {
                         <!-- ZONAS DE ENVÍO Y PAGO -->
                         <div class="option-group">
                             <label for="tipoEnvio">🚚 Zona / Forma de Entrega:</label>
-                            <select id="tipoEnvio" onchange="actualizarTotal()">
+                            <select id="tipoEnvio" class="custom-input" onchange="actualizarTotal()">
                                 <option value="retiro" data-costo="0">Retirar por el local (Gratis)</option>
                                 <option value="centro" data-costo="1500">Zona Centro / Cambá Cuá (+$1.500)</option>
                                 <option value="barrios_cercanos" data-costo="2000">Barrios Cercanos / Aldana / Yapeyú (+$2.000)</option>
@@ -166,7 +166,7 @@ app.get('/', (req, res) => {
 
                         <div class="option-group">
                             <label for="metodoPago">💳 Método de Pago:</label>
-                            <select id="metodoPago" onchange="mostrarDatosTransferencia()">
+                            <select id="metodoPago" class="custom-input" onchange="mostrarDatosTransferencia()">
                                 <option value="Efectivo">Efectivo al recibir</option>
                                 <option value="Mercado Pago">Mercado Pago</option>
                                 <option value="Transferencia Bancaria">Transferencia Bancaria (Alias/CBU)</option>
@@ -219,7 +219,7 @@ app.get('/', (req, res) => {
                 let carrito = [];
                 let categoriaSeleccionada = 'Todas';
 
-                function normalizarTexto(txt) {
+                function limpiarTexto(txt) {
                     return (txt || '').normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
                 }
 
@@ -236,15 +236,14 @@ app.get('/', (req, res) => {
                 }
 
                 function filtrarProductos() {
-                    const busqueda = normalizarTexto(document.getElementById('searchInput').value);
+                    const busqueda = limpiarTexto(document.getElementById('searchInput').value);
                     const tarjetas = document.querySelectorAll('.product-card');
 
                     tarjetas.forEach(tarjeta => {
-                        const catProducto = normalizarTexto(tarjeta.getAttribute('data-categoria'));
-                        const nombre = normalizarTexto(tarjeta.getAttribute('data-nombre'));
-                        const descripcion = normalizarTexto(tarjeta.getAttribute('data-descripcion'));
-
-                        const catSeleccionadaNorm = normalizarTexto(categoriaSeleccionada);
+                        const catProducto = limpiarTexto(tarjeta.getAttribute('data-categoria'));
+                        const nombre = limpiarTexto(tarjeta.getAttribute('data-nombre'));
+                        const descripcion = limpiarTexto(tarjeta.getAttribute('data-descripcion'));
+                        const catSeleccionadaNorm = limpiarTexto(categoriaSeleccionada);
 
                         const coincideCategoria = (catSeleccionadaNorm === 'todas' || catProducto === catSeleccionadaNorm);
                         const coincideTexto = (nombre.includes(busqueda) || descripcion.includes(busqueda));
@@ -456,22 +455,22 @@ app.get('/admin', (req, res) => {
 
                         <div class="form-group">
                             <label>Nombre del Producto:</label>
-                            <input type="text" name="nombre" required placeholder="Ej: Protector Solar x 200ml">
+                            <input type="text" name="nombre" class="custom-input" required placeholder="Ej: Protector Solar x 200ml">
                         </div>
 
                         <div class="form-group">
                             <label>Precio en $ (ejemplo: 4000):</label>
-                            <input type="number" name="precio" required placeholder="4000" step="1">
+                            <input type="number" name="precio" class="custom-input" required placeholder="4000" step="1">
                         </div>
 
                         <div class="form-group">
                             <label>Stock Disponible (Cantidad):</label>
-                            <input type="number" name="stock" required placeholder="10" value="10" min="0">
+                            <input type="number" name="stock" class="custom-input" required placeholder="10" value="10" min="0">
                         </div>
 
                         <div class="form-group">
                             <label>Etiqueta / Badge Promocional:</label>
-                            <select name="etiqueta">
+                            <select name="etiqueta" class="custom-input">
     `;
 
     etiquetasValidas.forEach(et => {
@@ -484,7 +483,7 @@ app.get('/admin', (req, res) => {
 
                         <div class="form-group">
                             <label>Categoría:</label>
-                            <select name="categoria" required>
+                            <select name="categoria" class="custom-input" required>
     `;
 
     categoriasValidas.forEach(cat => {
@@ -497,7 +496,7 @@ app.get('/admin', (req, res) => {
 
                         <div class="form-group">
                             <label>Descripción Breve (opcional):</label>
-                            <textarea name="descripcion" rows="2" placeholder="Ej: Excelente calidad, incluye accesorios."></textarea>
+                            <textarea name="descripcion" class="custom-input" rows="2" placeholder="Ej: Excelente calidad, incluye accesorios."></textarea>
                         </div>
 
                         <div class="form-group" style="background:#0f172a; padding:1rem; border-radius:12px; border:1px solid #334155;">
@@ -505,7 +504,7 @@ app.get('/admin', (req, res) => {
                             <small style="color:#94a3b8; display:block; margin-bottom:0.5rem;">Cargá un archivo desde tu PC o pegá un enlace URL:</small>
                             <input type="file" id="fileInput" accept="image/*" style="margin-bottom:0.8rem;" onchange="convertirImagen()">
                             <label style="font-size:0.85rem; color:#cbd5e1;">O usar Enlace URL:</label>
-                            <input type="url" id="urlInput" name="imagenUrl" placeholder="https://ejemplo.com/foto.jpg">
+                            <input type="url" id="urlInput" name="imagenUrl" class="custom-input" placeholder="https://ejemplo.com/foto.jpg">
 
                             <div id="previewContainer" style="display:none; margin-top:1rem; text-align:center;">
                                 <small style="color:#38bdf8; display:block;">Vista previa:</small>
