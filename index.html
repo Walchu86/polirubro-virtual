@@ -56,7 +56,9 @@
             </div>
             
             <h3 class="cat-titulo-seccion" id="tituloSeccionActual">🌟 Catálogo General y Destacados</h3>
-            <div class="productos-grid" id="contenedorProductos"></div>
+            <div class="productos-grid" id="contenedorProductos">
+                <p style="grid-column: 1/-1; text-align: center; color: #666; padding: 40px 0;">Cargando productos...</p>
+            </div>
         </main>
 
         <aside class="sidebar" id="contenedorSidebarCategoriasPC">
@@ -105,6 +107,10 @@
     </div>
 
     <script>
+        const BIN_ID = "6acba057ac6210605a28056a";
+        const API_KEY = "\$2a\$10\$tg1ZdjhTaaMXJux9z9NikO/nVFhjVdV28wxjdimgawIO.VkiBMEUi";
+        const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+
         let listaProductos = [];
         let listaCategorias = [];
         let carrito = [];
@@ -112,25 +118,31 @@
         let productosMezcladosInicio = [];
         const NUMERO_WHATSAPP = "5493794655867";
 
-        function iniciarTienda() {
-            sincronizarYActualizar();
-            window.addEventListener('storage', (e) => {
-                sincronizarYActualizar();
-            });
-            document.addEventListener("visibilitychange", function() {
-                if (!document.hidden) sincronizarYActualizar();
+        async function iniciarTienda() {
+            await sincronizarYActualizarNube();
+            window.addEventListener('focus', async () => {
+                await sincronizarYActualizarNube();
             });
         }
 
-        function sincronizarYActualizar() {
-            let datos = { categorias: ["General", "Electrónica", "Bazar"], productos: [] };
-            const guardado = localStorage.getItem('polirubro_global_datos');
-            if (guardado) {
-                try { datos = JSON.parse(guardado); } catch(e){}
-            }
+        async function sincronizarYActualizarNube() {
+            try {
+                const res = await fetch(API_URL, {
+                    method: "GET",
+                    headers: { 
+                        "X-Master-Key": API_KEY,
+                        "X-Bin-Meta": "false"
+                    }
+                });
+                if (!res.ok) throw new Error("Error al obtener datos");
+                const data = await res.json();
+                const datos = data.record || data || { categorias: ["General", "Electrónica", "Bazar"], productos: [] };
 
-            listaProductos = datos.productos || [];
-            listaCategorias = datos.categorias || ["General", "Electrónica", "Bazar"];
+                listaProductos = datos.productos || [];
+                listaCategorias = datos.categorias || ["General", "Electrónica", "Bazar"];
+            } catch(e) {
+                console.error("Error al conectar con la nube:", e);
+            }
 
             actualizarMezclainicio();
             renderizarNavSecciones();
@@ -189,7 +201,7 @@
                     <div class="card-oferta-destacada">
                         <div class="badge-oferta-box"><span class="badge-oferta">🔥 48HS</span></div>
                         <div class="img-frame-oferta" onclick="abrirLupa('${img}')">
-                            <img src="${img}" alt="${p.nombre}" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Sin+Imagen'">
+                            <img src="${img}" alt="${p.nombre}" onerror="this.src='https://via.placeholder.com/200?text=Sin+Imagen'">
                         </div>
                         <div class="titulo-producto-oferta">${p.nombre}</div>
                         <div class="precio-producto-oferta">$${Number(p.precio).toLocaleString('es-AR')}</div>
