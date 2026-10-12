@@ -198,6 +198,7 @@
         }
 
         function renderizarProductos() {
+            sincronizarYActualizarDatosEnMemoria();
             const cont = document.getElementById('contenedorProductos');
             const busqueda = document.getElementById('inputBuscador').value.toLowerCase().trim();
             if (!cont) return;
@@ -237,6 +238,17 @@
                     </div>
                 `;
             });
+        }
+
+        function sincronizarYActualizarDatosEnMemoria() {
+            const guardado = localStorage.getItem('polirubro_global_datos');
+            if (guardado) {
+                try {
+                    const datos = JSON.parse(guardado);
+                    listaProductos = datos.productos || [];
+                    listaCategorias = datos.categorias || [];
+                } catch(e){}
+            }
         }
 
         function filtrarPorCat(cat) {
