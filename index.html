@@ -114,12 +114,6 @@
 
         function iniciarTienda() {
             sincronizarYActualizar();
-            // Refrescar automáticamente cada vez que la página vuelve a estar visible en el celular
-            document.addEventListener("visibilitychange", function() {
-                if (!document.hidden) {
-                    sincronizarYActualizar();
-                }
-            });
             window.addEventListener('storage', (e) => {
                 sincronizarYActualizar();
             });
@@ -128,19 +122,39 @@
         function sincronizarYActualizar() {
             let datos = { categorias: ["General", "Electrónica", "Bazar"], productos: [] };
             
-            const guardadoGlobal = localStorage.getItem('polirubro_global_datos');
-            const guardadoProd = localStorage.getItem('polirubro_productos');
-            const guardadoCat = localStorage.getItem('polirubro_categorias');
+            // Revisa todas las fuentes posibles de almacenamiento para no perder nada
+            const gGlobal = localStorage.getItem('polirubro_global_datos');
+            const gProd = localStorage.getItem('polirubro_productos');
+            const gCat = localStorage.getItem('polirubro_categorias');
 
-            if (guardadoGlobal) {
-                try { datos = JSON.parse(guardadoGlobal); } catch(e){}
-            } else {
-                if (guardadoProd) { try { datos.productos = JSON.parse(guardadoProd); } catch(e){} }
-                if (guardadoCat) { try { datos.categorias = JSON.parse(guardadoCat); } catch(e){} }
+            if (gGlobal) {
+                try { datos = JSON.parse(gGlobal); } catch(e){}
             }
 
+            // Si hay productos en la otra llave suelta, los unifica
+            if (gProd) {
+                try {
+                    const pArr = JSON.parse(gProd);
+                    if (pArr && pArr.length > 0 && (!datos.productos || datos.productos.length === 0)) {
+                        datos.productos = pArr;
+                    }
+                } catch(e){}
+            }
+
+            if (gCat) {
+                try {
+                    const cArr = JSON.parse(gCat);
+                    if (cArr && cArr.length > 0 && (!datos.categorias || datos.categorias.length === 0)) {
+                        datos.categorias = cArr;
+                    }
+                } catch(e){}
+            }
+
+            // Asegurar que quede guardado en la llave unificada global
+            localStorage.setItem('polirubro_global_datos', JSON.stringify(datos));
+
             listaProductos = datos.productos || [];
-            listaCategorias = datos.categorias || [];
+            listaCategorias = datos.categorias || ["General", "Electrónica", "Bazar"];
 
             actualizarMezclainicio();
             renderizarNavSecciones();
@@ -210,7 +224,6 @@
         }
 
         function renderizarProductos() {
-            sincronizarYActualizar();
             const cont = document.getElementById('contenedorProductos');
             const busqueda = document.getElementById('inputBuscador').value.toLowerCase().trim();
             if (!cont) return;
