@@ -45,14 +45,14 @@
         </div>
     </header>
 
-    <!-- Navegación Naranja (Solo Secciones, Limpio) -->
+    <!-- Navegación Naranja (Secciones) -->
     <nav class="main-nav">
         <div class="nav-container-categorias">
             <ul class="nav-links" id="navSeccionesHeader"></ul>
         </div>
     </nav>
 
-    <!-- Botón Flotante del Carrito (Especial para Celular y Web) -->
+    <!-- Barra Flotante Superior del Carrito -->
     <div class="floating-cart-bar" onclick="toggleCarrito()">
         <div class="floating-cart-content">
             <span>🛒 <strong id="cantCarrito">0</strong> un.</span>
@@ -81,7 +81,8 @@
             <div class="productos-grid" id="contenedorProductos"></div>
         </main>
 
-        <aside class="sidebar">
+        <!-- Sidebar que se oculta por completo en celulares -->
+        <aside class="sidebar" id="contenedorSidebarCategoriasPC">
             <h3 class="sidebar-title">📂 Categorías</h3>
             <div class="sidebar-menu" id="contenedorCategorias"></div>
         </aside>
@@ -290,12 +291,13 @@
 
             filtrados.forEach(p => {
                 const badge = p.enOferta ? `<div class="badge-oferta-box"><span class="badge-oferta">🔥 OFERTA 48HS</span><span class="timer-oferta" id="timer-${p.id}">47:59:59</span></div>` : '';
-                const imgUrl = p.imagen || 'https://via.placeholder.com/200?text=Sin+Imagen';
+                const imgUrl = p.imagen && p.imagen.trim() !== '' ? p.imagen : 'https://via.placeholder.com/200?text=Sin+Imagen';
+                
                 cont.innerHTML += `
                     <div class="card-producto">
                         ${badge}
                         <div class="img-frame" onclick="abrirLupa('${imgUrl}')" title="Hacé clic para ampliar">
-                            <img src="${imgUrl}" class="img-producto" alt="${p.nombre}" onerror="this.src='https://via.placeholder.com/200?text=Sin+Imagen'">
+                            <img src="${imgUrl}" class="img-producto" alt="${p.nombre}" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Sin+Imagen'">
                         </div>
                         <div class="card-detalles">
                             <div class="titulo-producto">${p.nombre}</div>
@@ -389,7 +391,6 @@
 
             const totalFinal = subtotalProds + costoEnvioFinal;
 
-            // Actualizar contadores en la barra flotante y en el modal
             document.getElementById('cantCarrito').innerText = totalCant;
             document.getElementById('totalCarritoNav').innerText = `$${totalFinal.toLocaleString('es-AR')}`;
             document.getElementById('totalCarritoModal').innerText = `$${totalFinal.toLocaleString('es-AR')}`;
