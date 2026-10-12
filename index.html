@@ -47,12 +47,11 @@
         </div>
     </header>
 
-    <!-- Navegación y Carrito -->
+    <!-- Navegación Dinámica (Secciones creadas desde el Admin) -->
     <nav class="main-nav">
         <div class="nav-container">
-            <ul class="nav-links">
-                <li><a href="/">Inicio</a></li>
-                <li><a href="#" onclick="filtrarPorCat('Todos'); return false;">Catálogo Completo</a></li>
+            <ul class="nav-links" id="navSeccionesHeader">
+                <!-- Se llenan automáticamente con JavaScript según las secciones del Admin -->
             </ul>
             <div class="cart-nav-widget" onclick="toggleCarrito()">
                 🛒 Mi Carrito: <span id="cantCarrito">0</span> un. | Total: <span id="totalCarritoNav">\$0</span>
@@ -66,8 +65,20 @@
             <div class="search-box">
                 <input type="text" id="inputBuscador" class="search-input" placeholder="🔍 Buscar productos en Polirubro Virtual..." oninput="filtrarProductos()">
             </div>
+
+            <!-- SECCIÓN ESTRATÉGICA DE OFERTAS IMPERDIBLES (Se muestra solo si hay productos en oferta) -->
+            <div id="seccionEspecialOfertas" class="ofertas-container-destacado" style="display: none;">
+                <div class="ofertas-header-title">
+                    <h2>🔥 OFERTAS IMPERDIBLES (¡Tiempo Limitado!)</h2>
+                    <span class="badge-reloj-global">⚡ Precios especiales por 48 horas</span>
+                </div>
+                <div class="ofertas-grid-scroll" id="contenedorOfertasDestacadas">
+                    <!-- Se completan dinámicamente -->
+                </div>
+            </div>
             
-            <!-- Grilla de Productos -->
+            <!-- Grilla Principal de Todos los Productos -->
+            <h3 class="cat-titulo-seccion" id="tituloSeccionActual">📦 Catálogo General</h3>
             <div class="productos-grid" id="contenedorProductos"></div>
         </main>
 
@@ -149,9 +160,27 @@
             listaProductos = datos.productos;
             listaCategorias = datos.categorias;
 
+            renderizarNavSecciones();
             renderizarCategorias();
+            renderizarOfertasEspeciales();
             renderizarProductos();
             iniciarRelojOfertas();
+        }
+
+        function renderizarNavSecciones() {
+            const nav = document.getElementById('navSeccionesHeader');
+            nav.innerHTML = `<li><a href="#" class="${categoriaSeleccionada === 'Todos' ? 'activa-nav' : ''}" onclick="filtrarPorCat('Todos'); return false;">Inicio</a></li>`;
+            
+            listaCategorias.forEach(catNombre => {
+                const esActiva = categoriaSeleccionada === catNombre ? 'activa-nav' : '';
+                nav.innerHTML += `
+                    <li>
+                        <a href="#" class="${esActiva}" onclick="filtrarPorCat('${catNombre}'); return false;">
+                            ${catNombre}
+                        </a>
+                    </li>
+                `;
+            });
         }
 
         function renderizarCategorias() {
@@ -168,9 +197,43 @@
             });
         }
 
+        function renderizarOfertasEspeciales() {
+            const secContenedor = document.getElementById('seccionEspecialOfertas');
+            const contGrid = document.getElementById('contenedorOfertasDestacadas');
+            
+            const ofertas = listaProductos.filter(p => p.enOferta === true);
+
+            if (ofertas.length === 0) {
+                secContenedor.style.display = "none";
+                return;
+            }
+
+            secContenedor.style.display = "block";
+            contGrid.innerHTML = '';
+
+            ofertas.forEach(p => {
+                contGrid.innerHTML += `
+                    <div class="card-oferta-destacada">
+                        <div class="badge-oferta-box"><span class="badge-oferta">🔥 48HS</span><span class="timer-oferta" id="timer-oferta-${p.id}">47:59:59</span></div>
+                        <div class="img-frame-oferta">
+                            <img src="${p.imagen || 'https://via.placeholder.com/200?text=Sin+Imagen'}" alt="${p.nombre}" onerror="this.src='https://via.placeholder.com/200?text=Sin+Imagen'">
+                        </div>
+                        <div class="titulo-producto-oferta">${p.nombre}</div>
+                        <div class="precio-producto-oferta">$${Number(p.precio).toLocaleString('es-AR')}</div>
+                        <div class="card-acciones" style="margin-top: 6px;">
+                            <button class="btn-add-cart" onclick="agregarAlCarrito(${p.id})">🛒 AGREGAR</button>
+                            <button class="btn-share-wsp" onclick="compartirProductoWhatsApp('${encodeURIComponent(p.nombre)}', ${p.precio})">📲</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
         function renderizarProductos() {
             const cont = document.getElementById('contenedorProductos');
             const busqueda = document.getElementById('inputBuscador').value.toLowerCase().trim();
+            document.getElementById('tituloSeccionActual').innerText = categoriaSeleccionada === 'Todos' ? '📦 Catálogo General' : `📂 Sección: ${categoriaSeleccionada}`;
+            
             cont.innerHTML = '';
 
             const filtrados = listaProductos.filter(p => {
@@ -189,22 +252,37 @@
                 cont.innerHTML += `
                     <div class="card-producto">
                         ${badge}
-                        <img src="${p.imagen || 'https://via.placeholder.com/200?text=Sin+Imagen'}" class="img-producto" alt="${p.nombre}" onerror="this.src='https://via.placeholder.com/200?text=Sin+Imagen'">
-                        <div style="flex-grow: 1; padding-top: 8px;">
+                        <div class="img-frame">
+                            <img src="${p.imagen || 'https://via.placeholder.com/200?text=Sin+Imagen'}" class="img-producto" alt="${p.nombre}" onerror="this.src='https://via.placeholder.com/200?text=Sin+Imagen'">
+                        </div>
+                        <div class="card-detalles">
                             <div class="titulo-producto">${p.nombre}</div>
                             <div class="precio-producto">$${Number(p.precio).toLocaleString('es-AR')}</div>
-                            <div class="stock-tag">Stock disponible: ${p.stock} un.</div>
+                            <div class="stock-tag">📦 Stock: <strong>${p.stock} un.</strong></div>
+                            
+                            <div class="card-acciones">
+                                <button class="btn-add-cart" onclick="agregarAlCarrito(${p.id})">
+                                    🛒 Agregar al Carrito
+                                </button>
+                                <button class="btn-share-wsp" onclick="compartirProductoWhatsApp('${encodeURIComponent(p.nombre)}', ${p.precio})" title="Compartir este producto">
+                                    📲
+                                </button>
+                            </div>
                         </div>
-                        <button class="btn-add-cart" onclick="agregarAlCarrito(${p.id})">
-                            🛒 AGREGAR AL CARRITO
-                        </button>
                     </div>
                 `;
             });
         }
 
+        function compartirProductoWhatsApp(nombreProdEnc, precioProd) {
+            const nombreProd = decodeURIComponent(nombreProdEnc);
+            const texto = `👋 ¡Mirá este producto en Polirubro Virtual!\n\n📌 *${nombreProd}*\n💵 *Precio:* $${Number(precioProd).toLocaleString('es-AR')}\n\n🛒 Pedilo directo acá: ${window.location.href}`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`, '_blank');
+        }
+
         function filtrarPorCat(nombreCat) {
             categoriaSeleccionada = nombreCat;
+            renderizarNavSecciones();
             renderizarCategorias();
             renderizarProductos();
         }
