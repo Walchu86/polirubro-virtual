@@ -8,12 +8,10 @@
 </head>
 <body>
 
-    <!-- Banner de Envío Gratis -->
     <div class="promo-banner">
         🚚 ¡ENVÍO GRATIS en compras mayores a \$20.000! 📦
     </div>
 
-    <!-- Cabecera clásica de Tienda -->
     <header>
         <div class="header-container">
             <a href="/" class="logo-title">
@@ -22,42 +20,32 @@
         </div>
     </header>
 
-    <!-- Barra de Navegación -->
     <nav class="main-nav">
         <div class="nav-container">
             <ul class="nav-links">
                 <li><a href="/">Inicio</a></li>
                 <li><a href="#" onclick="filtrarPorCat('Todos'); return false;">Catálogo</a></li>
             </ul>
-            <!-- Widget de Carrito -->
             <div class="cart-nav-widget" onclick="toggleCarrito()">
                 🛒 Mi Carrito: <span id="cantCarrito">0</span> item(s) | Total: <span id="totalCarritoNav">\$0</span>
             </div>
         </div>
     </nav>
 
-    <!-- Estructura de dos columnas (Catálogo + Barra lateral) -->
     <div class="main-layout">
-        
-        <!-- Columna Izquierda: Buscador y Productos -->
         <main>
             <div class="search-box">
                 <input type="text" id="inputBuscador" class="search-input" placeholder="🔍 Buscar productos en la tienda..." oninput="filtrarProductos()">
             </div>
-
-            <!-- Grid de Productos -->
             <div class="productos-grid" id="contenedorProductos"></div>
         </main>
 
-        <!-- Columna Derecha: Barra Lateral de Categorías -->
         <aside class="sidebar">
             <h3 class="sidebar-title">Categorías</h3>
             <div class="sidebar-menu" id="contenedorCategorias"></div>
         </aside>
-
     </div>
 
-    <!-- Modal del Carrito Lateral -->
     <div class="cart-modal" id="modalCarrito">
         <div class="cart-header">
             <h3 style="font-size: 1.1rem;">🛒 Tu Carrito de Compras</h3>
@@ -81,27 +69,17 @@
         let listaCategorias = [];
         let carrito = [];
         let categoriaSeleccionada = 'Todos';
-
-        const NUMERO_WHATSAPP = "5493794000000"; // Tu número real de WhatsApp
+        const NUMERO_WHATSAPP = "5493794000000";
 
         function iniciarTienda() {
-            // Contabilizar visita localmente
-            let visitas = Number(localStorage.getItem('polirubro_visitas') || 0) + 1;
-            localStorage.setItem('polirubro_visitas', visitas);
-
-            // Cargar productos locales
-            const prodsGuardados = localStorage.getItem('polirubro_productos');
-            if (prodsGuardados) {
-                try { listaProductos = JSON.parse(prodsGuardados); } catch(e){}
+            let datos = { categorias: ["General", "Electrónica", "Bazar"], productos: [] };
+            const guardado = localStorage.getItem('polirubro_global_datos');
+            if (guardado) {
+                try { datos = JSON.parse(guardado); } catch(e){}
             }
 
-            // Cargar categorías locales
-            const catsGuardadas = localStorage.getItem('polirubro_categorias');
-            if (catsGuardadas) {
-                try { listaCategorias = JSON.parse(catsGuardadas); } catch(e){}
-            } else {
-                listaCategorias = ["General", "Electrónica", "Bazar"];
-            }
+            listaProductos = datos.productos;
+            listaCategorias = datos.categorias;
 
             renderizarCategorias();
             renderizarProductos();
@@ -169,13 +147,8 @@
         function agregarAlCarrito(idProd) {
             const prod = listaProductos.find(p => p.id === idProd);
             if (!prod) return;
-
             const existente = carrito.find(item => item.id === idProd);
-            if (existente) {
-                existente.cantidad++;
-            } else {
-                carrito.push({ ...prod, cantidad: 1 });
-            }
+            if (existente) { existente.cantidad++; } else { carrito.push({ ...prod, cantidad: 1 }); }
             actualizarCarritoUI();
         }
 
@@ -183,9 +156,7 @@
             const item = carrito.find(i => i.id === idProd);
             if (!item) return;
             item.cantidad += delta;
-            if (item.cantidad <= 0) {
-                carrito = carrito.filter(i => i.id !== idProd);
-            }
+            if (item.cantidad <= 0) { carrito = carrito.filter(i => i.id !== idProd); }
             actualizarCarritoUI();
         }
 
@@ -209,7 +180,6 @@
 
             const contItems = document.getElementById('itemsCarrito');
             contItems.innerHTML = '';
-
             if (carrito.length === 0) {
                 contItems.innerHTML = `<p style="text-align: center; color: #666; margin-top: 20px;">El carrito está vacío.</p>`;
                 avisoEnvio.innerHTML = "";
@@ -242,26 +212,17 @@
                 alert("Agregá al menos un producto al carrito.");
                 return;
             }
-
             let mensaje = "👋 ¡Hola! Quisiera realizar el siguiente pedido:\n\n";
             let total = 0;
-
             carrito.forEach(item => {
                 const subtotal = item.precio * item.cantidad;
                 total += subtotal;
                 mensaje += `• *${item.nombre}* x${item.cantidad} - $${subtotal.toLocaleString('es-AR')}\n`;
             });
-
             mensaje += `\n💵 *Total a Pagar:* $${total.toLocaleString('es-AR')}\n`;
-            if (total >= 20000) {
-                mensaje += `🚚 *¡Aplica Envío Gratis!* (Compra mayor a $20.000)\n\n`;
-            } else {
-                mensaje += `\n`;
-            }
+            if (total >= 20000) { mensaje += `🚚 *¡Aplica Envío Gratis!* (Compra mayor a $20.000)\n\n`; }
             mensaje += "¡Aguardo confirmación de stock y medio de pago! Gracias.";
-
-            const url = `https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(mensaje)}`;
-            window.open(url, '_blank');
+            window.open(`https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(mensaje)}`, '_blank');
         }
 
         window.onload = iniciarTienda;
