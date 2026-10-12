@@ -27,8 +27,8 @@
 </head>
 <body class="admin-body">
     <header style="background:#0f172a; padding:1.2rem; border-bottom:1px solid #1e293b; text-align:center;">
-        <h1 style="margin:0; font-size:1.5rem; color:#fff;">⚙️ Panel Administrador</h1>
-        <p style="margin:0.3rem 0 0 0; color:#38bdf8; font-size:0.85rem;">Optimización e Integración Sincronizada</p>
+        <h1 style="margin:0; font-size:1.5rem; color:#fff;">⚙️ Panel Administrador Nube</h1>
+        <p style="margin:0.3rem 0 0 0; color:#38bdf8; font-size:0.85rem;">Sincronizado vía JSONBin</p>
         <div style="margin-top:0.8rem;">
             <a href="/" target="_blank" style="background:#0284c7; color:#fff; padding:0.4rem 1rem; border-radius:20px; text-decoration:none; font-weight:bold; font-size:0.8rem;">🌐 Ir a la Tienda Pública</a>
         </div>
@@ -80,7 +80,7 @@
                         <label for="prodOferta" style="font-size:0.85rem; color:#f43f5e; font-weight:bold; cursor:pointer;">🔥 Oferta Especial (48hs)</label>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">🖼️ Subir Imagen (Galería PC/Celu o URL):</label>
+                        <label class="form-label">🖼️ Subir Imagen (PC / Celular o URL):</label>
                         <input type="file" id="fileInput" accept="image/*" onchange="comprimirYConvertirImagen()" style="margin-bottom:0.4rem; color: #cbd5e1; font-size: 0.85rem;">
                         <input type="url" id="urlInput" class="form-input" placeholder="O pegá una URL web de imagen aquí..." oninput="mostrarVistaPreviaURL(this.value)">
                         <div id="previewContainer" style="display:none; margin-top:0.5rem; text-align:center; background:#070a12; padding:8px; border-radius:8px; border:1px dashed #38bdf8;">
@@ -89,13 +89,13 @@
                             <p id="pesoPreview" style="font-size:0.75rem; color:#34d399; margin-top:0.2rem; font-weight:bold;"></p>
                         </div>
                     </div>
-                    <button type="button" onclick="guardarProducto()" class="btn-action" style="background: #10b981;">💾 Guardar Producto</button>
+                    <button type="button" onclick="guardarProducto()" class="btn-action" style="background: #10b981;">💾 Guardar en la Nube</button>
                 </section>
             </div>
         </div>
 
         <section class="admin-card">
-            <h3>📦 Productos Registrados</h3>
+            <h3>📦 Productos en la Nube</h3>
             <div style="overflow-x: auto;">
                 <table class="tabla-productos">
                     <thead>
@@ -108,7 +108,7 @@
                         </tr>
                     </thead>
                     <tbody id="tablaProductosAdmin">
-                        <tr><td colspan="5" style="text-align: center; color: #94a3b8;">Cargando...</td></tr>
+                        <tr><td colspan="5" style="text-align: center; color: #94a3b8;">Cargando desde el servidor...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -116,24 +116,51 @@
     </div>
 
     <script>
+        const BIN_ID = "6acba057ac6210605a28056a";
+        const API_KEY = "\$2a\$10\$tg1ZdjhTaaMXJux9z9NikO/nVFhjVdV28wxjdimgawIO.VkiBMEUi";
+        const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+
         let imagenFinalOptimizada = "";
 
-        function obtenerDatos() {
-            let datos = { categorias: ["General", "Electrónica", "Bazar"], productos: [] };
-            const guardado = localStorage.getItem('polirubro_global_datos');
-            if (guardado) {
-                try { datos = JSON.parse(guardado); } catch(e){}
+        async function obtenerDatosServidor() {
+            try {
+                const res = await fetch(API_URL, {
+                    method: "GET",
+                    headers: { 
+                        "X-Master-Key": API_KEY,
+                        "X-Bin-Meta": "false"
+                    }
+                });
+                if (!res.ok) throw new Error("Error al conectar");
+                const data = await res.json();
+                return data.record || data || { categorias: ["General", "Electrónica", "Bazar"], productos: [] };
+            } catch (e) {
+                console.error("Error al leer servidor:", e);
+                return { categorias: ["General", "Electrónica", "Bazar"], productos: [] };
             }
-            return datos;
         }
 
-        function guardarDatos(datos) {
-            localStorage.setItem('polirubro_global_datos', JSON.stringify(datos));
-            window.dispatchEvent(new Event('storage'));
+        async function guardarDatosServidor(datos) {
+            try {
+                const res = await fetch(API_URL, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-Master-Key": API_KEY,
+                        "X-Bin-Versioning": "false"
+                    },
+                    body: JSON.stringify(datos)
+                });
+                if (!res.ok) throw new Error("Error al guardar");
+                return true;
+            } catch (e) {
+                alert("❌ Error al guardar en la nube. Verificá tu conexión.");
+                return false;
+            }
         }
 
-        function cargarPanelAdmin() {
-            const datos = obtenerDatos();
+        async function cargarPanelAdmin() {
+            const datos = await obtenerDatosServidor();
             const cats = datos.categorias || ["General", "Electrónica", "Bazar"];
             const prods = datos.productos || [];
 
@@ -156,7 +183,7 @@
             tbody.innerHTML = '';
 
             if (prods.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #94a3b8;">No hay productos cargados todavía.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #94a3b8;">No hay productos cargados en la nube.</td></tr>`;
                 return;
             }
 
@@ -174,34 +201,34 @@
             });
         }
 
-        function guardarSeccion() {
+        async function guardarSeccion() {
             const input = document.getElementById('inputNuevaCat');
             const nombre = input.value.trim();
             if (!nombre) return alert("Escribí el nombre de la sección.");
 
-            let datos = obtenerDatos();
+            let datos = await obtenerDatosServidor();
             if (!datos.categorias) datos.categorias = ["General", "Electrónica", "Bazar"];
 
             if (!datos.categorias.includes(nombre)) {
                 datos.categorias.push(nombre);
-                guardarDatos(datos);
+                const ok = await guardarDatosServidor(datos);
+                if (ok) {
+                    input.value = '';
+                    await cargarPanelAdmin();
+                    alert(`✅ Sección "${nombre}" guardada en la nube.`);
+                }
             }
-
-            input.value = '';
-            cargarPanelAdmin();
-            alert(`✅ Sección "${nombre}" creada con éxito.`);
         }
 
-        function eliminarSeccion(nombreCat) {
-            if (confirm(`¿Seguro que querés borrar "${nombreCat}"?`)) {
-                let datos = obtenerDatos();
+        async function eliminarSeccion(nombreCat) {
+            if (confirm(`¿Seguro que querés borrar la sección "${nombreCat}"?`)) {
+                let datos = await obtenerDatosServidor();
                 datos.categorias = (datos.categorias || []).filter(c => c !== nombreCat);
-                guardarDatos(datos);
-                cargarPanelAdmin();
+                await guardarDatosServidor(datos);
+                await cargarPanelAdmin();
             }
         }
 
-        // COMPRESIÓN AUTOMÁTICA ULTRA LIGERA AL ELEGIR ARCHIVO
         function comprimirYConvertirImagen() {
             const file = document.getElementById("fileInput").files[0];
             if (!file) return;
@@ -211,8 +238,7 @@
                 img.src = e.target.result;
                 img.onload = function() {
                     const canvas = document.createElement("canvas");
-                    // Reducción agresiva a máximo 220px para que en celulares cargue en milisegundos
-                    const MAX_SIZE = 220;
+                    const MAX_SIZE = 180; // Compresión ultraligera para celulares
                     let width = img.width, height = img.height;
                     if (width > height) {
                         if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; }
@@ -223,8 +249,7 @@
                     const ctx = canvas.getContext("2d");
                     ctx.drawImage(img, 0, 0, width, height);
                     
-                    // Compresión de calidad a 0.35 JPEG
-                    imagenFinalOptimizada = canvas.toDataURL("image/jpeg", 0.35);
+                    imagenFinalOptimizada = canvas.toDataURL("image/jpeg", 0.3);
                     document.getElementById("imgPreview").src = imagenFinalOptimizada;
                     document.getElementById("pesoPreview").innerText = "Súper liviana: ~" + Math.round(imagenFinalOptimizada.length / 1024) + " KB";
                     document.getElementById("previewContainer").style.display = "block";
@@ -243,7 +268,7 @@
             document.getElementById("previewContainer").style.display = "block";
         }
 
-        function guardarProducto() {
+        async function guardarProducto() {
             const nombre = document.getElementById('prodNombre').value.trim();
             const precio = document.getElementById('prodPrecio').value;
             const stock = document.getElementById('prodStock').value;
@@ -255,7 +280,7 @@
 
             const imagenFinal = urlImg || imagenFinalOptimizada || 'https://via.placeholder.com/200?text=Sin+Imagen';
 
-            let datos = obtenerDatos();
+            let datos = await obtenerDatosServidor();
             if (!datos.productos) datos.productos = [];
 
             datos.productos.push({
@@ -268,27 +293,29 @@
                 imagen: imagenFinal
             });
 
-            guardarDatos(datos);
-            alert(`🎉 ¡Producto "${nombre}" cargado e integrado!`);
-            
-            document.getElementById('prodNombre').value = '';
-            document.getElementById('prodPrecio').value = '';
-            document.getElementById('prodStock').value = '10';
-            document.getElementById('prodOferta').checked = false;
-            document.getElementById('urlInput').value = '';
-            document.getElementById('fileInput').value = '';
-            document.getElementById('previewContainer').style.display = 'none';
-            imagenFinalOptimizada = '';
+            const ok = await guardarDatosServidor(datos);
+            if (ok) {
+                alert(`🎉 ¡Producto "${nombre}" publicado en la nube para todos los dispositivos!`);
+                
+                document.getElementById('prodNombre').value = '';
+                document.getElementById('prodPrecio').value = '';
+                document.getElementById('prodStock').value = '10';
+                document.getElementById('prodOferta').checked = false;
+                document.getElementById('urlInput').value = '';
+                document.getElementById('fileInput').value = '';
+                document.getElementById('previewContainer').style.display = 'none';
+                imagenFinalOptimizada = '';
 
-            cargarPanelAdmin();
+                await cargarPanelAdmin();
+            }
         }
 
-        function eliminarProducto(idProd) {
+        async function eliminarProducto(idProd) {
             if (confirm("¿Estás seguro de eliminar este producto?")) {
-                let datos = obtenerDatos();
+                let datos = await obtenerDatosServidor();
                 datos.productos = (datos.productos || []).filter(p => p.id !== idProd);
-                guardarDatos(datos);
-                cargarPanelAdmin();
+                await guardarDatosServidor(datos);
+                await cargarPanelAdmin();
             }
         }
 
