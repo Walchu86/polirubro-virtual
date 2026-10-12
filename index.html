@@ -50,6 +50,8 @@
             <div class="search-box">
                 <input type="text" id="inputBuscador" class="search-input" placeholder="🔍 Buscar productos en Polirubro Virtual..." oninput="filtrarProductos()">
             </div>
+            
+            <!-- Grilla de Productos o Banner Animado de Sección Vacía -->
             <div class="productos-grid" id="contenedorProductos"></div>
         </main>
 
@@ -119,7 +121,7 @@
         let listaCategorias = [];
         let carrito = [];
         let categoriaSeleccionada = 'Todos';
-        const NUMERO_WHATSAPP = "5493794655867"; // Tu número oficial configurado
+        const NUMERO_WHATSAPP = "5493794655867";
 
         function iniciarTienda() {
             let datos = { categorias: ["General", "Electrónica", "Bazar"], productos: [] };
@@ -162,7 +164,22 @@
             });
 
             if (filtrados.length === 0) {
-                cont.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #666; padding: 40px 0;">No se encontraron productos en esta sección.</p>`;
+                cont.innerHTML = `
+                    <div class="empty-section-banner">
+                        <div class="animation-stage">
+                            <span class="anim-mouse">🖱️</span>
+                            <div class="anim-cart-box">
+                                <span class="anim-item item-1">📦</span>
+                                <span class="anim-item item-2">🎁</span>
+                                <span class="anim-item item-3">🛍️</span>
+                                <span class="anim-cart">🛒</span>
+                            </div>
+                        </div>
+                        <h3 class="anim-title">¡A un solo clic!</h3>
+                        <p class="anim-subtitle">Cargás tu changuito y... <strong>¡así de fácil te llevás todo!</strong></p>
+                        <p style="font-size:0.85rem; color:#94a3b8; margin-top:8px;">Próximamente más productos cargados en esta sección.</p>
+                    </div>
+                `;
                 return;
             }
 
@@ -309,7 +326,6 @@
 
             const urlWsp = `https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(mensaje)}`;
 
-            // Generar código QR en pantalla
             const container = document.getElementById('qrModalContainer');
             const qrDiv = document.getElementById('qrcode');
             qrDiv.innerHTML = "";
@@ -320,7 +336,6 @@
             });
             container.style.display = "block";
 
-            // Redirigir directamente a tu WhatsApp
             window.open(urlWsp, '_blank');
         }
 
