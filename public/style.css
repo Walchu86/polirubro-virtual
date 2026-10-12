@@ -134,7 +134,7 @@ body {
     font-weight: bold;
 }
 
-/* BARRA DE NAVEGACIÓN NARANJA (SOLO SECCIONES) */
+/* BARRA DE NAVEGACIÓN NARANJA (SECCIONES) */
 .main-nav {
     background: #ea580c;
     padding: 0.5rem 1rem;
@@ -177,7 +177,7 @@ body {
     font-weight: 900;
 }
 
-/* BOTÓN / BARRA FLOTANTE SUPERIOR DEL CARRITO */
+/* BARRA FLOTANTE SUPERIOR DEL CARRITO */
 .floating-cart-bar {
     background: #1e293b;
     color: #fff;
@@ -305,7 +305,7 @@ body {
     cursor: zoom-in;
 }
 
-.img-frame-oferta img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.img-frame-oferta img { width: 100%; height: 100%; object-fit: contain; display: block; }
 
 .titulo-producto-oferta {
     font-size: 0.85rem;
@@ -363,7 +363,12 @@ body {
     cursor: zoom-in;
 }
 
-.img-producto { max-width: 100%; max-height: 100%; object-fit: contain; }
+.img-producto { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: contain; 
+    display: block; 
+}
 
 .card-detalles {
     padding-top: 8px;
@@ -647,6 +652,11 @@ body {
         gap: 1rem;
     }
 
+    /* Ocultar por completo la caja lateral de categorías en celulares */
+    #contenedorSidebarCategoriasPC {
+        display: none !important;
+    }
+
     .header-animation-box, .quick-badge {
         display: none;
     }
@@ -668,7 +678,6 @@ body {
         font-size: 0.68rem;
     }
 
-    /* Barra de navegación superior exclusiva para secciones con scroll horizontal */
     .main-nav {
         padding: 0.4rem 0.5rem;
     }
