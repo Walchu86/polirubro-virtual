@@ -45,15 +45,21 @@
         </div>
     </header>
 
-    <!-- Navegación Dinámica -->
+    <!-- Navegación Naranja (Solo Secciones, Limpio) -->
     <nav class="main-nav">
-        <div class="nav-container">
+        <div class="nav-container-categorias">
             <ul class="nav-links" id="navSeccionesHeader"></ul>
-            <div class="cart-nav-widget" onclick="toggleCarrito()">
-                🛒 Carrito: <span id="cantCarrito">0</span> un. | <span id="totalCarritoNav">\$0</span>
-            </div>
         </div>
     </nav>
+
+    <!-- Botón Flotante del Carrito (Especial para Celular y Web) -->
+    <div class="floating-cart-bar" onclick="toggleCarrito()">
+        <div class="floating-cart-content">
+            <span>🛒 <strong id="cantCarrito">0</strong> un.</span>
+            <span>Total: <strong id="totalCarritoNav">\$0</strong></span>
+            <span class="ver-carrito-text">Ver Carrito ➔</span>
+        </div>
+    </div>
 
     <!-- Layout Principal -->
     <div class="main-layout">
@@ -170,7 +176,6 @@
             renderizarProductos();
             iniciarRelojOfertas();
 
-            // Detectar botón "Atrás" del celular para cerrar la lupa limpiamente
             window.addEventListener('popstate', function(event) {
                 const lightbox = document.getElementById('lightboxModal');
                 if (lightbox.style.display === 'flex') {
@@ -178,7 +183,6 @@
                 }
             });
 
-            // Detectar tecla Escape para salir en la PC
             window.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape') {
                     cerrarLupa();
@@ -186,14 +190,11 @@
             });
         }
 
-        // FUNCIONES DE LA LUPA (LIGHTBOX)
         function abrirLupa(urlImagen) {
             const lightbox = document.getElementById('lightboxModal');
             const imgAmpliada = document.getElementById('imgAmpliada');
             imgAmpliada.src = urlImagen;
             lightbox.style.display = 'flex';
-            
-            // Agrega estado al historial para que el botón "Atrás" del celu cierre la lupa
             history.pushState({ lightboxOpen: true }, '', '#zoom');
         }
 
@@ -201,7 +202,6 @@
             const lightbox = document.getElementById('lightboxModal');
             if (lightbox.style.display === 'flex') {
                 lightbox.style.display = 'none';
-                // Si el historial tiene el hash #zoom, volvemos atrás sin recargar
                 if (window.location.hash === '#zoom') {
                     history.back();
                 }
@@ -389,6 +389,7 @@
 
             const totalFinal = subtotalProds + costoEnvioFinal;
 
+            // Actualizar contadores en la barra flotante y en el modal
             document.getElementById('cantCarrito').innerText = totalCant;
             document.getElementById('totalCarritoNav').innerText = `$${totalFinal.toLocaleString('es-AR')}`;
             document.getElementById('totalCarritoModal').innerText = `$${totalFinal.toLocaleString('es-AR')}`;
