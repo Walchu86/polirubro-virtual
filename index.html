@@ -114,6 +114,12 @@
 
         function iniciarTienda() {
             sincronizarYActualizar();
+            // Refrescar automáticamente cada vez que la página vuelve a estar visible en el celular
+            document.addEventListener("visibilitychange", function() {
+                if (!document.hidden) {
+                    sincronizarYActualizar();
+                }
+            });
             window.addEventListener('storage', (e) => {
                 sincronizarYActualizar();
             });
@@ -122,7 +128,6 @@
         function sincronizarYActualizar() {
             let datos = { categorias: ["General", "Electrónica", "Bazar"], productos: [] };
             
-            // Busca en la llave unificada principal y también en las secundarias por seguridad móvil
             const guardadoGlobal = localStorage.getItem('polirubro_global_datos');
             const guardadoProd = localStorage.getItem('polirubro_productos');
             const guardadoCat = localStorage.getItem('polirubro_categorias');
