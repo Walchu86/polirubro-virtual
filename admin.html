@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Panel Administrador | Polirubro Virtual</title>
-    <!-- Enlace al archivo CSS centralizado -->
     <link rel="stylesheet" href="/style.css">
     <style>
         body.admin-body { background-color: #0b0f19 !important; color: #f8fafc !important; font-family: system-ui, -apple-system, sans-serif !important; }
@@ -13,6 +12,9 @@
         .stat-box-clean { background: #1e293b; border: 1px solid #334155; border-radius: 16px; padding: 1.2rem 1rem; text-align: center; }
         .stat-box-clean h3 { color: #94a3b8; font-size: 0.82rem; margin: 0 0 0.3rem 0; text-transform: uppercase; }
         .stat-box-clean .num { font-size: 2rem; font-weight: 900; color: #38bdf8; }
+        .stat-box-clean .sub { font-size: 0.78rem; color: #34d399; font-weight: 700; margin-top: 0.2rem; }
+        .table-clean { width: 100%; border-collapse: collapse; }
+        .table-clean th, .table-clean td { padding: 0.5rem 0.7rem; border-bottom: 1px solid #334155; font-size: 0.85rem; }
         .admin-two-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; align-items: start; }
         @media (max-width: 900px) { .grid-stats-cards { grid-template-columns: 1fr; } .admin-two-columns { grid-template-columns: 1fr; } }
     </style>
@@ -54,12 +56,10 @@
         </section>
 
         <div class="admin-two-columns">
-            <div style="display:flex; flex-direction:column; gap:1.5rem; width: 100%;">
-                
-                <!-- GESTIONAR SECCIONES (LIMPIO, SIN EMOJI) -->
+            <div style="display:flex; flex-direction:column; gap:1.5rem;">
                 <section style="background:#0f172a; border:1px solid #1e293b; border-radius:18px; padding:1.2rem;">
                     <h3 style="margin:0 0 1rem 0; font-size:1.1rem; color:#38bdf8;">📂 Gestionar Secciones</h3>
-                    <form action="/admin/categoria/agregar" method="POST" style="display:flex; flex-direction:column; gap:0.8rem; margin-bottom:1.2rem;">
+                    <form action="/admin/categoria/agregar" method="POST" style="display:flex; flex-direction:column; gap:0.8rem; margin-bottom:1.2rem; border-bottom:1px solid #1e293b; padding-bottom:1.2rem;">
                         <div>
                             <label style="font-size:0.82rem; color:#cbd5e1; display:block; margin-bottom:0.3rem;">Nueva Sección:</label>
                             <input type="text" name="nombreCat" placeholder="Ej: Bazar, Ferretería" required style="width:100%; padding:0.6rem; border-radius:8px; background:#1e293b; border:1px solid #334155; color:#fff; outline:none;">
@@ -68,7 +68,6 @@
                     </form>
                 </section>
 
-                <!-- CARGAR NUEVO PRODUCTO -->
                 <section style="background:#0f172a; border:1px solid #1e293b; border-radius:18px; padding:1.2rem;">
                     <h3 style="margin:0 0 1rem 0; font-size:1.1rem; color:#38bdf8;">➕ Cargar Nuevo Producto</h3>
                     <form action="/admin/agregar" method="POST" id="productForm" style="display:flex; flex-direction:column; gap:0.8rem;">
@@ -89,7 +88,7 @@
                         </div>
                         <div>
                             <label style="font-size:0.82rem; color:#cbd5e1; display:block; margin-bottom:0.3rem;">Sección:</label>
-                            <!-- Select que se llena de forma dinámica con las secciones creadas -->
+                            <!-- Selector dinámico que se llena con las categorías creadas -->
                             <select name="categoria" id="selectCategorias" required style="width:100%; padding:0.6rem; border-radius:8px; background:#1e293b; border:1px solid #334155; color:#fff; outline:none;">
                                 <option value="">Cargando secciones...</option>
                             </select>
@@ -104,7 +103,7 @@
                         </div>
                         <div>
                             <label style="font-size:0.82rem; color:#cbd5e1; display:block; margin-bottom:0.3rem;">🖼️ Imagen (Archivo o URL):</label>
-                            <input type="file" id="fileInput" accept="image/*" onchange="comprimirYConvertirImagen()" style="margin-bottom:0.4rem; color: #cbd5e1; font-size: 0.85rem;">
+                            <input type="file" id="fileInput" accept="image/*" onchange="comprimirYConvertirImagen()" style="margin-bottom:0.4rem;">
                             <input type="url" id="urlInput" name="imagenUrl" placeholder="https://..." style="width:100%; padding:0.5rem; border-radius:8px; background:#1e293b; border:1px solid #334155; color:#fff; outline:none;">
                             <div id="previewContainer" style="display:none; margin-top:0.5rem; text-align:center;">
                                 <img id="imgPreview" src="" alt="Preview" style="max-width:100px; max-height:100px; border-radius:8px; border:1px solid #38bdf8; background:#070a12; object-fit:contain;">
@@ -119,7 +118,7 @@
     </div>
 
     <script>
-        // Cargar las categorías dinámicamente en el selector del formulario de productos
+        // Cargar las categorías dinámicamente en el selector
         async function cargarCategoriasEnAdmin() {
             try {
                 const res = await fetch('/api/categorias');
