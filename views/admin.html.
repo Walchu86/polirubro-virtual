@@ -1,1 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Panel Administrador | Polirubro Virtual</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        body.admin-body { background-color: #0b0f19 !important; color: #f8fafc !important; font-family: system-ui, -apple-system, sans-serif !important; }
+        .admin-wrapper { max-width: 1250px; margin: 0 auto; padding: 1.5rem 1rem; }
+        .grid-stats-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+        .stat-box-clean { background: #1e293b; border: 1px solid #334155; border-radius: 16px; padding: 1.2rem 1rem; text-align: center; }
+        .stat-box-clean h3 { color: #94a3b8; font-size: 0.82rem; margin: 0 0 0.3rem 0; text-transform: uppercase; }
+        .stat-box-clean .num { font-size: 2rem; font-weight: 900; color: #38bdf8; }
+        .stat-box-clean .sub { font-size: 0.78rem; color: #34d399; font-weight: 700; margin-top: 0.2rem; }
+        .table-clean { width: 100%; border-collapse: collapse; }
+        .table-clean th, .table-clean td { padding: 0.5rem 0.7rem; border-bottom: 1px solid #334155; font-size: 0.85rem; }
+        .admin-two-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; align-items: start; }
+        @media (max-width: 900px) { .grid-stats-cards { grid-template-columns: 1fr; } .admin-two-columns { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body class="admin-body">
+    <header style="background:#0f172a; padding:1.2rem; border-bottom:1px solid #1e293b; text-align:center;">
+        <h1 style="margin:0; font-size:1.6rem; color:#fff;">⚙️ Panel de Control Administrador</h1>
+        <p style="margin:0.3rem 0 0 0; color:#38bdf8; font-size:0.9rem;">Gestioná productos, secciones y monitoreá métricas en tiempo real</p>
+        <div style="margin-top:0.8rem;">
+            <a href="/" target="_blank" style="background:#0284c7; color:#fff; padding:0.4rem 1rem; border-radius:20px; text-decoration:none; font-weight:bold; font-size:0.85rem;">🌐 Ir a la Tienda Pública</a>
+        </div>
+    </header>
 
+    <div class="admin-wrapper">
+        <section style="background:#0f172a; border:1px solid #1e293b; border-radius:20px; padding:1.5rem; margin-bottom:1.8rem; box-shadow:0 8px 25px rgba(0,0,0,0.4);">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1.2rem; border-bottom:1px solid #1e293b; padding-bottom:0.8rem;">
+                <div>
+                    <h2 style="margin:0; font-size:1.3rem; color:#38bdf8; font-weight:800;">📊 Estadísticas de Rendimiento</h2>
+                </div>
+                <form action="/admin/estadisticas/reiniciar" method="POST" onsubmit="return confirm('¿Seguro que querés reiniciar todas las estadísticas a cero?');">
+                    <button type="submit" style="background:#ef4444; color:#fff; border:none; padding:0.5rem 0.9rem; border-radius:8px; font-weight:bold; cursor:pointer; font-size:0.8rem;">🔄 Reiniciar Contadores</button>
+                </form>
+            </div>
+
+            <div class="grid-stats-cards">
+                <div class="stat-box-clean">
+                    <h3>👁️ Visitas Totales</h3>
+                    <div class="num">0</div>
+                </div>
+                <div class="stat-box-clean">
+                    <h3>📱 Desde Celular</h3>
+                    <div class="num" style="color:#a7f3d0;">0</div>
+                </div>
+                <div class="stat-box-clean">
+                    <h3>💻 Desde Computadora</h3>
+                    <div class="num" style="color:#fde047;">0</div>
+                </div>
+            </div>
+        </section>
+
+        <div class="admin-two-columns">
+            <div style="display:flex; flex-direction:column; gap:1.5rem;">
+                <section style="background:#0f172a; border:1px solid #1e293b; border-radius:18px; padding:1.2rem;">
+                    <h3 style="margin:0 0 1rem 0; font-size:1.1rem; color:#38bdf8;">📂 Gestionar Secciones</h3>
+                    <form action="/admin/categoria/agregar" method="POST" style="display:flex; flex-direction:column; gap:0.8rem; margin-bottom:1.2rem; border-bottom:1px solid #1e293b; padding-bottom:1.2rem;">
+                        <div>
+                            <label style="font-size:0.82rem; color:#cbd5e1; display:block; margin-bottom:0.3rem;">Nueva Sección:</label>
+                            <input type="text" name="nombreCat" placeholder="Ej: Bazar, Ferretería" required style="width:100%; padding:0.6rem; border-radius:8px; background:#1e293b; border:1px solid #334155; color:#fff; outline:none;">
+                        </div>
+                        <div>
+                            <label style="font-size:0.82rem; color:#cbd5e1; display:block; margin-bottom:0.3rem;">Emoji:</label>
+                            <input type="text" name="iconoCat" value="📦" required style="width:100%; padding:0.6rem; border-radius:8px; background:#1e293b; border:1px solid #334155; color:#fff; outline:none;">
+                        </div>
+                        <button type="submit" style="background:#2563eb; color:#fff; border:none; padding:0.7rem; border-radius:8px; font-weight:bold; cursor:pointer;">✨ Guardar Sección</button>
+                    </form>
+                </section>
+
+                <section style="background:#0f172a; border:1px solid #1e293b; border-radius:18px; padding:1.2rem;">
+                    <h3 style="margin:0 0 1rem 0; font-size:1.1rem; color:#38bdf8;">➕ Cargar Nuevo Producto</h3>
+                    <form action="/admin/agregar" method="POST" id="productForm" style="display:flex; flex-direction:column; gap:0.8rem;">
+                        <input type="hidden" id="imagenBase64" name="imagenBase64">
+                        <div>
+                            <label style="font-size:0.82rem; color:#cbd5e1; display:block; margin-bottom:0.3rem;">Nombre del Producto:</label>
+                            <input type="text" name="nombre" required placeholder="Ej: Protector Solar" style="width:100%; padding:0.6rem; border-radius:8px; background:#1e293b; border:1px solid #334155; color:#fff; outline:none;">
+                        </div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem;">
+                            <div>
+                                <label style="font-size:0.82rem; color:#cbd5e1; display:block; margin-bottom:0.3rem;">Precio ($):</label>
+                                <input type="number" name="precio" required placeholder="4000" style="width:100%; padding:0.6rem; border-radius:8px; background:#1e293b; border:1px solid #334155; color:#fff; outline:none;">
+                            </div>
+                            <div>
+                                <label style="font-size:0.82rem; color:#cbd5e1; display:block; margin-bottom:0.3rem;">Stock:</label>
+                                <input type="number" name="stock" required value="10" min="0" style="width:100%; padding:0.6rem; border-radius:8px; background:#1e293b; border:1px solid #334155; color:#fff; outline:none;">
+                            </div>
+                        </div>
+                        <div>
+                            <label style="font-size:0.82rem; color:#cbd5e1; display:block; margin-bottom:0.3rem;">Sección:</label>
+                            <select name="categoria" required style="width:100%; padding:0.6rem; border-radius:8px; background:#1e293b; border:1px solid #334155; color:#fff; outline:none;">
+                                <option value="Estética">Estética</option>
+                                <option value="Electrónica">Electrónica</option>
+                            </select>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:0.5rem; background:#1e293b; padding:0.6rem; border-radius:8px; border:1px solid #334155;">
+                            <input type="checkbox" id="enOferta" name="enOferta" value="true" style="width:18px; height:18px; cursor:pointer;">
+                            <label for="enOferta" style="font-size:0.85rem; color:#f43f5e; font-weight:bold; cursor:pointer;">🔥 Marcar como Producto en Oferta Destacada</label>
+                        </div>
+                        <div>
+                            <label style="font-size:0.82rem; color:#cbd5e1; display:block; margin-bottom:0.3rem;">Descripción:</label>
+                            <textarea name="descripcion" rows="2" placeholder="Breve detalle..." style="width:100%; padding:0.6rem; border-radius:8px; background:#1e293b; border:1px solid #334155; color:#fff; outline:none;"></textarea>
+                        </div>
+                        <div>
+                            <label style="font-size:0.82rem; color:#cbd5e1; display:block; margin-bottom:0.3rem;">🖼️ Imagen (Archivo o URL):</label>
+                            <input type="file" id="fileInput" accept="image/*" onchange="comprimirYConvertirImagen()" style="margin-bottom:0.4rem;">
+                            <input type="url" id="urlInput" name="imagenUrl" placeholder="https://..." style="width:100%; padding:0.5rem; border-radius:8px; background:#1e293b; border:1px solid #334155; color:#fff; outline:none;">
+                            <div id="previewContainer" style="display:none; margin-top:0.5rem; text-align:center;">
+                                <img id="imgPreview" src="" alt="Preview" style="max-width:100px; max-height:100px; border-radius:8px; border:1px solid #38bdf8; background:#070a12; object-fit:contain;">
+                                <p id="pesoPreview" style="font-size:0.75rem; color:#34d399; margin-top:0.2rem; font-weight:bold;"></p>
+                            </div>
+                        </div>
+                        <button type="submit" style="background:#10b981; color:#fff; border:none; padding:0.8rem; border-radius:8px; font-weight:bold; cursor:pointer;">💾 Guardar Producto</button>
+                    </form>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function comprimirYConvertirImagen() {
+            const fileInput = document.getElementById("fileInput");
+            const file = fileInput.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.src = e.target.result;
+                img.onload = function() {
+                    const canvas = document.createElement("canvas");
+                    const MAX_WIDTH = 350;
+                    const MAX_HEIGHT = 350;
+                    let width = img.width;
+                    let height = img.height;
+                    if (width > height) {
+                        if (width > MAX_WIDTH) {
+                            height *= MAX_WIDTH / width;
+                            width = MAX_WIDTH;
+                        }
+                    } else {
+                        if (height > MAX_HEIGHT) {
+                            width *= MAX_HEIGHT / height;
+                            height = MAX_HEIGHT;
+                        }
+                    }
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext("2d");
+                    ctx.drawImage(img, 0, 0, width, height);
+                    const dataUrl = canvas.toDataURL("image/jpeg", 0.5);
+                    document.getElementById("imagenBase64").value = dataUrl;
+                    document.getElementById("imgPreview").src = dataUrl;
+                    const pesoKB = Math.round(dataUrl.length / 1024);
+                    document.getElementById("pesoPreview").innerText = "Imagen optimizada: ~" + pesoKB + " KB";
+                    document.getElementById("previewContainer").style.display = "block";
+                };
+            };
+            reader.readAsDataURL(file);
+        }
+    </script>
+</body>
+</html>
