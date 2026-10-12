@@ -478,10 +478,7 @@ app.get('/', (req, res) => {
                     'if (event) event.stopPropagation();' +
                     'const modal = document.getElementById("modal-imagen-zoom");' +
                     'if (modal && modal.style.display === "flex") {' +
-                        'modal.style.display = "none";' +
-                        'if (history.state && history.state.modalZoomAbierto) {' +
-                            'history.back();' +
-                        '}' +
+                        'history.back();' +
                     '}' +
                 '}' +
 
