@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Panel Administrador | Polirubro Virtual</title>
+    <!-- Enlace al archivo CSS centralizado -->
     <link rel="stylesheet" href="/style.css">
     <style>
         body.admin-body { background-color: #0b0f19 !important; color: #f8fafc !important; font-family: system-ui, -apple-system, sans-serif !important; }
@@ -53,7 +54,7 @@
         </section>
 
         <div class="admin-two-columns">
-            <div style="display:flex; flex-direction:column; gap:1.5rem;">
+            <div style="display:flex; flex-direction:column; gap:1.5rem; width: 100%;">
                 
                 <!-- GESTIONAR SECCIONES (LIMPIO, SIN EMOJI) -->
                 <section style="background:#0f172a; border:1px solid #1e293b; border-radius:18px; padding:1.2rem;">
@@ -88,7 +89,7 @@
                         </div>
                         <div>
                             <label style="font-size:0.82rem; color:#cbd5e1; display:block; margin-bottom:0.3rem;">Sección:</label>
-                            <!-- Select dinámico que se llena automáticamente con las secciones creadas -->
+                            <!-- Select que se llena de forma dinámica con las secciones creadas -->
                             <select name="categoria" id="selectCategorias" required style="width:100%; padding:0.6rem; border-radius:8px; background:#1e293b; border:1px solid #334155; color:#fff; outline:none;">
                                 <option value="">Cargando secciones...</option>
                             </select>
@@ -103,7 +104,7 @@
                         </div>
                         <div>
                             <label style="font-size:0.82rem; color:#cbd5e1; display:block; margin-bottom:0.3rem;">🖼️ Imagen (Archivo o URL):</label>
-                            <input type="file" id="fileInput" accept="image/*" onchange="comprimirYConvertirImagen()" style="margin-bottom:0.4rem;">
+                            <input type="file" id="fileInput" accept="image/*" onchange="comprimirYConvertirImagen()" style="margin-bottom:0.4rem; color: #cbd5e1; font-size: 0.85rem;">
                             <input type="url" id="urlInput" name="imagenUrl" placeholder="https://..." style="width:100%; padding:0.5rem; border-radius:8px; background:#1e293b; border:1px solid #334155; color:#fff; outline:none;">
                             <div id="previewContainer" style="display:none; margin-top:0.5rem; text-align:center;">
                                 <img id="imgPreview" src="" alt="Preview" style="max-width:100px; max-height:100px; border-radius:8px; border:1px solid #38bdf8; background:#070a12; object-fit:contain;">
