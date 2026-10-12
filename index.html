@@ -22,21 +22,21 @@
         </div>
     </header>
 
-    <!-- Barra de Navegación Estilo Blogger Store -->
+    <!-- Barra de Navegación -->
     <nav class="main-nav">
         <div class="nav-container">
             <ul class="nav-links">
                 <li><a href="/">Inicio</a></li>
                 <li><a href="#" onclick="filtrarPorCat('Todos'); return false;">Catálogo</a></li>
             </ul>
-            <!-- Widget de Carrito en la barra superior -->
+            <!-- Widget de Carrito -->
             <div class="cart-nav-widget" onclick="toggleCarrito()">
                 🛒 Mi Carrito: <span id="cantCarrito">0</span> item(s) | Total: <span id="totalCarritoNav">\$0</span>
             </div>
         </div>
     </nav>
 
-    <!-- Estructura de dos columnas (Contenido principal + Barra lateral) -->
+    <!-- Estructura de dos columnas (Catálogo + Barra lateral) -->
     <div class="main-layout">
         
         <!-- Columna Izquierda: Buscador y Productos -->
@@ -49,7 +49,7 @@
             <div class="productos-grid" id="contenedorProductos"></div>
         </main>
 
-        <!-- Columna Derecha: Barra Lateral de Categorías (Product Category) -->
+        <!-- Columna Derecha: Barra Lateral de Categorías -->
         <aside class="sidebar">
             <h3 class="sidebar-title">Categorías</h3>
             <div class="sidebar-menu" id="contenedorCategorias"></div>
@@ -82,32 +82,40 @@
         let carrito = [];
         let categoriaSeleccionada = 'Todos';
 
-        const NUMERO_WHATSAPP = "5493794000000"; // Reemplazá con tu número real
+        const NUMERO_WHATSAPP = "5493794000000"; // Tu número real de WhatsApp
 
-        async function iniciarTienda() {
-            try {
-                const resProds = await fetch('/api/productos').catch(() => null);
-                const resCats = await fetch('/api/categorias').catch(() => null);
+        function iniciarTienda() {
+            // Contabilizar visita localmente
+            let visitas = Number(localStorage.getItem('polirubro_visitas') || 0) + 1;
+            localStorage.setItem('polirubro_visitas', visitas);
 
-                if (resProds && resProds.ok) listaProductos = await resProds.json();
-                if (resCats && resCats.ok) listaCategorias = await resCats.json();
-
-                renderizarCategorias();
-                renderizarProductos();
-            } catch (err) {
-                console.error("Error al cargar la tienda:", err);
+            // Cargar productos locales
+            const prodsGuardados = localStorage.getItem('polirubro_productos');
+            if (prodsGuardados) {
+                try { listaProductos = JSON.parse(prodsGuardados); } catch(e){}
             }
+
+            // Cargar categorías locales
+            const catsGuardadas = localStorage.getItem('polirubro_categorias');
+            if (catsGuardadas) {
+                try { listaCategorias = JSON.parse(catsGuardadas); } catch(e){}
+            } else {
+                listaCategorias = ["General", "Electrónica", "Bazar"];
+            }
+
+            renderizarCategorias();
+            renderizarProductos();
         }
 
         function renderizarCategorias() {
             const cont = document.getElementById('contenedorCategorias');
             cont.innerHTML = `<button class="btn-categoria ${categoriaSeleccionada === 'Todos' ? 'activa' : ''}" onclick="filtrarPorCat('Todos')">📁 Todos los productos</button>`;
 
-            listaCategorias.forEach(cat => {
-                const esActiva = categoriaSeleccionada === cat.nombre ? 'activa' : '';
+            listaCategorias.forEach(catNombre => {
+                const esActiva = categoriaSeleccionada === catNombre ? 'activa' : '';
                 cont.innerHTML += `
-                    <button class="btn-categoria ${esActiva}" onclick="filtrarPorCat('${cat.nombre}')">
-                        🔹 ${cat.nombre}
+                    <button class="btn-categoria ${esActiva}" onclick="filtrarPorCat('${catNombre}')">
+                        🔹 ${catNombre}
                     </button>
                 `;
             });
