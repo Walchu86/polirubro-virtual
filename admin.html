@@ -28,7 +28,7 @@
 <body class="admin-body">
     <header style="background:#0f172a; padding:1.2rem; border-bottom:1px solid #1e293b; text-align:center;">
         <h1 style="margin:0; font-size:1.5rem; color:#fff;">⚙️ Panel de Control Administrador</h1>
-        <p style="margin:0.3rem 0 0 0; color:#38bdf8; font-size:0.85rem;">Gestión completa de secciones y productos locales</p>
+        <p style="margin:0.3rem 0 0 0; color:#38bdf8; font-size:0.85rem;">Gestión completa de secciones, productos y ofertas sincronizadas</p>
         <div style="margin-top:0.8rem;">
             <a href="/" target="_blank" style="background:#0284c7; color:#fff; padding:0.4rem 1rem; border-radius:20px; text-decoration:none; font-weight:bold; font-size:0.8rem;">🌐 Ir a la Tienda Pública</a>
         </div>
@@ -39,12 +39,12 @@
             <!-- COLUMNA IZQUIERDA: GESTIÓN DE SECCIONES -->
             <div>
                 <section class="admin-card">
-                    <h3>📂 Gestionar Secciones</h3>
+                    <h3>📂 Gestionar Secciones (Se reflejan en Web y Celu)</h3>
                     <div class="form-group">
                         <label class="form-label">Nueva Sección:</label>
                         <input type="text" id="inputNuevaCat" class="form-input" placeholder="Ej: Bazar, Ferretería">
                     </div>
-                    <button type="button" onclick="guardarSeccionLocal()" class="btn-action" style="background: #2563eb;">✨ Guardar Sección</button>
+                    <button type="button" onclick="guardarSeccionLocal()" class="btn-action" style="background: #2563eb;">✨ Guardar y Publicar Sección</button>
                     
                     <div style="margin-top: 15px;">
                         <label class="form-label" style="font-weight: bold; color: #38bdf8;">Secciones Existentes:</label>
@@ -53,18 +53,18 @@
                 </section>
             </div>
 
-            <!-- COLUMNA DERECHA: CARGAR NUEVO PRODUCTO -->
+            <!-- COLUMNA DERECHA: CARGAR NUEVO PRODUCTO U OFERTA -->
             <div>
                 <section class="admin-card">
-                    <h3>➕ Cargar Nuevo Producto</h3>
+                    <h3>➕ Cargar Producto u Oferta Destacada</h3>
                     <div class="form-group">
                         <label class="form-label">Nombre del Producto:</label>
-                        <input type="text" id="prodNombre" class="form-input" placeholder="Ej: Protector Solar">
+                        <input type="text" id="prodNombre" class="form-input" placeholder="Ej: Zapatillas Urbanas">
                     </div>
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem;" class="form-group">
                         <div>
                             <label class="form-label">Precio (\$):</label>
-                            <input type="number" id="prodPrecio" class="form-input" placeholder="4000">
+                            <input type="number" id="prodPrecio" class="form-input" placeholder="5000">
                         </div>
                         <div>
                             <label class="form-label">Stock:</label>
@@ -79,25 +79,28 @@
                     </div>
                     <div class="form-group" style="display:flex; align-items:center; gap:0.5rem; background:#1e293b; padding:0.6rem; border-radius:8px; border:1px solid #334155;">
                         <input type="checkbox" id="prodOferta" style="width:18px; height:18px; cursor:pointer;">
-                        <label for="prodOferta" style="font-size:0.85rem; color:#f43f5e; font-weight:bold; cursor:pointer;">🔥 Marcar como Producto en Oferta</label>
+                        <label for="prodOferta" style="font-size:0.85rem; color:#f43f5e; font-weight:bold; cursor:pointer;">🔥 Marcar como Oferta Especial (48hs)</label>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">🖼️ Imagen (Archivo o URL):</label>
+                        <label class="form-label">🖼️ Imagen (Subir archivo o pegar URL):</label>
                         <input type="file" id="fileInput" accept="image/*" onchange="comprimirYConvertirImagen()" style="margin-bottom:0.4rem; color: #cbd5e1; font-size: 0.85rem;">
-                        <input type="url" id="urlInput" class="form-input" placeholder="https://...">
-                        <div id="previewContainer" style="display:none; margin-top:0.5rem; text-align:center;">
-                            <img id="imgPreview" src="" alt="Preview" style="max-width:90px; max-height:90px; border-radius:8px; border:1px solid #38bdf8; background:#070a12; object-fit:contain;">
+                        <input type="url" id="urlInput" class="form-input" placeholder="https://ejemplo.com/foto.jpg" oninput="mostrarVistaPreviaURL(this.value)">
+                        
+                        <!-- Vista Previa Dinámica -->
+                        <div id="previewContainer" style="display:none; margin-top:0.6rem; text-align:center; background:#070a12; padding:8px; border-radius:8px; border:1px dashed #38bdf8;">
+                            <p style="font-size: 0.75rem; color: #38bdf8; margin-bottom: 4px;">Vista Previa:</p>
+                            <img id="imgPreview" src="" alt="Vista previa" style="max-width:110px; max-height:110px; border-radius:6px; object-fit:contain;">
                             <p id="pesoPreview" style="font-size:0.75rem; color:#34d399; margin-top:0.2rem; font-weight:bold;"></p>
                         </div>
                     </div>
-                    <button type="button" onclick="guardarProductoLocal()" class="btn-action" style="background: #10b981;">💾 Guardar Producto</button>
+                    <button type="button" onclick="guardarProductoLocal()" class="btn-action" style="background: #10b981;">💾 Guardar y Publicar en Tienda</button>
                 </section>
             </div>
         </div>
 
         <!-- SECCIÓN INFERIOR: LISTADO DE PRODUCTOS CARGADOS -->
         <section class="admin-card">
-            <h3>📦 Productos Cargados en el Sistema</h3>
+            <h3>📦 Productos en el Sistema</h3>
             <div style="overflow-x: auto;">
                 <table class="tabla-productos">
                     <thead>
@@ -105,7 +108,7 @@
                             <th>Nombre</th>
                             <th>Sección</th>
                             <th>Precio</th>
-                            <th>Stock</th>
+                            <th>Oferta</th>
                             <th>Acción</th>
                         </tr>
                     </thead>
@@ -120,28 +123,26 @@
     <script>
         let imagenFinalBase64 = "";
 
-        function obtenerCategorias() {
-            let cats = ["General", "Electrónica", "Bazar"];
-            const guardadas = localStorage.getItem('polirubro_categorias');
-            if (guardadas) {
-                try { cats = JSON.parse(guardadas); } catch(e){}
+        function obtenerDatosGlobales() {
+            let datos = { categorias: ["General", "Electrónica", "Bazar"], productos: [] };
+            const guardado = localStorage.getItem('polirubro_global_datos');
+            if (guardado) {
+                try { datos = JSON.parse(guardado); } catch(e){}
             }
-            return cats;
+            return datos;
         }
 
-        function obtenerProductos() {
-            let prods = [];
-            const guardados = localStorage.getItem('polirubro_productos');
-            if (guardados) {
-                try { prods = JSON.parse(guardados); } catch(e){}
-            }
-            return prods;
+        function guardarDatosGlobales(datos) {
+            localStorage.setItem('polirubro_global_datos', JSON.stringify(datos));
         }
 
         function cargarPanelAdmin() {
+            const datos = obtenerDatosGlobales();
+            const cats = datos.categorias || ["General", "Electrónica", "Bazar"];
+            const prods = datos.productos || [];
+
             // 1. Llenar el Select de categorías
             const select = document.getElementById('selectCategorias');
-            const cats = obtenerCategorias();
             select.innerHTML = '<option value="">Seleccioná una sección...</option>';
             cats.forEach(c => {
                 select.innerHTML += `<option value="${c}">${c}</option>`;
@@ -160,7 +161,6 @@
             });
 
             // 3. Llenar la tabla de productos en el admin
-            const prods = obtenerProductos();
             const tbody = document.getElementById('tablaProductosAdmin');
             tbody.innerHTML = '';
 
@@ -170,12 +170,13 @@
             }
 
             prods.forEach(p => {
+                const badgeOferta = p.enOferta ? '<span style="color:#f43f5e; font-weight:bold;">🔥 Sí</span>' : '<span style="color:#94a3b8;">No</span>';
                 tbody.innerHTML += `
                     <tr>
                         <td style="font-weight: bold; color: #fff;">${p.nombre}</td>
                         <td><span style="background: #1e293b; padding: 3px 8px; border-radius: 4px; border: 1px solid #334155; font-size: 0.78rem;">${p.categoria}</span></td>
                         <td style="color: #38bdf8; font-weight: bold;">$${Number(p.precio).toLocaleString('es-AR')}</td>
-                        <td>${p.stock} un.</td>
+                        <td>${badgeOferta}</td>
                         <td><button class="btn-delete" onclick="eliminarProducto(${p.id})">Eliminar</button></td>
                     </tr>
                 `;
@@ -190,23 +191,25 @@
                 return;
             }
 
-            let cats = obtenerCategorias();
-            if (!cats.includes(nombre)) {
-                cats.push(nombre);
-                localStorage.setItem('polirubro_categorias', JSON.stringify(cats));
+            let datos = obtenerDatosGlobales();
+            if (!datos.categorias) datos.categorias = ["General", "Electrónica", "Bazar"];
+
+            if (!datos.categorias.includes(nombre)) {
+                datos.categorias.push(nombre);
+                guardarDatosGlobales(datos);
             }
 
             input.value = '';
             cargarPanelAdmin();
             document.getElementById('selectCategorias').value = nombre;
-            alert(`✅ Sección "${nombre}" creada con éxito.`);
+            alert(`✅ Sección "${nombre}" creada y sincronizada con éxito en Web y Celular.`);
         }
 
         function eliminarSeccion(nombreCat) {
             if (confirm(`¿Seguro que querés borrar la sección "${nombreCat}"?`)) {
-                let cats = obtenerCategorias();
-                cats = cats.filter(c => c !== nombreCat);
-                localStorage.setItem('polirubro_categorias', JSON.stringify(cats));
+                let datos = obtenerDatosGlobales();
+                datos.categorias = (datos.categorias || []).filter(c => c !== nombreCat);
+                guardarDatosGlobales(datos);
                 cargarPanelAdmin();
             }
         }
@@ -235,12 +238,28 @@
                     const ctx = canvas.getContext("2d");
                     ctx.drawImage(img, 0, 0, width, height);
                     imagenFinalBase64 = canvas.toDataURL("image/jpeg", 0.5);
+                    
                     document.getElementById("imgPreview").src = imagenFinalBase64;
-                    document.getElementById("pesoPreview").innerText = "Imagen optimizada: ~" + Math.round(imagenFinalBase64.length / 1024) + " KB";
+                    document.getElementById("pesoPreview").innerText = "Optimizada: ~" + Math.round(imagenFinalBase64.length / 1024) + " KB";
                     document.getElementById("previewContainer").style.display = "block";
+                    document.getElementById("urlInput").value = ""; // Limpiar URL si subió archivo
                 };
             };
             reader.readAsDataURL(file);
+        }
+
+        function mostrarVistaPreviaURL(url) {
+            if (!url || url.trim() === "") {
+                if (!imagenFinalBase64) {
+                    document.getElementById("previewContainer").style.display = "none";
+                }
+                return;
+            }
+            imagenFinalBase64 = ""; // Si pega URL, anula el archivo local
+            document.getElementById("fileInput").value = "";
+            document.getElementById("imgPreview").src = url;
+            document.getElementById("pesoPreview").innerText = "Imagen desde URL web";
+            document.getElementById("previewContainer").style.display = "block";
         }
 
         function guardarProductoLocal() {
@@ -258,7 +277,9 @@
 
             const imagenFinal = imagenFinalBase64 || urlImg || 'https://via.placeholder.com/200?text=Sin+Imagen';
 
-            let productos = obtenerProductos();
+            let datos = obtenerDatosGlobales();
+            if (!datos.productos) datos.productos = [];
+
             const nuevoProd = {
                 id: Date.now(),
                 nombre,
@@ -269,10 +290,10 @@
                 imagen: imagenFinal
             };
 
-            productos.push(nuevoProd);
-            localStorage.setItem('polirubro_productos', JSON.stringify(productos));
+            datos.productos.push(nuevoProd);
+            guardarDatosGlobales(datos);
 
-            alert(`🎉 ¡Producto "${nombre}" guardado en la sección "${categoria}" con éxito!`);
+            alert(`🎉 ¡Producto "${nombre}" guardado y publicado con éxito! Ya se ve en Web y Celular.`);
             
             // Limpiar formulario
             document.getElementById('prodNombre').value = '';
@@ -289,9 +310,9 @@
 
         function eliminarProducto(idProd) {
             if (confirm("¿Estás seguro de eliminar este producto?")) {
-                let productos = obtenerProductos();
-                productos = productos.filter(p => p.id !== idProd);
-                localStorage.setItem('polirubro_productos', JSON.stringify(productos));
+                let datos = obtenerDatosGlobales();
+                datos.productos = (datos.productos || []).filter(p => p.id !== idProd);
+                guardarDatosGlobales(datos);
                 cargarPanelAdmin();
             }
         }
