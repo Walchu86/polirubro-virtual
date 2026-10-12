@@ -15,18 +15,34 @@
         🚚 ¡ENVÍO GRATIS en compras mayores a \$20.000! 📦
     </div>
 
-    <!-- Cabecera Principal -->
+    <!-- Cabecera Principal con Animación Integrada -->
     <header class="main-header">
         <div class="header-container">
+            <!-- Título y Marca -->
             <a href="/" class="logo-title">
-                <span class="cart-animado">🛒</span>
                 <div class="brand-text">
                     <h1>Polirubro <span>Virtual</span></h1>
                     <p class="tagline">¡Todo lo que buscás, acá lo encontrás!</p>
                 </div>
             </a>
+
+            <!-- ANIMACIÓN EN LA CABECERA: MOUSE Y CHANGUITO CARGANDO -->
+            <div class="header-animation-box">
+                <span class="anim-mouse">🖱️</span>
+                <div class="anim-cart-box">
+                    <span class="anim-item item-1">📦</span>
+                    <span class="anim-item item-2">🎁</span>
+                    <span class="anim-item item-3">🛍️</span>
+                    <span class="anim-cart">🛒</span>
+                </div>
+                <div class="anim-text-badge">
+                    ¡A un clic, <strong>así de fácil te llevás todo!</strong>
+                </div>
+            </div>
+
+            <!-- Badge Secundario -->
             <div class="quick-badge">
-                ⚡ A un solo clic para comprar y llevar
+                ⚡ Comprá fácil desde tu celu o compu
             </div>
         </div>
     </header>
@@ -51,7 +67,7 @@
                 <input type="text" id="inputBuscador" class="search-input" placeholder="🔍 Buscar productos en Polirubro Virtual..." oninput="filtrarProductos()">
             </div>
             
-            <!-- Grilla de Productos o Banner Animado de Sección Vacía -->
+            <!-- Grilla de Productos -->
             <div class="productos-grid" id="contenedorProductos"></div>
         </main>
 
@@ -164,22 +180,7 @@
             });
 
             if (filtrados.length === 0) {
-                cont.innerHTML = `
-                    <div class="empty-section-banner">
-                        <div class="animation-stage">
-                            <span class="anim-mouse">🖱️</span>
-                            <div class="anim-cart-box">
-                                <span class="anim-item item-1">📦</span>
-                                <span class="anim-item item-2">🎁</span>
-                                <span class="anim-item item-3">🛍️</span>
-                                <span class="anim-cart">🛒</span>
-                            </div>
-                        </div>
-                        <h3 class="anim-title">¡A un solo clic!</h3>
-                        <p class="anim-subtitle">Cargás tu changuito y... <strong>¡así de fácil te llevás todo!</strong></p>
-                        <p style="font-size:0.85rem; color:#94a3b8; margin-top:8px;">Próximamente más productos cargados en esta sección.</p>
-                    </div>
-                `;
+                cont.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #666; padding: 40px 0;">No se encontraron productos en esta sección.</p>`;
                 return;
             }
 
