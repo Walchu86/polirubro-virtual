@@ -115,18 +115,25 @@
         function iniciarTienda() {
             sincronizarYActualizar();
             window.addEventListener('storage', (e) => {
-                if (e.key === 'polirubro_global_datos') {
-                    sincronizarYActualizar();
-                }
+                sincronizarYActualizar();
             });
         }
 
         function sincronizarYActualizar() {
             let datos = { categorias: ["General", "Electrónica", "Bazar"], productos: [] };
-            const guardado = localStorage.getItem('polirubro_global_datos');
-            if (guardado) {
-                try { datos = JSON.parse(guardado); } catch(e){}
+            
+            // Busca en la llave unificada principal y también en las secundarias por seguridad móvil
+            const guardadoGlobal = localStorage.getItem('polirubro_global_datos');
+            const guardadoProd = localStorage.getItem('polirubro_productos');
+            const guardadoCat = localStorage.getItem('polirubro_categorias');
+
+            if (guardadoGlobal) {
+                try { datos = JSON.parse(guardadoGlobal); } catch(e){}
+            } else {
+                if (guardadoProd) { try { datos.productos = JSON.parse(guardadoProd); } catch(e){} }
+                if (guardadoCat) { try { datos.categorias = JSON.parse(guardadoCat); } catch(e){} }
             }
+
             listaProductos = datos.productos || [];
             listaCategorias = datos.categorias || [];
 
@@ -198,7 +205,7 @@
         }
 
         function renderizarProductos() {
-            sincronizarYActualizarDatosEnMemoria();
+            sincronizarYActualizar();
             const cont = document.getElementById('contenedorProductos');
             const busqueda = document.getElementById('inputBuscador').value.toLowerCase().trim();
             if (!cont) return;
@@ -238,17 +245,6 @@
                     </div>
                 `;
             });
-        }
-
-        function sincronizarYActualizarDatosEnMemoria() {
-            const guardado = localStorage.getItem('polirubro_global_datos');
-            if (guardado) {
-                try {
-                    const datos = JSON.parse(guardado);
-                    listaProductos = datos.productos || [];
-                    listaCategorias = datos.categorias || [];
-                } catch(e){}
-            }
         }
 
         function filtrarPorCat(cat) {
