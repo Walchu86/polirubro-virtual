@@ -15,7 +15,7 @@
         🚚 ¡ENVÍO GRATIS en compras mayores a \$20.000! 📦
     </div>
 
-    <!-- Cabecera Principal con Animación Integrada -->
+    <!-- Cabecera Principal -->
     <header class="main-header">
         <div class="header-container">
             <a href="/" class="logo-title">
@@ -25,7 +25,7 @@
                 </div>
             </a>
 
-            <!-- ANIMACIÓN EN LA CABECERA -->
+            <!-- Animación para PC -->
             <div class="header-animation-box">
                 <span class="anim-mouse">🖱️</span>
                 <div class="anim-cart-box">
@@ -50,7 +50,7 @@
         <div class="nav-container">
             <ul class="nav-links" id="navSeccionesHeader"></ul>
             <div class="cart-nav-widget" onclick="toggleCarrito()">
-                🛒 Mi Carrito: <span id="cantCarrito">0</span> un. | Total: <span id="totalCarritoNav">\$0</span>
+                🛒 Carrito: <span id="cantCarrito">0</span> un. | <span id="totalCarritoNav">\$0</span>
             </div>
         </div>
     </nav>
@@ -62,7 +62,7 @@
                 <input type="text" id="inputBuscador" class="search-input" placeholder="🔍 Buscar productos en Polirubro Virtual..." oninput="filtrarProductos()">
             </div>
 
-            <!-- SECCIÓN ESTRATÉGICA DE OFERTAS IMPERDIBLES -->
+            <!-- Sección de Ofertas Destacadas -->
             <div id="seccionEspecialOfertas" class="ofertas-container-destacado" style="display: none;">
                 <div class="ofertas-header-title">
                     <h2>🔥 OFERTAS IMPERDIBLES (¡Tiempo Limitado!)</h2>
@@ -81,6 +81,12 @@
         </aside>
     </div>
 
+    <!-- Visor Lupa / Lightbox para Imágenes -->
+    <div id="lightboxModal" class="lightbox-overlay" onclick="cerrarLupa()">
+        <span class="lightbox-close" onclick="cerrarLupa()">✕</span>
+        <img class="lightbox-img" id="imgAmpliada" alt="Vista ampliada del producto" onclick="event.stopPropagation()">
+    </div>
+
     <!-- Modal del Carrito -->
     <div class="cart-modal" id="modalCarrito">
         <div class="cart-header">
@@ -90,7 +96,7 @@
         
         <div class="cart-items" id="itemsCarrito"></div>
         
-        <!-- Opciones de Envío (Dinámico según Supera \$20.000) -->
+        <!-- Opciones de Envío -->
         <div class="cart-shipping-box" style="margin-bottom: 8px;">
             <label style="font-weight: bold; font-size: 0.82rem; color: #333; display: block; margin-bottom: 4px;">🛵 Método de Entrega / Envío:</label>
             <div id="contenedorSelectorEnvio">
@@ -136,7 +142,7 @@
         </div>
     </div>
 
-    <!-- Botón Flotante Directo a WhatsApp para Consultas -->
+    <!-- Botón Flotante Directo a WhatsApp -->
     <a href="https://wa.me/5493794655867?text=Hola!%20Tengo%20una%20consulta%20sobre%20Polirubro%20Virtual" target="_blank" class="wsp-float" title="Contactanos por WhatsApp">
         💬
     </a>
@@ -163,6 +169,43 @@
             renderizarOfertasEspeciales();
             renderizarProductos();
             iniciarRelojOfertas();
+
+            // Detectar botón "Atrás" del celular para cerrar la lupa limpiamente
+            window.addEventListener('popstate', function(event) {
+                const lightbox = document.getElementById('lightboxModal');
+                if (lightbox.style.display === 'flex') {
+                    lightbox.style.display = 'none';
+                }
+            });
+
+            // Detectar tecla Escape para salir en la PC
+            window.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    cerrarLupa();
+                }
+            });
+        }
+
+        // FUNCIONES DE LA LUPA (LIGHTBOX)
+        function abrirLupa(urlImagen) {
+            const lightbox = document.getElementById('lightboxModal');
+            const imgAmpliada = document.getElementById('imgAmpliada');
+            imgAmpliada.src = urlImagen;
+            lightbox.style.display = 'flex';
+            
+            // Agrega estado al historial para que el botón "Atrás" del celu cierre la lupa
+            history.pushState({ lightboxOpen: true }, '', '#zoom');
+        }
+
+        function cerrarLupa() {
+            const lightbox = document.getElementById('lightboxModal');
+            if (lightbox.style.display === 'flex') {
+                lightbox.style.display = 'none';
+                // Si el historial tiene el hash #zoom, volvemos atrás sin recargar
+                if (window.location.hash === '#zoom') {
+                    history.back();
+                }
+            }
         }
 
         function renderizarNavSecciones() {
@@ -209,11 +252,12 @@
             contGrid.innerHTML = '';
 
             ofertas.forEach(p => {
+                const imgUrl = p.imagen || 'https://via.placeholder.com/200?text=Sin+Imagen';
                 contGrid.innerHTML += `
                     <div class="card-oferta-destacada">
                         <div class="badge-oferta-box"><span class="badge-oferta">🔥 48HS</span><span class="timer-oferta" id="timer-oferta-${p.id}">47:59:59</span></div>
-                        <div class="img-frame-oferta">
-                            <img src="${p.imagen || 'https://via.placeholder.com/200?text=Sin+Imagen'}" alt="${p.nombre}" onerror="this.src='https://via.placeholder.com/200?text=Sin+Imagen'">
+                        <div class="img-frame-oferta" onclick="abrirLupa('${imgUrl}')" title="Hacé clic para ampliar">
+                            <img src="${imgUrl}" alt="${p.nombre}" onerror="this.src='https://via.placeholder.com/200?text=Sin+Imagen'">
                         </div>
                         <div class="titulo-producto-oferta">${p.nombre}</div>
                         <div class="precio-producto-oferta">$${Number(p.precio).toLocaleString('es-AR')}</div>
@@ -246,11 +290,12 @@
 
             filtrados.forEach(p => {
                 const badge = p.enOferta ? `<div class="badge-oferta-box"><span class="badge-oferta">🔥 OFERTA 48HS</span><span class="timer-oferta" id="timer-${p.id}">47:59:59</span></div>` : '';
+                const imgUrl = p.imagen || 'https://via.placeholder.com/200?text=Sin+Imagen';
                 cont.innerHTML += `
                     <div class="card-producto">
                         ${badge}
-                        <div class="img-frame">
-                            <img src="${p.imagen || 'https://via.placeholder.com/200?text=Sin+Imagen'}" class="img-producto" alt="${p.nombre}" onerror="this.src='https://via.placeholder.com/200?text=Sin+Imagen'">
+                        <div class="img-frame" onclick="abrirLupa('${imgUrl}')" title="Hacé clic para ampliar">
+                            <img src="${imgUrl}" class="img-producto" alt="${p.nombre}" onerror="this.src='https://via.placeholder.com/200?text=Sin+Imagen'">
                         </div>
                         <div class="card-detalles">
                             <div class="titulo-producto">${p.nombre}</div>
@@ -314,7 +359,6 @@
             let costoEnvioFinal = 0;
 
             if (subtotalProds >= 20000) {
-                // Si supera \$20.000, se cancela el selector y se muestra Envío Gratis
                 contenedorEnvio.innerHTML = `
                     <div style="background: #dcfce7; border: 1px solid #86efac; color: #166534; padding: 8px; border-radius: 8px; font-weight: bold; text-align: center; font-size: 0.85rem;">
                         🎉 ¡ENVÍO GRATIS APLICADO! ($0)
@@ -323,7 +367,6 @@
                 avisoEnvio.innerHTML = "";
                 costoEnvioFinal = 0;
             } else {
-                // Si es menor a \$20.000, se muestra el selector normal de tarifas
                 contenedorEnvio.innerHTML = `
                     <select id="selectEnvio" onchange="actualizarCarritoUI()" style="width: 100%; padding: 7px; border-radius: 8px; border: 1px solid #ccc; font-size: 0.82rem; background: #fff;">
                         <option value="0">🏪 Retiro en Local / Sucursal (GRATIS)</option>
