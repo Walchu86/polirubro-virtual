@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Polirubro Virtual | Tienda Online</title>
-    <!-- Enlace al archivo CSS centralizado -->
+    <title>Polirubro Virtual | Catálogo Online</title>
     <link rel="stylesheet" href="/style.css">
 </head>
 <body>
@@ -14,41 +13,63 @@
         🚚 ¡ENVÍO GRATIS en compras mayores a \$20.000! 📦
     </div>
 
+    <!-- Cabecera clásica de Tienda -->
     <header>
-        <div class="header-content">
-            <div class="logo-title">🛍️ Polirubro Virtual</div>
-            <a href="/admin" style="color: #38bdf8; text-decoration: none; font-weight: bold; font-size: 0.85rem;">⚙️ Admin</a>
+        <div class="header-container">
+            <a href="/" class="logo-title">
+                🛒 Polirubro <span>Virtual</span>
+            </a>
         </div>
     </header>
 
-    <div class="search-box">
-        <input type="text" id="inputBuscador" class="search-input" placeholder="🔍 Buscar productos..." oninput="filtrarProductos()">
+    <!-- Barra de Navegación Estilo Blogger Store -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="/">Inicio</a></li>
+                <li><a href="#" onclick="filtrarPorCat('Todos'); return false;">Catálogo</a></li>
+            </ul>
+            <!-- Widget de Carrito en la barra superior -->
+            <div class="cart-nav-widget" onclick="toggleCarrito()">
+                🛒 Mi Carrito: <span id="cantCarrito">0</span> item(s) | Total: <span id="totalCarritoNav">\$0</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Estructura de dos columnas (Contenido principal + Barra lateral) -->
+    <div class="main-layout">
+        
+        <!-- Columna Izquierda: Buscador y Productos -->
+        <main>
+            <div class="search-box">
+                <input type="text" id="inputBuscador" class="search-input" placeholder="🔍 Buscar productos en la tienda..." oninput="filtrarProductos()">
+            </div>
+
+            <!-- Grid de Productos -->
+            <div class="productos-grid" id="contenedorProductos"></div>
+        </main>
+
+        <!-- Columna Derecha: Barra Lateral de Categorías (Product Category) -->
+        <aside class="sidebar">
+            <h3 class="sidebar-title">Categorías</h3>
+            <div class="sidebar-menu" id="contenedorCategorias"></div>
+        </aside>
+
     </div>
 
-    <!-- Carrusel dinámico de categorías (Píldoras redondas) -->
-    <div class="categorias-container" id="contenedorCategorias"></div>
-
-    <!-- Grid de productos -->
-    <div class="productos-grid" id="contenedorProductos"></div>
-
-    <!-- Botón flotante del carrito -->
-    <button class="cart-float-btn" onclick="toggleCarrito()">
-        🛒 Carrito <span class="cart-badge" id="cantCarrito">0</span>
-    </button>
-
-    <!-- Modal del Carrito -->
+    <!-- Modal del Carrito Lateral -->
     <div class="cart-modal" id="modalCarrito">
         <div class="cart-header">
-            <h2 style="color: #fff; font-size: 1.2rem;">🛒 Tu Pedido</h2>
-            <button onclick="toggleCarrito()" style="background: none; border: none; color: #94a3b8; font-size: 1.5rem; cursor: pointer;">✕</button>
+            <h3 style="font-size: 1.1rem;">🛒 Tu Carrito de Compras</h3>
+            <button onclick="toggleCarrito()" style="background: none; border: none; font-size: 1.3rem; cursor: pointer; color: #333;">✕</button>
         </div>
         <div class="cart-items" id="itemsCarrito"></div>
         <div class="cart-footer">
-            <div style="display: flex; justify-content: space-between; color: #fff; font-weight: bold; font-size: 1.2rem;">
+            <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 1.1rem; color: #333;">
                 <span>Total:</span>
-                <span id="totalCarrito" style="color: #38bdf8;">\$0</span>
+                <span id="totalCarritoModal" style="color: #cc0000;">\$0</span>
             </div>
-            <div id="avisoEnvioGratis" style="font-size: 0.8rem; color: #34d399; font-weight: bold; text-align: center;"></div>
+            <div id="avisoEnvioGratis" style="font-size: 0.8rem; font-weight: bold; text-align: center;"></div>
             <button class="btn-whatsapp" onclick="enviarPedidoWhatsApp()">
                 📲 Enviar Pedido por WhatsApp
             </button>
@@ -56,21 +77,12 @@
     </div>
 
     <script>
-        const paletaColores = [
-            'linear-gradient(135deg, #ec4899, #be185d)',
-            'linear-gradient(135deg, #3b82f6, #1d4ed8)',
-            'linear-gradient(135deg, #f59e0b, #d97706)',
-            'linear-gradient(135deg, #8b5cf6, #6d28d9)',
-            'linear-gradient(135deg, #10b981, #047857)',
-            'linear-gradient(135deg, #06b6d4, #0e7490)'
-        ];
-
         let listaProductos = [];
         let listaCategorias = [];
         let carrito = [];
         let categoriaSeleccionada = 'Todos';
 
-        const NUMERO_WHATSAPP = "5493794000000"; // Reemplazá con tu número real si querés
+        const NUMERO_WHATSAPP = "5493794000000"; // Reemplazá con tu número real
 
         async function iniciarTienda() {
             try {
@@ -83,20 +95,19 @@
                 renderizarCategorias();
                 renderizarProductos();
             } catch (err) {
-                console.error("Iniciando tienda...", err);
+                console.error("Error al cargar la tienda:", err);
             }
         }
 
         function renderizarCategorias() {
             const cont = document.getElementById('contenedorCategorias');
-            cont.innerHTML = `<button class="btn-categoria ${categoriaSeleccionada === 'Todos' ? 'activa' : ''}" style="background: ${paletaColores[0]}" onclick="filtrarPorCat('Todos')">🔥 Todos</button>`;
+            cont.innerHTML = `<button class="btn-categoria ${categoriaSeleccionada === 'Todos' ? 'activa' : ''}" onclick="filtrarPorCat('Todos')">📁 Todos los productos</button>`;
 
-            listaCategorias.forEach((cat, index) => {
-                const color = cat.color || paletaColores[(index + 1) % paletaColores.length];
+            listaCategorias.forEach(cat => {
                 const esActiva = categoriaSeleccionada === cat.nombre ? 'activa' : '';
                 cont.innerHTML += `
-                    <button class="btn-categoria ${esActiva}" style="background: ${color}" onclick="filtrarPorCat('${cat.nombre}')">
-                        ${cat.nombre}
+                    <button class="btn-categoria ${esActiva}" onclick="filtrarPorCat('${cat.nombre}')">
+                        🔹 ${cat.nombre}
                     </button>
                 `;
             });
@@ -114,24 +125,24 @@
             });
 
             if (filtrados.length === 0) {
-                cont.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #64748b; padding: 40px 0;">No se encontraron productos disponibles.</p>`;
+                cont.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #666; padding: 40px 0;">No se encontraron productos en esta sección.</p>`;
                 return;
             }
 
             filtrados.forEach(p => {
-                const badge = p.enOferta ? `<span class="badge-oferta">🔥 OFERTA</span>` : '';
+                const badge = p.enOferta ? `<span class="badge-oferta">OFERTA</span>` : '';
                 cont.innerHTML += `
                     <div class="card-producto">
                         ${badge}
                         <img src="${p.imagen || 'https://via.placeholder.com/200?text=Sin+Imagen'}" class="img-producto" alt="${p.nombre}" onerror="this.src='https://via.placeholder.com/200?text=Sin+Imagen'">
-                        <div class="info-producto">
+                        <div style="flex-grow: 1;">
                             <div class="titulo-producto">${p.nombre}</div>
                             <div class="precio-producto">$${Number(p.precio).toLocaleString('es-AR')}</div>
                             <div class="stock-tag">Stock: ${p.stock} un.</div>
-                            <button class="btn-add-cart" onclick="agregarAlCarrito(${p.id})">
-                                🛒 Agregar
-                            </button>
                         </div>
+                        <button class="btn-add-cart" onclick="agregarAlCarrito(${p.id})">
+                            AGREGAR AL CARRITO
+                        </button>
                     </div>
                 `;
             });
@@ -175,24 +186,24 @@
             const totalPrecio = carrito.reduce((acc, item) => acc + (item.precio * item.cantidad), 0);
 
             document.getElementById('cantCarrito').innerText = totalCant;
-            document.getElementById('totalCarrito').innerText = `$${totalPrecio.toLocaleString('es-AR')}`;
+            document.getElementById('totalCarritoNav').innerText = `$${totalPrecio.toLocaleString('es-AR')}`;
+            document.getElementById('totalCarritoModal').innerText = `$${totalPrecio.toLocaleString('es-AR')}`;
 
-            // Validación de Envío Gratis (\$20.000)
             const avisoEnvio = document.getElementById('avisoEnvioGratis');
             if (totalPrecio >= 20000) {
-                avisoEnvio.innerHTML = "🎉 ¡Felicitaciones! Tenés **ENVÍO GRATIS**.";
-                avisoEnvio.style.color = "#34d399";
+                avisoEnvio.innerHTML = "🎉 ¡Tenés ENVÍO GRATIS!";
+                avisoEnvio.style.color = "#20ba5a";
             } else {
                 const falta = 20000 - totalPrecio;
-                avisoEnvio.innerHTML = `Faltan $${falta.toLocaleString('es-AR')} para obtener **Envío Gratis**`;
-                avisoEnvio.style.color = "#fbbf24";
+                avisoEnvio.innerHTML = `Faltan $${falta.toLocaleString('es-AR')} para Envío Gratis`;
+                avisoEnvio.style.color = "#cc0000";
             }
 
             const contItems = document.getElementById('itemsCarrito');
             contItems.innerHTML = '';
 
             if (carrito.length === 0) {
-                contItems.innerHTML = `<p style="text-align: center; color: #64748b; margin-top: 20px;">El carrito está vacío.</p>`;
+                contItems.innerHTML = `<p style="text-align: center; color: #666; margin-top: 20px;">El carrito está vacío.</p>`;
                 avisoEnvio.innerHTML = "";
                 return;
             }
@@ -201,13 +212,13 @@
                 contItems.innerHTML += `
                     <div class="cart-item">
                         <div>
-                            <div style="color: #fff; font-weight: bold; font-size: 0.9rem;">${item.nombre}</div>
-                            <div style="color: #38bdf8; font-size: 0.85rem;">$${(item.precio * item.cantidad).toLocaleString('es-AR')}</div>
+                            <div style="font-weight: bold; font-size: 0.85rem; color: #333;">${item.nombre}</div>
+                            <div style="color: #cc0000; font-size: 0.8rem; font-weight: bold;">$${(item.precio * item.cantidad).toLocaleString('es-AR')}</div>
                         </div>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <button onclick="cambiarCantidad(${item.id}, -1)" style="background: #334155; color: #fff; border: none; width: 26px; height: 26px; border-radius: 6px; cursor: pointer;">-</button>
-                            <span style="color: #fff; font-weight: bold;">${item.cantidad}</span>
-                            <button onclick="cambiarCantidad(${item.id}, 1)" style="background: #334155; color: #fff; border: none; width: 26px; height: 26px; border-radius: 6px; cursor: pointer;">+</button>
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <button onclick="cambiarCantidad(${item.id}, -1)" style="background: #e0e0e0; border: 1px solid #adadad; width: 22px; height: 22px; cursor: pointer; font-weight: bold;">-</button>
+                            <span style="font-weight: bold; font-size: 0.85rem; min-width: 15px; text-align: center;">${item.cantidad}</span>
+                            <button onclick="cambiarCantidad(${item.id}, 1)" style="background: #e0e0e0; border: 1px solid #adadad; width: 22px; height: 22px; cursor: pointer; font-weight: bold;">+</button>
                         </div>
                     </div>
                 `;
