@@ -56,7 +56,9 @@
             </div>
             
             <h3 class="cat-titulo-seccion" id="tituloSeccionActual">🌟 Catálogo General y Destacados</h3>
-            <div class="productos-grid" id="contenedorProductos"></div>
+            <div class="productos-grid" id="contenedorProductos">
+                <p style="grid-column: 1/-1; text-align: center; color: #666; padding: 40px 0;">Cargando productos desde la nube...</p>
+            </div>
         </main>
 
         <aside class="sidebar" id="contenedorSidebarCategoriasPC">
@@ -105,6 +107,10 @@
     </div>
 
     <script>
+        const BIN_ID = "6acba057ac6210605a28056a";
+        const API_KEY = "\$2a\$10\$tg1ZdjhTaaMXJux9z9NikO/nVFhjVdV28wxjdimgawIO.VkiBMEUi";
+        const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+
         let listaProductos = [];
         let listaCategorias = [];
         let carrito = [];
@@ -112,49 +118,40 @@
         let productosMezcladosInicio = [];
         const NUMERO_WHATSAPP = "5493794655867";
 
-        function iniciarTienda() {
-            sincronizarYActualizar();
-            window.addEventListener('storage', (e) => {
-                sincronizarYActualizar();
+        async function iniciarTienda() {
+            await sincronizarYActualizarNube();
+            // Refrescar al volver a enfocar la pestaña en el celular
+            document.addEventListener("visibilitychange", async function() {
+                if (!document.hidden) {
+                    await sincronizarYActualizarNube();
+                }
             });
         }
 
-        function sincronizarYActualizar() {
-            let datos = { categorias: ["General", "Electrónica", "Bazar"], productos: [] };
-            
-            // Revisa todas las fuentes posibles de almacenamiento para no perder nada
-            const gGlobal = localStorage.getItem('polirubro_global_datos');
-            const gProd = localStorage.getItem('polirubro_productos');
-            const gCat = localStorage.getItem('polirubro_categorias');
-
-            if (gGlobal) {
-                try { datos = JSON.parse(gGlobal); } catch(e){}
+        async function sincronizarYActualizarNube() {
+            try {
+                const res = await fetch(API_URL, {
+                    headers: { "X-Master-Key": API_KEY }
+                });
+                const data = await res.json();
+                const datos = data.record || { categorias: ["General", "Electrónica", "Bazar"], productos: [] };
+                
+                // Guardar respaldo local
+                localStorage.setItem('polirubro_backup_local', JSON.stringify(datos));
+                
+                listaProductos = datos.productos || [];
+                listaCategorias = datos.categorias || ["General", "Electrónica", "Bazar"];
+            } catch(e) {
+                console.warn("Sin internet, cargando desde copia local de seguridad.");
+                const local = localStorage.getItem('polirubro_backup_local');
+                if (local) {
+                    try {
+                        const datosLocal = JSON.parse(local);
+                        listaProductos = datosLocal.productos || [];
+                        listaCategorias = datosLocal.categorias || ["General", "Electrónica", "Bazar"];
+                    } catch(err){}
+                }
             }
-
-            // Si hay productos en la otra llave suelta, los unifica
-            if (gProd) {
-                try {
-                    const pArr = JSON.parse(gProd);
-                    if (pArr && pArr.length > 0 && (!datos.productos || datos.productos.length === 0)) {
-                        datos.productos = pArr;
-                    }
-                } catch(e){}
-            }
-
-            if (gCat) {
-                try {
-                    const cArr = JSON.parse(gCat);
-                    if (cArr && cArr.length > 0 && (!datos.categorias || datos.categorias.length === 0)) {
-                        datos.categorias = cArr;
-                    }
-                } catch(e){}
-            }
-
-            // Asegurar que quede guardado en la llave unificada global
-            localStorage.setItem('polirubro_global_datos', JSON.stringify(datos));
-
-            listaProductos = datos.productos || [];
-            listaCategorias = datos.categorias || ["General", "Electrónica", "Bazar"];
 
             actualizarMezclainicio();
             renderizarNavSecciones();
@@ -213,7 +210,7 @@
                     <div class="card-oferta-destacada">
                         <div class="badge-oferta-box"><span class="badge-oferta">🔥 48HS</span></div>
                         <div class="img-frame-oferta" onclick="abrirLupa('${img}')">
-                            <img src="${img}" alt="${p.nombre}" onerror="this.src='https://via.placeholder.com/200?text=Sin+Imagen'">
+                            <img src="${img}" alt="${p.nombre}" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Sin+Imagen'">
                         </div>
                         <div class="titulo-producto-oferta">${p.nombre}</div>
                         <div class="precio-producto-oferta">$${Number(p.precio).toLocaleString('es-AR')}</div>
@@ -241,7 +238,7 @@
             });
 
             if (filtrados.length === 0) {
-                cont.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #666; padding: 40px 0;">No se encontraron productos.</p>`;
+                cont.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #666; padding: 40px 0;">No se encontraron productos en esta sección.</p>`;
                 return;
             }
 
