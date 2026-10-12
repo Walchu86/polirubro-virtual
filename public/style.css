@@ -134,7 +134,7 @@ body {
     font-weight: bold;
 }
 
-/* BARRA DE NAVEGACIÓN NARANJA (SECCIONES) */
+/* BARRA DE NAVEGACIÓN NARANJA (SOLO SECCIONES) */
 .main-nav {
     background: #ea580c;
     padding: 0.5rem 1rem;
@@ -142,13 +142,11 @@ body {
     -webkit-overflow-scrolling: touch;
 }
 
-.nav-container {
+.nav-container-categorias {
     max-width: 1200px;
     margin: 0 auto;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    gap: 1rem;
 }
 
 .nav-links {
@@ -163,8 +161,8 @@ body {
     color: #ffffff;
     text-decoration: none;
     font-weight: bold;
-    font-size: 0.85rem;
-    padding: 6px 12px;
+    font-size: 0.88rem;
+    padding: 6px 14px;
     border-radius: 8px;
     transition: background 0.2s;
 }
@@ -179,16 +177,41 @@ body {
     font-weight: 900;
 }
 
-.cart-nav-widget {
-    background: #ffffff;
-    color: #ea580c;
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-weight: bold;
-    font-size: 0.82rem;
+/* BOTÓN / BARRA FLOTANTE SUPERIOR DEL CARRITO */
+.floating-cart-bar {
+    background: #1e293b;
+    color: #fff;
+    padding: 8px 16px;
+    text-align: center;
     cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    white-space: nowrap;
+    font-size: 0.88rem;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 90;
+    border-bottom: 2px solid #ea580c;
+    transition: background 0.2s;
+}
+
+.floating-cart-bar:hover {
+    background: #0f172a;
+}
+
+.floating-cart-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+}
+
+.ver-carrito-text {
+    background: #ea580c;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 0.78rem;
 }
 
 /* ==========================================
@@ -645,27 +668,17 @@ body {
         font-size: 0.68rem;
     }
 
+    /* Barra de navegación superior exclusiva para secciones con scroll horizontal */
     .main-nav {
-        padding: 0.35rem 0.5rem;
-    }
-
-    .nav-container {
-        flex-direction: row;
-        justify-content: space-between;
-        gap: 0.5rem;
+        padding: 0.4rem 0.5rem;
     }
 
     .nav-links a {
-        font-size: 0.78rem;
-        padding: 5px 8px;
+        font-size: 0.82rem;
+        padding: 6px 12px;
     }
 
-    .cart-nav-widget {
-        font-size: 0.75rem;
-        padding: 5px 10px;
-    }
-
-    /* Grilla de productos en 2 columnas simétricas para celu */
+    /* Grilla de productos en 2 columnas simétricas para celular */
     .productos-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 0.7rem;
