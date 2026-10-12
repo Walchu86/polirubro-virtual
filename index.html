@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Todo lo que buscás, acá lo encontrás</title>
     <link rel="stylesheet" href="/style.css">
+    <!-- Librería para generar código QR dinámico -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
 
@@ -44,56 +46,71 @@
 
     <!-- Layout Principal -->
     <div class="main-layout">
-        
-        <!-- Contenido Central -->
         <main>
             <div class="search-box">
                 <input type="text" id="inputBuscador" class="search-input" placeholder="🔍 Buscar productos en Polirubro Virtual..." oninput="filtrarProductos()">
             </div>
-
-            <!-- Grilla de Productos -->
             <div class="productos-grid" id="contenedorProductos"></div>
         </main>
 
-        <!-- Barra Lateral de Categorías -->
         <aside class="sidebar">
             <h3 class="sidebar-title">📂 Categorías</h3>
             <div class="sidebar-menu" id="contenedorCategorias"></div>
         </aside>
-
     </div>
 
-    <!-- Modal del Carrito con Opción de Barrios / Retiro -->
+    <!-- Modal del Carrito -->
     <div class="cart-modal" id="modalCarrito">
         <div class="cart-header">
             <h3>🛒 Tu Carrito de Compras</h3>
             <button onclick="toggleCarrito()" class="btn-close-cart">✕</button>
         </div>
+        
         <div class="cart-items" id="itemsCarrito"></div>
         
-        <div class="cart-shipping-box">
-            <label for="selectEnvio" style="font-weight: bold; font-size: 0.85rem; color: #333; display: block; margin-bottom: 5px;">🚚 Método de Entrega / Envío:</label>
-            <select id="selectEnvio" onchange="actualizarCarritoUI()" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #ccc; font-size: 0.85rem;">
+        <!-- Opciones de Envío -->
+        <div class="cart-shipping-box" style="margin-bottom: 8px;">
+            <label for="selectEnvio" style="font-weight: bold; font-size: 0.82rem; color: #333; display: block; margin-bottom: 4px;">🛵 Método de Entrega / Envío:</label>
+            <select id="selectEnvio" onchange="actualizarCarritoUI()" style="width: 100%; padding: 7px; border-radius: 8px; border: 1px solid #ccc; font-size: 0.82rem; background: #fff;">
                 <option value="0">🏪 Retiro en Local / Sucursal (GRATIS)</option>
-                <option value="800">🛵 Barrio Centro / Cercanías (\$800)</option>
-                <option value="1200">🛵 Barrios Periféricos / Aledaños (\$1.200)</option>
+                <option value="1500">🛵 Dentro de las 4 Avenidas (\$1.500)</option>
+                <option value="2500">🚚 Fuera de las 4 Avenidas (\$2.500)</option>
+            </select>
+        </div>
+
+        <!-- Opciones de Medio de Pago -->
+        <div class="cart-shipping-box" style="background: #f0fdf4; border-color: #bbf7d0; margin-bottom: 8px;">
+            <label for="selectPago" style="font-weight: bold; font-size: 0.82rem; color: #166534; display: block; margin-bottom: 4px;">💳 Medio de Pago Preferido:</label>
+            <select id="selectPago" style="width: 100%; padding: 7px; border-radius: 8px; border: 1px solid #86efac; font-size: 0.82rem; background: #fff;">
+                <option value="Mercado Pago">💙 Mercado Pago</option>
+                <option value="Brubank">💜 Brubank</option>
+                <option value="Personal Pay">🖤 Personal Pay</option>
+                <option value="Ualá">🔴 Ualá</option>
+                <option value="Efectivo">💵 Efectivo (Al retirar / recibir)</option>
             </select>
         </div>
 
         <div class="cart-footer">
             <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 1.1rem; color: #333;">
                 <span>Total Final:</span>
-                <span id="totalCarritoModal" style="color: #d97706;">\$0</span>
+                <span id="totalCarritoModal" style="color: #ea580c;">\$0</span>
             </div>
-            <div id="avisoEnvioGratis" style="font-size: 0.82rem; font-weight: bold; text-align: center; margin-top: 5px;"></div>
-            <button class="btn-whatsapp" onclick="enviarPedidoWhatsApp()">
-                📲 Enviar Pedido por WhatsApp
+            <div id="avisoEnvioGratis" style="font-size: 0.8rem; font-weight: bold; text-align: center; margin-top: 4px;"></div>
+            
+            <button class="btn-whatsapp" onclick="procesarPedidoYQR()">
+                📲 Confirmar Pedido y Abrir WhatsApp / QR
             </button>
+        </div>
+
+        <!-- Contenedor para el Código QR dinámico -->
+        <div id="qrModalContainer" style="display: none; text-align: center; margin-top: 10px; padding: 10px; background: #fff; border-radius: 10px; border: 1px solid #cbd5e1;">
+            <p style="font-size: 0.78rem; font-weight: bold; color: #1e293b; margin-bottom: 6px;">Escaneá este QR con tu celu para enviar tu pedido directo:</p>
+            <div id="qrcode" style="display: inline-block;"></div>
         </div>
     </div>
 
-    <!-- Botón Flotante Directo a WhatsApp -->
-    <a href="https://wa.me/5493794000000?text=Hola!%20Tengo%20una%20consulta%20sobre%20Polirubro%20Virtual" target="_blank" class="wsp-float" title="Contactanos por WhatsApp">
+    <!-- Botón Flotante Directo a WhatsApp para Consultas -->
+    <a href="https://wa.me/5493794655867?text=Hola!%20Tengo%20una%20consulta%20sobre%20Polirubro%20Virtual" target="_blank" class="wsp-float" title="Contactanos por WhatsApp">
         💬
     </a>
 
@@ -102,7 +119,7 @@
         let listaCategorias = [];
         let carrito = [];
         let categoriaSeleccionada = 'Todos';
-        const NUMERO_WHATSAPP = "5493794000000"; // Tu número de WhatsApp real
+        const NUMERO_WHATSAPP = "5493794655867"; // Tu número oficial configurado
 
         function iniciarTienda() {
             let datos = { categorias: ["General", "Electrónica", "Bazar"], productos: [] };
@@ -202,14 +219,14 @@
             let costoEnvioFinal = costoEnvioBase;
             const avisoEnvio = document.getElementById('avisoEnvioGratis');
 
-            if (subtotalProds >= 20000) {
+            if (subtotalProds >= 20000 && costoEnvioBase > 0) {
                 costoEnvioFinal = 0;
-                avisoEnvio.innerHTML = "🎉 ¡Felicidades! Alcanzaste \$20.000: TENÉS ENVÍO GRATIS";
+                avisoEnvio.innerHTML = "🎉 ¡Felicidades! Superaste \$20.000: TENÉS ENVÍO GRATIS";
                 avisoEnvio.style.color = "#16a34a";
-            } else if (subtotalProds > 0) {
+            } else if (subtotalProds > 0 && subtotalProds < 20000 && costoEnvioBase > 0) {
                 const falta = 20000 - subtotalProds;
-                avisoEnvio.innerHTML = `💡 Agregá $${falta.toLocaleString('es-AR')} más en productos para tener Envío Gratis`;
-                avisoEnvio.style.color = "#d97706";
+                avisoEnvio.innerHTML = `💡 Agregá $${falta.toLocaleString('es-AR')} más para tener Envío Gratis`;
+                avisoEnvio.style.color = "#ea580c";
             } else {
                 avisoEnvio.innerHTML = "";
             }
@@ -224,6 +241,7 @@
             contItems.innerHTML = '';
             if (carrito.length === 0) {
                 contItems.innerHTML = `<p style="text-align: center; color: #666; margin-top: 20px;">El carrito está vacío.</p>`;
+                document.getElementById('qrModalContainer').style.display = "none";
                 return;
             }
 
@@ -232,7 +250,7 @@
                     <div class="cart-item">
                         <div>
                             <div style="font-weight: bold; font-size: 0.85rem; color: #333;">${item.nombre}</div>
-                            <div style="color: #d97706; font-size: 0.8rem; font-weight: bold;">$${(item.precio * item.cantidad).toLocaleString('es-AR')}</div>
+                            <div style="color: #ea580c; font-size: 0.8rem; font-weight: bold;">$${(item.precio * item.cantidad).toLocaleString('es-AR')}</div>
                         </div>
                         <div style="display: flex; align-items: center; gap: 6px;">
                             <button onclick="cambiarCantidad(${item.id}, -1)" style="background: #e2e8f0; border: 1px solid #cbd5e1; width: 22px; height: 22px; cursor: pointer; font-weight: bold; border-radius: 4px;">-</button>
@@ -262,7 +280,7 @@
             }, 1000);
         }
 
-        function enviarPedidoWhatsApp() {
+        function procesarPedidoYQR() {
             if (carrito.length === 0) {
                 alert("Agregá al menos un producto al carrito.");
                 return;
@@ -271,23 +289,39 @@
             const subtotalProds = carrito.reduce((acc, item) => acc + (item.precio * item.cantidad), 0);
             const selectEnvio = document.getElementById('selectEnvio');
             const textoEnvio = selectEnvio.options[selectEnvio.selectedIndex].text;
+            const medioPago = document.getElementById('selectPago').value;
 
-            let mensaje = "👋 *¡Hola Polirubro Virtual! Quisiera realizar el siguiente pedido:*\n\n";
+            let mensaje = "👋 *¡Hola Polirubro Virtual! Quisiera confirmar este pedido:*\n\n";
             carrito.forEach(item => {
                 mensaje += `• *${item.nombre}* x${item.cantidad} - $${(item.precio * item.cantidad).toLocaleString('es-AR')}\n`;
             });
 
             mensaje += `\n📍 *Método de entrega:* ${textoEnvio}\n`;
+            mensaje += `💳 *Medio de pago:* ${medioPago}\n`;
             
-            if (subtotalProds >= 20000) {
-                mensaje += `🚚 *¡Aplica Envío Gratis por supera $20.000!*\n`;
+            if (subtotalProds >= 20000 && Number(selectEnvio.value) > 0) {
+                mensaje += `🚚 *¡Aplica Envío Gratis por compra superior a $20.000!*\n`;
             }
 
             const totalFinal = document.getElementById('totalCarritoModal').innerText;
-            mensaje += `💵 *Total Final a Pagar:* ${totalFinal}\n\n`;
-            mensaje += "¡Aguardo confirmación para acordar el pago y la entrega! Muchas gracias.";
+            mensaje += `\n💵 *TOTAL FINAL A PAGAR:* ${totalFinal}\n\n`;
+            mensaje += "¡Aguardo confirmación de stock y datos para realizar la transferencia/pago! Muchas gracias.";
 
-            window.open(`https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(mensaje)}`, '_blank');
+            const urlWsp = `https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(mensaje)}`;
+
+            // Generar código QR en pantalla
+            const container = document.getElementById('qrModalContainer');
+            const qrDiv = document.getElementById('qrcode');
+            qrDiv.innerHTML = "";
+            new QRCode(qrDiv, {
+                text: urlWsp,
+                width: 130,
+                height: 130
+            });
+            container.style.display = "block";
+
+            // Redirigir directamente a tu WhatsApp
+            window.open(urlWsp, '_blank');
         }
 
         window.onload = iniciarTienda;
