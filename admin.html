@@ -15,8 +15,7 @@
         .form-group { margin-bottom: 0.8rem; }
         .form-label { font-size: 0.82rem; color: #cbd5e1; display: block; margin-bottom: 0.3rem; }
         .form-input { width: 100%; padding: 0.6rem; border-radius: 8px; background: #1e293b; border: 1px solid #334155; color: #fff; outline: none; font-size: 0.9rem; }
-        .btn-action { background: #2563eb; color: #fff; border: none; padding: 0.7rem; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; transition: opacity 0.2s; }
-        .btn-action:hover { opacity: 0.9; }
+        .btn-action { background: #2563eb; color: #fff; border: none; padding: 0.7rem; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; }
         .lista-items { display: flex; flex-direction: column; gap: 6px; max-height: 180px; overflow-y: auto; margin-top: 10px; }
         .item-row { display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 8px 12px; border-radius: 8px; border: 1px solid #334155; font-size: 0.88rem; }
         .btn-delete { background: #ef4444; color: #fff; border: none; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: bold; }
@@ -28,7 +27,7 @@
 <body class="admin-body">
     <header style="background:#0f172a; padding:1.2rem; border-bottom:1px solid #1e293b; text-align:center;">
         <h1 style="margin:0; font-size:1.5rem; color:#fff;">⚙️ Panel de Control Administrador</h1>
-        <p style="margin:0.3rem 0 0 0; color:#38bdf8; font-size:0.85rem;">Gestión completa de secciones y productos locales</p>
+        <p style="margin:0.3rem 0 0 0; color:#38bdf8; font-size:0.85rem;">Gestión segura de secciones y productos</p>
         <div style="margin-top:0.8rem;">
             <a href="/" target="_blank" style="background:#0284c7; color:#fff; padding:0.4rem 1rem; border-radius:20px; text-decoration:none; font-weight:bold; font-size:0.8rem;">🌐 Ir a la Tienda Pública</a>
         </div>
@@ -36,7 +35,6 @@
 
     <div class="admin-wrapper">
         <div class="admin-grid">
-            <!-- COLUMNA IZQUIERDA: GESTIÓN DE SECCIONES -->
             <div>
                 <section class="admin-card">
                     <h3>📂 Gestionar Secciones</h3>
@@ -53,7 +51,6 @@
                 </section>
             </div>
 
-            <!-- COLUMNA DERECHA: CARGAR NUEVO PRODUCTO -->
             <div>
                 <section class="admin-card">
                     <h3>➕ Cargar Nuevo Producto</h3>
@@ -95,7 +92,6 @@
             </div>
         </div>
 
-        <!-- SECCIÓN INFERIOR: LISTADO DE PRODUCTOS CARGADOS -->
         <section class="admin-card">
             <h3>📦 Productos Cargados en el Sistema</h3>
             <div style="overflow-x: auto;">
@@ -120,37 +116,33 @@
     <script>
         let imagenFinalBase64 = "";
 
-        function obtenerCategorias() {
-            let cats = ["General", "Electrónica", "Bazar"];
-            const guardadas = localStorage.getItem('polirubro_categorias');
-            if (guardadas) {
-                try { cats = JSON.parse(guardadas); } catch(e){}
+        function obtenerDatosGlobales() {
+            let datos = { categorias: ["General", "Electrónica", "Bazar"], productos: [] };
+            const guardado = localStorage.getItem('polirubro_global_datos');
+            if (guardado) {
+                try { datos = JSON.parse(guardado); } catch(e){}
             }
-            return cats;
+            return datos;
         }
 
-        function obtenerProductos() {
-            let prods = [];
-            const guardados = localStorage.getItem('polirubro_productos');
-            if (guardados) {
-                try { prods = JSON.parse(guardados); } catch(e){}
-            }
-            return prods;
+        function guardarDatosGlobales(datos) {
+            localStorage.setItem('polirubro_global_datos', JSON.stringify(datos));
         }
 
         function cargarPanelAdmin() {
-            // 1. Llenar el Select de categorías
+            const datos = obtenerDatosGlobales();
+            
+            // 1. Select
             const select = document.getElementById('selectCategorias');
-            const cats = obtenerCategorias();
             select.innerHTML = '<option value="">Seleccioná una sección...</option>';
-            cats.forEach(c => {
+            datos.categorias.forEach(c => {
                 select.innerHTML += `<option value="${c}">${c}</option>`;
             });
 
-            // 2. Llenar la lista de secciones para borrar
+            // 2. Lista de secciones para borrar
             const listaSec = document.getElementById('listaSeccionesAdmin');
             listaSec.innerHTML = '';
-            cats.forEach(c => {
+            datos.categorias.forEach(c => {
                 listaSec.innerHTML += `
                     <div class="item-row">
                         <span>🔹 ${c}</span>
@@ -159,17 +151,16 @@
                 `;
             });
 
-            // 3. Llenar la tabla de productos en el admin
-            const prods = obtenerProductos();
+            // 3. Tabla de productos
             const tbody = document.getElementById('tablaProductosAdmin');
             tbody.innerHTML = '';
 
-            if (prods.length === 0) {
+            if (datos.productos.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #94a3b8;">No hay productos cargados todavía.</td></tr>`;
                 return;
             }
 
-            prods.forEach(p => {
+            datos.productos.forEach(p => {
                 tbody.innerHTML += `
                     <tr>
                         <td style="font-weight: bold; color: #fff;">${p.nombre}</td>
@@ -190,10 +181,10 @@
                 return;
             }
 
-            let cats = obtenerCategorias();
-            if (!cats.includes(nombre)) {
-                cats.push(nombre);
-                localStorage.setItem('polirubro_categorias', JSON.stringify(cats));
+            let datos = obtenerDatosGlobales();
+            if (!datos.categorias.includes(nombre)) {
+                datos.categorias.push(nombre);
+                guardarDatosGlobales(datos);
             }
 
             input.value = '';
@@ -204,9 +195,9 @@
 
         function eliminarSeccion(nombreCat) {
             if (confirm(`¿Seguro que querés borrar la sección "${nombreCat}"?`)) {
-                let cats = obtenerCategorias();
-                cats = cats.filter(c => c !== nombreCat);
-                localStorage.setItem('polirubro_categorias', JSON.stringify(cats));
+                let datos = obtenerDatosGlobales();
+                datos.categorias = datos.categorias.filter(c => c !== nombreCat);
+                guardarDatosGlobales(datos);
                 cargarPanelAdmin();
             }
         }
@@ -258,7 +249,7 @@
 
             const imagenFinal = imagenFinalBase64 || urlImg || 'https://via.placeholder.com/200?text=Sin+Imagen';
 
-            let productos = obtenerProductos();
+            let datos = obtenerDatosGlobales();
             const nuevoProd = {
                 id: Date.now(),
                 nombre,
@@ -269,12 +260,11 @@
                 imagen: imagenFinal
             };
 
-            productos.push(nuevoProd);
-            localStorage.setItem('polirubro_productos', JSON.stringify(productos));
+            datos.productos.push(nuevoProd);
+            guardarDatosGlobales(datos);
 
-            alert(`🎉 ¡Producto "${nombre}" guardado en la sección "${categoria}" con éxito!`);
+            alert(`🎉 ¡Producto "${nombre}" guardado con éxito!`);
             
-            // Limpiar formulario
             document.getElementById('prodNombre').value = '';
             document.getElementById('prodPrecio').value = '';
             document.getElementById('prodStock').value = '10';
@@ -289,9 +279,9 @@
 
         function eliminarProducto(idProd) {
             if (confirm("¿Estás seguro de eliminar este producto?")) {
-                let productos = obtenerProductos();
-                productos = productos.filter(p => p.id !== idProd);
-                localStorage.setItem('polirubro_productos', JSON.stringify(productos));
+                let datos = obtenerDatosGlobales();
+                datos.productos = datos.productos.filter(p => p.id !== idProd);
+                guardarDatosGlobales(datos);
                 cargarPanelAdmin();
             }
         }
