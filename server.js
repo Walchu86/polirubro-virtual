@@ -5,7 +5,6 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.static(path.join(__dirname, 'views')));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(express.json({ limit: '10mb' }));
 
@@ -195,19 +194,21 @@ app.post('/api/stats/busqueda', (req, res) => {
     res.json({ success: true });
 });
 
+// Ruta Principal (Lee index.html directamente de la raíz)
 app.get('/', (req, res) => {
     try {
         registrarVisita(req);
-        res.sendFile(path.resolve(__dirname, 'views', 'index.html'));
+        res.sendFile(path.resolve(__dirname, 'index.html'));
     } catch (err) {
         console.error("Error cargando /:", err);
         res.status(500).send("Error del servidor: " + err.message);
     }
 });
 
+// Ruta Admin (Lee admin.html directamente de la raíz)
 app.get('/admin', (req, res) => {
     try {
-        res.sendFile(path.resolve(__dirname, 'views', 'admin.html'));
+        res.sendFile(path.resolve(__dirname, 'admin.html'));
     } catch (err) {
         console.error("Error cargando /admin:", err);
         res.status(500).send("Error del servidor: " + err.message);
