@@ -7,97 +7,178 @@
     <link rel="stylesheet" href="/style.css">
     <style>
         body.admin-body { background-color: #0b0f19 !important; color: #f8fafc !important; font-family: system-ui, -apple-system, sans-serif !important; }
-        .admin-wrapper { max-width: 1250px; margin: 0 auto; padding: 1.5rem 1rem; }
-        .grid-stats-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
-        .stat-box-clean { background: #1e293b; border: 1px solid #334155; border-radius: 16px; padding: 1.2rem 1rem; text-align: center; }
-        .stat-box-clean h3 { color: #94a3b8; font-size: 0.82rem; margin: 0 0 0.3rem 0; text-transform: uppercase; }
-        .stat-box-clean .num { font-size: 2rem; font-weight: 900; color: #38bdf8; }
-        .admin-two-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; align-items: start; }
-        @media (max-width: 900px) { .grid-stats-cards { grid-template-columns: 1fr; } .admin-two-columns { grid-template-columns: 1fr; } }
+        .admin-wrapper { max-width: 1200px; margin: 0 auto; padding: 1.5rem 1rem; }
+        .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; align-items: start; }
+        @media (max-width: 900px) { .admin-grid { grid-template-columns: 1fr; } }
+        .admin-card { background: #0f172a; border: 1px solid #1e293b; border-radius: 18px; padding: 1.2rem; box-shadow: 0 8px 20px rgba(0,0,0,0.4); margin-bottom: 1.5rem; }
+        .admin-card h3 { margin: 0 0 1rem 0; font-size: 1.1rem; color: #38bdf8; border-bottom: 1px solid #1e293b; padding-bottom: 0.5rem; }
+        .form-group { margin-bottom: 0.8rem; }
+        .form-label { font-size: 0.82rem; color: #cbd5e1; display: block; margin-bottom: 0.3rem; }
+        .form-input { width: 100%; padding: 0.6rem; border-radius: 8px; background: #1e293b; border: 1px solid #334155; color: #fff; outline: none; font-size: 0.9rem; }
+        .btn-action { background: #2563eb; color: #fff; border: none; padding: 0.7rem; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; transition: opacity 0.2s; }
+        .btn-action:hover { opacity: 0.9; }
+        .lista-items { display: flex; flex-direction: column; gap: 6px; max-height: 180px; overflow-y: auto; margin-top: 10px; }
+        .item-row { display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 8px 12px; border-radius: 8px; border: 1px solid #334155; font-size: 0.88rem; }
+        .btn-delete { background: #ef4444; color: #fff; border: none; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: bold; }
+        .tabla-productos { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85rem; }
+        .tabla-productos th, .tabla-productos td { padding: 8px 10px; border-bottom: 1px solid #334155; text-align: left; }
+        .tabla-productos th { color: #38bdf8; }
     </style>
 </head>
 <body class="admin-body">
     <header style="background:#0f172a; padding:1.2rem; border-bottom:1px solid #1e293b; text-align:center;">
-        <h1 style="margin:0; font-size:1.6rem; color:#fff;">⚙️ Panel de Control Administrador</h1>
-        <p style="margin:0.3rem 0 0 0; color:#38bdf8; font-size:0.9rem;">Gestioná productos y secciones de manera local</p>
+        <h1 style="margin:0; font-size:1.5rem; color:#fff;">⚙️ Panel de Control Administrador</h1>
+        <p style="margin:0.3rem 0 0 0; color:#38bdf8; font-size:0.85rem;">Gestión completa de secciones y productos locales</p>
         <div style="margin-top:0.8rem;">
-            <a href="/" target="_blank" style="background:#0284c7; color:#fff; padding:0.4rem 1rem; border-radius:20px; text-decoration:none; font-weight:bold; font-size:0.85rem;">🌐 Ir a la Tienda Pública</a>
+            <a href="/" target="_blank" style="background:#0284c7; color:#fff; padding:0.4rem 1rem; border-radius:20px; text-decoration:none; font-weight:bold; font-size:0.8rem;">🌐 Ir a la Tienda Pública</a>
         </div>
     </header>
 
     <div class="admin-wrapper">
-        <div class="admin-two-columns">
-            <div style="display:flex; flex-direction:column; gap:1.5rem; width: 100%;">
-                
-                <!-- GESTIONAR SECCIONES -->
-                <section style="background:#0f172a; border:1px solid #1e293b; border-radius:18px; padding:1.2rem;">
-                    <h3 style="margin:0 0 1rem 0; font-size:1.1rem; color:#38bdf8;">📂 Gestionar Secciones</h3>
-                    <div style="display:flex; flex-direction:column; gap:0.8rem; margin-bottom:1.2rem;">
-                        <div>
-                            <label style="font-size:0.82rem; color:#cbd5e1; display:block; margin-bottom:0.3rem;">Nueva Sección:</label>
-                            <input type="text" id="inputNuevaCat" placeholder="Ej: Bazar, Ferretería" style="width:100%; padding:0.6rem; border-radius:8px; background:#1e293b; border:1px solid #334155; color:#fff; outline:none;">
-                        </div>
-                        <button type="button" onclick="guardarSeccionLocal()" style="background:#2563eb; color:#fff; border:none; padding:0.7rem; border-radius:8px; font-weight:bold; cursor:pointer;">✨ Guardar Sección</button>
+        <div class="admin-grid">
+            <!-- COLUMNA IZQUIERDA: GESTIÓN DE SECCIONES -->
+            <div>
+                <section class="admin-card">
+                    <h3>📂 Gestionar Secciones</h3>
+                    <div class="form-group">
+                        <label class="form-label">Nueva Sección:</label>
+                        <input type="text" id="inputNuevaCat" class="form-input" placeholder="Ej: Bazar, Ferretería">
                     </div>
-                </section>
-
-                <!-- CARGAR NUEVO PRODUCTO -->
-                <section style="background:#0f172a; border:1px solid #1e293b; border-radius:18px; padding:1.2rem;">
-                    <h3 style="margin:0 0 1rem 0; font-size:1.1rem; color:#38bdf8;">➕ Cargar Nuevo Producto</h3>
-                    <div id="productForm" style="display:flex; flex-direction:column; gap:0.8rem;">
-                        <div>
-                            <label style="font-size:0.82rem; color:#cbd5e1; display:block; margin-bottom:0.3rem;">Nombre del Producto:</label>
-                            <input type="text" id="prodNombre" required placeholder="Ej: Protector Solar" style="width:100%; padding:0.6rem; border-radius:8px; background:#1e293b; border:1px solid #334155; color:#fff; outline:none;">
-                        </div>
-                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem;">
-                            <div>
-                                <label style="font-size:0.82rem; color:#cbd5e1; display:block; margin-bottom:0.3rem;">Precio (\$):</label>
-                                <input type="number" id="prodPrecio" required placeholder="4000" style="width:100%; padding:0.6rem; border-radius:8px; background:#1e293b; border:1px solid #334155; color:#fff; outline:none;">
-                            </div>
-                            <div>
-                                <label style="font-size:0.82rem; color:#cbd5e1; display:block; margin-bottom:0.3rem;">Stock:</label>
-                                <input type="number" id="prodStock" required value="10" min="0" style="width:100%; padding:0.6rem; border-radius:8px; background:#1e293b; border:1px solid #334155; color:#fff; outline:none;">
-                            </div>
-                        </div>
-                        <div>
-                            <label style="font-size:0.82rem; color:#cbd5e1; display:block; margin-bottom:0.3rem;">Sección:</label>
-                            <select id="selectCategorias" required style="width:100%; padding:0.6rem; border-radius:8px; background:#1e293b; border:1px solid #334155; color:#fff; outline:none;">
-                                <option value="">Seleccioná una sección...</option>
-                            </select>
-                        </div>
-                        <div style="display:flex; align-items:center; gap:0.5rem; background:#1e293b; padding:0.6rem; border-radius:8px; border:1px solid #334155;">
-                            <input type="checkbox" id="prodOferta" style="width:18px; height:18px; cursor:pointer;">
-                            <label for="prodOferta" style="font-size:0.85rem; color:#f43f5e; font-weight:bold; cursor:pointer;">🔥 Marcar como Producto en Oferta Destacada</label>
-                        </div>
-                        <div>
-                            <label style="font-size:0.82rem; color:#cbd5e1; display:block; margin-bottom:0.3rem;">🖼️ Imagen (Archivo o URL):</label>
-                            <input type="file" id="fileInput" accept="image/*" onchange="comprimirYConvertirImagen()" style="margin-bottom:0.4rem; color: #cbd5e1; font-size: 0.85rem;">
-                            <input type="url" id="urlInput" placeholder="https://..." style="width:100%; padding:0.5rem; border-radius:8px; background:#1e293b; border:1px solid #334155; color:#fff; outline:none;">
-                            <div id="previewContainer" style="display:none; margin-top:0.5rem; text-align:center;">
-                                <img id="imgPreview" src="" alt="Preview" style="max-width:100px; max-height:100px; border-radius:8px; border:1px solid #38bdf8; background:#070a12; object-fit:contain;">
-                                <p id="pesoPreview" style="font-size:0.75rem; color:#34d399; margin-top:0.2rem; font-weight:bold;"></p>
-                            </div>
-                        </div>
-                        <button type="button" onclick="guardarProductoLocal()" style="background:#10b981; color:#fff; border:none; padding:0.8rem; border-radius:8px; font-weight:bold; cursor:pointer;">💾 Guardar Producto</button>
+                    <button type="button" onclick="guardarSeccionLocal()" class="btn-action" style="background: #2563eb;">✨ Guardar Sección</button>
+                    
+                    <div style="margin-top: 15px;">
+                        <label class="form-label" style="font-weight: bold; color: #38bdf8;">Secciones Existentes:</label>
+                        <div class="lista-items" id="listaSeccionesAdmin"></div>
                     </div>
                 </section>
             </div>
+
+            <!-- COLUMNA DERECHA: CARGAR NUEVO PRODUCTO -->
+            <div>
+                <section class="admin-card">
+                    <h3>➕ Cargar Nuevo Producto</h3>
+                    <div class="form-group">
+                        <label class="form-label">Nombre del Producto:</label>
+                        <input type="text" id="prodNombre" class="form-input" placeholder="Ej: Protector Solar">
+                    </div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem;" class="form-group">
+                        <div>
+                            <label class="form-label">Precio (\$):</label>
+                            <input type="number" id="prodPrecio" class="form-input" placeholder="4000">
+                        </div>
+                        <div>
+                            <label class="form-label">Stock:</label>
+                            <input type="number" id="prodStock" class="form-input" value="10" min="0">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Sección / Categoría:</label>
+                        <select id="selectCategorias" class="form-input">
+                            <option value="">Seleccioná una sección...</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="display:flex; align-items:center; gap:0.5rem; background:#1e293b; padding:0.6rem; border-radius:8px; border:1px solid #334155;">
+                        <input type="checkbox" id="prodOferta" style="width:18px; height:18px; cursor:pointer;">
+                        <label for="prodOferta" style="font-size:0.85rem; color:#f43f5e; font-weight:bold; cursor:pointer;">🔥 Marcar como Producto en Oferta</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">🖼️ Imagen (Archivo o URL):</label>
+                        <input type="file" id="fileInput" accept="image/*" onchange="comprimirYConvertirImagen()" style="margin-bottom:0.4rem; color: #cbd5e1; font-size: 0.85rem;">
+                        <input type="url" id="urlInput" class="form-input" placeholder="https://...">
+                        <div id="previewContainer" style="display:none; margin-top:0.5rem; text-align:center;">
+                            <img id="imgPreview" src="" alt="Preview" style="max-width:90px; max-height:90px; border-radius:8px; border:1px solid #38bdf8; background:#070a12; object-fit:contain;">
+                            <p id="pesoPreview" style="font-size:0.75rem; color:#34d399; margin-top:0.2rem; font-weight:bold;"></p>
+                        </div>
+                    </div>
+                    <button type="button" onclick="guardarProductoLocal()" class="btn-action" style="background: #10b981;">💾 Guardar Producto</button>
+                </section>
+            </div>
         </div>
+
+        <!-- SECCIÓN INFERIOR: LISTADO DE PRODUCTOS CARGADOS -->
+        <section class="admin-card">
+            <h3>📦 Productos Cargados en el Sistema</h3>
+            <div style="overflow-x: auto;">
+                <table class="tabla-productos">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Sección</th>
+                            <th>Precio</th>
+                            <th>Stock</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaProductosAdmin">
+                        <tr><td colspan="5" style="text-align: center; color: #94a3b8;">No hay productos cargados todavía.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
     </div>
 
     <script>
         let imagenFinalBase64 = "";
 
-        function cargarDatosAdmin() {
+        function obtenerCategorias() {
             let cats = ["General", "Electrónica", "Bazar"];
             const guardadas = localStorage.getItem('polirubro_categorias');
             if (guardadas) {
                 try { cats = JSON.parse(guardadas); } catch(e){}
             }
+            return cats;
+        }
+
+        function obtenerProductos() {
+            let prods = [];
+            const guardados = localStorage.getItem('polirubro_productos');
+            if (guardados) {
+                try { prods = JSON.parse(guardados); } catch(e){}
+            }
+            return prods;
+        }
+
+        function cargarPanelAdmin() {
+            // 1. Llenar el Select de categorías
             const select = document.getElementById('selectCategorias');
+            const cats = obtenerCategorias();
             select.innerHTML = '<option value="">Seleccioná una sección...</option>';
             cats.forEach(c => {
                 select.innerHTML += `<option value="${c}">${c}</option>`;
+            });
+
+            // 2. Llenar la lista de secciones para borrar
+            const listaSec = document.getElementById('listaSeccionesAdmin');
+            listaSec.innerHTML = '';
+            cats.forEach(c => {
+                listaSec.innerHTML += `
+                    <div class="item-row">
+                        <span>🔹 ${c}</span>
+                        <button class="btn-delete" onclick="eliminarSeccion('${c}')">Borrar</button>
+                    </div>
+                `;
+            });
+
+            // 3. Llenar la tabla de productos en el admin
+            const prods = obtenerProductos();
+            const tbody = document.getElementById('tablaProductosAdmin');
+            tbody.innerHTML = '';
+
+            if (prods.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #94a3b8;">No hay productos cargados todavía.</td></tr>`;
+                return;
+            }
+
+            prods.forEach(p => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td style="font-weight: bold; color: #fff;">${p.nombre}</td>
+                        <td><span style="background: #1e293b; padding: 3px 8px; border-radius: 4px; border: 1px solid #334155; font-size: 0.78rem;">${p.categoria}</span></td>
+                        <td style="color: #38bdf8; font-weight: bold;">$${Number(p.precio).toLocaleString('es-AR')}</td>
+                        <td>${p.stock} un.</td>
+                        <td><button class="btn-delete" onclick="eliminarProducto(${p.id})">Eliminar</button></td>
+                    </tr>
+                `;
             });
         }
 
@@ -109,21 +190,25 @@
                 return;
             }
 
-            let cats = ["General", "Electrónica", "Bazar"];
-            const guardadas = localStorage.getItem('polirubro_categorias');
-            if (guardadas) {
-                try { cats = JSON.parse(guardadas); } catch(e){}
-            }
-
+            let cats = obtenerCategorias();
             if (!cats.includes(nombre)) {
                 cats.push(nombre);
                 localStorage.setItem('polirubro_categorias', JSON.stringify(cats));
             }
 
             input.value = '';
-            cargarDatosAdmin();
+            cargarPanelAdmin();
             document.getElementById('selectCategorias').value = nombre;
             alert(`✅ Sección "${nombre}" creada con éxito.`);
+        }
+
+        function eliminarSeccion(nombreCat) {
+            if (confirm(`¿Seguro que querés borrar la sección "${nombreCat}"?`)) {
+                let cats = obtenerCategorias();
+                cats = cats.filter(c => c !== nombreCat);
+                localStorage.setItem('polirubro_categorias', JSON.stringify(cats));
+                cargarPanelAdmin();
+            }
         }
 
         function comprimirYConvertirImagen() {
@@ -167,18 +252,13 @@
             const urlImg = document.getElementById('urlInput').value.trim();
 
             if (!nombre || !precio || !categoria) {
-                alert("Por favor completá el nombre, el precio y la sección del producto.");
+                alert("Por favor completá el nombre, el precio y elegí una sección.");
                 return;
             }
 
             const imagenFinal = imagenFinalBase64 || urlImg || 'https://via.placeholder.com/200?text=Sin+Imagen';
 
-            let productos = [];
-            const prodsGuardados = localStorage.getItem('polirubro_productos');
-            if (prodsGuardados) {
-                try { productos = JSON.parse(prodsGuardados); } catch(e){}
-            }
-
+            let productos = obtenerProductos();
             const nuevoProd = {
                 id: Date.now(),
                 nombre,
@@ -192,7 +272,7 @@
             productos.push(nuevoProd);
             localStorage.setItem('polirubro_productos', JSON.stringify(productos));
 
-            alert(`🎉 ¡Producto "${nombre}" guardado con éxito! Ya se ve reflejado en tu tienda.`);
+            alert(`🎉 ¡Producto "${nombre}" guardado en la sección "${categoria}" con éxito!`);
             
             // Limpiar formulario
             document.getElementById('prodNombre').value = '';
@@ -203,9 +283,20 @@
             document.getElementById('fileInput').value = '';
             document.getElementById('previewContainer').style.display = 'none';
             imagenFinalBase64 = '';
+
+            cargarPanelAdmin();
         }
 
-        window.onload = cargarDatosAdmin;
+        function eliminarProducto(idProd) {
+            if (confirm("¿Estás seguro de eliminar este producto?")) {
+                let productos = obtenerProductos();
+                productos = productos.filter(p => p.id !== idProd);
+                localStorage.setItem('polirubro_productos', JSON.stringify(productos));
+                cargarPanelAdmin();
+            }
+        }
+
+        window.onload = cargarPanelAdmin;
     </script>
 </body>
 </html>
