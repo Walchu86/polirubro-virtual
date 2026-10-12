@@ -25,11 +25,6 @@ let nubeSincronizadaOk = false;
 
 function sincronizarConCloud(forzarGuardado = false) {
     if (!datosListos) return;
-    
-    if (!nubeSincronizadaOk && memoriaProductos.length === 0 && !forzarGuardado) {
-        console.log('🛡️ ALERTA CRÍTICA: Bloqueo de seguridad activado. No se sincronizó con la nube aún, se evita sobreescritura.');
-        return;
-    }
 
     const payload = JSON.stringify({
         record: {
@@ -95,7 +90,7 @@ function cargarDesdeCloud() {
                         const response = JSON.parse(body);
                         const dataRoot = response.record || response;
                         
-                        if (dataRoot && Array.isArray(dataRoot.productos) && dataRoot.productos.length > 0) {
+                        if (dataRoot && Array.isArray(dataRoot.productos)) {
                             memoriaProductos = dataRoot.productos;
                             nubeSincronizadaOk = true;
                             console.log('☁️ Datos RECUPERADOS desde JSONBin correctamente. Total productos:', memoriaProductos.length);
