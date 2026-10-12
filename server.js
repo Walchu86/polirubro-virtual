@@ -5,6 +5,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'views')));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(express.json({ limit: '10mb' }));
 
@@ -163,10 +164,6 @@ function registrarVisita(req) {
     guardarEstadisticas(stats);
 }
 
-function formatearPrecio(monto) {
-    return Number(monto || 0).toLocaleString('es-AR');
-}
-
 app.post('/api/stats/seccion', (req, res) => {
     const { seccion } = req.body;
     if (!seccion) return res.json({ success: false });
@@ -201,7 +198,7 @@ app.post('/api/stats/busqueda', (req, res) => {
 app.get('/', (req, res) => {
     try {
         registrarVisita(req);
-        res.sendFile(path.join(__dirname, 'views', 'index.html'));
+        res.sendFile(path.resolve(__dirname, 'views', 'index.html'));
     } catch (err) {
         console.error("Error cargando /:", err);
         res.status(500).send("Error del servidor: " + err.message);
@@ -210,7 +207,7 @@ app.get('/', (req, res) => {
 
 app.get('/admin', (req, res) => {
     try {
-        res.sendFile(path.join(__dirname, 'views', 'admin.html'));
+        res.sendFile(path.resolve(__dirname, 'views', 'admin.html'));
     } catch (err) {
         console.error("Error cargando /admin:", err);
         res.status(500).send("Error del servidor: " + err.message);
