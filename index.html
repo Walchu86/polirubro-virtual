@@ -56,9 +56,7 @@
             </div>
             
             <h3 class="cat-titulo-seccion" id="tituloSeccionActual">🌟 Catálogo General y Destacados</h3>
-            <div class="productos-grid" id="contenedorProductos">
-                <p style="grid-column: 1/-1; text-align: center; color: #666; padding: 40px 0;">Cargando productos desde la nube...</p>
-            </div>
+            <div class="productos-grid" id="contenedorProductos"></div>
         </main>
 
         <aside class="sidebar" id="contenedorSidebarCategoriasPC">
@@ -107,10 +105,6 @@
     </div>
 
     <script>
-        const BIN_ID = "6acba057ac6210605a28056a";
-        const API_KEY = "\$2a\$10\$tg1ZdjhTaaMXJux9z9NikO/nVFhjVdV28wxjdimgawIO.VkiBMEUi";
-        const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
-
         let listaProductos = [];
         let listaCategorias = [];
         let carrito = [];
@@ -118,40 +112,25 @@
         let productosMezcladosInicio = [];
         const NUMERO_WHATSAPP = "5493794655867";
 
-        async function iniciarTienda() {
-            await sincronizarYActualizarNube();
-            // Refrescar al volver a enfocar la pestaña en el celular
-            document.addEventListener("visibilitychange", async function() {
-                if (!document.hidden) {
-                    await sincronizarYActualizarNube();
-                }
+        function iniciarTienda() {
+            sincronizarYActualizar();
+            window.addEventListener('storage', (e) => {
+                sincronizarYActualizar();
+            });
+            document.addEventListener("visibilitychange", function() {
+                if (!document.hidden) sincronizarYActualizar();
             });
         }
 
-        async function sincronizarYActualizarNube() {
-            try {
-                const res = await fetch(API_URL, {
-                    headers: { "X-Master-Key": API_KEY }
-                });
-                const data = await res.json();
-                const datos = data.record || { categorias: ["General", "Electrónica", "Bazar"], productos: [] };
-                
-                // Guardar respaldo local
-                localStorage.setItem('polirubro_backup_local', JSON.stringify(datos));
-                
-                listaProductos = datos.productos || [];
-                listaCategorias = datos.categorias || ["General", "Electrónica", "Bazar"];
-            } catch(e) {
-                console.warn("Sin internet, cargando desde copia local de seguridad.");
-                const local = localStorage.getItem('polirubro_backup_local');
-                if (local) {
-                    try {
-                        const datosLocal = JSON.parse(local);
-                        listaProductos = datosLocal.productos || [];
-                        listaCategorias = datosLocal.categorias || ["General", "Electrónica", "Bazar"];
-                    } catch(err){}
-                }
+        function sincronizarYActualizar() {
+            let datos = { categorias: ["General", "Electrónica", "Bazar"], productos: [] };
+            const guardado = localStorage.getItem('polirubro_global_datos');
+            if (guardado) {
+                try { datos = JSON.parse(guardado); } catch(e){}
             }
+
+            listaProductos = datos.productos || [];
+            listaCategorias = datos.categorias || ["General", "Electrónica", "Bazar"];
 
             actualizarMezclainicio();
             renderizarNavSecciones();
