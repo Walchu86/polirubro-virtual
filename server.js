@@ -31,22 +31,6 @@ function sincronizarConCloud(forzarGuardado = false) {
         return;
     }
 
-    console.log('🔍 ANALIZANDO IMÁGENES DE LOS PRODUCTOS A SUBIR:');
-    memoriaProductos.forEach((p, index) => {
-        let tipoImg = 'Sin Imagen';
-        let detalle = 'URL por defecto o vacía';
-        if (p.imagen) {
-            if (p.imagen.startsWith('data:image')) {
-                tipoImg = '📸 Base64 (Archivo local comprimido)';
-                detalle = 'Tamaño del string: ' + Math.round(p.imagen.length / 1024) + ' KB';
-            } else if (p.imagen.startsWith('http')) {
-                tipoImg = '🌐 URL Externa';
-                detalle = p.imagen;
-            }
-        }
-        console.log(`   -> [${index + 1}] Producto: "${p.nombre}" | Tipo: ${tipoImg} | Detalle: ${detalle}`);
-    });
-
     const payload = JSON.stringify({
         record: {
             productos: memoriaProductos,
@@ -54,6 +38,9 @@ function sincronizarConCloud(forzarGuardado = false) {
             estadisticas: memoriaEstadisticas
         }
     });
+
+    const pesoPayloadKB = Math.round(Buffer.byteLength(payload) / 1024);
+    console.log(`📦 Peso total a sincronizar con JSONBin: ${pesoPayloadKB} KB`);
 
     const options = {
         hostname: 'api.jsonbin.io',
@@ -72,7 +59,7 @@ function sincronizarConCloud(forzarGuardado = false) {
         res.on('data', (chunk) => body += chunk);
         res.on('end', () => {
             if (res.statusCode === 200) {
-                console.log('☁️ Sincronización con JSONBin exitosa. Total en la nube:', memoriaProductos.length);
+                console.log('☁️ Sincronización con JSONBin exitosa. Total productos en la nube:', memoriaProductos.length);
             } else {
                 console.log('⚠️ Aviso de JSONBin (Código ' + res.statusCode + '):', body);
             }
@@ -112,8 +99,6 @@ function cargarDesdeCloud() {
                             memoriaProductos = dataRoot.productos;
                             nubeSincronizadaOk = true;
                             console.log('☁️ Datos RECUPERADOS desde JSONBin correctamente. Total productos:', memoriaProductos.length);
-                        } else {
-                            console.log('⚠️ JSONBin devolvió productos vacíos o estructura inválida.');
                         }
                         if (dataRoot && Array.isArray(dataRoot.categorias) && dataRoot.categorias.length > 0) {
                             memoriaCategorias = dataRoot.categorias;
@@ -121,8 +106,6 @@ function cargarDesdeCloud() {
                         if (dataRoot && dataRoot.estadisticas) {
                             memoriaEstadisticas = dataRoot.estadisticas;
                         }
-                    } else {
-                        console.log('⚠️ Error al leer JSONBin (Código ' + res.statusCode + '):', body);
                     }
                 } catch (e) {
                     console.error('Error al parsear datos de JSONBin:', e.message);
@@ -488,12 +471,18 @@ app.get('/', (req, res) => {
                     'const imgAmpliada = document.getElementById("img-ampliada");' +
                     'imgAmpliada.src = urlImagen;' +
                     'modal.style.display = "flex";' +
+                    'history.pushState({ modalZoomAbierto: true }, "", window.location.href);' +
                 '}' +
 
                 'function cerrarZoom(event) {' +
                     'if (event) event.stopPropagation();' +
                     'const modal = document.getElementById("modal-imagen-zoom");' +
-                    'modal.style.display = "none";' +
+                    'if (modal && modal.style.display === "flex") {' +
+                        'modal.style.display = "none";' +
+                        'if (history.state && history.state.modalZoomAbierto) {' +
+                            'history.back();' +
+                        '}' +
+                    '}' +
                 '}' +
 
                 'function cerrarPromoWelcome() {' +
@@ -973,6 +962,7 @@ app.get('/admin', (req, res) => {
                                         '<input type="url" id="urlInput" name="imagenUrl" placeholder="https://..." style="width:100%; padding:0.5rem; border-radius:8px; background:#1e293b; border:1px solid #334155; color:#fff; outline:none;">' +
                                         '<div id="previewContainer" style="display:none; margin-top:0.5rem; text-align:center;">' +
                                             '<img id="imgPreview" src="" alt="Preview" style="max-width:100px; max-height:100px; border-radius:8px; border:1px solid #38bdf8; background:#070a12; object-fit:contain;">' +
+                                            '<p id="pesoPreview" style="font-size:0.75rem; color:#34d399; margin-top:0.2rem; font-weight:bold;"></p>' +
                                         '</div>' +
                                     '</div>' +
                                     '<button type="submit" style="background:#10b981; color:#fff; border:none; padding:0.8rem; border-radius:8px; font-weight:bold; cursor:pointer;">💾 Guardar Producto</button>' +
@@ -998,8 +988,8 @@ app.get('/admin', (req, res) => {
                             'img.src = e.target.result;' +
                             'img.onload = function() {' +
                                 'const canvas = document.createElement("canvas");' +
-                                'const MAX_WIDTH = 500;' +
-                                'const MAX_HEIGHT = 500;' +
+                                'const MAX_WIDTH = 350;' +
+                                'const MAX_HEIGHT = 350;' +
                                 'let width = img.width;' +
                                 'let height = img.height;' +
                                 'if (width > height) {' +
@@ -1017,9 +1007,11 @@ app.get('/admin', (req, res) => {
                                 'canvas.height = height;' +
                                 'const ctx = canvas.getContext("2d");' +
                                 'ctx.drawImage(img, 0, 0, width, height);' +
-                                'const dataUrl = canvas.toDataURL("image/jpeg", 0.7);' +
+                                'const dataUrl = canvas.toDataURL("image/jpeg", 0.5);' +
                                 'document.getElementById("imagenBase64").value = dataUrl;' +
                                 'document.getElementById("imgPreview").src = dataUrl;' +
+                                'const pesoKB = Math.round(dataUrl.length / 1024);' +
+                                'document.getElementById("pesoPreview").innerText = "Imagen optimizada: ~" + pesoKB + " KB";' +
                                 'document.getElementById("previewContainer").style.display = "block";' +
                             '};' +
                         '};' +
@@ -1033,6 +1025,7 @@ app.get('/admin', (req, res) => {
                         'if (url) {' +
                             'hiddenInput.value = "";' +
                             'preview.src = url;' +
+                            'document.getElementById("pesoPreview").innerText = "Imagen externa por URL (0 KB de espacio en nube)";' +
                             'previewContainer.style.display = "block";' +
                         '}' +
                     '});' +
