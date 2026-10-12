@@ -1,348 +1,354 @@
-/* ==========================================
-   ESTILOS GENERALES Y BASE (ESTILO TIENDA CLÁSICA)
-   ========================================== */
-* { 
-    box-sizing: border-box; 
-    margin: 0; 
-    padding: 0; 
+/* RESET BÁSICO Y FUENTES */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body {
-    background-color: #ffffff;
-    color: #333333;
-    font-family: Arial, Helvetica, sans-serif;
-    padding-bottom: 50px;
+    background-color: #f8fafc;
+    color: #1e293b;
 }
 
-/* ==========================================
-   BANNER DE ENVÍO GRATIS
-   ========================================== */
+/* BANNER SUPERIOR PROMO */
 .promo-banner {
-    background: linear-gradient(135deg, #f59e0b, #d97706);
+    background: linear-gradient(90deg, #ea580c, #d97706);
     color: #ffffff;
     text-align: center;
-    padding: 8px 15px;
-    font-size: 0.85rem;
+    padding: 8px 12px;
     font-weight: bold;
-    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
 }
 
-/* ==========================================
-   CABECERA SUPERIOR (ESTILO BLOGGER STORE)
-   ========================================== */
-header {
+/* CABECERA Y LOGO ANIMADO */
+.main-header {
     background: #ffffff;
-    border-bottom: 1px solid #dddddd;
-    padding: 15px 20px;
+    border-bottom: 2px solid #e2e8f0;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
 }
 
 .header-container {
-    max-width: 1000px;
+    max-width: 1200px;
     margin: 0 auto;
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    gap: 15px;
+    gap: 1rem;
 }
 
 .logo-title {
-    font-size: 1.8rem;
-    font-weight: bold;
-    color: #cc0000;
-    text-decoration: none;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
+    text-decoration: none;
 }
 
-.logo-title span {
-    color: #333333;
+.cart-animado {
+    font-size: 2.2rem;
+    display: inline-block;
+    animation: cargarMercaderia 2s infinite ease-in-out;
 }
 
-/* ==========================================
-   BARRA DE NAVEGACIÓN PRINCIPAL (NARANJA)
-   ========================================== */
+@keyframes cargarMercaderia {
+    0% { transform: translateX(0) rotate(0deg); }
+    25% { transform: translateX(4px) translateY(-3px) rotate(-5deg); }
+    50% { transform: translateX(0) translateY(0) rotate(0deg); }
+    75% { transform: translateX(-4px) translateY(-3px) rotate(5deg); }
+    100% { transform: translateX(0) rotate(0deg); }
+}
+
+.brand-text h1 {
+    font-size: 1.6rem;
+    color: #dc2626;
+    font-weight: 900;
+    line-height: 1.1;
+}
+
+.brand-text h1 span {
+    color: #ea580c;
+}
+
+.tagline {
+    font-size: 0.78rem;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.quick-badge {
+    background: #fef3c7;
+    color: #b45309;
+    border: 1px solid #fde68a;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.82rem;
+    font-weight: bold;
+}
+
+/* BARRA DE NAVEGACIÓN Y CARRITO */
 .main-nav {
-    background: #e65c00;
-    border-bottom: 3px solid #b34700;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.3);
+    background: #ea580c;
+    padding: 0.6rem 1.5rem;
 }
 
 .nav-container {
-    max-width: 1000px;
+    max-width: 1200px;
     margin: 0 auto;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 10px;
 }
 
 .nav-links {
-    display: flex;
     list-style: none;
-    overflow-x: auto;
+    display: flex;
+    gap: 15px;
 }
 
 .nav-links a {
-    color: #ffffff;
+    color: #fff;
     text-decoration: none;
-    padding: 12px 18px;
-    font-size: 0.9rem;
     font-weight: bold;
-    display: block;
-    transition: background 0.2s;
-    white-space: nowrap;
+    font-size: 0.9rem;
 }
 
-.nav-links a:hover {
-    background: #cc4e00;
-}
-
-/* Widget del Carrito en la barra naranja */
 .cart-nav-widget {
-    background: #ffcc00;
-    color: #333333;
-    padding: 8px 15px;
+    background: #ffffff;
+    color: #ea580c;
+    padding: 6px 14px;
+    border-radius: 20px;
     font-weight: bold;
     font-size: 0.85rem;
-    border-radius: 4px;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    border: 1px solid #e6b800;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
 }
 
 .cart-nav-widget:hover {
-    background: #ffdb4d;
+    transform: scale(1.03);
 }
 
-/* ==========================================
-   ESTRUCTURA PRINCIPAL (2 COLUMNAS: CATÁLOGO + LATERAL)
-   ========================================== */
+/* ESTRUCTURA PRINCIPAL DE 2 COLUMNAS */
 .main-layout {
-    max-width: 1000px;
-    margin: 20px auto;
-    padding: 0 10px;
+    max-width: 1200px;
+    margin: 1.5rem auto;
+    padding: 0 1rem;
     display: grid;
     grid-template-columns: 1fr 260px;
-    gap: 20px;
+    gap: 1.5rem;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 850px) {
     .main-layout {
-        grid-template-columns: 1fr; /* En celular pasa a una sola columna ordenada */
+        grid-template-columns: 1fr;
     }
 }
 
-/* ==========================================
-   BUSCADOR
-   ========================================== */
+/* BUSCADOR */
 .search-box {
-    margin-bottom: 15px;
+    margin-bottom: 1.2rem;
 }
 
 .search-input {
     width: 100%;
-    padding: 10px 14px;
-    border: 1px solid #cccccc;
-    border-radius: 4px;
-    font-size: 0.9rem;
+    padding: 0.8rem 1rem;
+    border-radius: 12px;
+    border: 1px solid #cbd5e1;
+    font-size: 0.95rem;
     outline: none;
-    background: #f9f9f9;
+    background: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.02);
 }
 
-.search-input:focus {
-    border-color: #e65c00;
-    background: #ffffff;
-}
-
-/* ==========================================
-   GRID DE PRODUCTOS (ESTILO CLÁSICO)
-   ========================================== */
+/* GRILLA DE PRODUCTOS */
 .productos-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 15px;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 1.2rem;
 }
 
 .card-producto {
     background: #ffffff;
-    border: 1px solid #dddddd;
-    border-radius: 4px;
-    padding: 10px;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 1rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    transition: transform 0.2s, box-shadow 0.2s;
     position: relative;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    transition: box-shadow 0.2s;
+    overflow: hidden;
 }
 
 .card-producto:hover {
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    border-color: #b0b0b0;
-}
-
-.badge-oferta {
-    position: absolute;
-    top: 8px;
-    left: 8px;
-    background: #cc0000;
-    color: #ffffff;
-    font-size: 0.65rem;
-    font-weight: bold;
-    padding: 3px 6px;
-    border-radius: 3px;
-    z-index: 2;
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.06);
 }
 
 .img-producto {
     width: 100%;
     height: 160px;
-    object-fit: cover;
-    border: 1px solid #eeeeee;
-    background: #fdfdfd;
-    margin-bottom: 8px;
+    object-fit: contain;
+    border-radius: 10px;
+    background: #f8fafc;
 }
 
 .titulo-producto {
-    font-size: 0.9rem;
-    font-weight: bold;
-    color: #0044cc;
-    margin-bottom: 6px;
-    line-height: 1.2;
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 4px;
+    color: #1e293b;
 }
 
 .precio-producto {
-    background: #cc0000;
-    color: #ffffff;
-    font-size: 1rem;
-    font-weight: bold;
-    padding: 5px 8px;
-    border-radius: 3px;
-    display: inline-block;
-    margin-bottom: 8px;
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: #ea580c;
 }
 
 .stock-tag {
     font-size: 0.75rem;
-    color: #666666;
-    margin-bottom: 8px;
+    color: #64748b;
+    margin-bottom: 10px;
 }
 
 .btn-add-cart {
-    background: linear-gradient(to bottom, #f9f9f9, #e0e0e0);
-    color: #333333;
-    border: 1px solid #adadad;
-    padding: 7px 10px;
-    border-radius: 3px;
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    padding: 0.6rem;
+    border-radius: 10px;
     font-weight: bold;
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     cursor: pointer;
-    text-align: center;
-    transition: background 0.1s;
+    width: 100%;
+    transition: background 0.2s;
 }
 
 .btn-add-cart:hover {
-    background: linear-gradient(to bottom, #ffffff, #dcdcdc);
-    border-color: #888888;
+    background: #1d4ed8;
 }
 
-/* ==========================================
-   BARRA LATERAL (SIDEBAR DE CATEGORÍAS)
-   ========================================== */
+/* RELOJ Y OFERTAS DE 48HS */
+.badge-oferta-box {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    z-index: 2;
+}
+
+.badge-oferta {
+    background: #dc2626;
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 900;
+    padding: 3px 6px;
+    border-radius: 6px;
+}
+
+.timer-oferta {
+    background: #0f172a;
+    color: #fde047;
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 2px 5px;
+    border-radius: 6px;
+}
+
+/* BARRA LATERAL Y BOTONES DE CATEGORÍAS */
 .sidebar {
-    background: #fbfbfb;
-    border: 1px solid #dddddd;
-    border-radius: 4px;
-    padding: 15px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 1.2rem;
+    height: fit-content;
 }
 
 .sidebar-title {
-    font-size: 0.95rem;
-    font-weight: bold;
-    color: #333333;
-    border-bottom: 2px solid #e65c00;
-    padding-bottom: 6px;
-    margin-bottom: 12px;
-    text-transform: uppercase;
+    font-size: 1.05rem;
+    color: #ea580c;
+    border-bottom: 2px solid #fdba74;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
 }
 
 .sidebar-menu {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
 }
 
 .btn-categoria {
-    background: transparent;
-    border: none;
-    border-bottom: 1px dotted #cccccc;
-    padding: 8px 5px;
+    background: #f1f5f9;
+    color: #334155;
+    border: 1px solid #cbd5e1;
+    padding: 10px 12px;
+    border-radius: 10px;
     text-align: left;
-    font-size: 0.88rem;
-    font-weight: bold;
-    color: #0044cc;
+    font-weight: 700;
+    font-size: 0.85rem;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: color 0.2s;
+    transition: all 0.2s;
 }
 
 .btn-categoria:hover {
-    color: #cc0000;
-    background: rgba(0,0,0,0.02);
+    background: #ffedd5;
+    color: #ea580c;
+    border-color: #fdba74;
 }
 
 .btn-categoria.activa {
-    color: #cc0000;
-    background: rgba(230, 92, 0, 0.08);
-    border-left: 3px solid #e65c00;
-    padding-left: 8px;
+    background: #ea580c;
+    color: #ffffff;
+    border-color: #ea580c;
+    box-shadow: 0 4px 10px rgba(234, 88, 12, 0.3);
 }
 
-/* ==========================================
-   MODAL DEL CARRITO
-   ========================================== */
+/* MODAL Y CARRITO */
 .cart-modal {
     position: fixed;
-    top: 0; 
-    right: -100%;
-    width: 100%;
-    max-width: 380px;
-    height: 100%;
-    background: #ffffff;
-    border-left: 1px solid #cccccc;
-    z-index: 1000;
+    top: 0;
+    right: -400px;
+    width: 360px;
+    height: 100vh;
+    background: #fff;
+    box-shadow: -5px 0 25px rgba(0,0,0,0.15);
+    z-index: 999;
     transition: right 0.3s ease;
     display: flex;
     flex-direction: column;
-    padding: 20px;
-    box-shadow: -5px 0 20px rgba(0,0,0,0.2);
+    padding: 1.2rem;
 }
 
-.cart-modal.abierto { 
-    right: 0; 
+.cart-modal.abierto {
+    right: 0;
 }
 
 .cart-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #eeeeee;
-    padding-bottom: 12px;
-    color: #333333;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 0.8rem;
+}
+
+.btn-close-cart {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
 }
 
 .cart-items {
     flex-grow: 1;
     overflow-y: auto;
-    margin: 15px 0;
+    margin: 1rem 0;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -352,38 +358,64 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #f9f9f9;
+    background: #f8fafc;
     padding: 8px 10px;
-    border-radius: 4px;
-    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.cart-shipping-box {
+    background: #fff7ed;
+    border: 1px solid #ffedd5;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
 }
 
 .cart-footer {
-    border-top: 1px solid #eeeeee;
-    padding-top: 15px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 0.8rem;
 }
 
 .btn-whatsapp {
-    background: #25d366;
-    color: #ffffff;
+    background: #22c55e;
+    color: #fff;
     border: none;
-    padding: 12px;
-    border-radius: 4px;
+    width: 100%;
+    padding: 0.8rem;
+    border-radius: 10px;
     font-weight: bold;
-    font-size: 0.95rem;
+    margin-top: 10px;
     cursor: pointer;
-    text-align: center;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    font-size: 0.9rem;
 }
 
 .btn-whatsapp:hover {
-    background: #20ba5a;
+    background: #16a34a;
+}
+
+/* BOTÓN FLOTANTE DE WHATSAPP */
+.wsp-float {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #22c55e;
+    color: white;
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);
+    text-decoration: none;
+    z-index: 99;
+    animation: pulsoWsp 2s infinite;
+}
+
+@keyframes pulsoWsp {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+    100% { transform: scale(1); }
 }
