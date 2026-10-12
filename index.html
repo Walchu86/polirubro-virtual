@@ -25,7 +25,7 @@
                 </div>
             </a>
 
-            <!-- ANIMACIÓN EN LA CABECERA: MOUSE Y CHANGUITO CARGANDO -->
+            <!-- ANIMACIÓN EN LA CABECERA -->
             <div class="header-animation-box">
                 <span class="anim-mouse">🖱️</span>
                 <div class="anim-cart-box">
@@ -90,14 +90,17 @@
         
         <div class="cart-items" id="itemsCarrito"></div>
         
-        <!-- Opciones de Envío -->
+        <!-- Opciones de Envío (Dinámico según Supera \$20.000) -->
         <div class="cart-shipping-box" style="margin-bottom: 8px;">
-            <label for="selectEnvio" style="font-weight: bold; font-size: 0.82rem; color: #333; display: block; margin-bottom: 4px;">🛵 Método de Entrega / Envío:</label>
-            <select id="selectEnvio" onchange="actualizarCarritoUI()" style="width: 100%; padding: 7px; border-radius: 8px; border: 1px solid #ccc; font-size: 0.82rem; background: #fff;">
-                <option value="0">🏪 Retiro en Local / Sucursal (GRATIS)</option>
-                <option value="1500">🛵 Dentro de las 4 Avenidas (\$1.500)</option>
-                <option value="2500">🚚 Fuera de las 4 Avenidas (\$2.500)</option>
-            </select>
+            <label style="font-weight: bold; font-size: 0.82rem; color: #333; display: block; margin-bottom: 4px;">🛵 Método de Entrega / Envío:</label>
+            <div id="contenedorSelectorEnvio">
+                <select id="selectEnvio" onchange="actualizarCarritoUI()" style="width: 100%; padding: 7px; border-radius: 8px; border: 1px solid #ccc; font-size: 0.82rem; background: #fff;">
+                    <option value="0">🏪 Retiro en Local / Sucursal (GRATIS)</option>
+                    <option value="1500">🛵 Dentro de las 4 Avenidas (\$1.500)</option>
+                    <option value="2500">🚚 Fuera de las 4 Avenidas (\$2.500)</option>
+                </select>
+            </div>
+            <div id="avisoEnvioGratis" style="font-size: 0.8rem; font-weight: bold; text-align: center; margin-top: 6px;"></div>
         </div>
 
         <!-- Opciones de Medio de Pago -->
@@ -117,9 +120,8 @@
                 <span>Total Final:</span>
                 <span id="totalCarritoModal" style="color: #ea580c;">\$0</span>
             </div>
-            <div id="avisoEnvioGratis" style="font-size: 0.8rem; font-weight: bold; text-align: center; margin-top: 4px;"></div>
             
-            <button class="btn-whatsapp" onclick="procesarPedidoYQR()">
+            <button class="btn-whatsapp" onclick="procesarPedidoYQR()" style="margin-top: 10px;">
                 📲 Confirmar Pedido y Generar QR / WhatsApp
             </button>
         </div>
@@ -196,7 +198,6 @@
         function renderizarOfertasEspeciales() {
             const secContenedor = document.getElementById('seccionEspecialOfertas');
             const contGrid = document.getElementById('contenedorOfertasDestacadas');
-            
             const ofertas = listaProductos.filter(p => p.enOferta === true);
 
             if (ofertas.length === 0) {
@@ -307,21 +308,40 @@
             const totalCant = carrito.reduce((acc, item) => acc + item.cantidad, 0);
             const subtotalProds = carrito.reduce((acc, item) => acc + (item.precio * item.cantidad), 0);
             
-            const selectEnvio = document.getElementById('selectEnvio');
+            const contenedorEnvio = document.getElementById('contenedorSelectorEnvio');
             const avisoEnvio = document.getElementById('avisoEnvioGratis');
             
-            let costoEnvioFinal = Number(selectEnvio.value || 0);
+            let costoEnvioFinal = 0;
 
             if (subtotalProds >= 20000) {
-                costoEnvioFinal = 0;
-                avisoEnvio.innerHTML = "🎉 ¡Felicidades! Superaste \$20.000: TENÉS ENVÍO GRATIS";
-                avisoEnvio.style.color = "#16a34a";
-            } else if (subtotalProds > 0) {
-                const falta = 20000 - subtotalProds;
-                avisoEnvio.innerHTML = `💡 Agregá $${falta.toLocaleString('es-AR')} más para tener Envío Gratis`;
-                avisoEnvio.style.color = "#ea580c";
-            } else {
+                // Si supera \$20.000, se cancela el selector y se muestra Envío Gratis
+                contenedorEnvio.innerHTML = `
+                    <div style="background: #dcfce7; border: 1px solid #86efac; color: #166534; padding: 8px; border-radius: 8px; font-weight: bold; text-align: center; font-size: 0.85rem;">
+                        🎉 ¡ENVÍO GRATIS APLICADO! ($0)
+                    </div>
+                `;
                 avisoEnvio.innerHTML = "";
+                costoEnvioFinal = 0;
+            } else {
+                // Si es menor a \$20.000, se muestra el selector normal de tarifas
+                contenedorEnvio.innerHTML = `
+                    <select id="selectEnvio" onchange="actualizarCarritoUI()" style="width: 100%; padding: 7px; border-radius: 8px; border: 1px solid #ccc; font-size: 0.82rem; background: #fff;">
+                        <option value="0">🏪 Retiro en Local / Sucursal (GRATIS)</option>
+                        <option value="1500">🛵 Dentro de las 4 Avenidas ($1.500)</option>
+                        <option value="2500">🚚 Fuera de las 4 Avenidas ($2.500)</option>
+                    </select>
+                `;
+                
+                const selectEnvioActual = document.getElementById('selectEnvio');
+                costoEnvioFinal = selectEnvioActual ? Number(selectEnvioActual.value || 0) : 0;
+
+                if (subtotalProds > 0) {
+                    const falta = 20000 - subtotalProds;
+                    avisoEnvio.innerHTML = `💡 Agregá $${falta.toLocaleString('es-AR')} más para tener Envío Gratis`;
+                    avisoEnvio.style.color = "#ea580c";
+                } else {
+                    avisoEnvio.innerHTML = "";
+                }
             }
 
             const totalFinal = subtotalProds + costoEnvioFinal;
@@ -380,11 +400,15 @@
             }
 
             const subtotalProds = carrito.reduce((acc, item) => acc + (item.precio * item.cantidad), 0);
-            const selectEnvio = document.getElementById('selectEnvio');
-            let textoEnvio = selectEnvio.options[selectEnvio.selectedIndex].text;
+            let textoEnvio = "Retiro en Local / Sucursal (GRATIS)";
             
             if (subtotalProds >= 20000) {
-                textoEnvio = "Envío Gratis (Compra superior a \$20.000)";
+                textoEnvio = "🎉 ¡Envío Gratis Aplicado! (Compra superior a \$20.000)";
+            } else {
+                const selectEnvio = document.getElementById('selectEnvio');
+                if (selectEnvio) {
+                    textoEnvio = selectEnvio.options[selectEnvio.selectedIndex].text;
+                }
             }
 
             const medioPago = document.getElementById('selectPago').value;
@@ -396,10 +420,6 @@
 
             mensaje += `\n📍 *Método de entrega:* ${textoEnvio}\n`;
             mensaje += `💳 *Medio de pago:* ${medioPago}\n`;
-            
-            if (subtotalProds >= 20000) {
-                mensaje += `🚚 *¡Aplica Envío Gratis!*\n`;
-            }
 
             const totalFinal = document.getElementById('totalCarritoModal').innerText;
             mensaje += `\n💵 *TOTAL FINAL A PAGAR:* ${totalFinal}\n\n`;
@@ -407,7 +427,6 @@
 
             const urlWsp = `https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(mensaje)}`;
 
-            // Generar Código QR en pantalla en lugar de abrir pestaña automática
             const container = document.getElementById('qrModalContainer');
             const qrDiv = document.getElementById('qrcode');
             const linkBtn = document.getElementById('linkBtnWsp');
