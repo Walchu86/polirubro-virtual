@@ -13,8 +13,6 @@
         .stat-box-clean h3 { color: #94a3b8; font-size: 0.82rem; margin: 0 0 0.3rem 0; text-transform: uppercase; }
         .stat-box-clean .num { font-size: 2rem; font-weight: 900; color: #38bdf8; }
         .stat-box-clean .sub { font-size: 0.78rem; color: #34d399; font-weight: 700; margin-top: 0.2rem; }
-        .table-clean { width: 100%; border-collapse: collapse; }
-        .table-clean th, .table-clean td { padding: 0.5rem 0.7rem; border-bottom: 1px solid #334155; font-size: 0.85rem; }
         .admin-two-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; align-items: start; }
         @media (max-width: 900px) { .grid-stats-cards { grid-template-columns: 1fr; } .admin-two-columns { grid-template-columns: 1fr; } }
     </style>
@@ -57,17 +55,19 @@
 
         <div class="admin-two-columns">
             <div style="display:flex; flex-direction:column; gap:1.5rem;">
+                <!-- GESTIONAR SECCIONES -->
                 <section style="background:#0f172a; border:1px solid #1e293b; border-radius:18px; padding:1.2rem;">
                     <h3 style="margin:0 0 1rem 0; font-size:1.1rem; color:#38bdf8;">📂 Gestionar Secciones</h3>
-                    <form action="/admin/categoria/agregar" method="POST" style="display:flex; flex-direction:column; gap:0.8rem; margin-bottom:1.2rem; border-bottom:1px solid #1e293b; padding-bottom:1.2rem;">
+                    <div style="display:flex; flex-direction:column; gap:0.8rem; margin-bottom:1.2rem; border-bottom:1px solid #1e293b; padding-bottom:1.2rem;">
                         <div>
                             <label style="font-size:0.82rem; color:#cbd5e1; display:block; margin-bottom:0.3rem;">Nueva Sección:</label>
-                            <input type="text" name="nombreCat" placeholder="Ej: Bazar, Ferretería" required style="width:100%; padding:0.6rem; border-radius:8px; background:#1e293b; border:1px solid #334155; color:#fff; outline:none;">
+                            <input type="text" id="inputNuevaCat" placeholder="Ej: Bazar, Ferretería" style="width:100%; padding:0.6rem; border-radius:8px; background:#1e293b; border:1px solid #334155; color:#fff; outline:none;">
                         </div>
-                        <button type="submit" style="background:#2563eb; color:#fff; border:none; padding:0.7rem; border-radius:8px; font-weight:bold; cursor:pointer;">✨ Guardar Sección</button>
-                    </form>
+                        <button type="button" onclick="agregarSeccionLocal()" style="background:#2563eb; color:#fff; border:none; padding:0.7rem; border-radius:8px; font-weight:bold; cursor:pointer;">✨ Guardar Sección</button>
+                    </div>
                 </section>
 
+                <!-- CARGAR NUEVO PRODUCTO -->
                 <section style="background:#0f172a; border:1px solid #1e293b; border-radius:18px; padding:1.2rem;">
                     <h3 style="margin:0 0 1rem 0; font-size:1.1rem; color:#38bdf8;">➕ Cargar Nuevo Producto</h3>
                     <form action="/admin/agregar" method="POST" id="productForm" style="display:flex; flex-direction:column; gap:0.8rem;">
@@ -88,9 +88,8 @@
                         </div>
                         <div>
                             <label style="font-size:0.82rem; color:#cbd5e1; display:block; margin-bottom:0.3rem;">Sección:</label>
-                            <!-- Selector dinámico que se llena con las categorías creadas -->
                             <select name="categoria" id="selectCategorias" required style="width:100%; padding:0.6rem; border-radius:8px; background:#1e293b; border:1px solid #334155; color:#fff; outline:none;">
-                                <option value="">Cargando secciones...</option>
+                                <option value="">Seleccioná una sección...</option>
                             </select>
                         </div>
                         <div style="display:flex; align-items:center; gap:0.5rem; background:#1e293b; padding:0.6rem; border-radius:8px; border:1px solid #334155;">
@@ -118,22 +117,64 @@
     </div>
 
     <script>
-        // Cargar las categorías dinámicamente en el selector
+        // Cargar categorías combinando servidor y almacenamiento local
         async function cargarCategoriasEnAdmin() {
+            const select = document.getElementById('selectCategorias');
+            let lista = ["General", "Electrónica", "Bazar", "Indumentaria"]; // Categorías por defecto
+
+            // Intentar recuperar del navegador
+            const guardadasLocal = localStorage.getItem('misSeccionesAdmin');
+            if (guardadasLocal) {
+                try { lista = JSON.parse(guardadasLocal); } catch(e){}
+            }
+
+            // Intentar buscar del servidor por si acaso
             try {
                 const res = await fetch('/api/categorias');
                 if (res.ok) {
-                    const categorias = await res.json();
-                    const select = document.getElementById('selectCategorias');
-                    select.innerHTML = '<option value="">Seleccioná una sección...</option>';
-                    
-                    categorias.forEach(cat => {
-                        select.innerHTML += `<option value="${cat.nombre}">${cat.nombre}</option>`;
-                    });
+                    const catsServidor = await res.json();
+                    if (catsServidor && catsServidor.length > 0) {
+                        catsServidor.forEach(c => {
+                            if (!lista.includes(c.nombre)) lista.push(c.nombre);
+                        });
+                    }
                 }
             } catch (e) {
-                console.error("Error al cargar categorías en el admin", e);
+                // Si falla el servidor, usamos las locales sin romperse
             }
+
+            // Renderizar en el select
+            select.innerHTML = '<option value="">Seleccioná una sección...</option>';
+            lista.forEach(nombreCat => {
+                select.innerHTML += `<option value="${nombreCat}">${nombreCat}</option>`;
+            });
+        }
+
+        function agregarSeccionLocal() {
+            const input = document.getElementById('inputNuevaCat');
+            const nombre = input.value.trim();
+            if (!nombre) {
+                alert("Escribí el nombre de la sección.");
+                return;
+            }
+
+            let lista = [];
+            const guardadasLocal = localStorage.getItem('misSeccionesAdmin');
+            if (guardadasLocal) {
+                try { lista = JSON.parse(guardadasLocal); } catch(e){}
+            }
+
+            if (!lista.includes(nombre)) {
+                lista.push(nombre);
+                localStorage.setItem('misSeccionesAdmin', JSON.stringify(lista));
+            }
+
+            input.value = '';
+            cargarCategoriasEnAdmin();
+            
+            // Seleccionar automáticamente la creada
+            document.getElementById('selectCategorias').value = nombre;
+            alert(`✅ Sección "${nombre}" creada con éxito.`);
         }
 
         function comprimirYConvertirImagen() {
@@ -176,7 +217,6 @@
             reader.readAsDataURL(file);
         }
 
-        // Ejecutar al cargar la página del admin
         window.onload = function() {
             cargarCategoriasEnAdmin();
         };
