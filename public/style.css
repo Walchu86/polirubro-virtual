@@ -1,4 +1,6 @@
-/* RESET BÁSICO Y FUENTES */
+/* ==========================================
+   1. RESET Y ESTILOS BASE (GENERALES)
+   ================================---------- */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -9,6 +11,7 @@
 body {
     background-color: #f8fafc;
     color: #1e293b;
+    -webkit-text-size-adjust: 100%;
 }
 
 /* BANNER SUPERIOR PROMO */
@@ -16,17 +19,17 @@ body {
     background: linear-gradient(90deg, #ea580c, #d97706);
     color: #ffffff;
     text-align: center;
-    padding: 8px 12px;
+    padding: 8px 10px;
     font-weight: bold;
-    font-size: 0.85rem;
-    letter-spacing: 0.5px;
+    font-size: 0.8rem;
+    letter-spacing: 0.3px;
 }
 
-/* CABECERA Y ANIMACIÓN INTEGRADA EN EL HEADER */
+/* CABECERA PRINCIPAL */
 .main-header {
     background: #ffffff;
     border-bottom: 2px solid #e2e8f0;
-    padding: 0.8rem 1.2rem;
+    padding: 0.8rem 1rem;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
 }
 
@@ -36,7 +39,6 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap;
     gap: 1rem;
 }
 
@@ -48,7 +50,7 @@ body {
 }
 
 .brand-text h1 {
-    font-size: 1.6rem;
+    font-size: 1.4rem;
     color: #dc2626;
     font-weight: 900;
     line-height: 1.1;
@@ -59,26 +61,26 @@ body {
 }
 
 .tagline {
-    font-size: 0.78rem;
+    font-size: 0.72rem;
     color: #64748b;
     font-weight: 600;
 }
 
-/* CAJA DE ANIMACIÓN EN EL HEADER */
+/* CAJA DE ANIMACIÓN EN EL HEADER (SOLO PC) */
 .header-animation-box {
     position: relative;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     background: #fff7ed;
     border: 1px solid #ffedd5;
-    padding: 6px 14px;
+    padding: 4px 12px;
     border-radius: 12px;
-    height: 50px;
+    height: 44px;
 }
 
 .anim-mouse {
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     animation: mouseClick 2.5s infinite ease-in-out;
 }
 
@@ -92,12 +94,12 @@ body {
 
 .anim-cart-box {
     position: relative;
-    width: 45px;
-    height: 40px;
+    width: 35px;
+    height: 35px;
 }
 
 .anim-cart {
-    font-size: 2rem;
+    font-size: 1.6rem;
     position: absolute;
     bottom: 0;
     left: 0;
@@ -106,37 +108,38 @@ body {
 
 .anim-item {
     position: absolute;
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     opacity: 0;
     z-index: 1;
 }
 
-.item-1 { left: 10px; animation: fillCart1 2.5s infinite ease-in; animation-delay: 0.8s; }
-.item-2 { left: 18px; animation: fillCart2 2.5s infinite ease-in; animation-delay: 1.1s; }
-.item-3 { left: 14px; animation: fillCart3 2.5s infinite ease-in; animation-delay: 1.4s; }
+.item-1 { left: 8px; animation: fillCart1 2.5s infinite ease-in; animation-delay: 0.8s; }
+.item-2 { left: 14px; animation: fillCart2 2.5s infinite ease-in; animation-delay: 1.1s; }
+.item-3 { left: 11px; animation: fillCart3 2.5s infinite ease-in; animation-delay: 1.4s; }
 
-@keyframes fillCart1 { 0% { top: -10px; opacity: 0; } 50% { opacity: 1; } 80% { top: 12px; opacity: 1; } 100% { top: 12px; opacity: 0; } }
-@keyframes fillCart2 { 0% { top: -10px; opacity: 0; } 50% { opacity: 1; } 80% { top: 10px; opacity: 1; } 100% { top: 10px; opacity: 0; } }
-@keyframes fillCart3 { 0% { top: -10px; opacity: 0; } 50% { opacity: 1; } 80% { top: 8px; opacity: 1; } 100% { top: 8px; opacity: 0; } }
+@keyframes fillCart1 { 0% { top: -8px; opacity: 0; } 50% { opacity: 1; } 80% { top: 10px; opacity: 1; } 100% { top: 10px; opacity: 0; } }
+@keyframes fillCart2 { 0% { top: -8px; opacity: 0; } 50% { opacity: 1; } 80% { top: 8px; opacity: 1; } 100% { top: 8px; opacity: 0; } }
+@keyframes fillCart3 { 0% { top: -8px; opacity: 0; } 50% { opacity: 1; } 80% { top: 6px; opacity: 1; } 100% { top: 6px; opacity: 0; } }
 
-.anim-text-badge { font-size: 0.78rem; color: #c2410c; }
+.anim-text-badge { font-size: 0.72rem; color: #c2410c; }
 .anim-text-badge strong { color: #16a34a; }
 
 .quick-badge {
     background: #fef3c7;
     color: #b45309;
     border: 1px solid #fde68a;
-    padding: 6px 14px;
+    padding: 6px 12px;
     border-radius: 20px;
-    font-size: 0.82rem;
+    font-size: 0.78rem;
     font-weight: bold;
 }
 
-/* BARRA DE NAVEGACIÓN NARANJA Y SECCIONES DINÁMICAS */
+/* BARRA DE NAVEGACIÓN NARANJA (SECCIONES) */
 .main-nav {
     background: #ea580c;
-    padding: 0.4rem 1.2rem;
+    padding: 0.5rem 1rem;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .nav-container {
@@ -182,13 +185,15 @@ body {
     padding: 6px 14px;
     border-radius: 20px;
     font-weight: bold;
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     cursor: pointer;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     white-space: nowrap;
 }
 
-/* ESTRUCTURA PRINCIPAL DE 2 COLUMNAS */
+/* ==========================================
+   2. LAYOUT GENERAL Y GRILLA DE PRODUCTOS
+   ================================---------- */
 .main-layout {
     max-width: 1200px;
     margin: 1.5rem auto;
@@ -196,11 +201,6 @@ body {
     display: grid;
     grid-template-columns: 1fr 260px;
     gap: 1.5rem;
-}
-
-@media (max-width: 850px) {
-    .main-layout { grid-template-columns: 1fr; }
-    .header-animation-box { display: none; }
 }
 
 /* BUSCADOR */
@@ -215,14 +215,14 @@ body {
     background: #fff;
 }
 
-/* BLOQUE ESTRATÉGICO DE OFERTAS DESTACADAS */
+/* SECCIÓN ESTRATÉGICA DE OFERTAS */
 .ofertas-container-destacado {
     background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
     border: 2px solid #fdba74;
-    border-radius: 18px;
+    border-radius: 16px;
     padding: 1.2rem;
     margin-bottom: 1.5rem;
-    box-shadow: 0 8px 20px rgba(234, 88, 12, 0.12);
+    box-shadow: 0 6px 18px rgba(234, 88, 12, 0.1);
 }
 
 .ofertas-header-title {
@@ -233,10 +233,11 @@ body {
     margin-bottom: 1rem;
     border-bottom: 2px solid #fed7aa;
     padding-bottom: 0.5rem;
+    gap: 0.5rem;
 }
 
 .ofertas-header-title h2 {
-    font-size: 1.15rem;
+    font-size: 1.1rem;
     color: #dc2626;
     font-weight: 900;
 }
@@ -244,7 +245,7 @@ body {
 .badge-reloj-global {
     background: #dc2626;
     color: #fff;
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     font-weight: bold;
     padding: 4px 10px;
     border-radius: 20px;
@@ -255,36 +256,33 @@ body {
     gap: 1rem;
     overflow-x: auto;
     padding-bottom: 8px;
+    -webkit-overflow-scrolling: touch;
 }
 
 .card-oferta-destacada {
-    min-width: 180px;
-    max-width: 190px;
+    min-width: 165px;
+    max-width: 175px;
     background: #ffffff;
     border: 2px solid #f97316;
     border-radius: 14px;
-    padding: 0.7rem;
+    padding: 0.8rem;
     position: relative;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     flex-shrink: 0;
 }
 
 .img-frame-oferta {
     height: 120px;
     background: #f8fafc;
-    border-radius: 8px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
     margin-top: 18px;
+    cursor: zoom-in;
 }
 
-.img-frame-oferta img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-}
+.img-frame-oferta img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
 .titulo-producto-oferta {
     font-size: 0.85rem;
@@ -305,12 +303,12 @@ body {
 .cat-titulo-seccion {
     font-size: 1.1rem;
     color: #1e293b;
-    margin-bottom: 0.8rem;
+    margin-bottom: 1rem;
     border-bottom: 2px solid #e2e8f0;
-    padding-bottom: 0.3rem;
+    padding-bottom: 0.4rem;
 }
 
-/* GRILLA Y TARJETAS DE PRODUCTOS PROLIJAS */
+/* GRILLA Y TARJETAS DE PRODUCTOS */
 .productos-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
@@ -321,36 +319,28 @@ body {
     background: #ffffff;
     border: 1px solid #e2e8f0;
     border-radius: 16px;
-    padding: 0.8rem;
+    padding: 0.9rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    transition: transform 0.2s, box-shadow 0.2s;
     position: relative;
-}
-
-.card-producto:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
 }
 
 .img-frame {
     background: #f8fafc;
     border: 1px solid #cbd5e1;
     border-radius: 12px;
-    padding: 6px;
+    padding: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 160px;
+    height: 150px;
     overflow: hidden;
+    cursor: zoom-in;
 }
 
-.img-producto {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-}
+.img-producto { max-width: 100%; max-height: 100%; object-fit: contain; }
 
 .card-detalles {
     padding-top: 8px;
@@ -363,7 +353,6 @@ body {
     font-weight: 700;
     font-size: 0.9rem;
     color: #1e293b;
-    line-height: 1.2;
 }
 
 .precio-producto {
@@ -378,7 +367,6 @@ body {
     margin-bottom: 6px;
 }
 
-/* ACCIONES DENTRO DE LA TARJETA */
 .card-acciones {
     display: flex;
     gap: 6px;
@@ -408,16 +396,15 @@ body {
     border-radius: 8px;
     font-size: 0.9rem;
     cursor: pointer;
-    transition: background 0.2s;
 }
 
 .btn-share-wsp:hover { background: #16a34a; }
 
-/* RELOJ Y OFERTAS DE 48HS */
+/* ETIQUETAS DE OFERTA */
 .badge-oferta-box {
     position: absolute;
-    top: 8px;
-    left: 8px;
+    top: 10px;
+    left: 10px;
     display: flex;
     flex-direction: column;
     gap: 2px;
@@ -429,7 +416,7 @@ body {
     color: #fff;
     font-size: 0.65rem;
     font-weight: 900;
-    padding: 3px 6px;
+    padding: 2px 6px;
     border-radius: 6px;
 }
 
@@ -442,7 +429,7 @@ body {
     border-radius: 6px;
 }
 
-/* BARRA LATERAL Y BOTONES DE CATEGORÍAS */
+/* BARRA LATERAL (SIDEBAR) */
 .sidebar {
     background: #ffffff;
     border: 1px solid #e2e8f0;
@@ -459,11 +446,7 @@ body {
     margin-bottom: 1rem;
 }
 
-.sidebar-menu {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
+.sidebar-menu { display: flex; flex-direction: column; gap: 8px; }
 
 .btn-categoria {
     background: #f1f5f9;
@@ -491,12 +474,67 @@ body {
     box-shadow: 0 4px 10px rgba(234, 88, 12, 0.3);
 }
 
-/* MODAL Y CARRITO */
+/* ==========================================
+   3. ESTILOS DEL VISOR LUPA / LIGHTBOX
+   ========================================== */
+.lightbox-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.lightbox-img {
+    max-width: 90%;
+    max-height: 85vh;
+    object-fit: contain;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    animation: zoomIn 0.25s ease;
+}
+
+@keyframes zoomIn {
+    from { transform: scale(0.85); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.lightbox-close {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    color: #fff;
+    font-size: 2.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.5);
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.lightbox-close:hover {
+    background: #dc2626;
+}
+
+/* CARRITO MODAL */
 .cart-modal {
     position: fixed;
     top: 0;
-    right: -400px;
-    width: 360px;
+    right: -420px;
+    width: 100%;
+    max-width: 380px;
     height: 100vh;
     background: #fff;
     box-shadow: -5px 0 25px rgba(0,0,0,0.15);
@@ -517,16 +555,9 @@ body {
     padding-bottom: 0.8rem;
 }
 
-.btn-close-cart { background: none; border: none; font-size: 1.2rem; cursor: pointer; }
+.btn-close-cart { background: none; border: none; font-size: 1.3rem; cursor: pointer; }
 
-.cart-items {
-    flex-grow: 1;
-    overflow-y: auto;
-    margin: 1rem 0;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
+.cart-items { flex-grow: 1; overflow-y: auto; margin: 1rem 0; display: flex; flex-direction: column; gap: 10px; }
 
 .cart-item {
     display: flex;
@@ -546,10 +577,7 @@ body {
     margin-bottom: 10px;
 }
 
-.cart-footer {
-    border-top: 1px solid #e2e8f0;
-    padding-top: 0.8rem;
-}
+.cart-footer { border-top: 1px solid #e2e8f0; padding-top: 0.8rem; }
 
 .btn-whatsapp {
     background: #22c55e;
@@ -559,14 +587,13 @@ body {
     padding: 0.8rem;
     border-radius: 10px;
     font-weight: bold;
-    margin-top: 10px;
     cursor: pointer;
     font-size: 0.9rem;
 }
 
 .btn-whatsapp:hover { background: #16a34a; }
 
-/* BOTÓN FLOTANTE DE WHATSAPP */
+/* BOTÓN FLOTANTE WSP */
 .wsp-float {
     position: fixed;
     bottom: 20px;
@@ -583,11 +610,122 @@ body {
     box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);
     text-decoration: none;
     z-index: 99;
-    animation: pulsoWsp 2s infinite;
 }
 
-@keyframes pulsoWsp {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.08); }
-    100% { transform: scale(1); }
+
+/* ==========================================================
+   4. ADAPTACIÓN PROFESIONAL PARA CELULARES (MOBILE RESPONSIVE)
+   ========================================================== */
+@media (max-width: 850px) {
+    .main-layout {
+        grid-template-columns: 1fr;
+        margin: 0.8rem auto;
+        padding: 0 0.5rem;
+        gap: 1rem;
+    }
+
+    .header-animation-box, .quick-badge {
+        display: none;
+    }
+
+    .main-header {
+        padding: 0.6rem 0.8rem;
+    }
+
+    .header-container {
+        justify-content: center;
+        text-align: center;
+    }
+
+    .brand-text h1 {
+        font-size: 1.25rem;
+    }
+
+    .tagline {
+        font-size: 0.68rem;
+    }
+
+    .main-nav {
+        padding: 0.35rem 0.5rem;
+    }
+
+    .nav-container {
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 0.5rem;
+    }
+
+    .nav-links a {
+        font-size: 0.78rem;
+        padding: 5px 8px;
+    }
+
+    .cart-nav-widget {
+        font-size: 0.75rem;
+        padding: 5px 10px;
+    }
+
+    /* Grilla de productos en 2 columnas simétricas para celu */
+    .productos-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.7rem;
+    }
+
+    .card-producto {
+        padding: 0.5rem;
+        border-radius: 12px;
+    }
+
+    .img-frame {
+        height: 110px;
+        padding: 4px;
+    }
+
+    .titulo-producto {
+        font-size: 0.78rem;
+    }
+
+    .precio-producto {
+        font-size: 0.95rem;
+    }
+
+    .stock-tag {
+        font-size: 0.65rem;
+        margin-bottom: 4px;
+    }
+
+    .card-acciones {
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .btn-add-cart {
+        width: 100%;
+        padding: 0.45rem;
+        font-size: 0.72rem;
+    }
+
+    .btn-share-wsp {
+        width: 100%;
+        padding: 0.4rem;
+        font-size: 0.78rem;
+        text-align: center;
+    }
+
+    .cart-modal {
+        max-width: 100%;
+        right: -100%;
+    }
+
+    .cart-modal.abierto {
+        right: 0;
+    }
+
+    .wsp-float {
+        bottom: 15px;
+        right: 15px;
+        width: 48px;
+        height: 48px;
+        font-size: 1.5rem;
+    }
 }
