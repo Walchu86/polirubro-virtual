@@ -18,7 +18,6 @@
     <!-- Cabecera Principal con Animación Integrada -->
     <header class="main-header">
         <div class="header-container">
-            <!-- Título y Marca -->
             <a href="/" class="logo-title">
                 <div class="brand-text">
                     <h1>Polirubro <span>Virtual</span></h1>
@@ -40,19 +39,16 @@
                 </div>
             </div>
 
-            <!-- Badge Secundario -->
             <div class="quick-badge">
                 ⚡ Comprá fácil desde tu celu o compu
             </div>
         </div>
     </header>
 
-    <!-- Navegación Dinámica (Secciones creadas desde el Admin) -->
+    <!-- Navegación Dinámica -->
     <nav class="main-nav">
         <div class="nav-container">
-            <ul class="nav-links" id="navSeccionesHeader">
-                <!-- Se llenan automáticamente con JavaScript según las secciones del Admin -->
-            </ul>
+            <ul class="nav-links" id="navSeccionesHeader"></ul>
             <div class="cart-nav-widget" onclick="toggleCarrito()">
                 🛒 Mi Carrito: <span id="cantCarrito">0</span> un. | Total: <span id="totalCarritoNav">\$0</span>
             </div>
@@ -66,18 +62,15 @@
                 <input type="text" id="inputBuscador" class="search-input" placeholder="🔍 Buscar productos en Polirubro Virtual..." oninput="filtrarProductos()">
             </div>
 
-            <!-- SECCIÓN ESTRATÉGICA DE OFERTAS IMPERDIBLES (Se muestra solo si hay productos en oferta) -->
+            <!-- SECCIÓN ESTRATÉGICA DE OFERTAS IMPERDIBLES -->
             <div id="seccionEspecialOfertas" class="ofertas-container-destacado" style="display: none;">
                 <div class="ofertas-header-title">
                     <h2>🔥 OFERTAS IMPERDIBLES (¡Tiempo Limitado!)</h2>
                     <span class="badge-reloj-global">⚡ Precios especiales por 48 horas</span>
                 </div>
-                <div class="ofertas-grid-scroll" id="contenedorOfertasDestacadas">
-                    <!-- Se completan dinámicamente -->
-                </div>
+                <div class="ofertas-grid-scroll" id="contenedorOfertasDestacadas"></div>
             </div>
             
-            <!-- Grilla Principal de Todos los Productos -->
             <h3 class="cat-titulo-seccion" id="tituloSeccionActual">📦 Catálogo General</h3>
             <div class="productos-grid" id="contenedorProductos"></div>
         </main>
@@ -127,14 +120,17 @@
             <div id="avisoEnvioGratis" style="font-size: 0.8rem; font-weight: bold; text-align: center; margin-top: 4px;"></div>
             
             <button class="btn-whatsapp" onclick="procesarPedidoYQR()">
-                📲 Confirmar Pedido y Abrir WhatsApp / QR
+                📲 Confirmar Pedido y Generar QR / WhatsApp
             </button>
         </div>
 
         <!-- Contenedor para el Código QR dinámico -->
-        <div id="qrModalContainer" style="display: none; text-align: center; margin-top: 10px; padding: 10px; background: #fff; border-radius: 10px; border: 1px solid #cbd5e1;">
-            <p style="font-size: 0.78rem; font-weight: bold; color: #1e293b; margin-bottom: 6px;">Escaneá este QR con tu celu para enviar tu pedido directo:</p>
-            <div id="qrcode" style="display: inline-block;"></div>
+        <div id="qrModalContainer" style="display: none; text-align: center; margin-top: 12px; padding: 12px; background: #f8fafc; border-radius: 12px; border: 2px dashed #22c55e;">
+            <p style="font-size: 0.82rem; font-weight: bold; color: #166534; margin-bottom: 8px;">📱 ¡Escaneá este código QR con tu celu para terminar de pagar por WhatsApp y enviar el pedido al administrador!</p>
+            <div id="qrcode" style="display: inline-block; background: #fff; padding: 6px; border-radius: 8px; border: 1px solid #cbd5e1;"></div>
+            <div style="margin-top: 10px;">
+                <a id="linkBtnWsp" href="#" target="_blank" style="display: inline-block; background: #22c55e; color: #fff; padding: 8px 12px; border-radius: 8px; font-weight: bold; font-size: 0.8rem; text-decoration: none;">Abrir WhatsApp Directo 📲</a>
+            </div>
         </div>
     </div>
 
@@ -310,16 +306,17 @@
         function actualizarCarritoUI() {
             const totalCant = carrito.reduce((acc, item) => acc + item.cantidad, 0);
             const subtotalProds = carrito.reduce((acc, item) => acc + (item.precio * item.cantidad), 0);
-            const costoEnvioBase = Number(document.getElementById('selectEnvio').value || 0);
-
-            let costoEnvioFinal = costoEnvioBase;
+            
+            const selectEnvio = document.getElementById('selectEnvio');
             const avisoEnvio = document.getElementById('avisoEnvioGratis');
+            
+            let costoEnvioFinal = Number(selectEnvio.value || 0);
 
-            if (subtotalProds >= 20000 && costoEnvioBase > 0) {
+            if (subtotalProds >= 20000) {
                 costoEnvioFinal = 0;
                 avisoEnvio.innerHTML = "🎉 ¡Felicidades! Superaste \$20.000: TENÉS ENVÍO GRATIS";
                 avisoEnvio.style.color = "#16a34a";
-            } else if (subtotalProds > 0 && subtotalProds < 20000 && costoEnvioBase > 0) {
+            } else if (subtotalProds > 0) {
                 const falta = 20000 - subtotalProds;
                 avisoEnvio.innerHTML = `💡 Agregá $${falta.toLocaleString('es-AR')} más para tener Envío Gratis`;
                 avisoEnvio.style.color = "#ea580c";
@@ -384,7 +381,12 @@
 
             const subtotalProds = carrito.reduce((acc, item) => acc + (item.precio * item.cantidad), 0);
             const selectEnvio = document.getElementById('selectEnvio');
-            const textoEnvio = selectEnvio.options[selectEnvio.selectedIndex].text;
+            let textoEnvio = selectEnvio.options[selectEnvio.selectedIndex].text;
+            
+            if (subtotalProds >= 20000) {
+                textoEnvio = "Envío Gratis (Compra superior a \$20.000)";
+            }
+
             const medioPago = document.getElementById('selectPago').value;
 
             let mensaje = "👋 *¡Hola Polirubro Virtual! Quisiera confirmar este pedido:*\n\n";
@@ -395,8 +397,8 @@
             mensaje += `\n📍 *Método de entrega:* ${textoEnvio}\n`;
             mensaje += `💳 *Medio de pago:* ${medioPago}\n`;
             
-            if (subtotalProds >= 20000 && Number(selectEnvio.value) > 0) {
-                mensaje += `🚚 *¡Aplica Envío Gratis por compra superior a $20.000!*\n`;
+            if (subtotalProds >= 20000) {
+                mensaje += `🚚 *¡Aplica Envío Gratis!*\n`;
             }
 
             const totalFinal = document.getElementById('totalCarritoModal').innerText;
@@ -405,17 +407,20 @@
 
             const urlWsp = `https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(mensaje)}`;
 
+            // Generar Código QR en pantalla en lugar de abrir pestaña automática
             const container = document.getElementById('qrModalContainer');
             const qrDiv = document.getElementById('qrcode');
+            const linkBtn = document.getElementById('linkBtnWsp');
+            
             qrDiv.innerHTML = "";
             new QRCode(qrDiv, {
                 text: urlWsp,
-                width: 130,
-                height: 130
+                width: 140,
+                height: 140
             });
-            container.style.display = "block";
 
-            window.open(urlWsp, '_blank');
+            linkBtn.href = urlWsp;
+            container.style.display = "block";
         }
 
         window.onload = iniciarTienda;
