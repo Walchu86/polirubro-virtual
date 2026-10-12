@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Polirubro Virtual | Tu Tienda Online</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="promo-banner">
+        <div class="promo-text-marquee">
+            🚚 <span>¡ENVÍO GRATIS comprando exclusivamente en la WEB superando los <strong>$20.000</strong>!</span> 🛍️ <span>¡Aprovechá tus beneficios hoy!</span>
+        </div>
+    </div>
+
+    <header>
+        <div class="header-content">
+            <h1>🏪 Polirubro Virtual</h1>
+            <p class="sub-header-text">✨ ¡Hacé clic y llevate lo que más te gusta!</p>
+        </div>
+        <div class="header-actions">
+            <button class="cart-btn" onclick="toggleCartModal()">🛒 Carrito (<span id="cartCount">0</span>)</button>
+        </div>
+    </header>
+
+    <main>
+        <section class="top-bar-container">
+            <div class="top-bar-grid" id="topBarGrid">
+                <button onclick="mostrarMenuPrincipal()" class="btn-home-mini">🏠 Inicio</button>
+            </div>
+        </section>
+
+        <section id="vistaSecciones" class="secciones-container">
+            <h2 class="titulo-bienvenida">🛍️ ¿Qué estás buscando hoy?</h2>
+            <div class="grid-secciones-container" id="gridSeccionesContainer">
+                <!-- Se cargan dinámicamente -->
+            </div>
+        </section>
+
+        <section id="vistaProductos" class="catalogo" style="display: none;">
+            <div class="search-container">
+                <input type="text" id="searchInput" oninput="filtrarProductosConDebounce()" placeholder="🔍 Buscar producto en esta sección..." class="input-busqueda">
+            </div>
+
+            <h2 id="tituloSeccionActual" class="titulo-seccion-head"></h2>
+            <div class="product-grid" id="productGrid">
+                <!-- Se cargan dinámicamente -->
+            </div>
+            <div id="mensajeSinResultados" class="mensaje-sin-resultados" style="display: none;">
+                No hay productos disponibles en esta sección por el momento.
+            </div>
+        </section>
+    </main>
+
+    <a href="https://wa.me/5493794655867?text=¡Hola!%20Tengo%20una%20consulta%20sobre%20Polirubro%20Virtual" class="whatsapp-float" target="_blank">
+        💬 <span>¿Tenés dudas? Hablá con nosotros</span>
+    </a>
+
+    <div id="promoWelcomeModal" class="modal" style="display:none;">
+        <div class="modal-bienvenida-content">
+            <button type="button" onclick="cerrarPromoWelcome()" class="btn-close-modal">&times;</button>
+            <div class="modal-icon-pulse">🚚🎁</div>
+            <h2>¡BIENVENIDO A POLIRUBRO VIRTUAL!</h2>
+            <p>¡Queremos regalarte el envío! Comprando en nuestra tienda web y alcanzando los <strong>$20.000</strong>, tu <strong>ENVÍO ES 100% GRATIS</strong>. 🥳</p>
+            <p class="sub-text">Aprovechá las mejores ofertas y armá tu carrito en unos pocos clics. ✨</p>
+            <button onclick="cerrarPromoWelcome()" class="btn-start-shop">🛍️ ¡Empezar a comprar!</button>
+        </div>
+    </div>
+
+    <div id="cartModal" class="modal" style="display:none;">
+        <div class="cart-modal-content">
+            <button type="button" onclick="toggleCartModal()" class="btn-close-cart">&times;</button>
+            <h2>🛒 Tu Carrito</h2>
+            
+            <div id="promoEnvioProgress" class="envio-progress-box">
+                🚚 Envío gratis exclusivo en la Web superando los $20.000
+            </div>
+
+            <div id="cartItemsList" class="cart-items-list">
+                <p style="color:#94a3b8; text-align:center;">El carrito está vacío.</p>
+            </div>
+
+            <div id="cartOptions" style="display:none;">
+                <div class="datos-entrega-box">
+                    <h4>📋 Datos para Entrega:</h4>
+                    <input type="text" id="clienteNombre" placeholder="Tu Nombre y Apellido *" class="cart-input" required>
+                    <input type="text" id="clienteDireccion" placeholder="Dirección / Barrio *" class="cart-input">
+                    <input type="tel" id="clienteTelefono" placeholder="Teléfono de contacto" class="cart-input">
+                </div>
+
+                <div id="contenedorEnvio" class="cart-step-margin">
+                    <label>🚚 Zona / Forma de Entrega:</label>
+                    <select id="tipoEnvio" onchange="actualizarTotal()" class="cart-select">
+                        <option value="retiro" data-costo="0">Retirar por el local (Gratis)</option>
+                        <option value="centro" data-costo="1500">Zona Centro / Cambá Cuá (+$1.500)</option>
+                        <option value="barrios_cercanos" data-costo="2000">Barrios Cercanos / Aldana / Yapeyú (+$2.000)</option>
+                        <option value="barrios_alejados" data-costo="2500">1000 Viviendas / Molina Punta / Laguna Seca (+$2.500)</option>
+                    </select>
+                </div>
+
+                <div id="cartelEnvioGratis" class="cartel-envio-gratis-box" style="display:none;">
+                    <span>🚚 Zona / Envío: <strong>🎉 ¡ENVÍO GRATIS WEB APLICADO! ($0)</strong></span>
+                </div>
+
+                <div class="cart-step-margin">
+                    <label>💳 Método de Pago:</label>
+                    <select id="metodoPago" onchange="mostrarDatosTransferencia()" class="cart-select">
+                        <option value="Efectivo">Efectivo al recibir</option>
+                        <option value="Mercado Pago">Mercado Pago</option>
+                        <option value="Transferencia Bancaria">Transferencia Bancaria (Alias/CBU)</option>
+                        <option value="Personal Pay">Personal Pay</option>
+                        <option value="Ualá">Ualá</option>
+                    </select>
+                </div>
+
+                <div id="transferInfo" class="transfer-info-box" style="display:none;">
+                    <small>🏦 <strong>Alias:</strong> POLIRUBRO.VIRTUAL.MP</small>
+                    <button type="button" onclick="copiarAlias()" class="btn-copy">📋 Copiar</button>
+                </div>
+
+                <div class="total-price-box">
+                    <h3>Total: $<span id="cartTotalPrice">0</span></h3>
+                </div>
+
+                <button onclick="procesarPedido()" class="btn-confirm-order">
+                    📲 Confirmar y Enviar por WhatsApp
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="optionsModal" class="modal" style="display:none;">
+        <div class="qr-modal-content">
+            <button type="button" onclick="cerrarOptionsModal()" class="btn-close-simple">&times;</button>
+            <h2>📲 Escaneá tu Pedido</h2>
+            <p>Apuntá con tu celular para enviar el pedido por WhatsApp:</p>
+            <div class="qr-box">
+                <img id="qrImage" src="" alt="Código QR Pedido">
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-imagen-zoom" onclick="cerrarZoom(event)" style="display:none;">
+        <span onclick="cerrarZoom(event)" class="btn-close-zoom">&times;</span>
+        <img id="img-ampliada" src="" alt="Zoom Producto">
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Polirubro Virtual — Todos los derechos reservados.</p>
+    </footer>
+
+    <script>
+        // Aquí puedes agregar la lógica de carga de productos por API o mantener la estructura general del cliente
+    </script>
+</body>
+</html>
