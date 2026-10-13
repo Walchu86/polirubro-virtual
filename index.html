@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=221">
+    <link rel="stylesheet" href="style.css?v=222">
 </head>
 <body>
 
@@ -179,7 +179,9 @@
 
         function cerrarWelcomeModal() {
             const modal = document.getElementById('welcomeModal');
-            if (modal) modal.style.display = 'none';
+            if (modal) {
+                modal.style.display = 'none';
+            }
         }
 
         function enfocarBuscador() {
@@ -203,7 +205,9 @@
                 if (res.ok) {
                     const data = await res.json();
                     todosLosProductos = data.productos || [];
-                    categoriasDisponibles = data.categorias || ["Estética", "Electrónica", "Zapatería", "Accesorios"];
+                    // Extraemos las categorías de forma limpia y robusta desde el JSON sincronizado
+                    const rawCats = data.categorias || ["Estética", "Electrónica", "Zapatería", "Accesorios"];
+                    categoriasDisponibles = rawCats.map(c => typeof c === 'string' ? c : (c.nombre || c.categoria || '')).filter(c => c !== '');
                     
                     renderizarMenuCategorias(categoriasDisponibles);
                     renderizarOfertas48hs();
@@ -262,8 +266,7 @@
             const sidebarContainer = document.getElementById('sidebarCategoriasMenu');
             let sidebarHtml = `<button class="btn-categoria ${categoriaActiva === 'TODAS' ? 'activa' : ''}" onclick="cambiarCategoria('TODAS', event)">🔥 Todos los Productos</button>`;
 
-            cats.forEach(c => {
-                const nombreCat = typeof c === 'string' ? c : (c.nombre || c.categoria || '');
+            cats.forEach(nombreCat => {
                 if (nombreCat) {
                     const activaClass = categoriaActiva === nombreCat ? 'activa-nav' : '';
                     const activaSidebar = categoriaActiva === nombreCat ? 'activa' : '';
@@ -500,7 +503,7 @@
             const selectEnvio = document.getElementById('selectTipoEnvio');
             const tipoEnvioVal = selectEnvio ? selectEnvio.value : 'local';
             const textoEnvio = selectEnvio ? selectEnvio.options[selectEnvio.selectedIndex].text : 'Retiro en Local';
-            const medioPago = document.getElementById('selectMedioPago') ? document.getElementById('selectMedioPago'].value : 'Efectivo';
+            const medioPago = document.getElementById('selectMedioPago') ? document.getElementById('selectMedioPago').value : 'Efectivo';
 
             let costoEnvio = 0;
             if (tipoEnvioVal === 'dentro') costoEnvio = 1500;
