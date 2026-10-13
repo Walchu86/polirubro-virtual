@@ -58,7 +58,7 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
 }
 .btn-vamos-comprar:hover { opacity: 0.95; }
 
-/* BARRA FLOTANTE INFERIOR DEL CARRITO (CENTRADÍSIMA Y LIMPIA) */
+/* BARRA FLOTANTE INFERIOR DEL CARRITO */
 .floating-cart-bar {
     position: fixed;
     bottom: 0;
@@ -101,7 +101,7 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
 .marquee-container { display: inline-block; animation: marquee 25s linear infinite; }
 @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-/* CABECERA Y DISEÑO ADAPTABLE PC / MÓVIL */
+/* CABECERA Y TRES COLUMNAS EN PC */
 .main-header { background: #ffffff; border-bottom: 1px solid #e2e8f0; padding: 15px 15px; }
 .header-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
 .header-left-col { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; width: 100%; }
@@ -118,49 +118,78 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
 .quick-badge-llamativo { background: #22c55e; color: white; padding: 9px 18px; border-radius: 20px; font-weight: bold; font-size: 0.85rem; cursor: pointer; box-shadow: 0 4px 10px rgba(34, 197, 94, 0.3); width: fit-content; transition: transform 0.2s; }
 .quick-badge-llamativo:hover { transform: scale(1.02); }
 
-/* WIDGET DERECHO Y ANIMACIÓN (EXCLUSIVO PARA PC - OCULTO EN CELULARES) */
+/* CARRUSEL CENTRAL DE IMÁGENES Y TEXTOS (EXCLUSIVO PARA PC) */
+.pc-carousel-container { display: none !important; }
+@media (min-width: 901px) {
+    .pc-carousel-container {
+        display: flex !important;
+        flex: 1;
+        max-width: 340px;
+        height: 125px;
+        background: #1e293b;
+        border-radius: 16px;
+        overflow: hidden;
+        position: relative;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        border: 2px solid #fed7aa;
+    }
+}
+.pc-carousel-track {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+.pc-carousel-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+.pc-carousel-slide.active {
+    opacity: 1;
+}
+.pc-carousel-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.pc-carousel-caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0.2));
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-align: center;
+    padding: 8px;
+    letter-spacing: 0.5px;
+}
+
+/* WIDGET DERECHO EXCLUSIVO PARA PC */
 .pc-desktop-widget { display: none !important; }
 @media (min-width: 901px) {
     .pc-desktop-widget {
         display: flex !important;
         flex-direction: column;
-        gap: 10px;
+        gap: 8px;
         background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
         border: 1.5px solid #fed7aa;
         border-radius: 16px;
-        padding: 12px 18px;
-        max-width: 380px;
+        padding: 10px 15px;
+        max-width: 320px;
         box-shadow: 0 4px 15px rgba(234, 88, 12, 0.08);
     }
 }
-.pc-widget-title { font-size: 0.85rem; font-weight: 900; color: #c2410c; display: flex; align-items: center; gap: 6px; }
-.pc-widget-text { font-size: 0.78rem; color: #475569; line-height: 1.3; }
-.pc-widget-badges { display: flex; gap: 6px; flex-wrap: wrap; }
-.pc-badge-item { background: #ffffff; color: #ea580c; font-size: 0.7rem; font-weight: 800; padding: 3px 8px; border-radius: 6px; border: 1px solid #fdba74; }
-
-/* ANIMACIÓN CENTRAL DEL CARRITO Y MOUSE EN PC */
-.pc-animation-area {
-    display: none;
-    align-items: center;
-    gap: 15px;
-    background: #f8fafc;
-    border: 1.5px dashed #cbd5e1;
-    border-radius: 12px;
-    padding: 8px 15px;
-}
-@media (min-width: 901px) {
-    .pc-animation-area { display: flex; }
-}
-.anim-cart-container { font-size: 1.8rem; position: relative; animation: bounceCart 1.5s ease-in-out infinite; }
-@keyframes bounceCart {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-3px); }
-}
-.anim-mouse { font-size: 1.2rem; animation: moveMouse 1.5s ease-in-out infinite; }
-@keyframes moveMouse {
-    0%, 100% { transform: translate(5px, 5px); }
-    50% { transform: translate(-3px, -3px); }
-}
+.pc-widget-title { font-size: 0.82rem; font-weight: 900; color: #c2410c; display: flex; align-items: center; gap: 6px; }
+.pc-widget-text { font-size: 0.75rem; color: #475569; line-height: 1.25; }
+.pc-widget-badges { display: flex; gap: 5px; flex-wrap: wrap; }
+.pc-badge-item { background: #ffffff; color: #ea580c; font-size: 0.68rem; font-weight: 800; padding: 2px 6px; border-radius: 6px; border: 1px solid #fdba74; }
 
 /* NAVEGACIÓN */
 .main-nav { background: #ea580c; padding: 8px 10px; overflow-x: auto; }
