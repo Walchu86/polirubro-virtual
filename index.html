@@ -120,7 +120,6 @@
 
         async function iniciarTienda() {
             await sincronizarYActualizarNube();
-            // Actualizar automáticamente si el cliente vuelve a enfocar la pestaña en el celular
             window.addEventListener('focus', async () => {
                 await sincronizarYActualizarNube();
             });
@@ -136,11 +135,17 @@
                     }
                 });
                 if (!res.ok) throw new Error("Error al obtener datos");
-                const data = await res.json();
-                const datos = data.record || data || { categorias: ["General", "Electrónica", "Bazar"], productos: [] };
+                const resJson = await res.json();
+                
+                // Desenvolver los datos igual que en el admin
+                let datos = resJson.record ? resJson.record : resJson;
 
-                listaProductos = datos.productos || [];
-                listaCategorias = datos.categorias || ["General", "Electrónica", "Bazar"];
+                // Normalizar categorías limpiando objetos y asegurando texto plano
+                let cats = Array.isArray(datos.categorias) ? datos.categorias : ["General", "Bazar", "Electrónica"];
+                cats = cats.map(c => (typeof c === 'string' ? c : (c.nombre || c.categoria || 'Sección'))).filter(c => typeof c === 'string');
+
+                listaProductos = Array.isArray(datos.productos) ? datos.productos : [];
+                listaCategorias = cats;
             } catch(e) {
                 console.error("Error al conectar con la nube:", e);
             }
