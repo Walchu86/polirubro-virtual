@@ -28,7 +28,7 @@
 <body class="admin-body">
     <header style="background:#0f172a; padding:1.2rem; border-bottom:1px solid #1e293b; text-align:center;">
         <h1 style="margin:0; font-size:1.5rem; color:#fff;">⚙️ Panel Administrador Cloud</h1>
-        <p style="margin:0.3rem 0 0 0; color:#38bdf8; font-size:0.85rem;">Sincronizado vía JSONBin</p>
+        <p style="margin:0.3rem 0 0 0; color:#38bdf8; font-size:0.85rem;">Sincronizado vía JSONBin (Estructura Bin Original)</p>
         <div style="margin-top:0.8rem;">
             <a href="/" target="_blank" style="background:#0284c7; color:#fff; padding:0.4rem 1rem; border-radius:20px; text-decoration:none; font-weight:bold; font-size:0.8rem;">🌐 Ir a la Tienda Pública</a>
         </div>
@@ -121,6 +121,7 @@
         const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
 
         let imagenFinalOptimizada = "";
+        let binCacheCompleto = {};
 
         async function obtenerDatosServidor() {
             try {
@@ -134,22 +135,25 @@
                 if (!res.ok) throw new Error("Error al conectar");
                 const resJson = await res.json();
                 
-                let datos = resJson.record ? resJson.record : resJson;
+                // Guardar la estructura completa para respetar estadisticas y formato original
+                binCacheCompleto = resJson.record ? resJson.record : resJson;
                 
-                let cats = Array.isArray(datos.categorias) ? datos.categorias : ["General", "Bazar", "Electrónica"];
-                cats = cats.map(c => (typeof c === 'string' ? c : (c.nombre || c.categoria || 'Sección'))).filter(c => typeof c === 'string');
-
-                let prods = Array.isArray(datos.productos) ? datos.productos : [];
-
-                return { categorias: cats, productos: prods };
+                return binCacheCompleto;
             } catch (e) {
                 console.error("Error al leer servidor:", e);
-                return { categorias: ["General", "Bazar", "Electrónica"], productos: [] };
+                return { productos: [], categorias: [], estadisticas: {} };
             }
         }
 
-        async function guardarDatosServidor(datos) {
+        async function guardarDatosServidor(datosNuevos) {
             try {
+                // Mantener estadisticas y estructura del bin original
+                const estructuraFinal = {
+                    productos: datosNuevos.productos || [],
+                    categorias: datosNuevos.categorias || binCacheCompleto.categorias || [],
+                    estadisticas: binCacheCompleto.estadisticas || { totalVisitas: 0, visitasMovil: 0, visitasPC: 0, secciones: {}, busquedas: {}, porDia: {} }
+                };
+
                 const res = await fetch(API_URL, {
                     method: "PUT",
                     headers: {
@@ -157,12 +161,12 @@
                         "X-Master-Key": API_KEY,
                         "X-Bin-Versioning": "false"
                     },
-                    body: JSON.stringify(datos)
+                    body: JSON.stringify(estructuraFinal)
                 });
                 if (!res.ok) {
                     const errorTxt = await res.text();
                     console.error("Error de servidor JSONBin:", errorTxt);
-                    alert("❌ JSONBin rechazó los datos. Verificá la consola.");
+                    alert("❌ JSONBin rechazó los datos.");
                     return false;
                 }
                 return true;
@@ -175,16 +179,19 @@
 
         async function cargarPanelAdmin() {
             const datos = await obtenerDatosServidor();
-            const cats = datos.categorias;
-            const prods = datos.productos;
+            
+            // Extraer nombres de categorías manejando objetos o strings
+            let rawCats = datos.categorias || [];
+            let listaNombresCats = rawCats.map(c => typeof c === 'string' ? c : (c.nombre || c.categoria || '')).filter(c => c !== '');
+            if (listaNombresCats.length === 0) listaNombresCats = ["Estética", "Electrónica", "Zapatería", "Accesorios"];
 
             const select = document.getElementById('selectCategorias');
             select.innerHTML = '<option value="">Seleccioná una sección...</option>';
-            cats.forEach(c => select.innerHTML += `<option value="${c}">${c}</option>`);
+            listaNombresCats.forEach(c => select.innerHTML += `<option value="${c}">${c}</option>`);
 
             const listaSec = document.getElementById('listaSeccionesAdmin');
             listaSec.innerHTML = '';
-            cats.forEach(c => {
+            listaNombresCats.forEach(c => {
                 listaSec.innerHTML += `
                     <div class="item-row">
                         <span>🔹 ${c}</span>
@@ -195,6 +202,7 @@
 
             const tbody = document.getElementById('tablaProductosAdmin');
             tbody.innerHTML = '';
+            const prods = datos.productos || [];
 
             if (prods.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #94a3b8;">No hay productos cargados en la nube.</td></tr>`;
@@ -221,9 +229,20 @@
             if (!nombre) return alert("Escribí el nombre de la sección.");
 
             let datos = await obtenerDatosServidor();
+            let rawCats = datos.categorias || [];
 
-            if (!datos.categorias.includes(nombre)) {
-                datos.categorias.push(nombre);
+            // Convertir categorías a objetos con formato id/nombre para mantener compatibilidad con tu bin
+            let listaNombres = rawCats.map(c => typeof c === 'string' ? c : (c.nombre || c.categoria || ''));
+            
+            if (!listaNombres.includes(nombre)) {
+                rawCats.push({
+                    id: Date.now(),
+                    nombre: nombre,
+                    icono: "📁",
+                    color: "linear-gradient(135deg, #3b82f6, #1d4ed8)"
+                });
+                datos.categorias = rawCats;
+
                 const ok = await guardarDatosServidor(datos);
                 if (ok) {
                     input.value = '';
@@ -238,7 +257,13 @@
         async function eliminarSeccion(nombreCat) {
             if (confirm(`¿Seguro que querés borrar la sección "${nombreCat}"?`)) {
                 let datos = await obtenerDatosServidor();
-                datos.categorias = datos.categorias.filter(c => c !== nombreCat);
+                let rawCats = datos.categorias || [];
+                
+                datos.categorias = rawCats.filter(c => {
+                    let nom = typeof c === 'string' ? c : (c.nombre || c.categoria || '');
+                    return nom !== nombreCat;
+                });
+
                 const ok = await guardarDatosServidor(datos);
                 if (ok) {
                     await cargarPanelAdmin();
@@ -310,6 +335,7 @@
             if (!imagenFinalOptimizada) return alert("Por favor seleccioná una imagen.");
 
             let datos = await obtenerDatosServidor();
+            if (!datos.productos) datos.productos = [];
 
             datos.productos.push({
                 id: Date.now(),
@@ -341,7 +367,7 @@
         async function eliminarProducto(idProd) {
             if (confirm("¿Estás seguro de eliminar este producto?")) {
                 let datos = await obtenerDatosServidor();
-                datos.productos = datos.productos.filter(p => p.id !== idProd);
+                datos.productos = (datos.productos || []).filter(p => p.id !== idProd);
                 await guardarDatosServidor(datos);
                 await cargarPanelAdmin();
             }
