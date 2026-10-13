@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=218">
+    <link rel="stylesheet" href="style.css?v=221">
 </head>
 <body>
 
-    <!-- POP-UP DE BIENVENIDA ANIMADO (APARECE AL ENTRAR Y SE CIERRA) -->
+    <!-- POP-UP DE BIENVENIDA ANIMADO -->
     <div class="welcome-modal-overlay" id="welcomeModal">
         <div class="welcome-modal-content">
             <button class="welcome-close-btn" onclick="cerrarWelcomeModal()">✕</button>
@@ -110,12 +110,16 @@
 
         <div class="cart-items" id="listaCarritoModal"></div>
 
-        <div class="checkout-options" style="margin-top:10px; padding:10px 0; border-top:1px solid #e2e8f0;">
+        <div style="padding: 5px 0; text-align: right;">
+            <button onclick="vaciarCarrito()" style="background: none; border: none; color: #ef4444; font-size: 0.78rem; font-weight: bold; cursor: pointer;">🗑️ Vaciar carrito entero</button>
+        </div>
+
+        <div class="checkout-options" style="margin-top:5px; padding:10px 0; border-top:1px solid #e2e8f0;">
             <label style="font-size:0.8rem; font-weight:bold; color:#1e293b; display:block; margin-bottom:4px;">📍 Selección de Zona / Entrega:</label>
             <select id="selectTipoEnvio" class="select-checkout" onchange="actualizarCarritoUI()">
                 <option value="local">🏬 Retiro en Local (Gratis)</option>
-                <option value="dentro" id="optEnvioDentro">🛵 Dentro de las 4 Avenidas (\$1.500)</option>
-                <option value="fuera" id="optEnvioFuera">🚚 Fuera de las 4 Avenidas (\$2.500)</option>
+                <option value="dentro">🛵 Dentro de las 4 Avenidas (\$1.500)</option>
+                <option value="fuera">🚚 Fuera de las 4 Avenidas (\$2.500)</option>
             </select>
 
             <label style="font-size:0.8rem; font-weight:bold; color:#1e293b; display:block; margin-top:8px; margin-bottom:4px;">💳 Forma de Pago:</label>
@@ -175,9 +179,7 @@
 
         function cerrarWelcomeModal() {
             const modal = document.getElementById('welcomeModal');
-            if (modal) {
-                modal.style.display = 'none';
-            }
+            if (modal) modal.style.display = 'none';
         }
 
         function enfocarBuscador() {
@@ -229,6 +231,7 @@
             seccion.style.display = 'block';
             grid48.innerHTML = ofertas.map(p => {
                 const imgUrl = p.imagen || 'https://via.placeholder.com/300?text=Sin+Imagen';
+                const precioLimpio = Number(p.precio || 0);
                 return `
                     <div class="card-producto en-oferta-card">
                         <div class="badge-oferta-box">
@@ -240,12 +243,12 @@
                         <div class="card-detalles">
                             <span style="font-size:0.7rem; color:#ef4444; font-weight:bold; text-transform:uppercase;">${p.categoria}</span>
                             <h3 class="titulo-producto">${p.nombre}</h3>
-                            <div class="precio-producto" style="color:#ef4444;">\$${formatearPrecio(p.precio)}</div>
+                            <div class="precio-producto" style="color:#ef4444;">\$${formatearPrecio(precioLimpio)}</div>
                             <div class="stock-tag">Stock disponible: ${p.stock || 0} un.</div>
                         </div>
                         <div class="card-acciones">
                             <button class="btn-add-cart" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);" onclick="agregarAlCarrito(${p.id})">🛒 Agregar</button>
-                            <button class="btn-share-wsp" onclick="consultarProductoWsp('${p.nombre}', ${p.precio})" title="Consultar por WhatsApp">💬</button>
+                            <button class="btn-share-wsp" onclick="consultarProductoWsp('${p.nombre}', ${precioLimpio})" title="Consultar por WhatsApp">💬</button>
                         </div>
                     </div>
                 `;
@@ -306,6 +309,7 @@
                 
                 const claseOfertaCard = p.enOferta ? 'card-producto en-oferta-card' : 'card-producto';
                 const imgUrl = p.imagen || 'https://via.placeholder.com/300?text=Sin+Imagen';
+                const precioLimpio = Number(p.precio || 0);
 
                 return `
                     <div class="${claseOfertaCard}">
@@ -316,12 +320,12 @@
                         <div class="card-detalles">
                             <span style="font-size:0.7rem; color:#ea580c; font-weight:bold; text-transform:uppercase;">${p.categoria}</span>
                             <h3 class="titulo-producto">${p.nombre}</h3>
-                            <div class="precio-producto">\$${formatearPrecio(p.precio)}</div>
+                            <div class="precio-producto">\$${formatearPrecio(precioLimpio)}</div>
                             <div class="stock-tag">Stock disponible: ${p.stock || 0} un.</div>
                         </div>
                         <div class="card-acciones">
                             <button class="btn-add-cart" onclick="agregarAlCarrito(${p.id})">🛒 Agregar</button>
-                            <button class="btn-share-wsp" onclick="consultarProductoWsp('${p.nombre}', ${p.precio})" title="Consultar por WhatsApp">💬</button>
+                            <button class="btn-share-wsp" onclick="consultarProductoWsp('${p.nombre}', ${precioLimpio})" title="Consultar por WhatsApp">💬</button>
                         </div>
                     </div>
                 `;
@@ -336,7 +340,7 @@
             if (item) {
                 item.cantidad++;
             } else {
-                carrito.push({ ...prod, cantidad: 1 });
+                carrito.push({ ...prod, precio: Number(prod.precio || 0), cantidad: 1 });
             }
             actualizarCarritoUI();
             abrirCarrito();
@@ -348,17 +352,10 @@
             const totalItems = carrito.reduce((sum, i) => sum + i.cantidad, 0);
             const subtotalMonto = carrito.reduce((sum, i) => sum + (Number(i.precio) * i.cantidad), 0);
 
-            const optDentro = document.getElementById('optEnvioDentro');
-            const optFuera = document.getElementById('optEnvioFuera');
             const bannerCart = document.getElementById('bannerCartShipping');
-
             if (subtotalMonto >= 20000) {
-                if (optDentro) optDentro.innerText = "🛵 Dentro de las 4 Avenidas (¡ENVÍO GRATIS!)";
-                if (optFuera) optFuera.innerText = "🚚 Fuera de las 4 Avenidas (¡ENVÍO GRATIS!)";
-                if (bannerCart) bannerCart.innerHTML = `<p style="font-size:0.85rem; font-weight:bold; color:#22c55e;">🎉 ¡FELICITACIONES! Tenés ENVÍO GRATIS en tu pedido.</p>`;
+                if (bannerCart) bannerCart.innerHTML = `<p style="font-size:0.85rem; font-weight:bold; color:#22c55e;">🎉 ¡FELICITACIONES! Tenés ENVÍO GRATIS aplicado en tu pedido.</p>`;
             } else {
-                if (optDentro) optDentro.innerText = "🛵 Dentro de las 4 Avenidas (\$1.500)";
-                if (optFuera) optFuera.innerText = "🚚 Fuera de las 4 Avenidas (\$2.500)";
                 if (bannerCart) bannerCart.innerHTML = `<p style="font-size:0.85rem; font-weight:bold; color:#ea580c;">🚚 Envío GRATIS en compras desde \$20.000</p><p style="font-size:0.75rem; color:#64748b;">Elegí tu zona de envío y método de pago antes de enviar.</p>`;
             }
 
@@ -386,7 +383,7 @@
                 if (tipoEnvio === 'local') {
                     elemEnvio.innerHTML = '<span style="color:#22c55e; font-weight:bold;">GRATIS (Retiro)</span>';
                 } else if (envioGratisAplica) {
-                    elemEnvio.innerHTML = '<span style="color:#22c55e; font-weight:bold;">¡GRATIS PROMO! 🎉</span>';
+                    elemEnvio.innerHTML = '<span style="color:#22c55e; font-weight:bold;">¡GRATIS PROMO! 🎉 (\$0)</span>';
                 } else {
                     elemEnvio.innerText = '\$' + formatearPrecio(costoEnvio);
                 }
@@ -398,19 +395,23 @@
                 return;
             }
 
-            contenedor.innerHTML = carrito.map(i => `
-                <div class="cart-item">
-                    <div style="flex:1;">
-                        <strong style="font-size:0.85rem; color:#1e293b;">${i.nombre}</strong>
-                        <div style="font-size:0.75rem; color:#ea580c;">\$${formatearPrecio(i.precio)} c/u</div>
+            contenedor.innerHTML = carrito.map(i => {
+                const precioItem = Number(i.precio || 0);
+                return `
+                    <div class="cart-item" style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid #f1f5f9;">
+                        <div style="flex:1; padding-right:8px;">
+                            <strong style="font-size:0.85rem; color:#1e293b; display:block;">${i.nombre}</strong>
+                            <div style="font-size:0.75rem; color:#ea580c;">\$${formatearPrecio(precioItem)} c/u</div>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:6px;">
+                            <button onclick="cambiarQty(${i.id}, -1)" style="padding:2px 8px; background:#e2e8f0; border:none; border-radius:4px; font-weight:bold; cursor:pointer;">-</button>
+                            <span style="font-size:0.85rem; font-weight:bold; min-width:18px; text-align:center;">${i.cantidad}</span>
+                            <button onclick="cambiarQty(${i.id}, 1)" style="padding:2px 8px; background:#e2e8f0; border:none; border-radius:4px; font-weight:bold; cursor:pointer;">+</button>
+                            <button onclick="eliminarDelCarrito(${i.id})" title="Eliminar producto" style="background:#ef4444; color:white; border:none; padding:3px 7px; border-radius:4px; font-size:0.75rem; cursor:pointer; margin-left:4px;">🗑️</button>
+                        </div>
                     </div>
-                    <div style="display:flex; align-items:center; gap:6px;">
-                        <button onclick="cambiarQty(${i.id}, -1)" style="padding:2px 8px; background:#e2e8f0; border:none; border-radius:4px; font-weight:bold; cursor:pointer;">-</button>
-                        <span style="font-size:0.85rem; font-weight:bold;">${i.cantidad}</span>
-                        <button onclick="cambiarQty(${i.id}, 1)" style="padding:2px 8px; background:#e2e8f0; border:none; border-radius:4px; font-weight:bold; cursor:pointer;">+</button>
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         function cambiarQty(id, delta) {
@@ -421,6 +422,18 @@
                 carrito = carrito.filter(i => i.id !== id);
             }
             actualizarCarritoUI();
+        }
+
+        function eliminarDelCarrito(id) {
+            carrito = carrito.filter(i => i.id !== id);
+            actualizarCarritoUI();
+        }
+
+        function vaciarCarrito() {
+            if (confirm("¿Estás seguro de vaciar todo el carrito?")) {
+                carrito = [];
+                actualizarCarritoUI();
+            }
         }
 
         let estadoModal = null;
@@ -487,7 +500,7 @@
             const selectEnvio = document.getElementById('selectTipoEnvio');
             const tipoEnvioVal = selectEnvio ? selectEnvio.value : 'local';
             const textoEnvio = selectEnvio ? selectEnvio.options[selectEnvio.selectedIndex].text : 'Retiro en Local';
-            const medioPago = document.getElementById('selectMedioPago') ? document.getElementById('selectMedioPago').value : 'Efectivo';
+            const medioPago = document.getElementById('selectMedioPago') ? document.getElementById('selectMedioPago'].value : 'Efectivo';
 
             let costoEnvio = 0;
             if (tipoEnvioVal === 'dentro') costoEnvio = 1500;
@@ -501,7 +514,7 @@
 
             let texto = "🛒 *NUEVO PEDIDO - POLIRUBRO VIRTUAL*\n\n";
             carrito.forEach(i => {
-                texto += `• ${i.cantidad}x ${i.nombre} ($${formatearPrecio(i.precio * i.cantidad)})\n`;
+                texto += `• ${i.cantidad}x ${i.nombre} ($${formatearPrecio(Number(i.precio) * i.cantidad)})\n`;
             });
 
             texto += `\n💵 *Subtotal:* \$${formatearPrecio(subtotalMonto)}\n`;
