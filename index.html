@@ -57,7 +57,7 @@
             
             <h3 class="cat-titulo-seccion" id="tituloSeccionActual">🌟 Catálogo General y Destacados</h3>
             <div class="productos-grid" id="contenedorProductos">
-                <p style="grid-column: 1/-1; text-align: center; color: #666; padding: 40px 0;">Cargando productos...</p>
+                <p style="grid-column: 1/-1; text-align: center; color: #666; padding: 40px 0;">Cargando productos desde la nube...</p>
             </div>
         </main>
 
@@ -120,6 +120,7 @@
 
         async function iniciarTienda() {
             await sincronizarYActualizarNube();
+            // Actualizar automáticamente si el cliente vuelve a enfocar la pestaña en el celular
             window.addEventListener('focus', async () => {
                 await sincronizarYActualizarNube();
             });
@@ -201,7 +202,7 @@
                     <div class="card-oferta-destacada">
                         <div class="badge-oferta-box"><span class="badge-oferta">🔥 48HS</span></div>
                         <div class="img-frame-oferta" onclick="abrirLupa('${img}')">
-                            <img src="${img}" alt="${p.nombre}" onerror="this.src='https://via.placeholder.com/200?text=Sin+Imagen'">
+                            <img src="${img}" alt="${p.nombre}" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Sin+Imagen'">
                         </div>
                         <div class="titulo-producto-oferta">${p.nombre}</div>
                         <div class="precio-producto-oferta">$${Number(p.precio).toLocaleString('es-AR')}</div>
