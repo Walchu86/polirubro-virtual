@@ -7,7 +7,7 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0, 0, 0, 0.65);
-    z-index: 4000; display: flex; align-items: center; justify-content: center; padding: 15px;
+    z-index: 5000; display: flex; align-items: center; justify-content: center; padding: 15px;
 }
 .welcome-modal-content {
     background: #ffffff; padding: 25px 20px; border-radius: 20px;
@@ -20,17 +20,18 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
 }
 .welcome-close-btn {
     position: absolute; top: 12px; right: 15px; background: none; border: none;
-    font-size: 1.2rem; cursor: pointer; color: #64748b; font-weight: bold;
+    font-size: 1.3rem; cursor: pointer; color: #64748b; font-weight: bold; z-index: 5001;
 }
 .btn-vamos-comprar {
     background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
     color: white; border: none; padding: 12px 20px; border-radius: 12px;
     font-weight: 900; font-size: 0.95rem; cursor: pointer; width: 100%;
     margin-top: 15px; box-shadow: 0 4px 12px rgba(234, 88, 12, 0.3); text-transform: uppercase;
+    z-index: 5001; position: relative;
 }
 .btn-vamos-comprar:hover { opacity: 0.95; }
 
-/* BARRA FLOTANTE INFERIOR DEL CARRITO (MÓVIL OPTIMIZADA) */
+/* BARRA FLOTANTE INFERIOR DEL CARRITO */
 .floating-cart-bar {
     position: fixed; bottom: 0; left: 0; width: 100%;
     background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
@@ -41,7 +42,6 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
     max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between;
     align-items: center; font-size: 0.9rem; font-weight: bold; width: 100%;
 }
-/* BOTÓN DESTELLANTE Y LLAMATIVO PARA VER PEDIDO */
 .ver-carrito-text {
     background: #ffffff; color: #ea580c; padding: 10px 24px; border-radius: 30px;
     font-size: 0.95rem; font-weight: 900; box-shadow: 0 4px 15px rgba(255, 255, 255, 0.4);
@@ -59,43 +59,49 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
 .marquee-container { display: inline-block; animation: marquee 25s linear infinite; }
 @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-/* CABECERA (DISEÑO MÓVIL ARMONIZADO) */
-.main-header { background: #ffffff; border-bottom: 1px solid #e2e8f0; padding: 12px 12px; }
-.header-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
-.header-left-col { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; width: 100%; }
+/* CABECERA (ALINEACIÓN PERFECTAMENTE CENTRADA EN PC) */
+.main-header { background: #ffffff; border-bottom: 1px solid #e2e8f0; padding: 15px 15px; }
+.header-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+.header-left-col { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; width: 100%; }
 @media (min-width: 901px) {
-    .header-left-col { width: auto; }
+    .header-left-col { width: auto; align-items: flex-start; justify-content: center; }
 }
 
 .logo-title { display: flex; align-items: center; text-decoration: none; }
-.brand-text h1 { font-size: 1.5rem; color: #ea580c; font-weight: 900; line-height: 1.1; }
+.brand-text h1 { font-size: 1.6rem; color: #ea580c; font-weight: 900; line-height: 1.1; }
 .brand-text h1 span { color: #1e293b; }
-.tagline { font-size: 0.78rem; color: #64748b; display: block; margin-top: 2px; }
+.tagline { font-size: 0.8rem; color: #64748b; display: block; margin-top: 2px; }
 
-/* CAJITA DE ATENCIÓN UNIFICADA Y PROFESIONAL EN MÓVIL */
 .header-banner-animado {
     background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
     border: 1px solid #fed7aa; padding: 8px 12px; border-radius: 12px;
     display: flex; justify-content: space-between; align-items: center; width: 100%;
     font-size: 0.8rem; color: #c2410c; font-weight: bold; box-shadow: 0 2px 6px rgba(0,0,0,0.02);
 }
+@media (min-width: 901px) {
+    .header-banner-animado { max-width: 300px; }
+}
 .header-banner-content { display: flex; align-items: center; gap: 6px; }
 .header-banner-badges { font-size: 0.9rem; letter-spacing: 2px; }
 
 .quick-badge-llamativo {
-    background: #22c55e; color: white; padding: 8px 16px; border-radius: 20px;
+    background: #22c55e; color: white; padding: 9px 18px; border-radius: 20px;
     font-weight: bold; font-size: 0.85rem; cursor: pointer; box-shadow: 0 4px 10px rgba(34, 197, 94, 0.3);
     width: 100%; text-align: center; transition: transform 0.2s;
 }
+@media (min-width: 901px) {
+    .quick-badge-llamativo { width: fit-content; }
+}
 .quick-badge-llamativo:hover { transform: scale(1.02); }
 
-/* CARRUSEL Y WIDGET EXCLUSIVOS PARA PC */
+/* CARRUSEL CENTRAL (CENTRADO EN PC) */
 .pc-carousel-container { display: none !important; }
 @media (min-width: 901px) {
     .pc-carousel-container {
-        display: flex !important; flex: 1; max-width: 340px; height: 125px;
+        display: flex !important; flex: 1; max-width: 320px; height: 130px;
         background: #1e293b; border-radius: 16px; overflow: hidden; position: relative;
         box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 2px solid #fed7aa;
+        margin: auto 0;
     }
 }
 .pc-carousel-track { display: flex; width: 100%; height: 100%; position: relative; }
@@ -105,22 +111,24 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
 .pc-carousel-caption {
     position: absolute; bottom: 0; left: 0; width: 100%;
     background: linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0.2));
-    color: white; font-size: 0.8rem; font-weight: 800; text-align: center; padding: 8px;
+    color: white; font-size: 0.78rem; font-weight: 800; text-align: center; padding: 6px;
 }
 
+/* WIDGET DERECHO (CENTRADO EN PC) */
 .pc-desktop-widget { display: none !important; }
 @media (min-width: 901px) {
     .pc-desktop-widget {
-        display: flex !important; flex-direction: column; gap: 8px;
+        display: flex !important; flex-direction: column; gap: 6px;
         background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
         border: 1.5px solid #fed7aa; border-radius: 16px; padding: 10px 15px;
-        max-width: 320px; box-shadow: 0 4px 15px rgba(234, 88, 12, 0.08);
+        max-width: 300px; box-shadow: 0 4px 15px rgba(234, 88, 12, 0.08);
+        margin: auto 0;
     }
 }
-.pc-widget-title { font-size: 0.82rem; font-weight: 900; color: #c2410c; display: flex; align-items: center; gap: 6px; }
-.pc-widget-text { font-size: 0.75rem; color: #475569; line-height: 1.25; }
-.pc-widget-badges { display: flex; gap: 5px; flex-wrap: wrap; }
-.pc-badge-item { background: #ffffff; color: #ea580c; font-size: 0.68rem; font-weight: 800; padding: 2px 6px; border-radius: 6px; border: 1px solid #fdba74; }
+.pc-widget-title { font-size: 0.8rem; font-weight: 900; color: #c2410c; display: flex; align-items: center; gap: 6px; }
+.pc-widget-text { font-size: 0.72rem; color: #475569; line-height: 1.25; }
+.pc-widget-badges { display: flex; gap: 4px; flex-wrap: wrap; }
+.pc-badge-item { background: #ffffff; color: #ea580c; font-size: 0.65rem; font-weight: 800; padding: 2px 5px; border-radius: 6px; border: 1px solid #fdba74; }
 
 /* NAVEGACIÓN */
 .main-nav { background: #ea580c; padding: 8px 10px; overflow-x: auto; }
