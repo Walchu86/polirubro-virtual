@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=244">
+    <link rel="stylesheet" href="style.css?v=245">
 </head>
 <body>
 
@@ -27,24 +27,37 @@
         </div>
     </div>
 
-    <!-- CABECERA PRINCIPAL (DISEÑO ORIGINAL A LA IZQUIERDA) -->
+    <!-- CABECERA PRINCIPAL (CON WIDGET EXCLUSIVO A LA DERECHA EN PC) -->
     <header class="main-header">
         <div class="header-container">
-            <a href="#" class="logo-title" style="text-decoration:none;">
-                <div class="brand-text">
-                    <h1>POLIRUBRO <span>VIRTUAL</span></h1>
-                    <span class="tagline">Tu tienda online de confianza</span>
+            <div class="header-left-col">
+                <a href="#" class="logo-title" style="text-decoration:none;">
+                    <div class="brand-text">
+                        <h1>POLIRUBRO <span>VIRTUAL</span></h1>
+                        <span class="tagline">Tu tienda online de confianza</span>
+                    </div>
+                </a>
+                
+                <div class="header-banner-animado">
+                    <span class="pulse-icon">🛍️</span>
+                    <span class="anim-text">Atención personalizada y envíos rápidos</span>
+                    <span class="anim-badges">📦 🎁 ⭐</span>
                 </div>
-            </a>
-            
-            <div class="header-banner-animado">
-                <span class="pulse-icon">🛍️</span>
-                <span class="anim-text">Atención personalizada y envíos rápidos</span>
-                <span class="anim-badges">📦 🎁 ⭐</span>
+
+                <div class="quick-badge-llamativo" onclick="enfocarBuscador()" title="¡Hacé clic para buscar productos!">
+                    🔥 ¡Hacé clic y llevate lo que necesitás!
+                </div>
             </div>
 
-            <div class="quick-badge-llamativo" onclick="enfocarBuscador()" title="¡Hacé clic para buscar productos!">
-                🔥 ¡Hacé clic y llevate lo que necesitás!
+            <!-- WIDGET DE ESCRITORIO (SOLO PC - MEZCLA 1 Y 3) -->
+            <div class="pc-desktop-widget">
+                <div class="pc-widget-title">🕒 Tienda Activa 24/7 • Comprá sin moverte</div>
+                <div class="pc-widget-text">Realizá tus pedidos desde casa de forma rápida y segura en Corrientes Capital.</div>
+                <div class="pc-widget-badges">
+                    <span class="pc-badge-item">🔒 Compra Segura</span>
+                    <span class="pc-badge-item">💵 Efectivo / Transf.</span>
+                    <span class="pc-badge-item">🚚 Envío Gratis ≥ \$20k</span>
+                </div>
             </div>
         </div>
     </header>
@@ -564,6 +577,7 @@
         function procesarPedidoCheckout() {
             if (carrito.length === 0) return alert("El carrito está vacío.");
             
+            pagoVal = document.getElementById('selectMedioPago') ? document.getElementById('selectMedioPago').value : 'Efectivo';
             const subtotalMonto = carrito.reduce((sum, i) => sum + (Number(i.precio) * i.cantidad), 0);
             const medioPago = document.getElementById('selectMedioPago') ? document.getElementById('selectMedioPago').value : 'Efectivo';
 
