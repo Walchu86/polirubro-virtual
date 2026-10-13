@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=251">
+    <link rel="stylesheet" href="style.css?v=252">
 </head>
 <body>
 
@@ -38,7 +38,6 @@
                     </div>
                 </a>
                 
-                <!-- CAJITA DE ATENCIÓN ARMONIZADA PARA MÓVIL -->
                 <div class="header-banner-animado">
                     <div class="header-banner-content">
                         <span>🛍️</span>
@@ -403,7 +402,7 @@
                         </div>
                         <div class="card-detalles">
                             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
-                                <span style="font-size:0.7rem; color:#ea580c; font-weight:bold; text-transform:uppercase;">${p.categoria}</span>
+                                <span style="font-size:0.7rem; color:#ef4444; font-weight:bold; text-transform:uppercase;">${p.categoria}</span>
                                 <div>${badgesHtml}</div>
                             </div>
                             <h3 class="titulo-producto">${p.nombre}</h3>
@@ -616,7 +615,7 @@
             if (carrito.length === 0) return alert("El carrito está vacío.");
             
             const subtotalMonto = carrito.reduce((sum, i) => sum + (Number(i.precio) * i.cantidad), 0);
-            const medioPago = document.getElementById('selectMedioPago') ? document.getElementById('selectMedioPago'].value : 'Efectivo';
+            const medioPago = document.getElementById('selectMedioPago') ? document.getElementById('selectMedioPago').value : 'Efectivo';
 
             let costoEnvio = 0;
             let textoEnvio = "Retiro en Local (Gratis)";
