@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=201">
+    <link rel="stylesheet" href="style.css?v=203">
 </head>
 <body>
 
@@ -36,10 +36,20 @@
         </div>
     </header>
 
+    <!-- BARRA INFORMATIVA DE TARIFAS DE ENVÍO Y PAGOS -->
+    <div class="shipping-info-bar">
+        <div class="shipping-info-container">
+            <div class="info-item">🛵 <strong>Dentro 4 Avenidas:</strong> \$1.500</div>
+            <div class="info-item">🚚 <strong>Fuera 4 Avenidas:</strong> \$2.500</div>
+            <div class="info-item">🏬 <strong>Retiro en Local:</strong> ¡GRATIS!</div>
+            <div class="info-item">💳 <strong>Medios de Pago:</strong> Efectivo • Mercado Pago • Ualá • Personal Pay</div>
+        </div>
+    </div>
+
     <!-- BARRA DE NAVEGACIÓN NARANJA (SECCIONES) -->
     <nav class="main-nav">
         <div class="nav-container-categorias" id="contenedorCategoriasNav">
-            <!-- Se generan dinámicamente desde el JSON -->
+            <!-- Se generan dinámicamente -->
         </div>
     </nav>
 
@@ -85,23 +95,67 @@
             <button class="btn-close-cart" onclick="cerrarCarrito()">✕</button>
         </div>
         
-        <div class="cart-shipping-box">
-            <p style="font-size:0.85rem; font-weight:bold; color:#ea580c;">🚚 ¡ENVÍO GRATIS a partir de \$20.000!</p>
-            <p style="font-size:0.75rem; color:#64748b;">Los envíos se coordinan directamente por WhatsApp.</p>
+        <div class="cart-shipping-box" id="bannerCartShipping">
+            <p style="font-size:0.85rem; font-weight:bold; color:#ea580c;">🚚 Envío GRATIS en compras desde \$20.000</p>
+            <p style="font-size:0.75rem; color:#64748b;">Elegí tu zona de envío y método de pago antes de enviar.</p>
         </div>
 
         <div class="cart-items" id="listaCarritoModal">
             <!-- Ítems del carrito -->
         </div>
 
-        <div class="cart-footer">
-            <div style="display:flex; justify-content:space-between; margin-bottom: 10px; font-weight: bold; font-size: 1.05rem;">
-                <span>Total:</span>
+        <!-- OPCIONES DE ENVÍO Y PAGO -->
+        <div class="checkout-options" style="margin-top:10px; padding:10px 0; border-top:1px solid #e2e8f0;">
+            <label style="font-size:0.8rem; font-weight:bold; color:#1e293b; display:block; margin-bottom:4px;">📍 Selección de Zona / Entrega:</label>
+            <select id="selectTipoEnvio" class="select-checkout" onchange="actualizarCarritoUI()">
+                <option value="local">🏬 Retiro en Local (Gratis)</option>
+                <option value="dentro" id="optEnvioDentro">🛵 Dentro de las 4 Avenidas (\$1.500)</option>
+                <option value="fuera" id="optEnvioFuera">🚚 Fuera de las 4 Avenidas (\$2.500)</option>
+            </select>
+
+            <label style="font-size:0.8rem; font-weight:bold; color:#1e293b; display:block; margin-top:8px; margin-bottom:4px;">💳 Forma de Pago:</label>
+            <select id="selectMedioPago" class="select-checkout">
+                <option value="Efectivo">💵 Efectivo al recibir/retirar</option>
+                <option value="Mercado Pago">💙 Mercado Pago (Transferencia / QR)</option>
+                <option value="Ualá">❤️ Ualá</option>
+                <option value="Personal Pay">🖤 Personal Pay</option>
+            </select>
+        </div>
+
+        <div class="cart-footer" style="padding-top:10px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom: 4px; font-size: 0.85rem; color:#64748b;">
+                <span>Subtotal productos:</span>
+                <span>\$<span id="cartSubtotalModal">0</span></span>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom: 8px; font-size: 0.85rem; color:#64748b;">
+                <span>Costo de envío:</span>
+                <span id="cartEnvioTexto">\$0</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom: 12px; font-weight: bold; font-size: 1.1rem; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                <span>Total a pagar:</span>
                 <span style="color:#ea580c;">\$<span id="cartTotalModal">0</span></span>
             </div>
-            <button class="btn-whatsapp" onclick="enviarPedidoWhatsApp()">
+            <button class="btn-whatsapp" onclick="procesarPedidoCheckout()">
                 📲 Enviar Pedido por WhatsApp
             </button>
+        </div>
+    </div>
+
+    <!-- MODAL CÓDIGO QR PARA VERSIÓN PC -->
+    <div class="lightbox-overlay" id="qrModal" onclick="cerrarModalQR()">
+        <div style="background:#ffffff; padding:25px; border-radius:15px; text-align:center; max-width:350px; width:90%; position:relative;" onclick="event.stopPropagation()">
+            <span class="lightbox-close" onclick="cerrarModalQR()" style="color:#000; top:10px; right:15px;">&times;</span>
+            <h3 style="color:#ea580c; margin-bottom:10px; font-size:1.2rem;">📱 ¡Escaneá para enviar tu pedido!</h3>
+            <p style="font-size:0.85rem; color:#64748b; margin-bottom:15px;">Auntá la cámara de tu celular al código QR para abrir el pedido detallado directamente en tu WhatsApp.</p>
+            
+            <div style="background:#f8fafc; padding:15px; border-radius:10px; display:inline-block; border:1px solid #e2e8f0; margin-bottom:15px;">
+                <img id="imgCodigoQR" src="" alt="Código QR WhatsApp" style="width:200px; height:200px; display:block;">
+            </div>
+
+            <p style="font-size:0.8rem; color:#1e293b; font-weight:bold; margin-bottom:10px;">¿Estás navegando desde la PC?</p>
+            <a id="linkDirectoWspPC" href="#" target="_blank" style="display:block; background-color:#22c55e; color:white; text-decoration:none; padding:10px; border-radius:8px; font-weight:bold; font-size:0.85rem;">
+                💻 Abrir en WhatsApp Web
+            </a>
         </div>
     </div>
 
@@ -116,7 +170,7 @@
         💬
     </a>
 
-    <!-- LÓGICA DE LA TIENDA Y NAVEGACIÓN ATRÁS -->
+    <!-- LÓGICA DE LA TIENDA Y CÓDIGO QR -->
     <script>
         let todosLosProductos = [];
         let categoriasDisponibles = [];
@@ -238,11 +292,54 @@
             localStorage.setItem('carrito_polirubro', JSON.stringify(carrito));
             
             const totalItems = carrito.reduce((sum, i) => sum + i.cantidad, 0);
-            const totalMonto = carrito.reduce((sum, i) => sum + (i.precio * i.cantidad), 0);
+            const subtotalMonto = carrito.reduce((sum, i) => sum + (i.precio * i.cantidad), 0);
+
+            // Actualizar Opciones del Select si alcanza los \$20.000
+            const optDentro = document.getElementById('optEnvioDentro');
+            const optFuera = document.getElementById('optEnvioFuera');
+            const bannerCart = document.getElementById('bannerCartShipping');
+
+            if (subtotalMonto >= 20000) {
+                if (optDentro) optDentro.innerText = "🛵 Dentro de las 4 Avenidas (¡ENVÍO GRATIS!)";
+                if (optFuera) optFuera.innerText = "🚚 Fuera de las 4 Avenidas (¡ENVÍO GRATIS!)";
+                if (bannerCart) bannerCart.innerHTML = `<p style="font-size:0.85rem; font-weight:bold; color:#22c55e;">🎉 ¡FELICITACIONES! Tenés ENVÍO GRATIS en tu pedido.</p>`;
+            } else {
+                if (optDentro) optDentro.innerText = "🛵 Dentro de las 4 Avenidas (\$1.500)";
+                if (optFuera) optFuera.innerText = "🚚 Fuera de las 4 Avenidas (\$2.500)";
+                if (bannerCart) bannerCart.innerHTML = `<p style="font-size:0.85rem; font-weight:bold; color:#ea580c;">🚚 Envío GRATIS en compras desde $20.000</p><p style="font-size:0.75rem; color:#64748b;">Elegí tu zona de envío y método de pago antes de enviar.</p>`;
+            }
+
+            // Calcular costo de envío
+            const tipoEnvio = document.getElementById('selectTipoEnvio') ? document.getElementById('selectTipoEnvio').value : 'local';
+            let costoEnvio = 0;
+
+            if (tipoEnvio === 'dentro') costoEnvio = 1500;
+            if (tipoEnvio === 'fuera') costoEnvio = 2500;
+
+            // Bonificación por \$20.000 o más
+            let envioGratisAplica = false;
+            if (subtotalMonto >= 20000 && tipoEnvio !== 'local') {
+                costoEnvio = 0;
+                envioGratisAplica = true;
+            }
+
+            const totalFinal = subtotalMonto + costoEnvio;
 
             document.getElementById('cartCount').innerText = totalItems;
-            document.getElementById('cartTotalHeader').innerText = totalMonto.toLocaleString('es-AR');
-            document.getElementById('cartTotalModal').innerText = totalMonto.toLocaleString('es-AR');
+            document.getElementById('cartTotalHeader').innerText = totalFinal.toLocaleString('es-AR');
+            document.getElementById('cartSubtotalModal').innerText = subtotalMonto.toLocaleString('es-AR');
+            document.getElementById('cartTotalModal').innerText = totalFinal.toLocaleString('es-AR');
+
+            const elemEnvio = document.getElementById('cartEnvioTexto');
+            if (elemEnvio) {
+                if (tipoEnvio === 'local') {
+                    elemEnvio.innerHTML = '<span style="color:#22c55e; font-weight:bold;">GRATIS (Retiro)</span>';
+                } else if (envioGratisAplica) {
+                    elemEnvio.innerHTML = '<span style="color:#22c55e; font-weight:bold;">¡GRATIS PROMO! 🎉</span>';
+                } else {
+                    elemEnvio.innerText = '\$' + costoEnvio.toLocaleString('es-AR');
+                }
+            }
 
             const contenedor = document.getElementById('listaCarritoModal');
             if (carrito.length === 0) {
@@ -275,8 +372,8 @@
             actualizarCarritoUI();
         }
 
-        /* --- CONTROL DE HISTORIAL PARA MÓVILES (BOTÓN ATRÁS) --- */
-        let estadoModal = null; // 'cart' o 'lightbox'
+        /* --- CONTROL DE HISTORIAL Y MODALES --- */
+        let estadoModal = null;
 
         function abrirCarrito() {
             const cartModal = document.getElementById('cartModal');
@@ -316,7 +413,10 @@
             }
         }
 
-        // CAPTURA EL BOTÓN / GESTO ATRÁS DEL CELULAR
+        function cerrarModalQR() {
+            document.getElementById('qrModal').style.display = 'none';
+        }
+
         window.onpopstate = function(event) {
             if (estadoModal === 'cart') {
                 cerrarCarrito(true);
@@ -330,20 +430,52 @@
             window.open(`https://wa.me/543794000000?text=${encodeURIComponent(texto)}`, '_blank');
         }
 
-        function enviarPedidoWhatsApp() {
+        function procesarPedidoCheckout() {
             if (carrito.length === 0) return alert("El carrito está vacío.");
+            
+            const subtotalMonto = carrito.reduce((sum, i) => sum + (i.precio * i.cantidad), 0);
+            const selectEnvio = document.getElementById('selectTipoEnvio');
+            const tipoEnvioVal = selectEnvio ? selectEnvio.value : 'local';
+            const textoEnvio = selectEnvio ? selectEnvio.options[selectEnvio.selectedIndex].text : 'Retiro en Local';
+            const medioPago = document.getElementById('selectMedioPago') ? document.getElementById('selectMedioPago').value : 'Efectivo';
+
+            let costoEnvio = 0;
+            if (tipoEnvioVal === 'dentro') costoEnvio = 1500;
+            if (tipoEnvioVal === 'fuera') costoEnvio = 2500;
+
+            if (subtotalMonto >= 20000 && tipoEnvioVal !== 'local') {
+                costoEnvio = 0;
+            }
+
+            const totalFinal = subtotalMonto + costoEnvio;
+
             let texto = "🛒 *NUEVO PEDIDO - POLIRUBRO VIRTUAL*\n\n";
             carrito.forEach(i => {
                 texto += `• ${i.cantidad}x ${i.nombre} ($${(i.precio * i.cantidad).toLocaleString('es-AR')})\n`;
             });
-            const total = carrito.reduce((sum, i) => sum + (i.precio * i.cantidad), 0);
-            texto += `\n💰 *Total:* $${total.toLocaleString('es-AR')}\n`;
-            if (total >= 20000) {
-                texto += `🚚 *Envío:* ¡GRATIS! 🎉\n`;
-            }
-            texto += `📍 *Dirección de envío:* (Escribir dirección aquí)`;
 
-            window.open(`https://wa.me/543794000000?text=${encodeURIComponent(texto)}`, '_blank');
+            texto += `\n💵 *Subtotal:* $${subtotalMonto.toLocaleString('es-AR')}\n`;
+            texto += `🛵 *Entrega:* ${textoEnvio}\n`;
+            if (subtotalMonto >= 20000 && tipoEnvioVal !== 'local') {
+                texto += `🎉 *¡ENVÍO GRATIS APLICADO por superar $20.000!*\n`;
+            }
+            texto += `💳 *Medio de Pago:* ${medioPago}\n`;
+            texto += `💰 *TOTAL A PAGAR:* $${totalFinal.toLocaleString('es-AR')}\n\n`;
+            texto += `📍 *Dirección de Entrega:* (Escribir tu dirección exacta aquí)`;
+
+            const urlWsp = `https://wa.me/543794000000?text=${encodeURIComponent(texto)}`;
+
+            // DETECTAR SI ES PANTALLA DE PC O MÓVIL
+            if (window.innerWidth > 768) {
+                // GENERAR CÓDIGO QR EN MODAL PARA PC
+                const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(urlWsp)}`;
+                document.getElementById('imgCodigoQR').src = qrUrl;
+                document.getElementById('linkDirectoWspPC').href = urlWsp;
+                document.getElementById('qrModal').style.display = 'flex';
+            } else {
+                // ABRIR DIRECTAMENTE EN CELULAR
+                window.open(urlWsp, '_blank');
+            }
         }
 
         window.onload = () => {
