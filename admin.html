@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Panel Administrador | Polirubro Virtual</title>
-    <link rel="stylesheet" href="style.css?v=5">
+    <link rel="stylesheet" href="style.css?v=219">
     <style>
         body.admin-body { background-color: #0b0f19 !important; color: #f8fafc !important; font-family: system-ui, -apple-system, sans-serif !important; }
         .admin-wrapper { max-width: 1200px; margin: 0 auto; padding: 1.5rem 1rem; }
@@ -127,7 +127,7 @@
 
         function obtenerConfig() {
             let owner = localStorage.getItem("gh_owner") || "Walchu86";
-            let repo = localStorage.getItem("gh_repo") || "polirubrovirtual";
+            let repo = localStorage.getItem("gh_repo") || "polirubro-virtual";
             let token = localStorage.getItem("gh_token") || "";
             return { owner, repo, token };
         }
@@ -137,7 +137,7 @@
             let tokenInput = prompt("Pegá tu Token de GitHub (Classic Token con permiso 'repo'):", conf.token);
             if (tokenInput !== null) {
                 localStorage.setItem("gh_token", tokenInput.trim());
-                let repoInput = prompt("Nombre de tu repositorio en GitHub (ej: polirubro-virtual):", conf.repo);
+                let repoInput = prompt("Nombre de tu repositorio en GitHub:", conf.repo);
                 if (repoInput) localStorage.setItem("gh_repo", repoInput.trim());
                 let ownerInput = prompt("Tu usuario de GitHub:", conf.owner);
                 if (ownerInput) localStorage.setItem("gh_owner", ownerInput.trim());
@@ -153,7 +153,7 @@
                     datosTienda = await res.json();
                 }
             } catch (e) {
-                console.log("No se pudo cargar de la red, usando estructura base.");
+                console.log("Usando estructura base.");
             }
             renderizarInterfaz();
         }
@@ -189,11 +189,12 @@
             prods.forEach(p => {
                 const badgeOferta = p.enOferta ? '<span style="color:#f43f5e; font-weight:bold;">🔥 Sí</span>' : '<span style="color:#94a3b8;">No</span>';
                 const stockVal = p.stock !== undefined ? p.stock : 10;
+                const precioLimpinho = Number(p.precio || 0).toLocaleString('es-AR');
                 tbody.innerHTML += `
                     <tr>
                         <td style="font-weight: bold; color: #fff;">${p.nombre}</td>
                         <td><span style="background: #1e293b; padding: 3px 8px; border-radius: 4px; border: 1px solid #334155; font-size: 0.78rem;">${p.categoria}</span></td>
-                        <td style="color: #38bdf8; font-weight: bold;">$${Number(p.precio).toLocaleString('es-AR')}</td>
+                        <td style="color: #38bdf8; font-weight: bold;">$${precioLimpinho}</td>
                         <td><span style="color: #34d399; font-weight: bold;">${stockVal} un.</span></td>
                         <td>${badgeOferta}</td>
                         <td>
@@ -208,7 +209,7 @@
         async function sincronizarConGitHub() {
             const conf = obtenerConfig();
             if (!conf.token) {
-                alert("⚠️ Primero tenés que configurar tu Token de GitHub haciendo clic arriba en '🔑 Configurar Token GitHub'.");
+                alert("⚠️ Primero configurá tu Token de GitHub.");
                 configurarCredenciales();
                 return false;
             }
@@ -230,7 +231,7 @@
                 const contentBase64 = btoa(unescape(encodeURIComponent(jsonString)));
 
                 const bodyData = {
-                    message: "Actualización automática desde Panel Admin",
+                    message: "Actualización desde Panel Admin",
                     content: contentBase64,
                     sha: sha ? sha : undefined
                 };
@@ -272,7 +273,7 @@
                 if (exito) {
                     input.value = '';
                     renderizarInterfaz();
-                    alert(`✅ Sección "${nombre}" guardada y publicada automáticamente.`);
+                    alert(`✅ Sección "${nombre}" guardada y publicada.`);
                 }
             } else {
                 alert("Esa sección ya existe.");
@@ -280,7 +281,7 @@
         }
 
         async function eliminarSeccion(nombreCat) {
-            if (confirm(`¿Seguro que querés borrar la sección "${nombreCat}"?`)) {
+            if (confirm(`¿Seguro querés borrar la sección "${nombreCat}"?`)) {
                 datosTienda.categorias = (datosTienda.categorias || []).filter(c => c !== nombreCat);
                 let exito = await sincronizarConGitHub();
                 if (exito) renderizarInterfaz();
@@ -316,7 +317,7 @@
 
             document.getElementById('editIdProd').value = prod.id;
             document.getElementById('prodNombre').value = prod.nombre;
-            document.getElementById('prodPrecio').value = prod.precio;
+            document.getElementById('prodPrecio').value = Number(prod.precio || 0);
             document.getElementById('prodStock').value = prod.stock !== undefined ? prod.stock : 10;
             document.getElementById('selectCategorias').value = prod.categoria;
             document.getElementById('prodOferta').checked = prod.enOferta || false;
@@ -354,37 +355,39 @@
         async function guardarProducto() {
             const editId = document.getElementById('editIdProd').value;
             const nombre = document.getElementById('prodNombre').value.trim();
-            const precio = document.getElementById('prodPrecio').value;
-            const stock = document.getElementById('prodStock').value;
+            const precioRaw = document.getElementById('prodPrecio').value;
+            const stockRaw = document.getElementById('prodStock').value;
             const categoria = document.getElementById('selectCategorias').value;
             const enOferta = document.getElementById('prodOferta').checked;
 
-            if (!nombre || !precio || !categoria) return alert("Completá nombre, precio y sección.");
+            if (!nombre || !precioRaw || !categoria) return alert("Completá nombre, precio y sección.");
             if (!imagenFinalBase64) return alert("Por favor seleccioná una imagen.");
+
+            // Nos aseguramos que precio y stock sean números puros
+            const precio = Number(precioRaw);
+            const stock = Number(stockRaw);
 
             if (!datosTienda.productos) datosTienda.productos = [];
 
             if (editId) {
-                // Editando producto existente
                 let index = datosTienda.productos.findIndex(p => p.id == editId);
                 if (index !== -1) {
                     datosTienda.productos[index] = {
                         id: Number(editId),
                         nombre,
-                        precio: Number(precio),
-                        stock: Number(stock),
+                        precio,
+                        stock,
                         categoria,
                         enOferta,
                         imagen: imagenFinalBase64
                     };
                 }
             } else {
-                // Creando nuevo producto
                 datosTienda.productos.push({
                     id: Date.now(),
                     nombre,
-                    precio: Number(precio),
-                    stock: Number(stock),
+                    precio,
+                    stock,
                     categoria,
                     enOferta,
                     imagen: imagenFinalBase64
@@ -393,7 +396,7 @@
 
             let exito = await sincronizarConGitHub();
             if (exito) {
-                alert(`🎉 ¡Producto "${nombre}" actualizado y publicado automáticamente en la web!`);
+                alert(`🎉 ¡Producto "${nombre}" actualizado con éxito en la web!`);
                 cancelarEdicion();
                 renderizarInterfaz();
             }
