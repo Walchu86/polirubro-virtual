@@ -8,10 +8,13 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-body {
+html, body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden; /* Evita desplazamientos horizontales en móviles */
     background-color: #f8fafc;
     color: #1e293b;
-    padding-bottom: 70px; /* Espacio para barra flotante móvil */
+    padding-bottom: 70px;
 }
 
 /* BANNER SUPERIOR PROMO */
@@ -19,10 +22,11 @@ body {
     background: linear-gradient(90deg, #ea580c 0%, #c2410c 100%);
     color: #ffffff;
     text-align: center;
-    padding: 8px 15px;
-    font-size: 0.85rem;
-    font-weight: 700;
+    padding: 10px 15px;
+    font-size: 0.9rem;
+    font-weight: 800;
     letter-spacing: 0.5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 /* CABECERA PRINCIPAL */
@@ -60,28 +64,51 @@ body {
     font-weight: 600;
 }
 
-.header-animation-box {
+/* BANNER CENTRAL ANIMADO REHECHO */
+.header-banner-animado {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 10px;
-    background-color: #fff7ed;
-    padding: 8px 15px;
-    border-radius: 20px;
-    border: 1px solid #ffedd5;
+    background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+    border: 1.5px solid #fdba74;
+    padding: 8px 18px;
+    border-radius: 25px;
+    flex: 1;
+    max-width: 480px;
+    margin: 0 10px;
 }
 
-.anim-text-badge {
+.pulse-icon {
+    font-size: 1.2rem;
+    animation: latido 1.8s infinite ease-in-out;
+}
+
+.anim-text {
     font-size: 0.85rem;
+    font-weight: 700;
     color: #c2410c;
+    text-align: center;
+}
+
+.anim-badges {
+    font-size: 1rem;
+    letter-spacing: 2px;
+}
+
+@keyframes latido {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
 }
 
 .quick-badge {
     background-color: #ea580c;
     color: #fff;
-    padding: 6px 14px;
+    padding: 8px 16px;
     border-radius: 20px;
     font-weight: 700;
     font-size: 0.8rem;
+    box-shadow: 0 2px 5px rgba(234, 88, 12, 0.3);
 }
 
 /* BARRA DE NAVEGACIÓN CATEGORÍAS */
@@ -99,22 +126,24 @@ body {
     overflow-x: auto;
     white-space: nowrap;
     padding: 0 15px;
+    -webkit-overflow-scrolling: touch;
 }
 
 .nav-links {
     list-style: none;
     display: flex;
-    gap: 15px;
+    gap: 12px;
 }
 
 .nav-links a {
     color: #cbd5e1;
     text-decoration: none;
     font-weight: 600;
-    font-size: 0.9rem;
-    padding: 6px 12px;
-    border-radius: 6px;
+    font-size: 0.88rem;
+    padding: 8px 14px;
+    border-radius: 8px;
     transition: all 0.2s;
+    display: inline-block;
 }
 
 .nav-links a:hover, .nav-links a.activa-nav {
@@ -149,9 +178,10 @@ body {
 .ver-carrito-text {
     background-color: #ffffff;
     color: #ea580c;
-    padding: 4px 12px;
+    padding: 5px 14px;
     border-radius: 15px;
     font-size: 0.8rem;
+    font-weight: 800;
 }
 
 /* LAYOUT PRINCIPAL */
@@ -162,15 +192,6 @@ body {
     display: grid;
     grid-template-columns: 1fr 280px;
     gap: 25px;
-}
-
-@media (max-width: 768px) {
-    .main-layout {
-        grid-template-columns: 1fr;
-    }
-    .sidebar {
-        display: none; /* Ocultar sidebar en móviles */
-    }
 }
 
 /* BUSCADOR Y TÍTULOS */
@@ -392,7 +413,7 @@ body {
 
 .cart-items {
     flex: 1;
-    overflow-y: auto;
+    overflow-y_ auto;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -460,4 +481,30 @@ body {
     color: white;
     font-size: 2rem;
     cursor: pointer;
+}
+
+/* ADAPTACIÓN MÓVIL PERFECTA */
+@media (max-width: 768px) {
+    .main-layout {
+        grid-template-columns: 1fr;
+        padding: 0 10px;
+    }
+    .sidebar {
+        display: none;
+    }
+    .header-container {
+        justify-content: center;
+        text-align: center;
+    }
+    .header-banner-animado {
+        max-width: 100%;
+        margin: 5px 0;
+    }
+    .quick-badge {
+        display: none; /* Simplifica el header en móviles */
+    }
+    .productos-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 12px;
+    }
 }
