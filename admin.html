@@ -248,57 +248,42 @@
             }
         }
 
-        function comprimirArchivoLocal() {
+        async function comprimirArchivoLocal() {
             const fileInput = document.getElementById("fileInput");
             if (!fileInput.files || fileInput.files.length === 0) return;
             const file = fileInput.files[0];
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                procesarYReducirImagen(e.target.result);
-            };
-            reader.readAsDataURL(file);
+
+            const formData = new FormData();
+            formData.append("imagen", file);
+
+            try {
+                const res = await fetch("/api/upload", {
+                    method: "POST",
+                    body: formData
+                });
+                const resultado = await res.json();
+                if (resultado.success) {
+                    imagenFinalOptimizada = resultado.url;
+                    document.getElementById("imgPreview").src = imagenFinalOptimizada;
+                    document.getElementById("pesoPreview").innerText = "Imagen subida al servidor";
+                    document.getElementById("previewContainer").style.display = "block";
+                    document.getElementById("urlInput").value = "";
+                } else {
+                    alert("❌ Error al subir la imagen: " + (resultado.error || "Formato no soportado"));
+                }
+            } catch (e) {
+                console.error("Error de red al subir imagen:", e);
+                alert("❌ Error al conectar con el servidor para subir la imagen.");
+            }
         }
 
         function comprimirImagenURL(url) {
             if (!url || url.trim() === "") return;
-            procesarYReducirImagen(url);
-        }
-
-        function procesarYReducirImagen(srcOriginal) {
-            const img = new Image();
-            img.crossOrigin = "anonymous";
-            img.src = srcOriginal;
-            img.onload = function() {
-                const canvas = document.createElement("canvas");
-                const MAX_SIZE = 400; 
-                let width = img.width, height = img.height;
-                if (width > height) {
-                    if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; }
-                } else {
-                    if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; }
-                }
-                canvas.width = width; 
-                canvas.height = height;
-                const ctx = canvas.getContext("2d");
-                ctx.drawImage(img, 0, 0, width, height);
-                
-                imagenFinalOptimizada = canvas.toDataURL("image/jpeg", 0.6);
-                const tamanoKB = Math.round(imagenFinalOptimizada.length / 1024);
-
-                document.getElementById("imgPreview").src = imagenFinalOptimizada;
-                document.getElementById("pesoPreview").innerText = `Optimizada: ~${tamanoKB} KB`;
-                document.getElementById("previewContainer").style.display = "block";
-                
-                if(document.getElementById("fileInput").value) {
-                    document.getElementById("urlInput").value = "";
-                }
-            };
-            img.onerror = function() {
-                imagenFinalOptimizada = srcOriginal;
-                document.getElementById("imgPreview").src = srcOriginal;
-                document.getElementById("pesoPreview").innerText = "URL directa";
-                document.getElementById("previewContainer").style.display = "block";
-            };
+            imagenFinalOptimizada = url.trim();
+            document.getElementById("imgPreview").src = imagenFinalOptimizada;
+            document.getElementById("pesoPreview").innerText = "URL externa";
+            document.getElementById("previewContainer").style.display = "block";
+            document.getElementById("fileInput").value = "";
         }
 
         async function guardarProducto() {
