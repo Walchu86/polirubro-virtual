@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=233">
+    <link rel="stylesheet" href="style.css?v=235">
 </head>
 <body>
 
@@ -147,9 +147,10 @@
                 <span>Total a pagar:</span>
                 <span style="color:#ea580c;">\$<span id="cartTotalModal">0</span></span>
             </div>
-            <button class="btn-whatsapp" onclick="procesarPedidoCheckout()">
-                📲 Enviar Pedido por WhatsApp
-            </button>
+            <div style="display:flex; gap: 8px; margin-top: 6px;">
+                <button onclick="cerrarCarrito()" style="flex:1; background:#64748b; color:white; border:none; padding:10px; border-radius:8px; font-weight:bold; font-size:0.85rem; cursor:pointer;">🛍️ Seguir comprando</button>
+                <button class="btn-whatsapp" onclick="procesarPedidoCheckout()" style="flex:1; margin-top:0;">📲 Enviar Pedido</button>
+            </div>
         </div>
     </div>
 
@@ -182,6 +183,7 @@
         let categoriasDisponibles = [];
         let carrito = JSON.parse(localStorage.getItem('carrito_polirubro')) || [];
         let categoriaActiva = 'TODAS';
+        let yaAlcanzoEnvioGratis = false; // Control para abrir el carrito solo una vez al alcanzar la meta
 
         function cerrarWelcomeModal() {
             const modal = document.getElementById('welcomeModal');
@@ -378,7 +380,15 @@
                 carrito.push({ ...prod, precio: Number(prod.precio || 0), cantidad: 1 });
             }
             actualizarCarritoUI();
-            abrirCarrito();
+
+            // Verificamos si acaba de cruzar la meta de los \$20.000 por primera vez
+            const subtotalMonto = carrito.reduce((sum, i) => sum + (Number(i.precio) * i.cantidad), 0);
+            if (subtotalMonto >= 20000 && !yaAlcanzoEnvioGratis) {
+                yaAlcanzoEnvioGratis = true;
+                abrirCarrito(); // Abre el carrito automáticamente solo cuando alcanza la meta
+            } else if (subtotalMonto < 20000) {
+                yaAlcanzoEnvioGratis = false; // Resetea si baja de la meta
+            }
         }
 
         function actualizarCarritoUI() {
@@ -478,6 +488,7 @@
         function vaciarCarrito() {
             if (confirm("¿Estás seguro de vaciar todo el carrito?")) {
                 carrito = [];
+                yaAlcanzoEnvioGratis = false;
                 actualizarCarritoUI();
             }
         }
@@ -588,7 +599,7 @@
             if (subtotalMonto >= 20000) {
                 texto += `🎉 *¡ENVÍO GRATIS APLICADO por superar \$20.000!*\n`;
             }
-            texto += `💳 *💳 Forma de Pago:* ${medioPago}\n`;
+            texto += `💳 *Forma de Pago:* ${medioPago}\n`;
             texto += `💰 *TOTAL A PAGAR:* \$${formatearPrecio(totalFinal)}\n\n`;
             texto += `📍 *Dirección de Entrega:* (Escribir tu dirección exacta aquí)`;
 
