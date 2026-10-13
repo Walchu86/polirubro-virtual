@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=231">
+    <link rel="stylesheet" href="style.css?v=232">
 </head>
 <body>
 
@@ -241,7 +241,11 @@
             grid48.innerHTML = ofertas.map(p => {
                 const imgUrl = p.imagen || 'https://via.placeholder.com/300?text=Sin+Imagen';
                 const precioLimpio = Number(p.precio || 0);
-                const talleBadge = p.talle ? `<span style="background:#f1f5f9; color:#475569; padding:2px 8px; border-radius:6px; font-size:0.75rem; font-weight:bold; border:1px solid #cbd5e1; margin-left:6px;">Talle: ${p.talle}</span>` : '';
+                
+                let badgesHtml = '';
+                if (p.talle) badgesHtml += `<span style="background:#f1f5f9; color:#475569; padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:bold; border:1px solid #cbd5e1; margin-left:4px;">T: ${p.talle}</span>`;
+                if (p.color) badgesHtml += `<span style="background:#f1f5f9; color:#475569; padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:bold; border:1px solid #cbd5e1; margin-left:4px;">C: ${p.color}</span>`;
+                
                 const descHtml = p.descripcion ? `<p style="font-size:0.8rem; color:#64748b; margin:4px 0 8px 0; line-height:1.2;">${p.descripcion}</p>` : '';
 
                 return `
@@ -253,9 +257,9 @@
                             <img src="${imgUrl}" alt="${p.nombre}" class="img-producto" loading="lazy">
                         </div>
                         <div class="card-detalles">
-                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
                                 <span style="font-size:0.7rem; color:#ef4444; font-weight:bold; text-transform:uppercase;">${p.categoria}</span>
-                                ${talleBadge}
+                                <div>${badgesHtml}</div>
                             </div>
                             <h3 class="titulo-producto">${p.nombre}</h3>
                             ${descHtml}
@@ -264,7 +268,7 @@
                         </div>
                         <div class="card-acciones">
                             <button class="btn-add-cart" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);" onclick="agregarAlCarrito(${p.id})">🛒 Agregar</button>
-                            <button class="btn-share-wsp" onclick="enviarProductoWsp('${p.nombre}', ${precioLimpio}, '${p.talle || ''}')" title="Enviar producto por WhatsApp" style="background:#22c55e; color:white; border:none; padding:8px 10px; border-radius:8px; cursor:pointer; font-size:0.85rem; font-weight:bold;">📤 Enviar</button>
+                            <button class="btn-share-wsp" onclick="enviarProductoWsp('${p.nombre}', ${precioLimpio}, '${p.talle || ''}', '${p.color || ''}')" title="Enviar producto por WhatsApp" style="background:#22c55e; color:white; border:none; padding:8px 10px; border-radius:8px; cursor:pointer; font-size:0.85rem; font-weight:bold;">📤 Enviar</button>
                         </div>
                     </div>
                 `;
@@ -325,7 +329,11 @@
                 const claseOfertaCard = p.enOferta ? 'card-producto en-oferta-card' : 'card-producto';
                 const imgUrl = p.imagen || 'https://via.placeholder.com/300?text=Sin+Imagen';
                 const precioLimpio = Number(p.precio || 0);
-                const talleBadge = p.talle ? `<span style="background:#f1f5f9; color:#475569; padding:2px 8px; border-radius:6px; font-size:0.75rem; font-weight:bold; border:1px solid #cbd5e1; margin-left:6px;">Talle: ${p.talle}</span>` : '';
+                
+                let badgesHtml = '';
+                if (p.talle) badgesHtml += `<span style="background:#f1f5f9; color:#475569; padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:bold; border:1px solid #cbd5e1; margin-left:4px;">T: ${p.talle}</span>`;
+                if (p.color) badgesHtml += `<span style="background:#f1f5f9; color:#475569; padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:bold; border:1px solid #cbd5e1; margin-left:4px;">C: ${p.color}</span>`;
+                
                 const descHtml = p.descripcion ? `<p style="font-size:0.8rem; color:#64748b; margin:4px 0 8px 0; line-height:1.2;">${p.descripcion}</p>` : '';
 
                 return `
@@ -335,9 +343,9 @@
                             <img src="${imgUrl}" alt="${p.nombre}" class="img-producto" loading="lazy">
                         </div>
                         <div class="card-detalles">
-                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
                                 <span style="font-size:0.7rem; color:#ea580c; font-weight:bold; text-transform:uppercase;">${p.categoria}</span>
-                                ${talleBadge}
+                                <div>${badgesHtml}</div>
                             </div>
                             <h3 class="titulo-producto">${p.nombre}</h3>
                             ${descHtml}
@@ -346,7 +354,7 @@
                         </div>
                         <div class="card-acciones">
                             <button class="btn-add-cart" onclick="agregarAlCarrito(${p.id})">🛒 Agregar</button>
-                            <button class="btn-share-wsp" onclick="enviarProductoWsp('${p.nombre}', ${precioLimpio}, '${p.talle || ''}')" title="Enviar producto por WhatsApp" style="background:#22c55e; color:white; border:none; padding:8px 10px; border-radius:8px; cursor:pointer; font-size:0.85rem; font-weight:bold;">📤 Enviar</button>
+                            <button class="btn-share-wsp" onclick="enviarProductoWsp('${p.nombre}', ${precioLimpio}, '${p.talle || ''}', '${p.color || ''}')" title="Enviar producto por WhatsApp" style="background:#22c55e; color:white; border:none; padding:8px 10px; border-radius:8px; cursor:pointer; font-size:0.85rem; font-weight:bold;">📤 Enviar</button>
                         </div>
                     </div>
                 `;
@@ -423,11 +431,14 @@
 
             contenedor.innerHTML = carrito.map(i => {
                 const precioItem = Number(i.precio || 0);
-                const talleTexto = i.talle ? ` (Talle: ${i.talle})` : '';
+                let detallesExtra = [];
+                if (i.talle) detallesExtra.push(`T: ${i.talle}`);
+                if (i.color) detallesExtra.push(`C: ${i.color}`);
+                const detalleTxt = detallesExtra.length > 0 ? ` (${detallesExtra.join(', ')})` : '';
                 return `
                     <div class="cart-item" style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid #f1f5f9;">
                         <div style="flex:1; padding-right:8px;">
-                            <strong style="font-size:0.85rem; color:#1e293b; display:block;">${i.nombre}${talleTexto}</strong>
+                            <strong style="font-size:0.85rem; color:#1e293b; display:block;">${i.nombre}${detalleTxt}</strong>
                             <div style="font-size:0.75rem; color:#ea580c;">\$${formatearPrecio(precioItem)} c/u</div>
                         </div>
                         <div style="display:flex; align-items:center; gap:6px;">
@@ -515,10 +526,15 @@
             }
         };
 
-        function enviarProductoWsp(nombre, precio, talle) {
-            const talleTxt = talle ? ` (Talle: ${talle})` : '';
-            const texto = `¡Mirá esta oferta en Polirubro Virtual! 🛍️✨\n\n*${nombre}*${talleTxt}\nPrecio: \$${formatearPrecio(precio)}\n\nMiralo y pedilo acá: https://polirubrovirtual.shop`;
-            window.open(`https://wa.me/54${NUMERO_WHATSAPP}?text=${encodeURIComponent(texto)}`, '_blank');
+        function enviarProductoWsp(nombre, precio, talle, color) {
+            let detalles = [];
+            if (talle) detalles.push(`Talle: ${talle}`);
+            if (color) detalles.push(`Color: ${color}`);
+            const detalleTxt = detalles.length > 0 ? ` (${detalles.join(' - ')})` : '';
+            
+            const texto = `¡Mirá esta oferta en Polirubro Virtual! 🛍️✨\n\n*${nombre}*${detalleTxt}\nPrecio: \$${formatearPrecio(precio)}\n\nMiraló y pedilo acá: https://polirubrovirtual.shop`;
+            const urlWsp = `https://wa.me/54${NUMERO_WHATSAPP}?text=${encodeURIComponent(texto)}`;
+            window.open(urlWsp, '_blank');
         }
 
         function procesarPedidoCheckout() {
@@ -544,8 +560,11 @@
 
             let texto = "🛒 *NUEVO PEDIDO - POLIRUBRO VIRTUAL*\n\n";
             carrito.forEach(i => {
-                const talleTxt = i.talle ? ` (Talle: ${i.talle})` : '';
-                texto += `• ${i.cantidad}x ${i.nombre}${talleTxt} ($${formatearPrecio(Number(i.precio) * i.cantidad)})\n`;
+                let detallesExtra = [];
+                if (i.talle) detallesExtra.push(`T: ${i.talle}`);
+                if (i.color) detallesExtra.push(`C: ${i.color}`);
+                const detalleTxt = detallesExtra.length > 0 ? ` (${detallesExtra.join(', ')})` : '';
+                texto += `• ${i.cantidad}x ${i.nombre}${detalleTxt} ($${formatearPrecio(Number(i.precio) * i.cantidad)})\n`;
             });
 
             texto += `\n💵 *Subtotal:* \$${formatearPrecio(subtotalMonto)}\n`;
