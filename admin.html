@@ -28,7 +28,7 @@
 <body class="admin-body">
     <header style="background:#0f172a; padding:1.2rem; border-bottom:1px solid #1e293b; text-align:center;">
         <h1 style="margin:0; font-size:1.5rem; color:#fff;">⚙️ Panel Administrador Cloud</h1>
-        <p style="margin:0.3rem 0 0 0; color:#38bdf8; font-size:0.85rem;">Sincronizado con Servidor Local / Cloud</p>
+        <p style="margin:0.3rem 0 0 0; color:#38bdf8; font-size:0.85rem;">Sincronizado con Base de Datos Local Segura</p>
         <div style="margin-top:0.8rem;">
             <a href="/" target="_blank" style="background:#0284c7; color:#fff; padding:0.4rem 1rem; border-radius:20px; text-decoration:none; font-weight:bold; font-size:0.8rem;">🌐 Ir a la Tienda Pública</a>
         </div>
@@ -81,10 +81,10 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">🖼️ Imagen (Archivo PC/Celular o URL):</label>
-                        <input type="file" id="fileInput" accept="image/*" onchange="comprimirArchivoLocal()" style="margin-bottom:0.4rem; color: #cbd5e1; font-size: 0.85rem;">
-                        <input type="url" id="urlInput" class="form-input" placeholder="O pegá una URL web aquí..." oninput="comprimirImagenURL(this.value)">
+                        <input type="file" id="fileInput" accept="image/*" onchange="convertirArchivoABase64(event)" style="margin-bottom:0.4rem; color: #cbd5e1; font-size: 0.85rem;">
+                        <input type="url" id="urlInput" class="form-input" placeholder="O pegá una URL web aquí..." oninput="procesarImagenURL(this.value)">
                         <div id="previewContainer" style="display:none; margin-top:0.5rem; text-align:center; background:#070a12; padding:8px; border-radius:8px; border:1px dashed #38bdf8;">
-                            <p style="font-size: 0.75rem; color: #38bdf8; margin-bottom: 4px;">Vista Previa Optimizada:</p>
+                            <p style="font-size: 0.75rem; color: #38bdf8; margin-bottom: 4px;">Vista Previa:</p>
                             <img id="imgPreview" src="" alt="Preview" style="max-width:110px; max-height:110px; border-radius:6px; object-fit:contain;">
                             <p id="pesoPreview" style="font-size:0.75rem; color:#34d399; margin-top:0.2rem; font-weight:bold;"></p>
                         </div>
@@ -116,7 +116,7 @@
     </div>
 
     <script>
-        let imagenFinalOptimizada = "";
+        let imagenFinalBase64 = "";
         let binCacheCompleto = {};
 
         async function obtenerDatosServidor() {
@@ -248,40 +248,26 @@
             }
         }
 
-        async function comprimirArchivoLocal() {
-            const fileInput = document.getElementById("fileInput");
-            if (!fileInput.files || fileInput.files.length === 0) return;
-            const file = fileInput.files[0];
+        function convertirArchivoABase64(event) {
+            const file = event.target.files[0];
+            if (!file) return;
 
-            const formData = new FormData();
-            formData.append("imagen", file);
-
-            try {
-                const res = await fetch("/api/upload", {
-                    method: "POST",
-                    body: formData
-                });
-                const resultado = await res.json();
-                if (resultado.success) {
-                    imagenFinalOptimizada = resultado.url;
-                    document.getElementById("imgPreview").src = imagenFinalOptimizada;
-                    document.getElementById("pesoPreview").innerText = "Imagen subida al servidor";
-                    document.getElementById("previewContainer").style.display = "block";
-                    document.getElementById("urlInput").value = "";
-                } else {
-                    alert("❌ Error al subir la imagen: " + (resultado.error || "Formato no soportado"));
-                }
-            } catch (e) {
-                console.error("Error de red al subir imagen:", e);
-                alert("❌ Error al conectar con el servidor para subir la imagen.");
-            }
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                imagenFinalBase64 = e.target.result;
+                document.getElementById("imgPreview").src = imagenFinalBase64;
+                document.getElementById("pesoPreviewinnerText = "Imagen cargada OK";
+                document.getElementById("previewContainer").style.display = "block";
+                document.getElementById("urlInput").value = "";
+            };
+            reader.readAsDataURL(file);
         }
 
-        function comprimirImagenURL(url) {
+        function procesarImagenURL(url) {
             if (!url || url.trim() === "") return;
-            imagenFinalOptimizada = url.trim();
-            document.getElementById("imgPreview").src = imagenFinalOptimizada;
-            document.getElementById("pesoPreview").innerText = "URL externa";
+            imagenFinalBase64 = url.trim();
+            document.getElementById("imgPreview").src = imagenFinalBase64;
+            document.getElementById("pesoPreview").innerText = "URL externa OK";
             document.getElementById("previewContainer").style.display = "block";
             document.getElementById("fileInput").value = "";
         }
@@ -294,7 +280,7 @@
             const enOferta = document.getElementById('prodOferta').checked;
 
             if (!nombre || !precio || !categoria) return alert("Completá nombre, precio y sección.");
-            if (!imagenFinalOptimizada) return alert("Por favor seleccioná una imagen.");
+            if (!imagenFinalBase64) return alert("Por favor seleccioná una imagen.");
 
             let datos = await obtenerDatosServidor();
             if (!datos.productos) datos.productos = [];
@@ -306,7 +292,7 @@
                 stock: Number(stock),
                 categoria,
                 enOferta,
-                imagen: imagenFinalOptimizada
+                imagen: imagenFinalBase64
             });
 
             const ok = await guardarDatosServidor(datos);
@@ -320,7 +306,7 @@
                 document.getElementById('urlInput').value = '';
                 document.getElementById('fileInput').value = '';
                 document.getElementById('previewContainer').style.display = 'none';
-                imagenFinalOptimizada = '';
+                imagenFinalBase64 = '';
 
                 await cargarPanelAdmin();
             }
