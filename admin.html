@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Panel Administrador | Polirubro Virtual</title>
-    <link rel="stylesheet" href="style.css?v=232">
+    <link rel="stylesheet" href="style.css?v=233">
     <style>
         body.admin-body { background-color: #0b0f19 !important; color: #f8fafc !important; font-family: system-ui, -apple-system, sans-serif !important; }
         .admin-wrapper { max-width: 1200px; margin: 0 auto; padding: 1.5rem 1rem; }
@@ -24,6 +24,8 @@
         .tabla-productos { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85rem; }
         .tabla-productos th, .tabla-productos td { padding: 8px 10px; border-bottom: 1px solid #334155; text-align: left; }
         .tabla-productos th { color: #38bdf8; }
+        .checkbox-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 6px; background: #1e293b; padding: 10px; border-radius: 8px; border: 1px solid #334155; }
+        .checkbox-label { font-size: 0.8rem; color: #f8fafc; display: flex; align-items: center; gap: 4px; cursor: pointer; }
     </style>
 </head>
 <body class="admin-body">
@@ -86,55 +88,55 @@
                         </select>
                     </div>
 
-                    <!-- SELECTOR DE TALLES -->
+                    <!-- TALLES MÚLTIPLES (CHECKBOXES) -->
                     <div class="form-group">
-                        <label class="form-label">👕 Talles Disponibles (Opcional):</label>
-                        <select id="prodTalle" class="form-input">
-                            <option value="">Sin talle / Único</option>
-                            <optgroup label="Indumentaria (Remeras / Camperas)">
-                                <option value="S">S (Small)</option>
-                                <option value="M">M (Medium)</option>
-                                <option value="L">L (Large)</option>
-                                <option value="XL">XL (Extra Large)</option>
-                                <option value="XXL">XXL (Doble XL)</option>
-                            </optgroup>
-                            <optgroup label="Pantalones / Jeans">
-                                <option value="36">Talle 36</option>
-                                <option value="38">Talle 38</option>
-                                <option value="40">Talle 40</option>
-                                <option value="42">Talle 42</option>
-                                <option value="44">Talle 44</option>
-                                <option value="46">Talle 46</option>
-                                <option value="48">Talle 48</option>
-                            </optgroup>
-                            <optgroup label="Calzado / Zapatillas (ARG)">
-                                <option value="35">35 ARG</option>
-                                <option value="36">36 ARG</option>
-                                <option value="37">37 ARG</option>
-                                <option value="38">38 ARG</option>
-                                <option value="39">39 ARG</option>
-                                <option value="40">40 ARG</option>
-                                <option value="41">41 ARG</option>
-                                <option value="42">42 ARG</option>
-                                <option value="43">43 ARG</option>
-                                <option value="44">44 ARG</option>
-                            </optgroup>
-                        </select>
+                        <label class="form-label">👕 Talles Disponibles (Podés marcar varios):</label>
+                        <div class="checkbox-grid" id="grupoTalles">
+                            <label class="checkbox-label"><input type="checkbox" value="S"> S</label>
+                            <label class="checkbox-label"><input type="checkbox" value="M"> M</label>
+                            <label class="checkbox-label"><input type="checkbox" value="L"> L</label>
+                            <label class="checkbox-label"><input type="checkbox" value="XL"> XL</label>
+                            <label class="checkbox-label"><input type="checkbox" value="XXL"> XXL</label>
+                            <label class="checkbox-label"><input type="checkbox" value="36"> 36</label>
+                            <label class="checkbox-label"><input type="checkbox" value="38"> 38</label>
+                            <label class="checkbox-label"><input type="checkbox" value="40"> 40</label>
+                            <label class="checkbox-label"><input type="checkbox" value="42"> 42</label>
+                            <label class="checkbox-label"><input type="checkbox" value="44"> 44</label>
+                            <label class="checkbox-label"><input type="checkbox" value="46"> 46</label>
+                            <label class="checkbox-label"><input type="checkbox" value="48"> 48</label>
+                            <label class="checkbox-label"><input type="checkbox" value="35"> 35(ARG)</label>
+                            <label class="checkbox-label"><input type="checkbox" value="36"> 36(ARG)</label>
+                            <label class="checkbox-label"><input type="checkbox" value="37"> 37(ARG)</label>
+                            <label class="checkbox-label"><input type="checkbox" value="38"> 38(ARG)</label>
+                            <label class="checkbox-label"><input type="checkbox" value="39"> 39(ARG)</label>
+                            <label class="checkbox-label"><input type="checkbox" value="40"> 40(ARG)</label>
+                            <label class="checkbox-label"><input type="checkbox" value="41"> 41(ARG)</label>
+                            <label class="checkbox-label"><input type="checkbox" value="42"> 42(ARG)</label>
+                            <label class="checkbox-label"><input type="checkbox" value="43"> 43(ARG)</label>
+                            <label class="checkbox-label"><input type="checkbox" value="44"> 44(ARG)</label>
+                        </div>
                     </div>
 
-                    <!-- NUEVO: SELECTOR DE COLORES PRIMARIOS -->
+                    <!-- COLORES MÚLTIPLES (CHECKBOXES) -->
                     <div class="form-group">
-                        <label class="form-label">🎨 Color (Opcional):</label>
-                        <select id="prodColor" class="form-input">
-                            <option value="">Sin color específico</option>
-                            <option value="Blanco">⚪ Blanco</option>
-                            <option value="Negro">⚫ Negro</option>
-                            <option value="Rojo">🔴 Rojo</option>
-                            <option value="Azul">🔵 Azul</option>
-                            <option value="Amarillo">🟡 Amarillo</option>
-                            <option value="Gris">🔘 Gris</option>
-                            <option value="Verde">🟢 Verde</option>
-                        </select>
+                        <label class="form-label">🎨 Colores Disponibles (Podés marcar varios):</label>
+                        <div class="checkbox-grid" id="grupoColores">
+                            <label class="checkbox-label"><input type="checkbox" value="Blanco"> Blanco</label>
+                            <label class="checkbox-label"><input type="checkbox" value="Negro"> Negro</label>
+                            <label class="checkbox-label"><input type="checkbox" value="Rojo"> Rojo</label>
+                            <label class="checkbox-label"><input type="checkbox" value="Azul"> Azul</label>
+                            <label class="checkbox-label"><input type="checkbox" value="Amarillo"> Amarillo</label>
+                            <label class="checkbox-label"><input type="checkbox" value="Verde"> Verde</label>
+                            <label class="checkbox-label"><input type="checkbox" value="Gris"> Gris</label>
+                            <label class="checkbox-label"><input type="checkbox" value="Celeste"> Celeste</label>
+                            <label class="checkbox-label"><input type="checkbox" value="Rosa"> Rosa</label>
+                            <label class="checkbox-label"><input type="checkbox" value="Violeta"> Violeta</label>
+                            <label class="checkbox-label"><input type="checkbox" value="Naranja"> Naranja</label>
+                            <label class="checkbox-label"><input type="checkbox" value="Marrón"> Marrón</label>
+                            <label class="checkbox-label"><input type="checkbox" value="Beige"> Beige</label>
+                            <label class="checkbox-label"><input type="checkbox" value="Dorado"> Dorado</label>
+                            <label class="checkbox-label"><input type="checkbox" value="Plateado"> Plateado</label>
+                        </div>
                     </div>
 
                     <div class="form-group" style="display:flex; align-items:center; gap:0.5rem; background:#1e293b; padding:0.6rem; border-radius:8px; border:1px solid #334155;">
@@ -144,7 +146,7 @@
                     <div class="form-group">
                         <label class="form-label">🖼️ Imagen (Archivo PC/Celular o URL):</label>
                         <input type="file" id="fileInput" accept="image/*" onchange="convertirArchivoABase64(event)" style="margin-bottom:0.4rem; color: #cbd5e1; font-size: 0.85rem;">
-                        <input type="url" id="urlInput" class="form-input" placeholder="O pegá una URL web hier..." oninput="procesarImagenURL(this.value)">
+                        <input type="url" id="urlInput" class="form-input" placeholder="O pegá una URL web aquí..." oninput="procesarImagenURL(this.value)">
                         <div id="previewContainer" style="display:none; margin-top:0.5rem; text-align:center; background:#070a12; padding:8px; border-radius:8px; border:1px dashed #38bdf8;">
                             <p style="font-size: 0.75rem; color: #38bdf8; margin-bottom: 4px;">Vista Previa:</p>
                             <img id="imgPreview" src="" alt="Preview" style="max-width:110px; max-height:110px; border-radius:6px; object-fit:contain;">
@@ -165,7 +167,7 @@
                         <tr>
                             <th>Nombre</th>
                             <th>Sección</th>
-                            <th>Talle / Color</th>
+                            <th>Talles / Colores</th>
                             <th>Precio</th>
                             <th>Stock</th>
                             <th>Oferta</th>
@@ -248,11 +250,17 @@
             prods.forEach(p => {
                 const badgeOferta = p.enOferta ? '<span style="color:#f43f5e; font-weight:bold;">🔥 Sí</span>' : '<span style="color:#94a3b8;">No</span>';
                 const stockVal = p.stock !== undefined ? p.stock : 10;
-                let talleColorTxt = [];
-                if (p.talle) talleColorTxt.push(`T: ${p.talle}`);
-                if (p.color) talleColorTxt.push(`C: ${p.color}`);
-                const talleColorVal = talleColorTxt.length > 0 ? `<span style="background:#334155; padding:2px 6px; border-radius:4px; font-size:0.75rem;">${talleColorTxt.join(' / ')}</span>` : '<span style="color:#64748b;">-</span>';
+                
+                let resumenTC = [];
+                if (p.talles && p.talles.length > 0) resumenTC.push(`T: ${p.talles.join(', ')}`);
+                else if (p.talle) resumenTC.push(`T: ${p.talle}`);
+                
+                if (p.colores && p.colores.length > 0) resumenTC.push(`C: ${p.colores.join(', ')}`);
+                else if (p.color) resumenTC.push(`C: ${p.color}`);
+
+                const talleColorVal = resumenTC.length > 0 ? `<span style="background:#334155; padding:2px 6px; border-radius:4px; font-size:0.75rem;">${resumenTC.join(' | ')}</span>` : '<span style="color:#64748b;">-</span>';
                 const precioLimpinho = Number(p.precio || 0).toLocaleString('es-AR');
+                
                 tbody.innerHTML += `
                     <tr>
                         <td style="font-weight: bold; color: #fff;">${p.nombre}</td>
@@ -385,9 +393,19 @@
             document.getElementById('prodPrecio').value = Number(prod.precio || 0);
             document.getElementById('prodStock').value = prod.stock !== undefined ? prod.stock : 10;
             document.getElementById('selectCategorias').value = prod.categoria;
-            document.getElementById('prodTalle').value = prod.talle || "";
-            document.getElementById('prodColor').value = prod.color || "";
             document.getElementById('prodOferta').checked = prod.enOferta || false;
+
+            // Marcar talles guardados
+            const talleArr = prod.talles || (prod.talle ? [prod.talle] : []);
+            document.querySelectorAll('#grupoTalles input[type="checkbox"]').forEach(chk => {
+                chk.checked = talleArr.includes(chk.value);
+            });
+
+            // Marcar colores guardados
+            const colorArr = prod.colores || (prod.color ? [prod.color] : []);
+            document.querySelectorAll('#grupoColores input[type="checkbox"]').forEach(chk => {
+                chk.checked = colorArr.includes(chk.value);
+            });
 
             if (prod.imagen) {
                 imagenFinalBase64 = prod.imagen;
@@ -409,9 +427,9 @@
             document.getElementById('prodPrecio').value = '';
             document.getElementById('prodStock').value = '10';
             document.getElementById('selectCategorias').value = '';
-            document.getElementById('prodTalle').value = '';
-            document.getElementById('prodColor').value = '';
             document.getElementById('prodOferta').checked = false;
+            document.querySelectorAll('#grupoTalles input[type="checkbox"]').forEach(chk => chk.checked = false);
+            document.querySelectorAll('#grupoColores input[type="checkbox"]').forEach(chk => chk.checked = false);
             document.getElementById('urlInput').value = '';
             document.getElementById('fileInput').value = '';
             document.getElementById('previewContainer').style.display = 'none';
@@ -429,9 +447,19 @@
             const precioRaw = document.getElementById('prodPrecio').value;
             const stockRaw = document.getElementById('prodStock').value;
             const categoria = document.getElementById('selectCategorias').value;
-            const talle = document.getElementById('prodTalle').value;
-            const color = document.getElementById('prodColor').value;
             const enOferta = document.getElementById('prodOferta').checked;
+
+            // Recopilar talles seleccionados
+            let tallesSeleccionados = [];
+            document.querySelectorAll('#grupoTalles input[type="checkbox"]:checked').forEach(chk => {
+                tallesSeleccionados.push(chk.value);
+            });
+
+            // Recopilar colores seleccionados
+            let coloresSeleccionados = [];
+            document.querySelectorAll('#grupoColores input[type="checkbox"]:checked').forEach(chk => {
+                coloresSeleccionados.push(chk.value);
+            });
 
             if (!nombre || !precioRaw || !categoria) return alert("Completá nombre, precio y sección.");
             if (!imagenFinalBase64) return alert("Por favor seleccioná una imagen.");
@@ -451,8 +479,8 @@
                         precio,
                         stock,
                         categoria,
-                        talle,
-                        color,
+                        talles: tallesSeleccionados,
+                        colores: coloresSeleccionados,
                         enOferta,
                         imagen: imagenFinalBase64
                     };
@@ -465,8 +493,8 @@
                     precio,
                     stock,
                     categoria,
-                    talle,
-                    color,
+                    talles: tallesSeleccionados,
+                    colores: coloresSeleccionados,
                     enOferta,
                     imagen: imagenFinalBase64
                 });
