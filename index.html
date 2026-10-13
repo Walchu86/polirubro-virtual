@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=200">
+    <link rel="stylesheet" href="style.css?v=201">
 </head>
 <body>
 
@@ -23,7 +23,7 @@
                 </div>
             </a>
             
-            <!-- ANIMACIÓN Y DESTACADO CENTRAL REHECHO Y FLUIDO -->
+            <!-- ANIMACIÓN Y DESTACADO CENTRAL -->
             <div class="header-banner-animado">
                 <span class="pulse-icon">🛍️</span>
                 <span class="anim-text">Compra fácil, rápido y seguro desde tu celular</span>
@@ -44,7 +44,7 @@
     </nav>
 
     <!-- BARRA FLOTANTE SUPERIOR DEL CARRITO -->
-    <div class="floating-cart-bar" onclick="toggleCarrito()">
+    <div class="floating-cart-bar" onclick="abrirCarrito()">
         <div class="floating-cart-content">
             <span>🛒 Carrito: <strong id="cartCount">0</strong> productos</span>
             <span class="ver-carrito-text">Ver Pedido ➔</span>
@@ -82,7 +82,7 @@
     <div class="cart-modal" id="cartModal">
         <div class="cart-header">
             <h3>🛍️ Tu Carrito de Compras</h3>
-            <button class="btn-close-cart" onclick="toggleCarrito()">✕</button>
+            <button class="btn-close-cart" onclick="cerrarCarrito()">✕</button>
         </div>
         
         <div class="cart-shipping-box">
@@ -111,12 +111,12 @@
         <img class="lightbox-img" id="lightboxImg" src="" alt="Ampliada">
     </div>
 
-    <!-- BOTÓN FLOTANTE WHATSAPP -->
+    <!-- BOTÓN FLOTANTE WHATSAPP GENERAL -->
     <a href="https://wa.me/543794000000?text=Hola!%20Tengo%20una%20consulta%20sobre%20la%20tienda." target="_blank" class="wsp-float" title="Consultar por WhatsApp">
         💬
     </a>
 
-    <!-- LÓGICA DE LA TIENDA -->
+    <!-- LÓGICA DE LA TIENDA Y NAVEGACIÓN ATRÁS -->
     <script>
         let todosLosProductos = [];
         let categoriasDisponibles = [];
@@ -231,7 +231,7 @@
                 carrito.push({ ...prod, cantidad: 1 });
             }
             actualizarCarritoUI();
-            toggleCarrito();
+            abrirCarrito();
         }
 
         function actualizarCarritoUI() {
@@ -275,9 +275,55 @@
             actualizarCarritoUI();
         }
 
-        function toggleCarrito() {
-            document.getElementById('cartModal').classList.toggle('abierto');
+        /* --- CONTROL DE HISTORIAL PARA MÓVILES (BOTÓN ATRÁS) --- */
+        let estadoModal = null; // 'cart' o 'lightbox'
+
+        function abrirCarrito() {
+            const cartModal = document.getElementById('cartModal');
+            if (!cartModal.classList.contains('abierto')) {
+                cartModal.classList.add('abierto');
+                estadoModal = 'cart';
+                history.pushState({ modalOpen: 'cart' }, "");
+            }
         }
+
+        function cerrarCarrito(desdeHistorial = false) {
+            const cartModal = document.getElementById('cartModal');
+            if (cartModal.classList.contains('abierto')) {
+                cartModal.classList.remove('abierto');
+                estadoModal = null;
+                if (!desdeHistorial && history.state && history.state.modalOpen) {
+                    history.back();
+                }
+            }
+        }
+
+        function abrirLightbox(src) {
+            document.getElementById('lightboxImg').src = src;
+            document.getElementById('lightboxModal').style.display = 'flex';
+            estadoModal = 'lightbox';
+            history.pushState({ modalOpen: 'lightbox' }, "");
+        }
+
+        function cerrarLightbox(desdeHistorial = false) {
+            const modal = document.getElementById('lightboxModal');
+            if (modal.style.display === 'flex') {
+                modal.style.display = 'none';
+                estadoModal = null;
+                if (!desdeHistorial && history.state && history.state.modalOpen) {
+                    history.back();
+                }
+            }
+        }
+
+        // CAPTURA EL BOTÓN / GESTO ATRÁS DEL CELULAR
+        window.onpopstate = function(event) {
+            if (estadoModal === 'cart') {
+                cerrarCarrito(true);
+            } else if (estadoModal === 'lightbox') {
+                cerrarLightbox(true);
+            }
+        };
 
         function consultarProductoWsp(nombre, precio) {
             const texto = `Hola! Me interesa el producto *${nombre}* ($${Number(precio).toLocaleString('es-AR')}) que vi en Polirubro Virtual. ¿Hay stock?`;
@@ -298,15 +344,6 @@
             texto += `📍 *Dirección de envío:* (Escribir dirección aquí)`;
 
             window.open(`https://wa.me/543794000000?text=${encodeURIComponent(texto)}`, '_blank');
-        }
-
-        function abrirLightbox(src) {
-            document.getElementById('lightboxImg').src = src;
-            document.getElementById('lightboxModal').style.display = 'flex';
-        }
-
-        function cerrarLightbox() {
-            document.getElementById('lightboxModal').style.display = 'none';
         }
 
         window.onload = () => {
