@@ -1,6 +1,6 @@
 /* ==========================================
    1. RESET Y ESTILOS BASE (GENERALES)
-   ================================---------- */
+   ========================================== */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -216,7 +216,7 @@ body {
 
 /* ==========================================
    2. LAYOUT GENERAL Y GRILLA DE PRODUCTOS
-   ================================---------- */
+   ========================================== */
 .main-layout {
     max-width: 1200px;
     margin: 1.5rem auto;
@@ -749,7 +749,7 @@ body {
         right: 0;
     }
 
-    /* Scroll interno para los productos del carrito sin tapar el botón de WhatsApp */
+    /* Scroll interno para los productos del carrito sin tapar el botón */
     .cart-items {
         flex-grow: 1 !important;
         overflow-y: auto !important;
