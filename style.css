@@ -1,1 +1,753 @@
+/* ==========================================
+   1. RESET Y ESTILOS BASE (GENERALES)
+   ================================---------- */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
 
+body {
+    background-color: #f8fafc;
+    color: #1e293b;
+    -webkit-text-size-adjust: 100%;
+}
+
+/* BANNER SUPERIOR PROMO */
+.promo-banner {
+    background: linear-gradient(90deg, #ea580c, #d97706);
+    color: #ffffff;
+    text-align: center;
+    padding: 8px 10px;
+    font-weight: bold;
+    font-size: 0.8rem;
+    letter-spacing: 0.3px;
+}
+
+/* CABECERA PRINCIPAL */
+.main-header {
+    background: #ffffff;
+    border-bottom: 2px solid #e2e8f0;
+    padding: 0.8rem 1rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+}
+
+.header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.logo-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.brand-text h1 {
+    font-size: 1.4rem;
+    color: #dc2626;
+    font-weight: 900;
+    line-height: 1.1;
+}
+
+.brand-text h1 span {
+    color: #ea580c;
+}
+
+.tagline {
+    font-size: 0.72rem;
+    color: #64748b;
+    font-weight: 600;
+}
+
+/* CAJA DE ANIMACIÓN EN EL HEADER (SOLO PC) */
+.header-animation-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #fff7ed;
+    border: 1px solid #ffedd5;
+    padding: 4px 12px;
+    border-radius: 12px;
+    height: 44px;
+}
+
+.anim-mouse {
+    font-size: 1.2rem;
+    animation: mouseClick 2.5s infinite ease-in-out;
+}
+
+@keyframes mouseClick {
+    0% { transform: scale(1); }
+    30% { transform: scale(0.85); }
+    35% { transform: scale(1.2); }
+    40% { transform: scale(1); }
+    100% { transform: scale(1); }
+}
+
+.anim-cart-box {
+    position: relative;
+    width: 35px;
+    height: 35px;
+}
+
+.anim-cart {
+    font-size: 1.6rem;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 2;
+}
+
+.anim-item {
+    position: absolute;
+    font-size: 0.75rem;
+    opacity: 0;
+    z-index: 1;
+}
+
+.item-1 { left: 8px; animation: fillCart1 2.5s infinite ease-in; animation-delay: 0.8s; }
+.item-2 { left: 14px; animation: fillCart2 2.5s infinite ease-in; animation-delay: 1.1s; }
+.item-3 { left: 11px; animation: fillCart3 2.5s infinite ease-in; animation-delay: 1.4s; }
+
+@keyframes fillCart1 { 0% { top: -8px; opacity: 0; } 50% { opacity: 1; } 80% { top: 10px; opacity: 1; } 100% { top: 10px; opacity: 0; } }
+@keyframes fillCart2 { 0% { top: -8px; opacity: 0; } 50% { opacity: 1; } 80% { top: 8px; opacity: 1; } 100% { top: 8px; opacity: 0; } }
+@keyframes fillCart3 { 0% { top: -8px; opacity: 0; } 50% { opacity: 1; } 80% { top: 6px; opacity: 1; } 100% { top: 6px; opacity: 0; } }
+
+.anim-text-badge { font-size: 0.72rem; color: #c2410c; }
+.anim-text-badge strong { color: #16a34a; }
+
+.quick-badge {
+    background: #fef3c7;
+    color: #b45309;
+    border: 1px solid #fde68a;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: bold;
+}
+
+/* BARRA DE NAVEGACIÓN NARANJA (SECCIONES) */
+.main-nav {
+    background: #ea580c;
+    padding: 0.5rem 1rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.nav-container-categorias {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    white-space: nowrap;
+}
+
+.nav-links a {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 0.88rem;
+    padding: 6px 14px;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+.nav-links a:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.nav-links a.activa-nav {
+    background: #ffffff;
+    color: #ea580c;
+    font-weight: 900;
+}
+
+/* BARRA FLOTANTE SUPERIOR DEL CARRITO */
+.floating-cart-bar {
+    background: #1e293b;
+    color: #fff;
+    padding: 8px 16px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 0.88rem;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 90;
+    border-bottom: 2px solid #ea580c;
+    transition: background 0.2s;
+}
+
+.floating-cart-bar:hover {
+    background: #0f172a;
+}
+
+.floating-cart-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+}
+
+.ver-carrito-text {
+    background: #ea580c;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 0.78rem;
+}
+
+/* ==========================================
+   2. LAYOUT GENERAL Y GRILLA DE PRODUCTOS
+   ================================---------- */
+.main-layout {
+    max-width: 1200px;
+    margin: 1.5rem auto;
+    padding: 0 1rem;
+    display: grid;
+    grid-template-columns: 1fr 260px;
+    gap: 1.5rem;
+}
+
+/* BUSCADOR */
+.search-box { margin-bottom: 1.2rem; }
+.search-input {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border-radius: 12px;
+    border: 1px solid #cbd5e1;
+    font-size: 0.95rem;
+    outline: none;
+    background: #fff;
+}
+
+/* SECCIÓN ESTRATÉGICA DE OFERTAS */
+.ofertas-container-destacado {
+    background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+    border: 2px solid #fdba74;
+    border-radius: 16px;
+    padding: 1.2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 6px 18px rgba(234, 88, 12, 0.1);
+}
+
+.ofertas-header-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid #fed7aa;
+    padding-bottom: 0.5rem;
+    gap: 0.5rem;
+}
+
+.ofertas-header-title h2 {
+    font-size: 1.1rem;
+    color: #dc2626;
+    font-weight: 900;
+}
+
+.badge-reloj-global {
+    background: #dc2626;
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: bold;
+    padding: 4px 10px;
+    border-radius: 20px;
+}
+
+.ofertas-grid-scroll {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    -webkit-overflow-scrolling: touch;
+}
+
+.card-oferta-destacada {
+    min-width: 165px;
+    max-width: 175px;
+    background: #ffffff;
+    border: 2px solid #f97316;
+    border-radius: 14px;
+    padding: 0.8rem;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.img-frame-oferta {
+    height: 120px;
+    background: #f8fafc;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin-top: 18px;
+    cursor: zoom-in;
+}
+
+.img-frame-oferta img { width: 100%; height: 100%; object-fit: contain; display: block; }
+
+.titulo-producto-oferta {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-top: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.precio-producto-oferta {
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: #dc2626;
+}
+
+.cat-titulo-seccion {
+    font-size: 1.1rem;
+    color: #1e293b;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 0.4rem;
+}
+
+/* GRILLA Y TARJETAS DE PRODUCTOS */
+.productos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 1.2rem;
+}
+
+.card-producto {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 0.9rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+}
+
+.img-frame {
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 150px;
+    overflow: hidden;
+    cursor: zoom-in;
+}
+
+.img-producto { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: contain; 
+    display: block; 
+}
+
+.card-detalles {
+    padding-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.titulo-producto {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #1e293b;
+}
+
+.precio-producto {
+    font-size: 1.15rem;
+    font-weight: 900;
+    color: #ea580c;
+}
+
+.stock-tag {
+    font-size: 0.75rem;
+    color: #64748b;
+    margin-bottom: 6px;
+}
+
+.card-acciones {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.btn-add-cart {
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    padding: 0.6rem;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 0.8rem;
+    cursor: pointer;
+    flex-grow: 1;
+    transition: background 0.2s;
+}
+
+.btn-add-cart:hover { background: #1d4ed8; }
+
+.btn-share-wsp {
+    background: #22c55e;
+    color: #fff;
+    border: none;
+    padding: 0.6rem 0.8rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.btn-share-wsp:hover { background: #16a34a; }
+
+/* ETIQUETAS DE OFERTA */
+.badge-oferta-box {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    z-index: 2;
+}
+
+.badge-oferta {
+    background: #dc2626;
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 900;
+    padding: 2px 6px;
+    border-radius: 6px;
+}
+
+.timer-oferta {
+    background: #0f172a;
+    color: #fde047;
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 2px 5px;
+    border-radius: 6px;
+}
+
+/* BARRA LATERAL (SIDEBAR) */
+.sidebar {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 1.2rem;
+    height: fit-content;
+}
+
+.sidebar-title {
+    font-size: 1.05rem;
+    color: #ea580c;
+    border-bottom: 2px solid #fdba74;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.sidebar-menu { display: flex; flex-direction: column; gap: 8px; }
+
+.btn-categoria {
+    background: #f1f5f9;
+    color: #334155;
+    border: 1px solid #cbd5e1;
+    padding: 10px 12px;
+    border-radius: 10px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-categoria:hover {
+    background: #ffedd5;
+    color: #ea580c;
+    border-color: #fdba74;
+}
+
+.btn-categoria.activa {
+    background: #ea580c;
+    color: #ffffff;
+    border-color: #ea580c;
+    box-shadow: 0 4px 10px rgba(234, 88, 12, 0.3);
+}
+
+/* ==========================================
+   3. ESTILOS DEL VISOR LUPA / LIGHTBOX
+   ========================================== */
+.lightbox-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.lightbox-img {
+    max-width: 90%;
+    max-height: 85vh;
+    object-fit: contain;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    animation: zoomIn 0.25s ease;
+}
+
+@keyframes zoomIn {
+    from { transform: scale(0.85); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.lightbox-close {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    color: #fff;
+    font-size: 2.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.5);
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.lightbox-close:hover {
+    background: #dc2626;
+}
+
+/* CARRITO MODAL */
+.cart-modal {
+    position: fixed;
+    top: 0;
+    right: -420px;
+    width: 100%;
+    max-width: 380px;
+    height: 100vh;
+    background: #fff;
+    box-shadow: -5px 0 25px rgba(0,0,0,0.15);
+    z-index: 999;
+    transition: right 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    padding: 1.2rem;
+}
+
+.cart-modal.abierto { right: 0; }
+
+.cart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 0.8rem;
+}
+
+.btn-close-cart { background: none; border: none; font-size: 1.3rem; cursor: pointer; }
+
+.cart-items { flex-grow: 1; overflow-y: auto; margin: 1rem 0; display: flex; flex-direction: column; gap: 10px; }
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8fafc;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.cart-shipping-box {
+    background: #fff7ed;
+    border: 1px solid #ffedd5;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.cart-footer { border-top: 1px solid #e2e8f0; padding-top: 0.8rem; }
+
+.btn-whatsapp {
+    background: #22c55e;
+    color: #fff;
+    border: none;
+    width: 100%;
+    padding: 0.8rem;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.btn-whatsapp:hover { background: #16a34a; }
+
+/* BOTÓN FLOTANTE WSP */
+.wsp-float {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #22c55e;
+    color: white;
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);
+    text-decoration: none;
+    z-index: 99;
+}
+
+
+/* ==========================================================
+   4. ADAPTACIÓN PROFESIONAL PARA CELULARES (MOBILE RESPONSIVE)
+   ========================================================== */
+@media (max-width: 850px) {
+    .main-layout {
+        grid-template-columns: 1fr;
+        margin: 0.8rem auto;
+        padding: 0 0.5rem;
+        gap: 1rem;
+    }
+
+    /* Ocultar por completo la caja lateral de categorías en celulares */
+    #contenedorSidebarCategoriasPC {
+        display: none !important;
+    }
+
+    .header-animation-box, .quick-badge {
+        display: none;
+    }
+
+    .main-header {
+        padding: 0.6rem 0.8rem;
+    }
+
+    .header-container {
+        justify-content: center;
+        text-align: center;
+    }
+
+    .brand-text h1 {
+        font-size: 1.25rem;
+    }
+
+    .tagline {
+        font-size: 0.68rem;
+    }
+
+    .main-nav {
+        padding: 0.4rem 0.5rem;
+    }
+
+    .nav-links a {
+        font-size: 0.82rem;
+        padding: 6px 12px;
+    }
+
+    /* Grilla de productos en 2 columnas simétricas para celular */
+    .productos-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.7rem;
+    }
+
+    .card-producto {
+        padding: 0.5rem;
+        border-radius: 12px;
+    }
+
+    .img-frame {
+        height: 110px;
+        padding: 4px;
+    }
+
+    .titulo-producto {
+        font-size: 0.78rem;
+    }
+
+    .precio-producto {
+        font-size: 0.95rem;
+    }
+
+    .stock-tag {
+        font-size: 0.65rem;
+        margin-bottom: 4px;
+    }
+
+    .card-acciones {
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .btn-add-cart {
+        width: 100%;
+        padding: 0.45rem;
+        font-size: 0.72rem;
+    }
+
+    .btn-share-wsp {
+        width: 100%;
+        padding: 0.4rem;
+        font-size: 0.78rem;
+        text-align: center;
+    }
+
+    .cart-modal {
+        max-width: 100%;
+        right: -100%;
+    }
+
+    .cart-modal.abierto {
+        right: 0;
+    }
+
+    .wsp-float {
+        bottom: 15px;
+        right: 15px;
+        width: 48px;
+        height: 48px;
+        font-size: 1.5rem;
+    }
+}
