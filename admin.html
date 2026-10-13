@@ -28,7 +28,7 @@
 <body class="admin-body">
     <header style="background:#0f172a; padding:1.2rem; border-bottom:1px solid #1e293b; text-align:center;">
         <h1 style="margin:0; font-size:1.5rem; color:#fff;">⚙️ Panel Administrador Cloud</h1>
-        <p style="margin:0.3rem 0 0 0; color:#38bdf8; font-size:0.85rem;">Sincronizado vía JSONBin (Con Control de Peso)</p>
+        <p style="margin:0.3rem 0 0 0; color:#38bdf8; font-size:0.85rem;">Sincronizado vía JSONBin (Corregido y Optimizado)</p>
         <div style="margin-top:0.8rem;">
             <a href="/" target="_blank" style="background:#0284c7; color:#fff; padding:0.4rem 1rem; border-radius:20px; text-decoration:none; font-weight:bold; font-size:0.8rem;">🌐 Ir a la Tienda Pública</a>
         </div>
@@ -85,7 +85,7 @@
                         <input type="url" id="urlInput" class="form-input" placeholder="O pegá una URL web aquí..." oninput="comprimirImagenURL(this.value)">
                         <div id="previewContainer" style="display:none; margin-top:0.5rem; text-align:center; background:#070a12; padding:8px; border-radius:8px; border:1px dashed #38bdf8;">
                             <p style="font-size: 0.75rem; color: #38bdf8; margin-bottom: 4px;">Vista Previa Optimizada:</p>
-                            <img id="imgPreview" src="" alt="Preview" style="max-width:90px; max-height:90px; border-radius:6px; object-fit:contain;">
+                            <img id="imgPreview" src="" alt="Preview" style="max-width:110px; max-height:110px; border-radius:6px; object-fit:contain;">
                             <p id="pesoPreview" style="font-size:0.75rem; color:#34d399; margin-top:0.2rem; font-weight:bold;"></p>
                         </div>
                     </div>
@@ -122,6 +122,7 @@
 
         let imagenFinalOptimizada = "";
 
+        // LECTURA CORRECTA DE JSONBIN
         async function obtenerDatosServidor() {
             try {
                 const res = await fetch(API_URL, {
@@ -132,11 +133,21 @@
                     }
                 });
                 if (!res.ok) throw new Error("Error al conectar");
-                const data = await res.json();
-                return data.record || data || { categorias: ["General", "Electrónica", "Bazar"], productos: [] };
+                const resJson = await res.json();
+                
+                // Desenvolver si viene en resJson.record o directo
+                let datos = resJson.record ? resJson.record : resJson;
+                
+                // Normalizar categorías limpiando cualquier [object Object] viejo
+                let cats = Array.isArray(datos.categorias) ? datos.categorias : ["General", "Bazar", "Electrónica"];
+                cats = cats.map(c => (typeof c === 'string' ? c : (c.nombre || c.categoria || 'Sección'))).filter(c => typeof c === 'string');
+
+                let prods = Array.isArray(datos.productos) ? datos.productos : [];
+
+                return { categorias: cats, productos: prods };
             } catch (e) {
                 console.error("Error al leer servidor:", e);
-                return { categorias: ["General", "Electrónica", "Bazar"], productos: [] };
+                return { categorias: ["General", "Bazar", "Electrónica"], productos: [] };
             }
         }
 
@@ -154,15 +165,15 @@
                 if (!res.ok) throw new Error("Error al guardar");
                 return true;
             } catch (e) {
-                alert("❌ Error: La imagen sigue siendo muy pesada para la nube. Intentá con otra foto.");
+                alert("❌ Error al guardar en la nube. Verificá tu conexión.");
                 return false;
             }
         }
 
         async function cargarPanelAdmin() {
             const datos = await obtenerDatosServidor();
-            const cats = datos.categorias || ["General", "Electrónica", "Bazar"];
-            const prods = datos.productos || [];
+            const cats = datos.categorias;
+            const prods = datos.productos;
 
             const select = document.getElementById('selectCategorias');
             select.innerHTML = '<option value="">Seleccioná una sección...</option>';
@@ -207,7 +218,6 @@
             if (!nombre) return alert("Escribí el nombre de la sección.");
 
             let datos = await obtenerDatosServidor();
-            if (!datos.categorias) datos.categorias = ["General", "Electrónica", "Bazar"];
 
             if (!datos.categorias.includes(nombre)) {
                 datos.categorias.push(nombre);
@@ -217,21 +227,26 @@
                     await cargarPanelAdmin();
                     alert(`✅ Sección "${nombre}" guardada en la nube.`);
                 }
+            } else {
+                alert("Esa sección ya existe.");
             }
         }
 
         async function eliminarSeccion(nombreCat) {
             if (confirm(`¿Seguro que querés borrar la sección "${nombreCat}"?`)) {
                 let datos = await obtenerDatosServidor();
-                datos.categorias = (datos.categorias || []).filter(c => c !== nombreCat);
-                await guardarDatosServidor(datos);
-                await cargarPanelAdmin();
+                datos.categorias = datos.categorias.filter(c => c !== nombreCat);
+                const ok = await guardarDatosServidor(datos);
+                if (ok) {
+                    await cargarPanelAdmin();
+                }
             }
         }
 
         function comprimirArchivoLocal() {
-            const file = document.getElementById("fileInput").files.length > 0 ? document.getElementById("fileInput").files[0] : null;
-            if (!file) return;
+            const fileInput = document.getElementById("fileInput");
+            if (!fileInput.files || fileInput.files.length === 0) return;
+            const file = fileInput.files[0];
             const reader = new FileReader();
             reader.onload = function(e) {
                 procesarYReducirImagen(e.target.result);
@@ -244,13 +259,14 @@
             procesarYReducirImagen(url);
         }
 
+        // REDUCCIÓN EQUILIBRADA (400px, Calidad 0.6) - Mantiene nitidez y pesa ~30KB
         function procesarYReducirImagen(srcOriginal) {
             const img = new Image();
             img.crossOrigin = "anonymous";
             img.src = srcOriginal;
             img.onload = function() {
                 const canvas = document.createElement("canvas");
-                const MAX_SIZE = 180; // Máximo 180px para garantizar velocidad total
+                const MAX_SIZE = 400; // Resolución nítida para celulares
                 let width = img.width, height = img.height;
                 if (width > height) {
                     if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; }
@@ -262,15 +278,9 @@
                 const ctx = canvas.getContext("2d");
                 ctx.drawImage(img, 0, 0, width, height);
                 
-                // Compresión agresiva a JPEG 0.3
-                imagenFinalOptimizada = canvas.toDataURL("image/jpeg", 0.3);
-                
+                // Calidad 0.6 JPEG
+                imagenFinalOptimizada = canvas.toDataURL("image/jpeg", 0.6);
                 const tamanoKB = Math.round(imagenFinalOptimizada.length / 1024);
-                
-                // ⚠️ AVISO SI LA IMAGEN SUPERA EL LÍMITE RECOMENDADO (300 KB)
-                if (tamanoKB > 300) {
-                    alert(`⚠️ ATENCIÓN: La imagen resultante pesa ${tamanoKB} KB y supera el límite recomendado de 300 KB. JSONBin podría rechazarla.`);
-                }
 
                 document.getElementById("imgPreview").src = imagenFinalOptimizada;
                 document.getElementById("pesoPreview").innerText = `Optimizada: ~${tamanoKB} KB`;
@@ -281,7 +291,11 @@
                 }
             };
             img.onerror = function() {
-                alert("No se pudo procesar la imagen desde esa URL. Probá con otra o subila desde tu archivo.");
+                // Si la URL falla por seguridad, usar directamente
+                imagenFinalOptimizada = srcOriginal;
+                document.getElementById("imgPreview").src = srcOriginal;
+                document.getElementById("pesoPreview").innerText = "URL directa";
+                document.getElementById("previewContainer").style.display = "block";
             };
         }
 
@@ -296,7 +310,6 @@
             if (!imagenFinalOptimizada) return alert("Por favor seleccioná una imagen.");
 
             let datos = await obtenerDatosServidor();
-            if (!datos.productos) datos.productos = [];
 
             datos.productos.push({
                 id: Date.now(),
@@ -310,7 +323,7 @@
 
             const ok = await guardarDatosServidor(datos);
             if (ok) {
-                alert(`🎉 ¡Producto "${nombre}" publicado en la nube para todos los dispositivos!`);
+                alert(`🎉 ¡Producto "${nombre}" publicado con éxito!`);
                 
                 document.getElementById('prodNombre').value = '';
                 document.getElementById('prodPrecio').value = '';
@@ -328,7 +341,7 @@
         async function eliminarProducto(idProd) {
             if (confirm("¿Estás seguro de eliminar este producto?")) {
                 let datos = await obtenerDatosServidor();
-                datos.productos = (datos.productos || []).filter(p => p.id !== idProd);
+                datos.productos = datos.productos.filter(p => p.id !== idProd);
                 await guardarDatosServidor(datos);
                 await cargarPanelAdmin();
             }
