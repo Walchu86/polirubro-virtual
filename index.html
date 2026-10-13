@@ -4,15 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=208">
+    <link rel="stylesheet" href="style.css?v=210">
 </head>
 <body>
 
-    <!-- BANNER SUPERIOR CON ANIMACIÓN PROFESIONAL -->
+    <!-- BANNER SUPERIOR LIMPIO -->
     <div class="promo-banner">
-        <div class="marquee-container">
-            <span>🚚 ¡ENVÍOS A DOMICILIO EN CORRIENTES! • <strong>¡ENVÍO GRATIS COMPRANDO \$20.000 O MÁS!</strong> • 🛵 Dentro 4 Avenidas: \$1.500 • 🚚 Fuera 4 Avenidas: \$2.500 • 🏬 Retiro en Local: ¡GRATIS! • 💳 Efectivo o Pago por Transferencia</span>
-        </div>
+        🔥 ¡ENVÍOS A DOMICILIO EN CORRIENTES! • <strong>¡ENVÍO GRATIS COMPRANDO \$20.000 O MÁS!</strong> 🚚💨
     </div>
 
     <!-- CABECERA PRINCIPAL -->
@@ -334,7 +332,7 @@
 
             const contenedor = document.getElementById('listaCarritoModal');
             if (carrito.length === 0) {
-                contenedor.innerHTML = '<p style="text-align:center; color:#64748b; padding:1rem;">Tu carrito está vacío.</p>';
+                contenedor.innerHTML = '<p style="text-align:center; color:#64748b; padding:1.5rem; font-size:0.9rem;">🛒 Tu carrito está vacío.</p>';
                 return;
             }
 
@@ -368,7 +366,7 @@
 
         function abrirCarrito() {
             const cartModal = document.getElementById('cartModal');
-            if (!cartModal.classList.contains('abierto')) {
+            if (cartModal && !cartModal.classList.contains('abierto')) {
                 cartModal.classList.add('abierto');
                 estadoModal = 'cart';
                 history.pushState({ modalOpen: 'cart' }, "");
@@ -377,7 +375,7 @@
 
         function cerrarCarrito(desdeHistorial = false) {
             const cartModal = document.getElementById('cartModal');
-            if (cartModal.classList.contains('abierto')) {
+            if (cartModal && cartModal.classList.contains('abierto')) {
                 cartModal.classList.remove('abierto');
                 estadoModal = null;
                 if (!desdeHistorial && history.state && history.state.modalOpen) {
@@ -428,7 +426,7 @@
             const selectEnvio = document.getElementById('selectTipoEnvio');
             const tipoEnvioVal = selectEnvio ? selectEnvio.value : 'local';
             const textoEnvio = selectEnvio ? selectEnvio.options[selectEnvio.selectedIndex].text : 'Retiro en Local';
-            const medioPago = document.getElementById('selectMedioPago') ? document.getElementById('selectMedioPago'].value : 'Efectivo';
+            const medioPago = document.getElementById('selectMedioPago') ? document.getElementById('selectMedioPago').value : 'Efectivo';
 
             let costoEnvio = 0;
             if (tipoEnvioVal === 'dentro') costoEnvio = 1500;
