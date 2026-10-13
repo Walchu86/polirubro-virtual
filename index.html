@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=235">
+    <link rel="stylesheet" href="style.css?v=236">
 </head>
 <body>
 
@@ -57,9 +57,9 @@
     <!-- BARRA FLOTANTE SUPERIOR DEL CARRITO -->
     <div class="floating-cart-bar" onclick="abrirCarrito()">
         <div class="floating-cart-content">
-            <span>🛒 Carrito: <strong id="cartCount">0</strong> productos</span>
+            <span style="font-size: 0.85rem;">🛒 <strong id="cartCount">0</strong> prod.</span>
             <span class="ver-carrito-text">Ver Pedido ➔</span>
-            <span>Total: \$<strong id="cartTotalHeader">0</strong></span>
+            <span style="font-size: 0.9rem;">Total: \$<strong id="cartTotalHeader">0</strong></span>
         </div>
     </div>
 
@@ -183,7 +183,7 @@
         let categoriasDisponibles = [];
         let carrito = JSON.parse(localStorage.getItem('carrito_polirubro')) || [];
         let categoriaActiva = 'TODAS';
-        let yaAlcanzoEnvioGratis = false; // Control para abrir el carrito solo una vez al alcanzar la meta
+        let yaAlcanzoEnvioGratis = false;
 
         function cerrarWelcomeModal() {
             const modal = document.getElementById('welcomeModal');
@@ -381,13 +381,12 @@
             }
             actualizarCarritoUI();
 
-            // Verificamos si acaba de cruzar la meta de los \$20.000 por primera vez
             const subtotalMonto = carrito.reduce((sum, i) => sum + (Number(i.precio) * i.cantidad), 0);
             if (subtotalMonto >= 20000 && !yaAlcanzoEnvioGratis) {
                 yaAlcanzoEnvioGratis = true;
-                abrirCarrito(); // Abre el carrito automáticamente solo cuando alcanza la meta
+                abrirCarrito();
             } else if (subtotalMonto < 20000) {
-                yaAlcanzoEnvioGratis = false; // Resetea si baja de la meta
+                yaAlcanzoEnvioGratis = false;
             }
         }
 
@@ -566,7 +565,7 @@
             if (carrito.length === 0) return alert("El carrito está vacío.");
             
             const subtotalMonto = carrito.reduce((sum, i) => sum + (Number(i.precio) * i.cantidad), 0);
-            const medioPago = document.getElementById('selectMedioPago') ? document.getElementById('selectMedioPago').value : 'Efectivo';
+            const medioPago = document.getElementById('selectMedioPago') ? document.getElementById('selectMedioPago'].value : 'Efectivo';
 
             let costoEnvio = 0;
             let textoEnvio = "Retiro en Local (Gratis)";
