@@ -57,7 +57,7 @@
             
             <h3 class="cat-titulo-seccion" id="tituloSeccionActual">🌟 Catálogo General y Destacados</h3>
             <div class="productos-grid" id="contenedorProductos">
-                <p style="grid-column: 1/-1; text-align: center; color: #666; padding: 40px 0;">Cargando productos desde la nube...</p>
+                <p style="grid-column: 1/-1; text-align: center; color: #666; padding: 40px 0;">Cargando productos...</p>
             </div>
         </main>
 
@@ -137,17 +137,22 @@
                 if (!res.ok) throw new Error("Error al obtener datos");
                 const resJson = await res.json();
                 
-                // Desenvolver los datos igual que en el admin
-                let datos = resJson.record ? resJson.record : resJson;
+                // Extraer el objeto real según la estructura de tu Bin
+                let estructuraReal = resJson.record ? resJson.record : resJson;
 
-                // Normalizar categorías limpiando objetos y asegurando texto plano
-                let cats = Array.isArray(datos.categorias) ? datos.categorias : ["General", "Bazar", "Electrónica"];
-                cats = cats.map(c => (typeof c === 'string' ? c : (c.nombre || c.categoria || 'Sección'))).filter(c => typeof c === 'string');
+                // Extraer productos de forma segura
+                listaProductos = Array.isArray(estructuraReal.productos) ? estructuraReal.productos : [];
 
-                listaProductos = Array.isArray(datos.productos) ? datos.productos : [];
-                listaCategorias = cats;
+                // Extraer categorías soportando tanto si son texto plano como si son objetos con .nombre
+                let rawCats = estructuraReal.categorias || ["Estética", "Electrónica", "Zapatería", "Accesorios"];
+                listaCategorias = rawCats.map(c => {
+                    if (typeof c === 'string') return c;
+                    return c.nombre || c.categoria || 'Sección';
+                });
+
             } catch(e) {
                 console.error("Error al conectar con la nube:", e);
+                listaCategorias = ["Estética", "Electrónica", "Zapatería", "Accesorios"];
             }
 
             actualizarMezclainicio();
@@ -207,7 +212,7 @@
                     <div class="card-oferta-destacada">
                         <div class="badge-oferta-box"><span class="badge-oferta">🔥 48HS</span></div>
                         <div class="img-frame-oferta" onclick="abrirLupa('${img}')">
-                            <img src="${img}" alt="${p.nombre}" loading="lazy" onerror="this.src='https://via.placeholder.com/200?text=Sin+Imagen'">
+                            <img src="${img}" alt="${p.nombre}" onerror="this.src='https://via.placeholder.com/200?text=Sin+Imagen'">
                         </div>
                         <div class="titulo-producto-oferta">${p.nombre}</div>
                         <div class="precio-producto-oferta">$${Number(p.precio).toLocaleString('es-AR')}</div>
@@ -326,7 +331,7 @@
             if (carrito.length === 0) { alert("Agregá productos al carrito."); return; }
             let msj = "👋 *Hola Polirubro Virtual, quiero confirmar este pedido:*\n\n";
             carrito.forEach(x => { msj += `• ${x.nombre} x${x.cantidad} - $${(x.precio * x.cantidad).toLocaleString('es-AR')}\n`; });
-            msj += `\n💵 *Total:* ${document.getElementById('totalCarritoModal').innerText}`;
+            msj += `\n💵 *Total:* ${document.getElementById('totalCarritoModal'].innerText}`;
             const url = `https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(msj)}`;
             
             document.getElementById('qrcode').innerHTML = "";
