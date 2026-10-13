@@ -504,7 +504,7 @@ body {
 
 /* ==========================================
    3. ESTILOS DEL VISOR LUPA / LIGHTBOX
-   ================================---------- */
+   ========================================== */
 .lightbox-overlay {
     position: fixed;
     top: 0;
@@ -652,7 +652,7 @@ body {
         gap: 1rem;
     }
 
-    /* Ocultar por completo la caja lateral de categorías en celulares */
+    /* Ocultar la barra lateral de categorías en celulares */
     #contenedorSidebarCategoriasPC {
         display: none !important;
     }
@@ -734,13 +734,31 @@ body {
         text-align: center;
     }
 
+    /* Ajustes específicos del carrito modal en celulares */
     .cart-modal {
         max-width: 100%;
         right: -100%;
+        height: 100vh !important;
+        max-height: 100vh !important;
+        display: flex !important;
+        flex-direction: column !important;
+        padding-bottom: 25px !important;
     }
 
     .cart-modal.abierto {
         right: 0;
+    }
+
+    /* Scroll interno para los productos del carrito sin tapar el botón de WhatsApp */
+    .cart-items {
+        flex-grow: 1 !important;
+        overflow-y: auto !important;
+        max-height: calc(100vh - 250px) !important;
+    }
+
+    .cart-footer {
+        padding-bottom: env(safe-area-inset-bottom, 20px) !important;
+        background: #ffffff !important;
     }
 
     .wsp-float {
@@ -750,92 +768,4 @@ body {
         height: 48px;
         font-size: 1.5rem;
     }
-}
-
-
-/* ==========================================================
-   5. NUEVOS ESTILOS: MODAL DE BIENVENIDA Y CAJA DE REGALO 🎁
-   ========================================================== */
-.modal-overlay {
-    position: fixed;
-    top: 0; 
-    left: 0; 
-    width: 100%; 
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-}
-
-.modal-content {
-    background: #fff;
-    padding: 30px;
-    border-radius: 12px;
-    text-align: center;
-    max-width: 400px;
-    width: 90%;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-    position: relative;
-    animation: modalPop 0.3s ease;
-}
-
-@keyframes modalPop {
-    0% { transform: scale(0.8); opacity: 0; }
-    100% { transform: scale(1); opacity: 1; }
-}
-
-.modal-close {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    background: none;
-    border: none;
-    font-size: 1.5em;
-    cursor: pointer;
-    color: #aaa;
-}
-
-.modal-close:hover {
-    color: #000;
-}
-
-.promo-badge {
-    background: #e8f5e9;
-    color: #2e7d32;
-    padding: 12px;
-    border-radius: 8px;
-    font-size: 1.1em;
-    margin: 15px 0;
-    border: 1px dashed #2e7d32;
-}
-
-.btn-modal-action {
-    background-color: #27ae60;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
-    font-size: 1em;
-    cursor: pointer;
-    width: 100%;
-    margin-top: 10px;
-}
-
-.btn-modal-action:hover {
-    background-color: #219653;
-}
-
-/* Animación y estilo de la Caja de Regalo en el Carrito */
-.gift-box-icon {
-    font-size: 1.2em;
-    margin-left: 8px;
-    animation: bounce 2s infinite;
-    display: inline-block;
-}
-
-@keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-4px); }
 }
