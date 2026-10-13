@@ -15,7 +15,7 @@
         .form-group { margin-bottom: 0.8rem; }
         .form-label { font-size: 0.82rem; color: #cbd5e1; display: block; margin-bottom: 0.3rem; }
         .form-input { width: 100%; padding: 0.6rem; border-radius: 8px; background: #1e293b; border: 1px solid #334155; color: #fff; outline: none; font-size: 0.9rem; }
-        .btn-action { background: #2563eb; color: #fff; border: none; padding: 0.7rem; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; transition: opacity 0.2s; }
+        .btn-action { background: #2563eb; color: #fff; border: none; padding: 0.7rem; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; transition: opacity 0.2s; margin-top: 0.4rem; }
         .btn-action:hover { opacity: 0.9; }
         .lista-items { display: flex; flex-direction: column; gap: 6px; max-height: 180px; overflow-y: auto; margin-top: 10px; }
         .item-row { display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 8px 12px; border-radius: 8px; border: 1px solid #334155; font-size: 0.88rem; }
@@ -27,10 +27,11 @@
 </head>
 <body class="admin-body">
     <header style="background:#0f172a; padding:1.2rem; border-bottom:1px solid #1e293b; text-align:center;">
-        <h1 style="margin:0; font-size:1.5rem; color:#fff;">⚙️ Panel Administrador Cloud</h1>
-        <p style="margin:0.3rem 0 0 0; color:#38bdf8; font-size:0.85rem;">Sincronizado con Base de Datos Local Segura</p>
-        <div style="margin-top:0.8rem;">
+        <h1 style="margin:0; font-size:1.5rem; color:#fff;">⚙️ Panel Administrador Estático</h1>
+        <p style="margin:0.3rem 0 0 0; color:#38bdf8; font-size:0.85rem;">Almacenamiento Local Inteligente (Hosting Web)</p>
+        <div style="margin-top:0.8rem; display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
             <a href="/" target="_blank" style="background:#0284c7; color:#fff; padding:0.4rem 1rem; border-radius:20px; text-decoration:none; font-weight:bold; font-size:0.8rem;">🌐 Ir a la Tienda Pública</a>
+            <button onclick="exportarBackupJSON()" style="background:#10b981; color:#fff; border:none; padding:0.4rem 1rem; border-radius:20px; font-weight:bold; font-size:0.8rem; cursor:pointer;">📥 Descargar Backup JSON</button>
         </div>
     </header>
 
@@ -89,13 +90,13 @@
                             <p id="pesoPreview" style="font-size:0.75rem; color:#34d399; margin-top:0.2rem; font-weight:bold;"></p>
                         </div>
                     </div>
-                    <button type="button" onclick="guardarProducto()" class="btn-action" style="background: #10b981;">💾 Guardar en el Servidor</button>
+                    <button type="button" onclick="guardarProducto()" class="btn-action" style="background: #10b981;">💾 Guardar Producto Local</button>
                 </section>
             </div>
         </div>
 
         <section class="admin-card">
-            <h3>📦 Productos en el Servidor</h3>
+            <h3>📦 Productos en la Tienda</h3>
             <div style="overflow-x: auto;">
                 <table class="tabla-productos">
                     <thead>
@@ -108,7 +109,7 @@
                         </tr>
                     </thead>
                     <tbody id="tablaProductosAdmin">
-                        <tr><td colspan="5" style="text-align: center; color: #94a3b8;">Cargando desde el servidor...</td></tr>
+                        <tr><td colspan="5" style="text-align: center; color: #94a3b8;">Cargando productos...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -117,47 +118,38 @@
 
     <script>
         let imagenFinalBase64 = "";
-        let binCacheCompleto = {};
+        const STORAGE_KEY = "polirubro_datos_local";
 
-        async function obtenerDatosServidor() {
+        function obtenerDatosLocales() {
             try {
-                const res = await fetch("/api/datos");
-                if (!res.ok) throw new Error("Error al conectar");
-                binCacheCompleto = await res.json();
-                return binCacheCompleto;
+                const guardados = localStorage.getItem(STORAGE_KEY);
+                if (guardados) {
+                    return JSON.parse(guardados);
+                }
             } catch (e) {
-                console.error("Error al leer servidor:", e);
-                return { productos: [], categorias: [], estadisticas: {} };
+                console.error("Error al leer localStorage:", e);
             }
+            // Datos por defecto si está vacío
+            return {
+                productos: [],
+                categorias: ["Estética", "Electrónica", "Zapatería", "Accesorios"],
+                estadisticas: { totalVisitas: 0 }
+            };
         }
 
-        async function guardarDatosServidor(datosNuevos) {
+        function guardarDatosLocales(datos) {
             try {
-                const estructuraFinal = {
-                    productos: datosNuevos.productos || [],
-                    categorias: datosNuevos.categorias || binCacheCompleto.categorias || [],
-                    estadisticas: binCacheCompleto.estadisticas || { totalVisitas: 0, visitasMovil: 0, visitasPC: 0, secciones: {}, busquedas: {}, porDia: {} }
-                };
-
-                const res = await fetch("/api/datos", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(estructuraFinal)
-                });
-                if (!res.ok) {
-                    alert("❌ El servidor rechazó los datos.");
-                    return false;
-                }
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(datos));
                 return true;
             } catch (e) {
-                console.error("Excepción al guardar:", e);
-                alert("❌ Error de red al guardar.");
+                console.error("Error al guardar en localStorage:", e);
+                alert("❌ Almacenamiento lleno o error al guardar la imagen. Probá con una imagen más chica.");
                 return false;
             }
         }
 
-        async function cargarPanelAdmin() {
-            const datos = await obtenerDatosServidor();
+        function cargarPanelAdmin() {
+            const datos = obtenerDatosLocales();
             
             let rawCats = datos.categorias || [];
             let listaNombresCats = rawCats.map(c => typeof c === 'string' ? c : (c.nombre || c.categoria || '')).filter(c => c !== '');
@@ -201,14 +193,13 @@
             });
         }
 
-        async function guardarSeccion() {
+        function guardarSeccion() {
             const input = document.getElementById('inputNuevaCat');
             const nombre = input.value.trim();
             if (!nombre) return alert("Escribí el nombre de la sección.");
 
-            let datos = await obtenerDatosServidor();
+            let datos = obtenerDatosLocales();
             let rawCats = datos.categorias || [];
-
             let listaNombres = rawCats.map(c => typeof c === 'string' ? c : (c.nombre || c.categoria || ''));
             
             if (!listaNombres.includes(nombre)) {
@@ -220,10 +211,9 @@
                 });
                 datos.categorias = rawCats;
 
-                const ok = await guardarDatosServidor(datos);
-                if (ok) {
+                if (guardarDatosLocales(datos)) {
                     input.value = '';
-                    await cargarPanelAdmin();
+                    cargarPanelAdmin();
                     alert(`✅ Sección "${nombre}" guardada.`);
                 }
             } else {
@@ -231,9 +221,9 @@
             }
         }
 
-        async function eliminarSeccion(nombreCat) {
+        function eliminarSeccion(nombreCat) {
             if (confirm(`¿Seguro que querés borrar la sección "${nombreCat}"?`)) {
-                let datos = await obtenerDatosServidor();
+                let datos = obtenerDatosLocales();
                 let rawCats = datos.categorias || [];
                 
                 datos.categorias = rawCats.filter(c => {
@@ -241,9 +231,8 @@
                     return nom !== nombreCat;
                 });
 
-                const ok = await guardarDatosServidor(datos);
-                if (ok) {
-                    await cargarPanelAdmin();
+                if (guardarDatosLocales(datos)) {
+                    cargarPanelAdmin();
                 }
             }
         }
@@ -272,7 +261,7 @@
             document.getElementById("fileInput").value = "";
         }
 
-        async function guardarProducto() {
+        function guardarProducto() {
             const nombre = document.getElementById('prodNombre').value.trim();
             const precio = document.getElementById('prodPrecio').value;
             const stock = document.getElementById('prodStock').value;
@@ -282,7 +271,7 @@
             if (!nombre || !precio || !categoria) return alert("Completá nombre, precio y sección.");
             if (!imagenFinalBase64) return alert("Por favor seleccioná una imagen.");
 
-            let datos = await obtenerDatosServidor();
+            let datos = obtenerDatosLocales();
             if (!datos.productos) datos.productos = [];
 
             datos.productos.push({
@@ -295,8 +284,7 @@
                 imagen: imagenFinalBase64
             });
 
-            const ok = await guardarDatosServidor(datos);
-            if (ok) {
+            if (guardarDatosLocales(datos)) {
                 alert(`🎉 ¡Producto "${nombre}" publicado con éxito!`);
                 
                 document.getElementById('prodNombre').value = '';
@@ -308,17 +296,28 @@
                 document.getElementById('previewContainer').style.display = 'none';
                 imagenFinalBase64 = '';
 
-                await cargarPanelAdmin();
+                cargarPanelAdmin();
             }
         }
 
-        async function eliminarProducto(idProd) {
+        function eliminarProducto(idProd) {
             if (confirm("¿Estás seguro de eliminar este producto?")) {
-                let datos = await obtenerDatosServidor();
+                let datos = obtenerDatosLocales();
                 datos.productos = (datos.productos || []).filter(p => p.id !== idProd);
-                await guardarDatosServidor(datos);
-                await cargarPanelAdmin();
+                guardarDatosLocales(datos);
+                cargarPanelAdmin();
             }
+        }
+
+        function exportarBackupJSON() {
+            const datos = obtenerDatosLocales();
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(datos, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", "database.json");
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
         }
 
         window.onload = cargarPanelAdmin;
