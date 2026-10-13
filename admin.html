@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Panel Administrador | Polirubro Virtual</title>
-    <link rel="stylesheet" href="style.css?v=219">
+    <link rel="stylesheet" href="style.css?v=224">
     <style>
         body.admin-body { background-color: #0b0f19 !important; color: #f8fafc !important; font-family: system-ui, -apple-system, sans-serif !important; }
         .admin-wrapper { max-width: 1200px; margin: 0 auto; padding: 1.5rem 1rem; }
@@ -43,7 +43,7 @@
                     <h3>📂 Gestionar Secciones</h3>
                     <div class="form-group">
                         <label class="form-label">Nueva Sección:</label>
-                        <input type="text" id="inputNuevaCat" class="form-input" placeholder="Ej: Bazar, Ferretería">
+                        <input type="text" id="inputNuevaCat" class="form-input" placeholder="Ej: Indumentaria, Calzado">
                     </div>
                     <button type="button" onclick="guardarSeccion()" class="btn-action" style="background: #2563eb;">✨ Guardar y Sincronizar</button>
                     
@@ -61,8 +61,15 @@
                     
                     <div class="form-group">
                         <label class="form-label">Nombre del Producto:</label>
-                        <input type="text" id="prodNombre" class="form-input" placeholder="Ej: Protector Solar">
+                        <input type="text" id="prodNombre" class="form-input" placeholder="Ej: Remera Algodón / Zapatillas">
                     </div>
+
+                    <!-- DESCRIPCIÓN BREVE -->
+                    <div class="form-group">
+                        <label class="form-label">📝 Descripción Breve (Opcional):</label>
+                        <textarea id="prodDescripcion" class="form-input" rows="2" placeholder="Ej: 100% algodón, excelente calidad..."></textarea>
+                    </div>
+
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem;" class="form-group">
                         <div>
                             <label class="form-label">Precio (\$):</label>
@@ -79,6 +86,43 @@
                             <option value="">Seleccioná una sección...</option>
                         </select>
                     </div>
+
+                    <!-- SELECTOR DE TALLES UNIVERSALES ARGENTINA -->
+                    <div class="form-group">
+                        <label class="form-label">👕 Talles Disponibles (Opcional):</label>
+                        <select id="prodTalle" class="form-input">
+                            <option value="">Sin talle / Único</option>
+                            <optgroup label="Indumentaria (Remeras / Camperas)">
+                                <option value="S">S (Small)</option>
+                                <option value="M">M (Medium)</option>
+                                <option value="L">L (Large)</option>
+                                <option value="XL">XL (Extra Large)</option>
+                                <option value="XXL">XXL (Doble XL)</option>
+                            </optgroup>
+                            <optgroup label="Pantalones / Jeans">
+                                <option value="36">Talle 36</option>
+                                <option value="38">Talle 38</option>
+                                <option value="40">Talle 40</option>
+                                <option value="42">Talle 42</option>
+                                <option value="44">Talle 44</option>
+                                <option value="46">Talle 46</option>
+                                <option value="48">Talle 48</option>
+                            </optgroup>
+                            <optgroup label="Calzado / Zapatillas (ARG)">
+                                <option value="35">35 ARG</option>
+                                <option value="36">36 ARG</option>
+                                <option value="37">37 ARG</option>
+                                <option value="38">38 ARG</option>
+                                <option value="39">39 ARG</option>
+                                <option value="40">40 ARG</option>
+                                <option value="41">41 ARG</option>
+                                <option value="42">42 ARG</option>
+                                <option value="43">43 ARG</option>
+                                <option value="44">44 ARG</option>
+                            </optgroup>
+                        </select>
+                    </div>
+
                     <div class="form-group" style="display:flex; align-items:center; gap:0.5rem; background:#1e293b; padding:0.6rem; border-radius:8px; border:1px solid #334155;">
                         <input type="checkbox" id="prodOferta" style="width:18px; height:18px; cursor:pointer;">
                         <label for="prodOferta" style="font-size:0.85rem; color:#f43f5e; font-weight:bold; cursor:pointer;">🔥 Oferta Especial (48hs)</label>
@@ -94,7 +138,7 @@
                         </div>
                     </div>
                     <button type="button" onclick="guardarProducto()" class="btn-action" style="background: #10b981;" id="btnGuardarProd">💾 Publicar en la Web (Automático)</button>
-                    <button type="button" onclick="cancelarEdicion()" class="btn-action" style="background: #64748b; display:none;" id="btnCancelarEdicion">❌ Cancelar Edición</button>
+                    <button type="button" onclick="cancelarEdicion()" class="btn-action" style="background: #64748b; display:none;" id="btnCancelarEdicion">❌ Cancelar / Nuevo</button>
                 </section>
             </div>
         </div>
@@ -107,6 +151,7 @@
                         <tr>
                             <th>Nombre</th>
                             <th>Sección</th>
+                            <th>Talle</th>
                             <th>Precio</th>
                             <th>Stock</th>
                             <th>Oferta</th>
@@ -114,7 +159,7 @@
                         </tr>
                     </thead>
                     <tbody id="tablaProductosAdmin">
-                        <tr><td colspan="6" style="text-align: center; color: #94a3b8;">Sincronizando con GitHub...</td></tr>
+                        <tr><td colspan="7" style="text-align: center; color: #94a3b8;">Sincronizando con GitHub...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -182,18 +227,20 @@
             const prods = datosTienda.productos || [];
 
             if (prods.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #94a3b8;">No hay productos cargados.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #94a3b8;">No hay productos cargados.</td></tr>`;
                 return;
             }
 
             prods.forEach(p => {
                 const badgeOferta = p.enOferta ? '<span style="color:#f43f5e; font-weight:bold;">🔥 Sí</span>' : '<span style="color:#94a3b8;">No</span>';
                 const stockVal = p.stock !== undefined ? p.stock : 10;
+                const talleVal = p.talle ? `<span style="background:#334155; padding:2px 6px; border-radius:4px; font-size:0.75rem;">${p.talle}</span>` : '<span style="color:#64748b;">-</span>';
                 const precioLimpinho = Number(p.precio || 0).toLocaleString('es-AR');
                 tbody.innerHTML += `
                     <tr>
                         <td style="font-weight: bold; color: #fff;">${p.nombre}</td>
                         <td><span style="background: #1e293b; padding: 3px 8px; border-radius: 4px; border: 1px solid #334155; font-size: 0.78rem;">${p.categoria}</span></td>
+                        <td>${talleVal}</td>
                         <td style="color: #38bdf8; font-weight: bold;">$${precioLimpinho}</td>
                         <td><span style="color: #34d399; font-weight: bold;">${stockVal} un.</span></td>
                         <td>${badgeOferta}</td>
@@ -317,9 +364,11 @@
 
             document.getElementById('editIdProd').value = prod.id;
             document.getElementById('prodNombre').value = prod.nombre;
+            document.getElementById('prodDescripcion').value = prod.descripcion || "";
             document.getElementById('prodPrecio').value = Number(prod.precio || 0);
             document.getElementById('prodStock').value = prod.stock !== undefined ? prod.stock : 10;
             document.getElementById('selectCategorias').value = prod.categoria;
+            document.getElementById('prodTalle').value = prod.talle || "";
             document.getElementById('prodOferta').checked = prod.enOferta || false;
 
             if (prod.imagen) {
@@ -338,9 +387,11 @@
         function cancelarEdicion() {
             document.getElementById('editIdProd').value = '';
             document.getElementById('prodNombre').value = '';
+            document.getElementById('prodDescripcion').value = '';
             document.getElementById('prodPrecio').value = '';
             document.getElementById('prodStock').value = '10';
             document.getElementById('selectCategorias').value = '';
+            document.getElementById('prodTalle').value = '';
             document.getElementById('prodOferta').checked = false;
             document.getElementById('urlInput').value = '';
             document.getElementById('fileInput').value = '';
@@ -355,15 +406,16 @@
         async function guardarProducto() {
             const editId = document.getElementById('editIdProd').value;
             const nombre = document.getElementById('prodNombre').value.trim();
+            const descripcion = document.getElementById('prodDescripcion').value.trim();
             const precioRaw = document.getElementById('prodPrecio').value;
             const stockRaw = document.getElementById('prodStock').value;
             const categoria = document.getElementById('selectCategorias').value;
+            const talle = document.getElementById('prodTalle').value;
             const enOferta = document.getElementById('prodOferta').checked;
 
             if (!nombre || !precioRaw || !categoria) return alert("Completá nombre, precio y sección.");
             if (!imagenFinalBase64) return alert("Por favor seleccioná una imagen.");
 
-            // Nos aseguramos que precio y stock sean números puros
             const precio = Number(precioRaw);
             const stock = Number(stockRaw);
 
@@ -375,9 +427,11 @@
                     datosTienda.productos[index] = {
                         id: Number(editId),
                         nombre,
+                        descripcion,
                         precio,
                         stock,
                         categoria,
+                        talle,
                         enOferta,
                         imagen: imagenFinalBase64
                     };
@@ -386,9 +440,11 @@
                 datosTienda.productos.push({
                     id: Date.now(),
                     nombre,
+                    descripcion,
                     precio,
                     stock,
                     categoria,
+                    talle,
                     enOferta,
                     imagen: imagenFinalBase64
                 });
@@ -396,7 +452,7 @@
 
             let exito = await sincronizarConGitHub();
             if (exito) {
-                alert(`🎉 ¡Producto "${nombre}" actualizado con éxito en la web!`);
+                alert(`🎉 ¡Producto "${nombre}" publicado con éxito!`);
                 cancelarEdicion();
                 renderizarInterfaz();
             }
