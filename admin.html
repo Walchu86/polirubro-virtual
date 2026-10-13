@@ -27,8 +27,8 @@
 </head>
 <body class="admin-body">
     <header style="background:#0f172a; padding:1.2rem; border-bottom:1px solid #1e293b; text-align:center;">
-        <h1 style="margin:0; font-size:1.5rem; color:#fff;">⚙️ Panel Administrador Nube</h1>
-        <p style="margin:0.3rem 0 0 0; color:#38bdf8; font-size:0.85rem;">Sincronizado vía JSONBin</p>
+        <h1 style="margin:0; font-size:1.5rem; color:#fff;">⚙️ Panel Administrador Cloud</h1>
+        <p style="margin:0.3rem 0 0 0; color:#38bdf8; font-size:0.85rem;">Sincronizado vía JSONBin (Con Control de Peso)</p>
         <div style="margin-top:0.8rem;">
             <a href="/" target="_blank" style="background:#0284c7; color:#fff; padding:0.4rem 1rem; border-radius:20px; text-decoration:none; font-weight:bold; font-size:0.8rem;">🌐 Ir a la Tienda Pública</a>
         </div>
@@ -80,11 +80,11 @@
                         <label for="prodOferta" style="font-size:0.85rem; color:#f43f5e; font-weight:bold; cursor:pointer;">🔥 Oferta Especial (48hs)</label>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">🖼️ Subir Imagen (PC / Celular o URL):</label>
-                        <input type="file" id="fileInput" accept="image/*" onchange="comprimirYConvertirImagen()" style="margin-bottom:0.4rem; color: #cbd5e1; font-size: 0.85rem;">
-                        <input type="url" id="urlInput" class="form-input" placeholder="O pegá una URL web de imagen aquí..." oninput="mostrarVistaPreviaURL(this.value)">
+                        <label class="form-label">🖼️ Imagen (Archivo PC/Celular o URL):</label>
+                        <input type="file" id="fileInput" accept="image/*" onchange="comprimirArchivoLocal()" style="margin-bottom:0.4rem; color: #cbd5e1; font-size: 0.85rem;">
+                        <input type="url" id="urlInput" class="form-input" placeholder="O pegá una URL web aquí..." oninput="comprimirImagenURL(this.value)">
                         <div id="previewContainer" style="display:none; margin-top:0.5rem; text-align:center; background:#070a12; padding:8px; border-radius:8px; border:1px dashed #38bdf8;">
-                            <p style="font-size: 0.75rem; color: #38bdf8; margin-bottom: 4px;">Vista Previa Comprimida:</p>
+                            <p style="font-size: 0.75rem; color: #38bdf8; margin-bottom: 4px;">Vista Previa Optimizada:</p>
                             <img id="imgPreview" src="" alt="Preview" style="max-width:90px; max-height:90px; border-radius:6px; object-fit:contain;">
                             <p id="pesoPreview" style="font-size:0.75rem; color:#34d399; margin-top:0.2rem; font-weight:bold;"></p>
                         </div>
@@ -154,7 +154,7 @@
                 if (!res.ok) throw new Error("Error al guardar");
                 return true;
             } catch (e) {
-                alert("❌ Error al guardar en la nube. Verificá tu conexión.");
+                alert("❌ Error: La imagen sigue siendo muy pesada para la nube. Intentá con otra foto.");
                 return false;
             }
         }
@@ -229,43 +229,60 @@
             }
         }
 
-        function comprimirYConvertirImagen() {
-            const file = document.getElementById("fileInput").files[0];
+        function comprimirArchivoLocal() {
+            const file = document.getElementById("fileInput").files.length > 0 ? document.getElementById("fileInput").files[0] : null;
             if (!file) return;
             const reader = new FileReader();
             reader.onload = function(e) {
-                const img = new Image();
-                img.src = e.target.result;
-                img.onload = function() {
-                    const canvas = document.createElement("canvas");
-                    const MAX_SIZE = 180; // Compresión ultraligera para celulares
-                    let width = img.width, height = img.height;
-                    if (width > height) {
-                        if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; }
-                    } else {
-                        if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; }
-                    }
-                    canvas.width = width; canvas.height = height;
-                    const ctx = canvas.getContext("2d");
-                    ctx.drawImage(img, 0, 0, width, height);
-                    
-                    imagenFinalOptimizada = canvas.toDataURL("image/jpeg", 0.3);
-                    document.getElementById("imgPreview").src = imagenFinalOptimizada;
-                    document.getElementById("pesoPreview").innerText = "Súper liviana: ~" + Math.round(imagenFinalOptimizada.length / 1024) + " KB";
-                    document.getElementById("previewContainer").style.display = "block";
-                    document.getElementById("urlInput").value = "";
-                };
+                procesarYReducirImagen(e.target.result);
             };
             reader.readAsDataURL(file);
         }
 
-        function mostrarVistaPreviaURL(url) {
+        function comprimirImagenURL(url) {
             if (!url || url.trim() === "") return;
-            imagenFinalOptimizada = "";
-            document.getElementById("fileInput").value = "";
-            document.getElementById("imgPreview").src = url;
-            document.getElementById("pesoPreview").innerText = "Cargada desde URL web";
-            document.getElementById("previewContainer").style.display = "block";
+            procesarYReducirImagen(url);
+        }
+
+        function procesarYReducirImagen(srcOriginal) {
+            const img = new Image();
+            img.crossOrigin = "anonymous";
+            img.src = srcOriginal;
+            img.onload = function() {
+                const canvas = document.createElement("canvas");
+                const MAX_SIZE = 180; // Máximo 180px para garantizar velocidad total
+                let width = img.width, height = img.height;
+                if (width > height) {
+                    if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; }
+                } else {
+                    if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; }
+                }
+                canvas.width = width; 
+                canvas.height = height;
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                // Compresión agresiva a JPEG 0.3
+                imagenFinalOptimizada = canvas.toDataURL("image/jpeg", 0.3);
+                
+                const tamanoKB = Math.round(imagenFinalOptimizada.length / 1024);
+                
+                // ⚠️ AVISO SI LA IMAGEN SUPERA EL LÍMITE RECOMENDADO (300 KB)
+                if (tamanoKB > 300) {
+                    alert(`⚠️ ATENCIÓN: La imagen resultante pesa ${tamanoKB} KB y supera el límite recomendado de 300 KB. JSONBin podría rechazarla.`);
+                }
+
+                document.getElementById("imgPreview").src = imagenFinalOptimizada;
+                document.getElementById("pesoPreview").innerText = `Optimizada: ~${tamanoKB} KB`;
+                document.getElementById("previewContainer").style.display = "block";
+                
+                if(document.getElementById("fileInput").value) {
+                    document.getElementById("urlInput").value = "";
+                }
+            };
+            img.onerror = function() {
+                alert("No se pudo procesar la imagen desde esa URL. Probá con otra o subila desde tu archivo.");
+            };
         }
 
         async function guardarProducto() {
@@ -274,11 +291,9 @@
             const stock = document.getElementById('prodStock').value;
             const categoria = document.getElementById('selectCategorias').value;
             const enOferta = document.getElementById('prodOferta').checked;
-            const urlImg = document.getElementById('urlInput').value.trim();
 
             if (!nombre || !precio || !categoria) return alert("Completá nombre, precio y sección.");
-
-            const imagenFinal = urlImg || imagenFinalOptimizada || 'https://via.placeholder.com/200?text=Sin+Imagen';
+            if (!imagenFinalOptimizada) return alert("Por favor seleccioná una imagen.");
 
             let datos = await obtenerDatosServidor();
             if (!datos.productos) datos.productos = [];
@@ -290,7 +305,7 @@
                 stock: Number(stock),
                 categoria,
                 enOferta,
-                imagen: imagenFinal
+                imagen: imagenFinalOptimizada
             });
 
             const ok = await guardarDatosServidor(datos);
