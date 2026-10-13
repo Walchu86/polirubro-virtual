@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=250">
+    <link rel="stylesheet" href="style.css?v=251">
 </head>
 <body>
 
@@ -30,7 +30,6 @@
     <!-- CABECERA PRINCIPAL -->
     <header class="main-header">
         <div class="header-container">
-            <!-- Columna Izquierda: Logo y Botón de búsqueda -->
             <div class="header-left-col">
                 <a href="#" class="logo-title" style="text-decoration:none;">
                     <div class="brand-text">
@@ -39,10 +38,13 @@
                     </div>
                 </a>
                 
+                <!-- CAJITA DE ATENCIÓN ARMONIZADA PARA MÓVIL -->
                 <div class="header-banner-animado">
-                    <span class="pulse-icon">🛍️</span>
-                    <span class="anim-text">Atención personalizada y envíos rápidos</span>
-                    <span class="anim-badges">📦 🎁 ⭐</span>
+                    <div class="header-banner-content">
+                        <span>🛍️</span>
+                        <span>Atención personalizada y envíos rápidos</span>
+                    </div>
+                    <div class="header-banner-badges">📦🎁⭐</div>
                 </div>
 
                 <div class="quick-badge-llamativo" onclick="enfocarBuscador()" title="¡Hacé clic para buscar productos!">
@@ -50,7 +52,7 @@
                 </div>
             </div>
 
-            <!-- Carrusel Central con Productos e Imagenes (EXCLUSIVO PARA PC) -->
+            <!-- Carrusel Central (EXCLUSIVO PARA PC) -->
             <div class="pc-carousel-container">
                 <div class="pc-carousel-track" id="carouselTrack">
                     <div class="pc-carousel-slide active">
@@ -95,7 +97,7 @@
     <!-- BARRA FLOTANTE SUPERIOR DEL CARRITO -->
     <div class="floating-cart-bar" onclick="abrirCarrito()">
         <div class="floating-cart-content">
-            <span>🛒 Carrito: <strong id="cartCount">0</strong> productos</span>
+            <span>🛒 Carrito: <strong id="cartCount">0</strong> prod.</span>
             <span class="ver-carrito-text">VER PEDIDO ➔</span>
             <span>Total: \$<strong id="cartTotalHeader">0</strong></span>
         </div>
@@ -223,7 +225,6 @@
         let categoriaActiva = 'TODAS';
         let yaAlcanzoEnvioGratis = false;
 
-        // Carrusel automático para la PC
         let currentSlide = 0;
         function iniciarCarruselPC() {
             const slides = document.querySelectorAll('.pc-carousel-slide');
@@ -615,7 +616,7 @@
             if (carrito.length === 0) return alert("El carrito está vacío.");
             
             const subtotalMonto = carrito.reduce((sum, i) => sum + (Number(i.precio) * i.cantidad), 0);
-            const medioPago = document.getElementById('selectMedioPago') ? document.getElementById('selectMedioPago').value : 'Efectivo';
+            const medioPago = document.getElementById('selectMedioPago') ? document.getElementById('selectMedioPago'].value : 'Efectivo';
 
             let costoEnvio = 0;
             let textoEnvio = "Retiro en Local (Gratis)";
