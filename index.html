@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=206">
+    <link rel="stylesheet" href="style.css?v=207">
 </head>
 <body>
 
@@ -35,16 +35,6 @@
             </div>
         </div>
     </header>
-
-    <!-- BARRA INFORMATIVA DE TARIFAS DE ENVÍO Y PAGOS -->
-    <div class="shipping-info-bar">
-        <div class="shipping-info-container">
-            <div class="info-item">🛵 <strong>Dentro 4 Avenidas:</strong> \$1.500</div>
-            <div class="info-item">🚚 <strong>Fuera 4 Avenidas:</strong> \$2.500</div>
-            <div class="info-item">🏬 <strong>Retiro en Local:</strong> ¡GRATIS!</div>
-            <div class="info-item">💳 <strong>Medios de Pago:</strong> Efectivo • Pago por Transferencia</div>
-        </div>
-    </div>
 
     <!-- BARRA DE NAVEGACIÓN NARANJA (SECCIONES) -->
     <nav class="main-nav">
@@ -436,7 +426,7 @@
             const selectEnvio = document.getElementById('selectTipoEnvio');
             const tipoEnvioVal = selectEnvio ? selectEnvio.value : 'local';
             const textoEnvio = selectEnvio ? selectEnvio.options[selectEnvio.selectedIndex].text : 'Retiro en Local';
-            const medioPago = document.getElementById('selectMedioPago') ? document.getElementById('selectMedioPago').value : 'Efectivo';
+            const medioPago = document.getElementById('selectMedioPago') ? document.getElementById('selectMedioPago'].value : 'Efectivo';
 
             let costoEnvio = 0;
             if (tipoEnvioVal === 'dentro') costoEnvio = 1500;
