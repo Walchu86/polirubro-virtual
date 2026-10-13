@@ -1,1 +1,4 @@
-
+{
+  "productos": [],
+  "categorias": ["Estética", "Electrónica", "Zapatería", "Accesorios"]
+}
