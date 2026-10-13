@@ -4,9 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=217">
+    <link rel="stylesheet" href="style.css?v=218">
 </head>
 <body>
+
+    <!-- POP-UP DE BIENVENIDA ANIMADO (APARECE AL ENTRAR Y SE CIERRA) -->
+    <div class="welcome-modal-overlay" id="welcomeModal">
+        <div class="welcome-modal-content">
+            <button class="welcome-close-btn" onclick="cerrarWelcomeModal()">✕</button>
+            <h3 style="color: #c2410c; font-size: 1.3rem; font-weight: 900; margin-bottom: 10px;">🎉 ¡Bienvenido a Polirubro Virtual! 🚀</h3>
+            <p style="color: #475569; font-size: 0.95rem; line-height: 1.5; margin-bottom: 5px;">
+                Aprovechá nuestros precios en Corrientes Capital y recordá que <strong>¡comprando \$20.000 o más, el envío es TOTALMENTE GRATIS!</strong> 🚚✨
+            </p>
+            <button class="btn-vamos-comprar" onclick="cerrarWelcomeModal()">¡Vamos a comprar! 🛒</button>
+        </div>
+    </div>
 
     <!-- BANNER SUPERIOR CON ANIMACIÓN MARQUESINA -->
     <div class="promo-banner">
@@ -55,14 +67,6 @@
     <div class="main-layout">
         
         <main>
-            <!-- CARTEL DE BIENVENIDA ANIMADO (APARECE AL ENTRAR) -->
-            <div class="welcome-popup-animado">
-                <h3 style="color: #c2410c; font-size: 1.2rem; font-weight: 900; margin-bottom: 6px;">🎉 ¡Bienvenido a Polirubro Virtual! 🚀</h3>
-                <p style="color: #475569; font-size: 0.92rem; line-height: 1.4; margin: 0;">
-                    Aprovechá nuestros precios en Corrientes Capital y recordá que <strong>¡comprando \$20.000 o más, el envío es TOTALMENTE GRATIS!</strong> 🚚✨
-                </p>
-            </div>
-
             <div class="search-box">
                 <input type="text" id="inputBuscador" class="search-input" placeholder="🔍 Buscar productos en el catálogo..." oninput="filtrarProductos()">
             </div>
@@ -168,6 +172,13 @@
         let categoriasDisponibles = [];
         let carrito = JSON.parse(localStorage.getItem('carrito_polirubro')) || [];
         let categoriaActiva = 'TODAS';
+
+        function cerrarWelcomeModal() {
+            const modal = document.getElementById('welcomeModal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
 
         function enfocarBuscador() {
             const input = document.getElementById('inputBuscador');
