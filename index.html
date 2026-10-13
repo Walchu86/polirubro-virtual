@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=239">
+    <link rel="stylesheet" href="style.css?v=240">
 </head>
 <body>
 
@@ -361,7 +361,7 @@
                             <div class="stock-tag">Stock disponible: ${p.stock || 0} un.</div>
                         </div>
                         <div class="card-acciones">
-                            <button class="btn-add-cart" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);" onclick="agregarAlCarrito(${p.id})">🛒 Agregar</button>
+                            <button class="btn-add-cart" onclick="agregarAlCarrito(${p.id})">🛒 Agregar</button>
                             <button class="btn-share-wsp" onclick="enviarProductoWsp(${p.id})" title="Enviar producto por WhatsApp" style="background:#22c55e; color:white; border:none; padding:8px 10px; border-radius:8px; cursor:pointer; font-size:0.85rem; font-weight:bold;">📤 Enviar</button>
                         </div>
                     </div>
@@ -607,6 +607,7 @@
             if (window.innerWidth > 768) {
                 const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(texto)}`;
                 document.getElementById('imgCodigoQR').src = qrUrl;
+                document.getElementById('linkDirectoWspPC', urlWsp);
                 document.getElementById('linkDirectoWspPC').href = urlWsp;
                 document.getElementById('qrModal').style.display = 'flex';
             } else {
