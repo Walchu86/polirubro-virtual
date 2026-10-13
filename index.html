@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=228">
+    <link rel="stylesheet" href="style.css?v=230">
 </head>
 <body>
 
     <!-- POP-UP DE BIENVENIDA ANIMADO -->
-    <div class="welcome-modal-overlay" id="welcomeModal">
+    <div class="welcome-modal-overlay" id="welcomeModal" style="display: flex;">
         <div class="welcome-modal-content">
             <button class="welcome-close-btn" onclick="cerrarWelcomeModal()">✕</button>
             <h3 style="color: #c2410c; font-size: 1.3rem; font-weight: 900; margin-bottom: 10px;">🎉 ¡Bienvenido a Polirubro Virtual! 🚀</h3>
@@ -115,14 +115,20 @@
         </div>
 
         <div class="checkout-options" style="margin-top:5px; padding:10px 0; border-top:1px solid #e2e8f0;">
-            <label style="font-size:0.80rem; font-weight:bold; color:#1e293b; display:block; margin-bottom:4px;">📍 Selección de Zona / Entrega:</label>
-            <select id="selectTipoEnvio" class="select-checkout" onchange="actualizarCarritoUI()">
-                <option value="local">🏬 Retiro en Local (Gratis)</option>
-                <option value="dentro" id="optEnvioDentro">🛵 Dentro de las 4 Avenidas (\$1.500)</option>
-                <option value="fuera" id="optEnvioFuera">🚚 Fuera de las 4 Avenidas (\$2.500)</option>
-            </select>
+            <!-- CONTENEDOR DE ZONA DINÁMICO (SE OCULTA O MUESTRA ENVÍO GRATIS SI SUPERA \$20.000) -->
+            <div id="contenedorZonaEnvio">
+                <label style="font-size:0.80rem; font-weight:bold; color:#1e293b; display:block; margin-bottom:4px;">📍 Selección de Zona / Entrega:</label>
+                <select id="selectTipoEnvio" class="select-checkout" onchange="actualizarCarritoUI()">
+                    <option value="local">🏬 Retiro en Local (Gratis)</option>
+                    <option value="dentro">🛵 Dentro de las 4 Avenidas (\$1.500)</option>
+                    <option value="fuera">🚚 Fuera de las 4 Avenidas (\$2.500)</option>
+                </select>
+            </div>
+            <div id="avisoEnvioGratisPromo" style="display:none; background: #ecfdf5; border: 1.5px solid #34d399; padding: 10px; border-radius: 8px; text-align: center; margin-top: 5px;">
+                <p style="font-size: 0.85rem; font-weight: 800; color: #065f46; margin: 0;">🎉 ¡BENEFICIO APLICADO: ENVÍO 100% GRATIS (\$0)!</p>
+            </div>
 
-            <label style="font-size:0.80rem; font-weight:bold; color:#1e293b; display:block; margin-top:8px; margin-bottom:4px;">💳 Forma de Pago:</label>
+            <label style="font-size:0.80rem; font-weight:bold; color:#1e293b; display:block; margin-top:10px; margin-bottom:4px;">💳 Forma de Pago:</label>
             <select id="selectMedioPago" class="select-checkout">
                 <option value="Efectivo al recibir/retirar">💵 Efectivo al recibir/retirar</option>
                 <option value="Pago por transferencia">🏦 Pago por transferencia</option>
@@ -168,10 +174,12 @@
         <img class="lightbox-img" id="lightboxImg" src="" alt="Ampliada">
     </div>
 
-    <a href="https://wa.me/5493794655867?text=Hola!%20Tengo%20una%20consulta%20sobre%20la%20tienda." target="_blank" class="wsp-float" title="Consultar por WhatsApp">💬</a>
+    <a href="https://wa.me/543794655867?text=Hola!%20Tengo%20una%20consulta%20sobre%20la%20tienda." target="_blank" class="wsp-float" title="Consultar por WhatsApp">💬</a>
 
     <script>
+        // AQUÍ PODÉS CAMBIAR MANUALMENTE EL NÚMERO DE TELÉFONO EN EL FUTURO:
         const NUMERO_WHATSAPP = "3794655867";
+
         let todosLosProductos = [];
         let categoriasDisponibles = [];
         let carrito = JSON.parse(localStorage.getItem('carrito_polirubro')) || [];
@@ -179,7 +187,9 @@
 
         function cerrarWelcomeModal() {
             const modal = document.getElementById('welcomeModal');
-            if (modal) modal.style.display = 'none';
+            if (modal) {
+                modal.style.display = 'none';
+            }
         }
 
         function enfocarBuscador() {
@@ -366,29 +376,27 @@
             const subtotalMonto = carrito.reduce((sum, i) => sum + (Number(i.precio) * i.cantidad), 0);
 
             const bannerCart = document.getElementById('bannerCartShipping');
-            const optDentro = document.getElementById('optEnvioDentro');
-            const optFuera = document.getElementById('optEnvioFuera');
+            const contenedorZona = document.getElementById('contenedorZonaEnvio');
+            const avisoPromo = document.getElementById('avisoEnvioGratisPromo');
 
             if (subtotalMonto >= 20000) {
                 if (bannerCart) bannerCart.innerHTML = `<p style="font-size:0.85rem; font-weight:bold; color:#22c55e;">🎉 ¡FELICITACIONES! Tenés ENVÍO GRATIS aplicado en tu pedido.</p>`;
-                if (optDentro) optDentro.innerText = "🛵 Dentro de las 4 Avenidas (¡ENVÍO GRATIS! 🎉)";
-                if (optFuera) optFuera.innerText = "🚚 Fuera de las 4 Avenidas (¡ENVÍO GRATIS! 🎉)";
+                if (contenedorZona) contenedorZona.style.display = 'none'; // Oculta el selector de zonas al aplicar la promo
+                if (avisoPromo) avisoPromo.style.display = 'block'; // Muestra el cartel que confirma el beneficio
             } else {
                 if (bannerCart) bannerCart.innerHTML = `<p style="font-size:0.85rem; font-weight:bold; color:#ea580c;">🚚 Envío GRATIS en compras desde \$20.000</p><p style="font-size:0.75rem; color:#64748b;">Elegí tu zona de envío y método de pago antes de enviar.</p>`;
-                if (optDentro) optDentro.innerText = "🛵 Dentro de las 4 Avenidas (\$1.500)";
-                if (optFuera) optFuera.innerText = "🚚 Fuera de las 4 Avenidas (\$2.500)";
+                if (contenedorZona) contenedorZona.style.display = 'block';
+                if (avisoPromo) avisoPromo.style.display = 'none';
             }
 
             const tipoEnvio = document.getElementById('selectTipoEnvio') ? document.getElementById('selectTipoEnvio').value : 'local';
             let costoEnvio = 0;
 
-            if (tipoEnvio === 'dentro') costoEnvio = 1500;
-            if (tipoEnvio === 'fuera') costoEnvio = 2500;
-
-            let envioGratisAplica = false;
-            if (subtotalMonto >= 20000 && tipoEnvio !== 'local') {
+            if (subtotalMonto >= 20000) {
                 costoEnvio = 0;
-                envioGratisAplica = true;
+            } else {
+                if (tipoEnvio === 'dentro') costoEnvio = 1500;
+                if (tipoEnvio === 'fuera') costoEnvio = 2500;
             }
 
             const totalFinal = subtotalMonto + costoEnvio;
@@ -400,10 +408,10 @@
 
             const elemEnvio = document.getElementById('cartEnvioTexto');
             if (elemEnvio) {
-                if (tipoEnvio === 'local') {
-                    elemEnvio.innerHTML = '<span style="color:#22c55e; font-weight:bold;">GRATIS (Retiro)</span>';
-                } else if (envioGratisAplica) {
+                if (subtotalMonto >= 20000) {
                     elemEnvio.innerHTML = '<span style="color:#22c55e; font-weight:bold;">¡GRATIS PROMO! 🎉 (\$0)</span>';
+                } else if (tipoEnvio === 'local') {
+                    elemEnvio.innerHTML = '<span style="color:#22c55e; font-weight:bold;">GRATIS (Retiro)</span>';
                 } else {
                     elemEnvio.innerText = '\$' + formatearPrecio(costoEnvio);
                 }
@@ -519,17 +527,19 @@
             if (carrito.length === 0) return alert("El carrito está vacío.");
             
             const subtotalMonto = carrito.reduce((sum, i) => sum + (Number(i.precio) * i.cantidad), 0);
-            const selectEnvio = document.getElementById('selectTipoEnvio');
-            const tipoEnvioVal = selectEnvio ? selectEnvio.value : 'local';
-            const textoEnvio = selectEnvio ? selectEnvio.options[selectEnvio.selectedIndex].text : 'Retiro en Local';
-            const medioPago = document.getElementById('selectMedioPago') ? document.getElementById('selectMedioPago'].value : 'Efectivo';
+            const medioPago = document.getElementById('selectMedioPago') ? document.getElementById('selectMedioPago').value : 'Efectivo';
 
             let costoEnvio = 0;
-            if (tipoEnvioVal === 'dentro') costoEnvio = 1500;
-            if (tipoEnvioVal === 'fuera') costoEnvio = 2500;
-
-            if (subtotalMonto >= 20000 && tipoEnvioVal !== 'local') {
+            let textoEnvio = "Retiro en Local (Gratis)";
+            if (subtotalMonto >= 20000) {
                 costoEnvio = 0;
+                textoEnvio = "Envío a Domicilio (¡GRATIS por superar \$20.000!)";
+            } else {
+                const selectEnvio = document.getElementById('selectTipoEnvio');
+                const tipoEnvioVal = selectEnvio ? selectEnvio.value : 'local';
+                textoEnvio = selectEnvio ? selectEnvio.options[selectEnvio.selectedIndex].text : 'Retiro en Local';
+                if (tipoEnvioVal === 'dentro') costoEnvio = 1500;
+                if (tipoEnvioVal === 'fuera') costoEnvio = 2500;
             }
 
             const totalFinal = subtotalMonto + costoEnvio;
@@ -542,14 +552,14 @@
 
             texto += `\n💵 *Subtotal:* \$${formatearPrecio(subtotalMonto)}\n`;
             texto += `🛵 *Entrega:* ${textoEnvio}\n`;
-            if (subtotalMonto >= 20000 && tipoEnvioVal !== 'local') {
+            if (subtotalMonto >= 20000) {
                 texto += `🎉 *¡ENVÍO GRATIS APLICADO por superar \$20.000!*\n`;
             }
             texto += `💳 *Medio de Pago:* ${medioPago}\n`;
             texto += `💰 *TOTAL A PAGAR:* \$${formatearPrecio(totalFinal)}\n\n`;
             texto += `📍 *Dirección de Entrega:* (Escribir tu dirección exacta aquí)`;
 
-            const urlWsp = `https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(texto)}`;
+            const urlWsp = `https://wa.me/54${NUMERO_WHATSAPP}?text=${encodeURIComponent(texto)}`;
 
             if (window.innerWidth > 768) {
                 const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(texto)}`;
