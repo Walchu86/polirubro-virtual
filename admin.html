@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Panel Administrador | Polirubro Virtual</title>
-    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="style.css?v=4">
     <style>
         body.admin-body { background-color: #0b0f19 !important; color: #f8fafc !important; font-family: system-ui, -apple-system, sans-serif !important; }
         .admin-wrapper { max-width: 1200px; margin: 0 auto; padding: 1.5rem 1rem; }
@@ -27,11 +27,11 @@
 </head>
 <body class="admin-body">
     <header style="background:#0f172a; padding:1.2rem; border-bottom:1px solid #1e293b; text-align:center;">
-        <h1 style="margin:0; font-size:1.5rem; color:#fff;">⚙️ Panel Administrador Estático</h1>
-        <p style="margin:0.3rem 0 0 0; color:#38bdf8; font-size:0.85rem;">Almacenamiento Local Inteligente (Hosting Web)</p>
+        <h1 style="margin:0; font-size:1.5rem; color:#fff;">⚙️ Panel Admin Polirubro (Auto-Sync)</h1>
+        <p style="margin:0.3rem 0 0 0; color:#38bdf8; font-size:0.85rem;">Conexión Automática con GitHub</p>
         <div style="margin-top:0.8rem; display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
             <a href="/" target="_blank" style="background:#0284c7; color:#fff; padding:0.4rem 1rem; border-radius:20px; text-decoration:none; font-weight:bold; font-size:0.8rem;">🌐 Ir a la Tienda Pública</a>
-            <button onclick="exportarBackupJSON()" style="background:#10b981; color:#fff; border:none; padding:0.4rem 1rem; border-radius:20px; font-weight:bold; font-size:0.8rem; cursor:pointer;">📥 Descargar Backup JSON</button>
+            <button onclick="configurarCredenciales()" style="background:#f59e0b; color:#fff; border:none; padding:0.4rem 1rem; border-radius:20px; font-weight:bold; font-size:0.8rem; cursor:pointer;">🔑 Configurar Token GitHub</button>
         </div>
     </header>
 
@@ -44,7 +44,7 @@
                         <label class="form-label">Nueva Sección:</label>
                         <input type="text" id="inputNuevaCat" class="form-input" placeholder="Ej: Bazar, Ferretería">
                     </div>
-                    <button type="button" onclick="guardarSeccion()" class="btn-action" style="background: #2563eb;">✨ Guardar Sección</button>
+                    <button type="button" onclick="guardarSeccion()" class="btn-action" style="background: #2563eb;">✨ Guardar y Sincronizar</button>
                     
                     <div style="margin-top: 15px;">
                         <label class="form-label" style="font-weight: bold; color: #38bdf8;">Secciones Existentes:</label>
@@ -90,7 +90,7 @@
                             <p id="pesoPreview" style="font-size:0.75rem; color:#34d399; margin-top:0.2rem; font-weight:bold;"></p>
                         </div>
                     </div>
-                    <button type="button" onclick="guardarProducto()" class="btn-action" style="background: #10b981;">💾 Guardar Producto Local</button>
+                    <button type="button" onclick="guardarProducto()" class="btn-action" style="background: #10b981;">💾 Publicar en la Web (Automático)</button>
                 </section>
             </div>
         </div>
@@ -109,7 +109,7 @@
                         </tr>
                     </thead>
                     <tbody id="tablaProductosAdmin">
-                        <tr><td colspan="5" style="text-align: center; color: #94a3b8;">Cargando productos...</td></tr>
+                        <tr><td colspan="5" style="text-align: center; color: #94a3b8;">Sincronizando con GitHub...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -118,42 +118,44 @@
 
     <script>
         let imagenFinalBase64 = "";
-        const STORAGE_KEY = "polirubro_datos_local";
+        let datosTienda = { productos: [], categorias: ["Estética", "Electrónica", "Zapatería", "Accesorios"] };
 
-        function obtenerDatosLocales() {
+        function obtenerConfig() {
+            let owner = localStorage.getItem("gh_owner") || "Walchu86";
+            let repo = localStorage.getItem("gh_repo") || "polirubrovirtual";
+            let token = localStorage.getItem("gh_token") || "";
+            return { owner, repo, token };
+        }
+
+        function configurarCredenciales() {
+            let conf = obtenerConfig();
+            let tokenInput = prompt("Pegá tu Token de GitHub (Classic Token con permiso 'repo'):", conf.token);
+            if (tokenInput !== null) {
+                localStorage.setItem("gh_token", tokenInput.trim());
+                let repoInput = prompt("Nombre de tu repositorio en GitHub (ej: polirubro-virtual):", conf.repo);
+                if (repoInput) localStorage.setItem("gh_repo", repoInput.trim());
+                let ownerInput = prompt("Tu usuario de GitHub:", conf.owner);
+                if (ownerInput) localStorage.setItem("gh_owner", ownerInput.trim());
+                alert("✅ ¡Credenciales guardadas correctamente!");
+                location.reload();
+            }
+        }
+
+        async function cargarPanelAdmin() {
             try {
-                const guardados = localStorage.getItem(STORAGE_KEY);
-                if (guardados) {
-                    return JSON.parse(guardados);
+                const res = await fetch('productos.json?v=' + Date.now());
+                if (res.ok) {
+                    datosTienda = await res.json();
                 }
             } catch (e) {
-                console.error("Error al leer localStorage:", e);
+                console.log("No se pudo cargar de la red, usando estructura base.");
             }
-            // Datos por defecto si está vacío
-            return {
-                productos: [],
-                categorias: ["Estética", "Electrónica", "Zapatería", "Accesorios"],
-                estadisticas: { totalVisitas: 0 }
-            };
+            renderizarInterfaz();
         }
 
-        function guardarDatosLocales(datos) {
-            try {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(datos));
-                return true;
-            } catch (e) {
-                console.error("Error al guardar en localStorage:", e);
-                alert("❌ Almacenamiento lleno o error al guardar la imagen. Probá con una imagen más chica.");
-                return false;
-            }
-        }
-
-        function cargarPanelAdmin() {
-            const datos = obtenerDatosLocales();
-            
-            let rawCats = datos.categorias || [];
+        function renderizarInterfaz() {
+            let rawCats = datosTienda.categorias || ["Estética", "Electrónica", "Zapatería", "Accesorios"];
             let listaNombresCats = rawCats.map(c => typeof c === 'string' ? c : (c.nombre || c.categoria || '')).filter(c => c !== '');
-            if (listaNombresCats.length === 0) listaNombresCats = ["Estética", "Electrónica", "Zapatería", "Accesorios"];
 
             const select = document.getElementById('selectCategorias');
             select.innerHTML = '<option value="">Seleccioná una sección...</option>';
@@ -172,7 +174,7 @@
 
             const tbody = document.getElementById('tablaProductosAdmin');
             tbody.innerHTML = '';
-            const prods = datos.productos || [];
+            const prods = datosTienda.productos || [];
 
             if (prods.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #94a3b8;">No hay productos cargados.</td></tr>`;
@@ -193,54 +195,91 @@
             });
         }
 
-        function guardarSeccion() {
+        async function sincronizarConGitHub() {
+            const conf = obtenerConfig();
+            if (!conf.token) {
+                alert("⚠️ Primero tenés que configurar tu Token de GitHub haciendo clic arriba en '🔑 Configurar Token GitHub'.");
+                configurarCredenciales();
+                return false;
+            }
+
+            const url = `https://api.github.com/repos/${conf.owner}/${conf.repo}/contents/productos.json`;
+            
+            try {
+                let sha = "";
+                const resGet = await fetch(url, {
+                    headers: { "Authorization": `token ${conf.token}` }
+                });
+                
+                if (resGet.ok) {
+                    const fileData = await resGet.json();
+                    sha = fileData.sha;
+                }
+
+                const jsonString = JSON.stringify(datosTienda, null, 2);
+                const contentBase64 = btoa(unescape(encodeURIComponent(jsonString)));
+
+                const bodyData = {
+                    message: "Actualización automática desde Panel Admin",
+                    content: contentBase64,
+                    sha: sha ? sha : undefined
+                };
+
+                const resPut = await fetch(url, {
+                    method: "PUT",
+                    headers: {
+                        "Authorization": `token ${conf.token}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(bodyData)
+                });
+
+                if (resPut.ok) {
+                    return true;
+                } else {
+                    const err = await resPut.json();
+                    alert("❌ Error al sincronizar con GitHub: " + (err.message || "Token inválido"));
+                    return false;
+                }
+            } catch (e) {
+                console.error(e);
+                alert("❌ Error de conexión con GitHub.");
+                return false;
+            }
+        }
+
+        async function guardarSeccion() {
             const input = document.getElementById('inputNuevaCat');
             const nombre = input.value.trim();
             if (!nombre) return alert("Escribí el nombre de la sección.");
 
-            let datos = obtenerDatosLocales();
-            let rawCats = datos.categorias || [];
-            let listaNombres = rawCats.map(c => typeof c === 'string' ? c : (c.nombre || c.categoria || ''));
-            
-            if (!listaNombres.includes(nombre)) {
-                rawCats.push({
-                    id: Date.now(),
-                    nombre: nombre,
-                    icono: "📁",
-                    color: "linear-gradient(135deg, #3b82f6, #1d4ed8)"
-                });
-                datos.categorias = rawCats;
+            let rawCats = datosTienda.categorias || [];
+            if (!rawCats.includes(nombre)) {
+                rawCats.push(nombre);
+                datosTienda.categorias = rawCats;
 
-                if (guardarDatosLocales(datos)) {
+                let exito = await sincronizarConGitHub();
+                if (exito) {
                     input.value = '';
-                    cargarPanelAdmin();
-                    alert(`✅ Sección "${nombre}" guardada.`);
+                    renderizarInterfaz();
+                    alert(`✅ Sección "${nombre}" guardada y publicada automáticamente.`);
                 }
             } else {
                 alert("Esa sección ya existe.");
             }
         }
 
-        function eliminarSeccion(nombreCat) {
+        async function eliminarSeccion(nombreCat) {
             if (confirm(`¿Seguro que querés borrar la sección "${nombreCat}"?`)) {
-                let datos = obtenerDatosLocales();
-                let rawCats = datos.categorias || [];
-                
-                datos.categorias = rawCats.filter(c => {
-                    let nom = typeof c === 'string' ? c : (c.nombre || c.categoria || '');
-                    return nom !== nombreCat;
-                });
-
-                if (guardarDatosLocales(datos)) {
-                    cargarPanelAdmin();
-                }
+                datosTienda.categorias = (datosTienda.categorias || []).filter(c => c !== nombreCat);
+                let exito = await sincronizarConGitHub();
+                if (exito) renderizarInterfaz();
             }
         }
 
         function convertirArchivoABase64(event) {
             const file = event.target.files[0];
             if (!file) return;
-
             const reader = new FileReader();
             reader.onload = function(e) {
                 imagenFinalBase64 = e.target.result;
@@ -261,7 +300,7 @@
             document.getElementById("fileInput").value = "";
         }
 
-        function guardarProducto() {
+        async function guardarProducto() {
             const nombre = document.getElementById('prodNombre').value.trim();
             const precio = document.getElementById('prodPrecio').value;
             const stock = document.getElementById('prodStock').value;
@@ -271,10 +310,9 @@
             if (!nombre || !precio || !categoria) return alert("Completá nombre, precio y sección.");
             if (!imagenFinalBase64) return alert("Por favor seleccioná una imagen.");
 
-            let datos = obtenerDatosLocales();
-            if (!datos.productos) datos.productos = [];
+            if (!datosTienda.productos) datosTienda.productos = [];
 
-            datos.productos.push({
+            datosTienda.productos.push({
                 id: Date.now(),
                 nombre,
                 precio: Number(precio),
@@ -284,8 +322,9 @@
                 imagen: imagenFinalBase64
             });
 
-            if (guardarDatosLocales(datos)) {
-                alert(`🎉 ¡Producto "${nombre}" publicado con éxito!`);
+            let exito = await sincronizarConGitHub();
+            if (exito) {
+                alert(`🎉 ¡Producto "${nombre}" publicado automáticamente en la web!`);
                 
                 document.getElementById('prodNombre').value = '';
                 document.getElementById('prodPrecio').value = '';
@@ -296,28 +335,16 @@
                 document.getElementById('previewContainer').style.display = 'none';
                 imagenFinalBase64 = '';
 
-                cargarPanelAdmin();
+                renderizarInterfaz();
             }
         }
 
-        function eliminarProducto(idProd) {
+        async function eliminarProducto(idProd) {
             if (confirm("¿Estás seguro de eliminar este producto?")) {
-                let datos = obtenerDatosLocales();
-                datos.productos = (datos.productos || []).filter(p => p.id !== idProd);
-                guardarDatosLocales(datos);
-                cargarPanelAdmin();
+                datosTienda.productos = (datosTienda.productos || []).filter(p => p.id !== idProd);
+                let exito = await sincronizarConGitHub();
+                if (exito) renderizarInterfaz();
             }
-        }
-
-        function exportarBackupJSON() {
-            const datos = obtenerDatosLocales();
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(datos, null, 2));
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", "database.json");
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
         }
 
         window.onload = cargarPanelAdmin;
