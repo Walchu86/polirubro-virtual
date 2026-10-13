@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=237">
+    <link rel="stylesheet" href="style.css?v=238">
 </head>
 <body>
 
@@ -268,7 +268,7 @@
                             </div>
                             <h3 class="titulo-producto">${p.nombre}</h3>
                             ${descHtml}
-                            <div class="precio-producto" style="color:#ef4444;">\$${formatearPrecio(precioLimpio)}</div>
+                            <div class="precio-producto" style="color:#ef4444;">$${formatearPrecio(precioLimpio)}</div>
                             <div class="stock-tag">Stock disponible: ${p.stock || 0} un.</div>
                         </div>
                         <div class="card-acciones">
@@ -357,7 +357,7 @@
                             </div>
                             <h3 class="titulo-producto">${p.nombre}</h3>
                             ${descHtml}
-                            <div class="precio-producto">\$${formatearPrecio(precioLimpio)}</div>
+                            <div class="precio-producto">$${formatearPrecio(precioLimpio)}</div>
                             <div class="stock-tag">Stock disponible: ${p.stock || 0} un.</div>
                         </div>
                         <div class="card-acciones">
@@ -405,12 +405,12 @@
                 if (contenedorZona) contenedorZona.style.display = 'none';
                 if (avisoPromo) avisoPromo.style.display = 'block';
             } else {
-                if (bannerCart) bannerCart.innerHTML = `<p style="font-size:0.85rem; font-weight:bold; color:#ea580c;">🚚 Envío GRATIS en compras desde \$20.000</p><p style="font-size:0.75rem; color:#64748b;">Elegí tu zona de envío y método de pago antes de enviar.</p>`;
+                if (bannerCart) bannerCart.innerHTML = `<p style="font-size:0.85rem; font-weight:bold; color:#ea580c;">🚚 Envío GRATIS en compras desde $20.000</p><p style="font-size:0.75rem; color:#64748b;">Elegí tu zona de envío y método de pago antes de enviar.</p>`;
                 if (contenedorZona) contenedorZona.style.display = 'block';
                 if (avisoPromo) avisoPromo.style.display = 'none';
             }
 
-            const tipoEnvio = document.getElementById('selectTipoEnvio') ? document.getElementById('selectTipoEnvio'].value : 'local';
+            const tipoEnvio = document.getElementById('selectTipoEnvio') ? document.getElementById('selectTipoEnvio').value : 'local';
             let costoEnvio = 0;
 
             if (subtotalMonto >= 20000) {
@@ -456,7 +456,7 @@
                     <div class="cart-item" style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid #f1f5f9;">
                         <div style="flex:1; padding-right:8px;">
                             <strong style="font-size:0.85rem; color:#1e293b; display:block;">${i.nombre}${detalleTxt}</strong>
-                            <div style="font-size:0.75rem; color:#ea580c;">\$${formatearPrecio(precioItem)} c/u</div>
+                            <div style="font-size:0.75rem; color:#ea580c;">$${formatearPrecio(precioItem)} c/u</div>
                         </div>
                         <div style="display:flex; align-items:center; gap:6px;">
                             <button onclick="cambiarQty(${i.id}, -1)" style="padding:2px 8px; background:#e2e8f0; border:none; border-radius:4px; font-weight:bold; cursor:pointer;">-</button>
@@ -556,7 +556,7 @@
             if (cArr.length > 0) detalles.push(`Colores: ${cArr.join(', ')}`);
             const detalleTxt = detalles.length > 0 ? `\n*${detalles.join(' | ')}*` : '';
             
-            const texto = `¡Mirá esta oferta en Polirubro Virtual! 🛍️✨\n\n*${prod.nombre}*${detalleTxt}\nPrecio: \$${formatearPrecio(prod.precio)}\n\nMiraló y pedilo acá: https://polirubrovirtual.shop`;
+            const texto = `¡Mirá esta oferta en Polirubro Virtual! 🛍️✨\n\n*${prod.nombre}*${detalleTxt}\nPrecio: $${formatearPrecio(prod.precio)}\n\nMiraló y pedilo acá: https://polirubrovirtual.shop`;
             const urlWsp = `https://wa.me/54${NUMERO_WHATSAPP}?text=${encodeURIComponent(texto)}`;
             window.open(urlWsp, '_blank');
         }
@@ -593,13 +593,13 @@
                 texto += `• ${i.cantidad}x ${i.nombre}${detalleTxt} ($${formatearPrecio(Number(i.precio) * i.cantidad)})\n`;
             });
 
-            texto += `\n💵 *Subtotal:* \$${formatearPrecio(subtotalMonto)}\n`;
+            texto += `\n💵 *Subtotal:* $${formatearPrecio(subtotalMonto)}\n`;
             texto += `🛵 *Entrega:* ${textoEnvio}\n`;
             if (subtotalMonto >= 20000) {
-                texto += `🎉 *¡ENVÍO GRATIS APLICADO por superar \$20.000!*\n`;
+                texto += `🎉 *¡ENVÍO GRATIS APLICADO por superar $20.000!*\n`;
             }
             texto += `💳 *Forma de Pago:* ${medioPago}\n`;
-            texto += `💰 *TOTAL A PAGAR:* \$${formatearPrecio(totalFinal)}\n\n`;
+            texto += `💰 *TOTAL A PAGAR:* $${formatearPrecio(totalFinal)}\n\n`;
             texto += `📍 *Dirección de Entrega:* (Escribir tu dirección exacta aquí)`;
 
             const urlWsp = `https://wa.me/54${NUMERO_WHATSAPP}?text=${encodeURIComponent(texto)}`;
