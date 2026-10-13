@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=224">
+    <link rel="stylesheet" href="style.css?v=226">
 </head>
 <body>
 
@@ -168,10 +168,10 @@
         <img class="lightbox-img" id="lightboxImg" src="" alt="Ampliada">
     </div>
 
-    <a href="https://wa.me/5493794655857?text=Hola!%20Tengo%20una%20consulta%20sobre%20la%20tienda." target="_blank" class="wsp-float" title="Consultar por WhatsApp">💬</a>
+    <a href="https://wa.me/5493794655867?text=Hola!%20Tengo%20una%20consulta%20sobre%20la%20tienda." target="_blank" class="wsp-float" title="Consultar por WhatsApp">💬</a>
 
     <script>
-        const NUMERO_WHATSAPP = "5493794655857";
+        const NUMERO_WHATSAPP = "5493794655867";
         let todosLosProductos = [];
         let categoriasDisponibles = [];
         let carrito = JSON.parse(localStorage.getItem('carrito_polirubro')) || [];
@@ -256,7 +256,7 @@
                         </div>
                         <div class="card-acciones">
                             <button class="btn-add-cart" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);" onclick="agregarAlCarrito(${p.id})">🛒 Agregar</button>
-                            <button class="btn-share-wsp" onclick="consultarProductoWsp('${p.nombre}', ${precioLimpio})" title="Consultar por WhatsApp">💬</button>
+                            <button class="btn-share-wsp" onclick="enviarProductoWsp('${p.nombre}', ${precioLimpio}, '${p.talle || ''}')" title="Enviar producto por WhatsApp" style="background:#22c55e; color:white; border:none; padding:8px 10px; border-radius:8px; cursor:pointer; font-size:0.85rem; font-weight:bold;">📤 Enviar</button>
                         </div>
                     </div>
                 `;
@@ -338,7 +338,7 @@
                         </div>
                         <div class="card-acciones">
                             <button class="btn-add-cart" onclick="agregarAlCarrito(${p.id})">🛒 Agregar</button>
-                            <button class="btn-share-wsp" onclick="consultarProductoWsp('${p.nombre}', ${precioLimpio})" title="Consultar por WhatsApp">💬</button>
+                            <button class="btn-share-wsp" onclick="enviarProductoWsp('${p.nombre}', ${precioLimpio}, '${p.talle || ''}')" title="Enviar producto por WhatsApp" style="background:#22c55e; color:white; border:none; padding:8px 10px; border-radius:8px; cursor:pointer; font-size:0.85rem; font-weight:bold;">📤 Enviar</button>
                         </div>
                     </div>
                 `;
@@ -502,9 +502,10 @@
             }
         };
 
-        function consultarProductoWsp(nombre, precio) {
-            const texto = `Hola! Me interesa el producto *${nombre}* ($${formatearPrecio(precio)}) que vi en Polirubro Virtual. ¿Hay stock?`;
-            window.open(`https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(texto)}`, '_blank');
+        function enviarProductoWsp(nombre, precio, talle) {
+            const talleTxt = talle ? ` (Talle: ${talle})` : '';
+            const texto = `¡Mirá esta oferta en Polirubro Virtual! 🛍️✨\n\n*${nombre}*${talleTxt}\nPrecio: \$${formatearPrecio(precio)}\n\nMiralo y pedilo acá: https://polirubrovirtual.shop`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`, '_blank');
         }
 
         function procesarPedidoCheckout() {
