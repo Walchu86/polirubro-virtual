@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Panel Administrador | Polirubro Virtual</title>
-    <link rel="stylesheet" href="style.css?v=4">
+    <link rel="stylesheet" href="style.css?v=5">
     <style>
         body.admin-body { background-color: #0b0f19 !important; color: #f8fafc !important; font-family: system-ui, -apple-system, sans-serif !important; }
         .admin-wrapper { max-width: 1200px; margin: 0 auto; padding: 1.5rem 1rem; }
@@ -20,6 +20,7 @@
         .lista-items { display: flex; flex-direction: column; gap: 6px; max-height: 180px; overflow-y: auto; margin-top: 10px; }
         .item-row { display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 8px 12px; border-radius: 8px; border: 1px solid #334155; font-size: 0.88rem; }
         .btn-delete { background: #ef4444; color: #fff; border: none; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: bold; }
+        .btn-edit { background: #f59e0b; color: #fff; border: none; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: bold; margin-right: 4px; }
         .tabla-productos { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85rem; }
         .tabla-productos th, .tabla-productos td { padding: 8px 10px; border-bottom: 1px solid #334155; text-align: left; }
         .tabla-productos th { color: #38bdf8; }
@@ -55,7 +56,9 @@
 
             <div>
                 <section class="admin-card">
-                    <h3>➕ Cargar Nuevo Producto</h3>
+                    <h3 id="tituloFormProducto">➕ Cargar Nuevo Producto</h3>
+                    <input type="hidden" id="editIdProd" value="">
+                    
                     <div class="form-group">
                         <label class="form-label">Nombre del Producto:</label>
                         <input type="text" id="prodNombre" class="form-input" placeholder="Ej: Protector Solar">
@@ -90,7 +93,8 @@
                             <p id="pesoPreview" style="font-size:0.75rem; color:#34d399; margin-top:0.2rem; font-weight:bold;"></p>
                         </div>
                     </div>
-                    <button type="button" onclick="guardarProducto()" class="btn-action" style="background: #10b981;">💾 Publicar en la Web (Automático)</button>
+                    <button type="button" onclick="guardarProducto()" class="btn-action" style="background: #10b981;" id="btnGuardarProd">💾 Publicar en la Web (Automático)</button>
+                    <button type="button" onclick="cancelarEdicion()" class="btn-action" style="background: #64748b; display:none;" id="btnCancelarEdicion">❌ Cancelar Edición</button>
                 </section>
             </div>
         </div>
@@ -104,12 +108,13 @@
                             <th>Nombre</th>
                             <th>Sección</th>
                             <th>Precio</th>
+                            <th>Stock</th>
                             <th>Oferta</th>
-                            <th>Acción</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody id="tablaProductosAdmin">
-                        <tr><td colspan="5" style="text-align: center; color: #94a3b8;">Sincronizando con GitHub...</td></tr>
+                        <tr><td colspan="6" style="text-align: center; color: #94a3b8;">Sincronizando con GitHub...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -177,19 +182,24 @@
             const prods = datosTienda.productos || [];
 
             if (prods.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #94a3b8;">No hay productos cargados.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #94a3b8;">No hay productos cargados.</td></tr>`;
                 return;
             }
 
             prods.forEach(p => {
                 const badgeOferta = p.enOferta ? '<span style="color:#f43f5e; font-weight:bold;">🔥 Sí</span>' : '<span style="color:#94a3b8;">No</span>';
+                const stockVal = p.stock !== undefined ? p.stock : 10;
                 tbody.innerHTML += `
                     <tr>
                         <td style="font-weight: bold; color: #fff;">${p.nombre}</td>
                         <td><span style="background: #1e293b; padding: 3px 8px; border-radius: 4px; border: 1px solid #334155; font-size: 0.78rem;">${p.categoria}</span></td>
                         <td style="color: #38bdf8; font-weight: bold;">$${Number(p.precio).toLocaleString('es-AR')}</td>
+                        <td><span style="color: #34d399; font-weight: bold;">${stockVal} un.</span></td>
                         <td>${badgeOferta}</td>
-                        <td><button class="btn-delete" onclick="eliminarProducto(${p.id})">Eliminar</button></td>
+                        <td>
+                            <button class="btn-edit" onclick="prepararEdicion(${p.id})">Editar</button>
+                            <button class="btn-delete" onclick="eliminarProducto(${p.id})">Eliminar</button>
+                        </td>
                     </tr>
                 `;
             });
@@ -300,7 +310,49 @@
             document.getElementById("fileInput").value = "";
         }
 
+        function prepararEdicion(idProd) {
+            const prod = (datosTienda.productos || []).find(p => p.id === idProd);
+            if (!prod) return;
+
+            document.getElementById('editIdProd').value = prod.id;
+            document.getElementById('prodNombre').value = prod.nombre;
+            document.getElementById('prodPrecio').value = prod.precio;
+            document.getElementById('prodStock').value = prod.stock !== undefined ? prod.stock : 10;
+            document.getElementById('selectCategorias').value = prod.categoria;
+            document.getElementById('prodOferta').checked = prod.enOferta || false;
+
+            if (prod.imagen) {
+                imagenFinalBase64 = prod.imagen;
+                document.getElementById("imgPreview").src = imagenFinalBase64;
+                document.getElementById("pesoPreview").innerText = "Imagen actual cargada";
+                document.getElementById("previewContainer").style.display = "block";
+            }
+
+            document.getElementById('tituloFormProducto').innerText = "✏️ Editar Producto";
+            document.getElementById('btnGuardarProd').innerText = "💾 Guardar Cambios";
+            document.getElementById('btnCancelarEdicion').style.display = "block";
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function cancelarEdicion() {
+            document.getElementById('editIdProd').value = '';
+            document.getElementById('prodNombre').value = '';
+            document.getElementById('prodPrecio').value = '';
+            document.getElementById('prodStock').value = '10';
+            document.getElementById('selectCategorias').value = '';
+            document.getElementById('prodOferta').checked = false;
+            document.getElementById('urlInput').value = '';
+            document.getElementById('fileInput').value = '';
+            document.getElementById('previewContainer').style.display = 'none';
+            imagenFinalBase64 = '';
+
+            document.getElementById('tituloFormProducto').innerText = "➕ Cargar Nuevo Producto";
+            document.getElementById('btnGuardarProd').innerText = "💾 Publicar en la Web (Automático)";
+            document.getElementById('btnCancelarEdicion').style.display = "none";
+        }
+
         async function guardarProducto() {
+            const editId = document.getElementById('editIdProd').value;
             const nombre = document.getElementById('prodNombre').value.trim();
             const precio = document.getElementById('prodPrecio').value;
             const stock = document.getElementById('prodStock').value;
@@ -312,29 +364,37 @@
 
             if (!datosTienda.productos) datosTienda.productos = [];
 
-            datosTienda.productos.push({
-                id: Date.now(),
-                nombre,
-                precio: Number(precio),
-                stock: Number(stock),
-                categoria,
-                enOferta,
-                imagen: imagenFinalBase64
-            });
+            if (editId) {
+                // Editando producto existente
+                let index = datosTienda.productos.findIndex(p => p.id == editId);
+                if (index !== -1) {
+                    datosTienda.productos[index] = {
+                        id: Number(editId),
+                        nombre,
+                        precio: Number(precio),
+                        stock: Number(stock),
+                        categoria,
+                        enOferta,
+                        imagen: imagenFinalBase64
+                    };
+                }
+            } else {
+                // Creando nuevo producto
+                datosTienda.productos.push({
+                    id: Date.now(),
+                    nombre,
+                    precio: Number(precio),
+                    stock: Number(stock),
+                    categoria,
+                    enOferta,
+                    imagen: imagenFinalBase64
+                });
+            }
 
             let exito = await sincronizarConGitHub();
             if (exito) {
-                alert(`🎉 ¡Producto "${nombre}" publicado automáticamente en la web!`);
-                
-                document.getElementById('prodNombre').value = '';
-                document.getElementById('prodPrecio').value = '';
-                document.getElementById('prodStock').value = '10';
-                document.getElementById('prodOferta').checked = false;
-                document.getElementById('urlInput').value = '';
-                document.getElementById('fileInput').value = '';
-                document.getElementById('previewContainer').style.display = 'none';
-                imagenFinalBase64 = '';
-
+                alert(`🎉 ¡Producto "${nombre}" actualizado y publicado automáticamente en la web!`);
+                cancelarEdicion();
                 renderizarInterfaz();
             }
         }
