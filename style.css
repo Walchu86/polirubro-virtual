@@ -235,7 +235,7 @@ html, body {
     border-bottom: 2px solid #ea580c;
 }
 
-/* POP-UP DE BIENVENIDA FLOTANTE (ANIMADO AL ENTRAR) */
+/* POP-UP DE BIENVENIDA FLOTANTE */
 .welcome-modal-overlay {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
@@ -344,13 +344,14 @@ html, body {
     letter-spacing: 0.5px;
 }
 
+/* CONTENEDOR DE IMAGEN ADAPTADO PARA FOTOS GRANDES */
 .img-frame {
     width: 100%;
     height: 190px;
     border-radius: 12px;
     overflow: hidden;
     margin-bottom: 12px;
-    background-color: #f8fafc;
+    background-color: #ffffff;
     border: 1px solid #f1f5f9;
     cursor: pointer;
     display: flex;
@@ -359,9 +360,9 @@ html, body {
 }
 
 .img-producto {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain; /* Esto adapta automáticamente cualquier foto grande o vertical sin recortarla */
     transition: transform 0.3s ease;
 }
 
