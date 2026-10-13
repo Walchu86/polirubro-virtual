@@ -104,15 +104,17 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
 .marquee-container { display: inline-block; animation: marquee 25s linear infinite; }
 @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-/* CABECERA */
-.main-header { background: #ffffff; border-bottom: 1px solid #e2e8f0; padding: 15px 10px; text-align: center; }
-.header-container { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; align-items: center; }
-.brand-text h1 { font-size: 1.6rem; color: #ea580c; font-weight: 900; }
+/* CABECERA (DISEÑO ORIGINAL ALINEADO A LA IZQUIERDA) */
+.main-header { background: #ffffff; border-bottom: 1px solid #e2e8f0; padding: 15px 15px; }
+.header-container { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; align-items: flex-start; text-align: left; }
+.logo-title { display: flex; align-items: center; text-decoration: none; }
+.brand-text h1 { font-size: 1.6rem; color: #ea580c; font-weight: 900; line-height: 1.1; }
 .brand-text h1 span { color: #1e293b; }
-.tagline { font-size: 0.8rem; color: #64748b; }
+.tagline { font-size: 0.8rem; color: #64748b; display: block; margin-top: 2px; }
 
-.header-banner-animado { background: #fff7ed; border: 1px solid #ffedd5; padding: 6px 14px; border-radius: 20px; display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: #c2410c; font-weight: bold; }
-.quick-badge-llamativo { background: #22c55e; color: white; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 0.85rem; cursor: pointer; box-shadow: 0 4px 10px rgba(34, 197, 94, 0.3); }
+.header-banner-animado { background: #fff7ed; border: 1px solid #ffedd5; padding: 8px 14px; border-radius: 14px; display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: #c2410c; font-weight: bold; width: fit-content; }
+.quick-badge-llamativo { background: #22c55e; color: white; padding: 9px 18px; border-radius: 20px; font-weight: bold; font-size: 0.85rem; cursor: pointer; box-shadow: 0 4px 10px rgba(34, 197, 94, 0.3); width: fit-content; transition: transform 0.2s; }
+.quick-badge-llamativo:hover { transform: scale(1.02); }
 
 /* NAVEGACIÓN */
 .main-nav { background: #ea580c; padding: 8px 10px; overflow-x: auto; }
