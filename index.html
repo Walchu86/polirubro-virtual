@@ -33,11 +33,13 @@
         </div>
     </nav>
 
+    <!-- Carrito Superior / Flotante con Cajita de Regalo Interactiva 🎁 -->
     <div class="floating-cart-bar" onclick="toggleCarrito()">
         <div class="floating-cart-content">
             <span>🛒 <strong id="cantCarrito">0</strong> un.</span>
             <span>Total: <strong id="totalCarritoNav">\$0</strong></span>
             <span class="ver-carrito-text">Ver Carrito ➔</span>
+            <div class="gift-box-icon" title="¡Regalo por compra!">🎁</div>
         </div>
     </div>
 
@@ -106,6 +108,23 @@
         </div>
     </div>
 
+    <!-- Modal / Cartel de Bienvenida de Envío Gratis -->
+    <div id="welcome-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeWelcomeModal()">&times;</button>
+            <div class="modal-header">
+                <h2>🎁 ¡Bienvenido a Polirubro Virtual!</h2>
+            </div>
+            <div class="modal-body">
+                <p>Aprovechá nuestra promoción exclusiva:</p>
+                <div class="promo-badge">
+                    🚚 ¡Comprando <strong>\$20.000</strong> el envío es <strong>GRATIS</strong>!
+                </div>
+            </div>
+            <button class="btn-modal-action" onclick="closeWelcomeModal()">¡Entendido, empezar a comprar!</button>
+        </div>
+    </div>
+
     <script>
         let listaProductos = [];
         let listaCategorias = [];
@@ -113,6 +132,22 @@
         let categoriaSeleccionada = 'Inicio';
         let productosMezcladosInicio = [];
         const NUMERO_WHATSAPP = "5493794655867";
+
+        // Abrir el cartel de bienvenida automáticamente al cargar la página
+        window.addEventListener('DOMContentLoaded', () => {
+            const modal = document.getElementById('welcome-modal');
+            if (modal) {
+                modal.style.display = 'flex';
+            }
+            iniciarTienda();
+        });
+
+        function closeWelcomeModal() {
+            const modal = document.getElementById('welcome-modal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
 
         async function iniciarTienda() {
             await sincronizarYActualizarNube();
@@ -324,8 +359,6 @@
             document.getElementById('linkBtnWsp').href = url;
             document.getElementById('qrModalContainer').style.display = "block";
         }
-
-        window.onload = iniciarTienda;
     </script>
 </body>
 </html>
