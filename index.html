@@ -137,13 +137,10 @@
                 if (!res.ok) throw new Error("Error al obtener datos");
                 const resJson = await res.json();
                 
-                // Extraer el objeto real según la estructura de tu Bin
                 let estructuraReal = resJson.record ? resJson.record : resJson;
 
-                // Extraer productos de forma segura
                 listaProductos = Array.isArray(estructuraReal.productos) ? estructuraReal.productos : [];
 
-                // Extraer categorías soportando tanto si son texto plano como si son objetos con .nombre
                 let rawCats = estructuraReal.categorias || ["Estética", "Electrónica", "Zapatería", "Accesorios"];
                 listaCategorias = rawCats.map(c => {
                     if (typeof c === 'string') return c;
@@ -331,7 +328,7 @@
             if (carrito.length === 0) { alert("Agregá productos al carrito."); return; }
             let msj = "👋 *Hola Polirubro Virtual, quiero confirmar este pedido:*\n\n";
             carrito.forEach(x => { msj += `• ${x.nombre} x${x.cantidad} - $${(x.precio * x.cantidad).toLocaleString('es-AR')}\n`; });
-            msj += `\n💵 *Total:* ${document.getElementById('totalCarritoModal'].innerText}`;
+            msj += `\n💵 *Total:* ${document.getElementById('totalCarritoModal').innerText}`;
             const url = `https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(msj)}`;
             
             document.getElementById('qrcode').innerHTML = "";
