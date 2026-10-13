@@ -107,10 +107,6 @@
     </div>
 
     <script>
-        const BIN_ID = "6acba057ac6210605a28056a";
-        const API_KEY = "\$2a\$10\$tg1ZdjhTaaMXJux9z9NikO/nVFhjVdV28wxjdimgawIO.VkiBMEUi";
-        const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
-
         let listaProductos = [];
         let listaCategorias = [];
         let carrito = [];
@@ -127,17 +123,9 @@
 
         async function sincronizarYActualizarNube() {
             try {
-                const res = await fetch(API_URL, {
-                    method: "GET",
-                    headers: { 
-                        "X-Master-Key": API_KEY,
-                        "X-Bin-Meta": "false"
-                    }
-                });
-                if (!res.ok) throw new Error("Error al obtener datos");
-                const resJson = await res.json();
-                
-                let estructuraReal = resJson.record ? resJson.record : resJson;
+                const res = await fetch("/api/datos");
+                if (!res.ok) throw new Error("Error al obtener datos del servidor");
+                const estructuraReal = await res.json();
 
                 listaProductos = Array.isArray(estructuraReal.productos) ? estructuraReal.productos : [];
 
@@ -148,7 +136,7 @@
                 });
 
             } catch(e) {
-                console.error("Error al conectar con la nube:", e);
+                console.error("Error al conectar con el servidor:", e);
                 listaCategorias = ["Estética", "Electrónica", "Zapatería", "Accesorios"];
             }
 
