@@ -3,123 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Polirubro Virtual | Tu Tienda Online</title>
-    <link rel="stylesheet" href="style.css?v=5">
+    <title>Polirubro Virtual | Catálogo Online</title>
+    <link rel="stylesheet" href="style.css?v=20">
 </head>
 <body>
 
-    <!-- BARRA SUPERIOR DE NAVEGACIÓN Y CARRITO -->
-    <header class="header-main">
+    <!-- BANNER SUPERIOR PROMO -->
+    <div class="promo-banner">
+        🔥 ¡ENVÍOS A DOMICILIO Y LAS MEJORES OFERTAS EN CORRIENTES! 🚚
+    </div>
+
+    <!-- CABECERA PRINCIPAL -->
+    <header class="main-header">
         <div class="header-container">
-            <div class="logo-area">
-                <h1 class="site-title">🛒 Polirubro Virtual</h1>
-                <p class="site-subtitle">Envíos a domicilio y las mejores ofertas</p>
+            <a href="#" class="logo-title" style="text-decoration:none;">
+                <div class="brand-text">
+                    <h1>POLIRUBRO <span>VIRTUAL</span></h1>
+                    <span class="tagline">Tu tienda online de confianza</span>
+                </div>
+            </a>
+            
+            <div class="header-animation-box">
+                <span class="anim-mouse">🖱️</span>
+                <div class="anim-cart-box">
+                    <span class="anim-cart">🛒</span>
+                    <span class="anim-item item-1">📦</span>
+                    <span class="anim-item item-2">🎁</span>
+                    <span class="anim-item item-3">⭐</span>
+                </div>
+                <div class="anim-text-badge">
+                    Compra fácil y <strong>rápido</strong>
+                </div>
             </div>
-            <div class="cart-summary-btn" onclick="toggleCarritoModal()">
-                <span>🛒 <strong id="cartCount">0</strong> un.</span>
-                <span class="cart-total-badge">Total: \$<strong id="cartTotalHeader">0</strong></span>
-                <button class="btn-ver-carrito">Ver Carrito ➔</button>
+
+            <div class="quick-badge">
+                ⚡ Pedidos al Instante
             </div>
         </div>
     </header>
 
-    <!-- BARRA DE BÚSQUEDA Y FILTROS POR CATEGORÍA -->
-    <nav class="filters-bar">
-        <div class="filters-container">
-            <input type="text" id="inputBuscador" placeholder="🔍 Buscar producto..." oninput="filtrarProductos()">
-            <div class="categories-scroll" id="contenedorCategorias">
-                <!-- Se generan dinámicamente desde el JSON -->
-            </div>
+    <!-- BARRA DE NAVEGACIÓN NARANJA (SECCIONES) -->
+    <nav class="main-nav">
+        <div class="nav-container-categorias" id="contenedorCategoriasNav">
+            <!-- Se generan dinámicamente desde el JSON -->
         </div>
     </nav>
 
-    <!-- CONTENEDOR PRINCIPAL DE PRODUCTOS -->
-    <main class="main-content">
-        <section class="catalog-section">
-            <h2 class="section-title">🌟 Catálogo de Productos</h2>
-            <div class="products-grid" id="gridProductos">
-                <!-- Se cargan dinámicamente -->
-            </div>
-        </section>
-    </main>
-
-    <!-- MODAL / VENTANA DEL CARRITO DE COMPRAS -->
-    <div id="modalCarrito" class="modal-overlay" style="display: none;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>🛍️ Tu Carrito de Compras</h3>
-                <button class="btn-cerrar-modal" onclick="toggleCarritoModal()">✖</button>
-            </div>
-            <div class="modal-body" id="listaCarrito">
-                <!-- Ítems del carrito -->
-            </div>
-            <div class="modal-footer">
-                <div class="total-row">
-                    <span>Total a Pagar:</span>
-                    <strong class="total-monto">\$<span id="cartTotalModal">0</span></strong>
-                </div>
-                <button class="btn-whatsapp-checkout" onclick="enviarPedidoWhatsApp()">
-                    📲 Enviar Pedido por WhatsApp
-                </button>
-            </div>
+    <!-- BARRA FLOTANTE SUPERIOR DEL CARRITO -->
+    <div class="floating-cart-bar" onclick="toggleCarrito()">
+        <div class="floating-cart-content">
+            <span>🛒 Carrito: <strong id="cartCount">0</strong> productos</span>
+            <span class="ver-carrito-text">Ver Pedido ➔</span>
+            <span>Total: \$<strong id="cartTotalHeader">0</strong></span>
         </div>
     </div>
 
+    <!-- LAYOUT PRINCIPAL -->
+    <div class="main-layout">
+        
+        <!-- COLUMNA IZQUIERDA: PRODUCTOS -->
+        <main>
+            <div class="search-box">
+                <input type="text" id="inputBuscador" class="search-input" placeholder="🔍 Buscar productos en el catálogo..." oninput="filtrarProductos()">
+            </div>
+
+            <h2 class="cat-titulo-seccion" id="tituloSeccionActiva">🌟 Todos los Productos</h2>
+
+            <div class="productos-grid" id="gridProductos">
+                <!-- Se cargan dinámicamente -->
+            </div>
+        </main>
+
+        <!-- COLUMNA DERECHA: SIDEBAR DE CATEGORÍAS (SOLO PC) -->
+        <aside class="sidebar" id="contenedorSidebarCategoriasPC">
+            <h3 class="sidebar-title">📂 Categorías</h3>
+            <div class="sidebar-menu" id="sidebarCategoriasMenu">
+                <!-- Se generan dinámicamente -->
+            </div>
+        </aside>
+
+    </div>
+
+    <!-- CARRITO / MODAL LATERAL -->
+    <div class="cart-modal" id="cartModal">
+        <div class="cart-header">
+            <h3>🛍️ Tu Carrito de Compras</h3>
+            <button class="btn-close-cart" onclick="toggleCarrito()">✕</button>
+        </div>
+        
+        <div class="cart-shipping-box">
+            <p style="font-size:0.8rem; font-weight:bold; color:#c2410c;">🚚 Información de Entrega</p>
+            <p style="font-size:0.75rem; color:#64748b;">Los pedidos se coordinan y envían directamente por WhatsApp.</p>
+        </div>
+
+        <div class="cart-items" id="listaCarritoModal">
+            <!-- Ítems del carrito -->
+        </div>
+
+        <div class="cart-footer">
+            <div style="display:flex; justify-content:space-between; margin-bottom: 10px; font-weight: bold; font-size: 1.05rem;">
+                <span>Total:</span>
+                <span style="color:#ea580c;">\$<span id="cartTotalModal">0</span></span>
+            </div>
+            <button class="btn-whatsapp" onclick="enviarPedidoWhatsApp()">
+                📲 Enviar Pedido por WhatsApp
+            </button>
+        </div>
+    </div>
+
+    <!-- VISOR LUPA / LIGHTBOX PARA IMÁGENES -->
+    <div class="lightbox-overlay" id="lightboxModal" onclick="cerrarLightbox()">
+        <span class="lightbox-close">&times;</span>
+        <img class="lightbox-img" id="lightboxImg" src="" alt="Ampliada">
+    </div>
+
     <!-- BOTÓN FLOTANTE WHATSAPP -->
-    <a href="https://wa.me/543794000000?text=Hola!%20Tengo%20una%20consulta%20sobre%20la%20tienda." target="_blank" class="btn-float-wa" title="Contacto directo">
-        💬 ¿Necesitás ayuda?
+    <a href="https://wa.me/543794000000?text=Hola!%20Tengo%20una%20consulta%20sobre%20la%20tienda." target="_blank" class="wsp-float" title="Consultar por WhatsApp">
+        💬
     </a>
 
     <!-- LÓGICA DE LA TIENDA -->
     <script>
         let todosLosProductos = [];
+        let categoriasDisponibles = [];
         let carrito = JSON.parse(localStorage.getItem('carrito_polirubro')) || [];
         let categoriaActiva = 'TODAS';
 
-        // Cargar productos exclusivamente desde el archivo productos.json
-        async function cargarProductos() {
+        async function cargarCatalogoPublico() {
             const grid = document.getElementById('gridProductos');
-            grid.innerHTML = '<p style="text-align:center; width:100%; color:#94a3b8; padding: 2rem;">Cargando catálogo actualizado...</p>';
+            grid.innerHTML = '<p style="text-align:center; width:100%; color:#64748b; padding:2rem;">Cargando catálogo...</p>';
 
             try {
                 const res = await fetch('productos.json?v=' + Date.now());
                 if (res.ok) {
                     const data = await res.json();
                     todosLosProductos = data.productos || [];
+                    categoriasDisponibles = data.categorias || ["Estética", "Electrónica", "Zapatería", "Accesorios"];
                     
-                    // Cargar botones de categorías dinámicamente
-                    const categorias = data.categorias || ["Estética", "Electrónica", "Zapatería", "Accesorios"];
-                    renderizarCategorias(categorias);
-                    
-                    // Renderizar catálogo
+                    renderizarMenuCategorias(categoriasDisponibles);
                     filtrarProductos();
                 } else {
-                    grid.innerHTML = '<p style="text-align:center; width:100%; color:#f43f5e; padding: 2rem;">No se encontraron productos disponibles.</p>';
+                    grid.innerHTML = '<p style="text-align:center; width:100%; color:#dc2626; padding:2rem;">No hay productos disponibles.</p>';
                 }
-            } catch (error) {
-                console.error("Error al cargar productos:", error);
-                grid.innerHTML = '<p style="text-align:center; width:100%; color:#f43f5e; padding: 2rem;">Error al conectar con el catálogo.</p>';
+            } catch (e) {
+                console.error(e);
+                grid.innerHTML = '<p style="text-align:center; width:100%; color:#dc2626; padding:2rem;">Error al conectar con la tienda.</p>';
             }
         }
 
-        function renderizarCategorias(cats) {
-            const contenedor = document.getElementById('contenedorCategorias');
-            let html = `<button class="btn-cat active" onclick="seleccionarCategoria('TODAS', this)">Todas</button>`;
+        function renderizarMenuCategorias(cats) {
+            const navContainer = document.getElementById('contenedorCategoriasNav');
+            let navHtml = `<ul class="nav-links"><li><a href="#" class="${categoriaActiva === 'TODAS' ? 'activa-nav' : ''}" onclick="cambiarCategoria('TODAS', event)">🔥 Todos</a></li>`;
             
+            const sidebarContainer = document.getElementById('sidebarCategoriasMenu');
+            let sidebarHtml = `<button class="btn-categoria ${categoriaActiva === 'TODAS' ? 'activa' : ''}" onclick="cambiarCategoria('TODAS', event)">🔥 Todos los Productos</button>`;
+
             cats.forEach(c => {
                 const nombreCat = typeof c === 'string' ? c : (c.nombre || c.categoria || '');
                 if (nombreCat) {
-                    html += `<button class="btn-cat" onclick="seleccionarCategoria('${nombreCat}', this)">${nombreCat}</button>`;
+                    const activaClass = categoriaActiva === nombreCat ? 'activa-nav' : '';
+                    const activaSidebar = categoriaActiva === nombreCat ? 'activa' : '';
+                    
+                    navHtml += `<li><a href="#" class="${activaClass}" onclick="cambiarCategoria('${nombreCat}', event)">${nombreCat}</a></li>`;
+                    sidebarHtml += `<button class="btn-categoria ${activaSidebar}" onclick="cambiarCategoria('${nombreCat}', event)">🔹 ${nombreCat}</button>`;
                 }
             });
 
-            contenedor.innerHTML = html;
+            navHtml += `</ul>`;
+            navContainer.innerHTML = navHtml;
+            sidebarContainer.innerHTML = sidebarHtml;
         }
 
-        function seleccionarCategoria(cat, btn) {
+        function cambiarCategoria(cat, event) {
+            if (event) event.preventDefault();
             categoriaActiva = cat;
-            document.querySelectorAll('.btn-cat').forEach(b => b.classList.remove('active'));
-            if (btn) btn.classList.add('active');
+            document.getElementById('tituloSeccionActiva').innerText = cat === 'TODAS' ? '🌟 Todos los Productos' : `📂 ${cat}`;
+            renderizarMenuCategorias(categoriasDisponibles);
             filtrarProductos();
         }
 
@@ -128,123 +187,134 @@
             const grid = document.getElementById('gridProductos');
 
             let filtrados = todosLosProductos.filter(p => {
-                const coincideCat = (categoriaActiva === 'TODAS') || (p.categoria === categoriaActiva);
-                const coincideNombre = p.nombre.toLowerCase().includes(busqueda);
-                return coincideCat && coincideNombre;
+                const matchCat = (categoriaActiva === 'TODAS') || (p.categoria === categoriaActiva);
+                const matchNombre = p.nombre.toLowerCase().includes(busqueda);
+                return matchCat && matchNombre;
             });
 
             if (filtrados.length === 0) {
-                grid.innerHTML = '<p style="text-align:center; width:100%; color:#94a3b8; padding:2rem;">No hay productos cargados en esta sección.</p>';
+                grid.innerHTML = '<p style="text-align:center; width:100%; color:#64748b; padding:2rem; grid-column: 1 / -1;">No hay productos cargados en esta sección.</p>';
                 return;
             }
 
             grid.innerHTML = filtrados.map(p => {
-                const ofertaBadge = p.enOferta ? '<span class="badge-oferta">🔥 OFERTA</span>' : '';
-                const imgUrl = p.imagen || 'https://via.placeholder.com/300x300?text=Sin+Imagen';
+                const badgeOferta = p.enOferta ? `
+                    <div class="badge-oferta-box">
+                        <span class="badge-oferta">🔥 OFERTA</span>
+                    </div>` : '';
+                
+                const imgUrl = p.imagen || 'https://via.placeholder.com/300?text=Sin+Imagen';
+
                 return `
-                    <div class="product-card">
-                        ${ofertaBadge}
-                        <div class="img-container">
-                            <img src="${imgUrl}" alt="${p.nombre}" loading="lazy">
+                    <div class="card-producto">
+                        ${badgeOferta}
+                        <div class="img-frame" onclick="abrirLightbox('${imgUrl}')">
+                            <img src="${imgUrl}" alt="${p.nombre}" class="img-producto" loading="lazy">
                         </div>
-                        <div class="product-info">
-                            <span class="product-category">${p.categoria || 'Gral'}</span>
-                            <h3 class="product-title">${p.nombre}</h3>
-                            <div class="price-row">
-                                <span class="product-price">$${Number(p.precio).toLocaleString('es-AR')}</span>
-                                <span class="product-stock">Stock: ${p.stock || 0} un.</span>
-                            </div>
-                            <button class="btn-add-cart" onclick="agregarAlCarrito(${p.id})">🛒 Agregar al Carrito</button>
+                        <div class="card-detalles">
+                            <span style="font-size:0.7rem; color:#ea580c; font-weight:bold; text-transform:uppercase;">${p.categoria}</span>
+                            <h3 class="titulo-producto">${p.nombre}</h3>
+                            <div class="precio-producto">$${Number(p.precio).toLocaleString('es-AR')}</div>
+                            <div class="stock-tag">Stock disponible: ${p.stock || 0} un.</div>
+                        </div>
+                        <div class="card-acciones">
+                            <button class="btn-add-cart" onclick="agregarAlCarrito(${p.id})">🛒 Agregar</button>
+                            <button class="btn-share-wsp" onclick="consultarProductoWsp('${p.nombre}', ${p.precio})" title="Consultar por WhatsApp">💬</button>
                         </div>
                     </div>
                 `;
             }).join('');
         }
 
-        // FUNCIONES DEL CARRITO
-        function agregarAlCarrito(idProd) {
-            const prod = todosLosProductos.find(p => p.id === idProd);
+        function agregarAlCarrito(id) {
+            const prod = todosLosProductos.find(p => p.id === id);
             if (!prod) return;
 
-            const itemExistente = carrito.find(item => item.id === idProd);
-            if (itemExistente) {
-                itemExistente.cantidad++;
+            const item = carrito.find(i => i.id === id);
+            if (item) {
+                item.cantidad++;
             } else {
                 carrito.push({ ...prod, cantidad: 1 });
             }
-
-            actualizarCarrito();
+            actualizarCarritoUI();
+            toggleCarrito();
         }
 
-        function actualizarCarrito() {
+        function actualizarCarritoUI() {
             localStorage.setItem('carrito_polirubro', JSON.stringify(carrito));
             
-            const totalItems = carrito.reduce((sum, item) => sum + item.cantidad, 0);
-            const totalMonto = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+            const totalItems = carrito.reduce((sum, i) => sum + i.cantidad, 0);
+            const totalMonto = carrito.reduce((sum, i) => sum + (i.precio * i.cantidad), 0);
 
             document.getElementById('cartCount').innerText = totalItems;
             document.getElementById('cartTotalHeader').innerText = totalMonto.toLocaleString('es-AR');
             document.getElementById('cartTotalModal').innerText = totalMonto.toLocaleString('es-AR');
 
-            renderizarListaCarrito();
-        }
-
-        function renderizarListaCarrito() {
-            const contenedor = document.getElementById('listaCarrito');
+            const contenedor = document.getElementById('listaCarritoModal');
             if (carrito.length === 0) {
-                contenedor.innerHTML = '<p style="text-align:center; color:#94a3b8; padding:1rem;">Tu carrito está vacío.</p>';
+                contenedor.innerHTML = '<p style="text-align:center; color:#64748b; padding:1rem;">Tu carrito está vacío.</p>';
                 return;
             }
 
-            contenedor.innerHTML = carrito.map(item => `
-                <div class="cart-item-row">
+            contenedor.innerHTML = carrito.map(i => `
+                <div class="cart-item">
                     <div style="flex:1;">
-                        <strong style="color:#fff;">${item.nombre}</strong>
-                        <div style="font-size:0.8rem; color:#38bdf8;">$${Number(item.precio).toLocaleString('es-AR')} c/u</div>
+                        <strong style="font-size:0.85rem; color:#1e293b;">${i.nombre}</strong>
+                        <div style="font-size:0.75rem; color:#ea580c;">$${Number(i.precio).toLocaleString('es-AR')} c/u</div>
                     </div>
-                    <div style="display:flex; align-items:center; gap:8px;">
-                        <button onclick="cambiarCantidad(${item.id}, -1)" class="btn-qty">-</button>
-                        <span style="font-weight:bold; color:#fff;">${item.cantidad}</span>
-                        <button onclick="cambiarCantidad(${item.id}, 1)" class="btn-qty">+</button>
+                    <div style="display:flex; align-items:center; gap:6px;">
+                        <button onclick="cambiarQty(${i.id}, -1)" style="padding:2px 8px; background:#e2e8f0; border:none; border-radius:4px; font-weight:bold; cursor:pointer;">-</button>
+                        <span style="font-size:0.85rem; font-weight:bold;">${i.cantidad}</span>
+                        <button onclick="cambiarQty(${i.id}, 1)" style="padding:2px 8px; background:#e2e8f0; border:none; border-radius:4px; font-weight:bold; cursor:pointer;">+</button>
                     </div>
                 </div>
             `).join('');
         }
 
-        function cambiarCantidad(id, delta) {
+        function cambiarQty(id, delta) {
             const item = carrito.find(i => i.id === id);
             if (!item) return;
-
             item.cantidad += delta;
             if (item.cantidad <= 0) {
                 carrito = carrito.filter(i => i.id !== id);
             }
-            actualizarCarrito();
+            actualizarCarritoUI();
         }
 
-        function toggleCarritoModal() {
-            const modal = document.getElementById('modalCarrito');
-            modal.style.display = modal.style.display === 'none' ? 'flex' : 'none';
+        function toggleCarrito() {
+            document.getElementById('cartModal').classList.toggle('abierto');
+        }
+
+        function consultarProductoWsp(nombre, precio) {
+            const texto = `Hola! Me interesa el producto *${nombre}* ($${Number(precio).toLocaleString('es-AR')}) que vi en Polirubro Virtual. ¿Hay stock?`;
+            window.open(`https://wa.me/543794000000?text=${encodeURIComponent(texto)}`, '_blank');
         }
 
         function enviarPedidoWhatsApp() {
             if (carrito.length === 0) return alert("El carrito está vacío.");
-
-            let texto = "🛒 *NUEVO PEDIDO DE POLIRUBRO VIRTUAL*\n\n";
+            let texto = "🛒 *NUEVO PEDIDO - POLIRUBRO VIRTUAL*\n\n";
             carrito.forEach(i => {
-                texto += `• ${i.cantidad}x ${i.nombre} - $${(i.precio * i.cantidad).toLocaleString('es-AR')}\n`;
+                texto += `• ${i.cantidad}x ${i.nombre} ($${(i.precio * i.cantidad).toLocaleString('es-AR')})\n`;
             });
-            const total = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
-            texto += `\n💰 *Total a pagar:* $${total.toLocaleString('es-AR')}\n`;
-            texto += `📍 *Ubicación de entrega:* (Indicar dirección)`;
+            const total = carrito.reduce((sum, i) => sum + (i.precio * i.cantidad), 0);
+            texto += `\n💰 *Total:* $${total.toLocaleString('es-AR')}\n`;
+            texto += `📍 *Dirección de envío:* (Escribir dirección aquí)`;
 
-            const url = `https://wa.me/543794000000?text=${encodeURIComponent(texto)}`;
-            window.open(url, '_blank');
+            window.open(`https://wa.me/543794000000?text=${encodeURIComponent(texto)}`, '_blank');
+        }
+
+        function abrirLightbox(src) {
+            document.getElementById('lightboxImg').src = src;
+            document.getElementById('lightboxModal').style.display = 'flex';
+        }
+
+        function cerrarLightbox() {
+            document.getElementById('lightboxModal').style.display = 'none';
         }
 
         window.onload = () => {
-            cargarProductos();
-            actualizarCarrito();
+            cargarCatalogoPublico();
+            actualizarCarritoUI();
         };
     </script>
 </body>
