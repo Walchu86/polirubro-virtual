@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=236">
+    <link rel="stylesheet" href="style.css?v=237">
 </head>
 <body>
 
@@ -57,9 +57,9 @@
     <!-- BARRA FLOTANTE SUPERIOR DEL CARRITO -->
     <div class="floating-cart-bar" onclick="abrirCarrito()">
         <div class="floating-cart-content">
-            <span style="font-size: 0.85rem;">🛒 <strong id="cartCount">0</strong> prod.</span>
+            <span>🛒 Carrito: <strong id="cartCount">0</strong> productos</span>
             <span class="ver-carrito-text">Ver Pedido ➔</span>
-            <span style="font-size: 0.9rem;">Total: \$<strong id="cartTotalHeader">0</strong></span>
+            <span>Total: \$<strong id="cartTotalHeader">0</strong></span>
         </div>
     </div>
 
@@ -410,7 +410,7 @@
                 if (avisoPromo) avisoPromo.style.display = 'none';
             }
 
-            const tipoEnvio = document.getElementById('selectTipoEnvio') ? document.getElementById('selectTipoEnvio').value : 'local';
+            const tipoEnvio = document.getElementById('selectTipoEnvio') ? document.getElementById('selectTipoEnvio'].value : 'local';
             let costoEnvio = 0;
 
             if (subtotalMonto >= 20000) {
@@ -565,7 +565,7 @@
             if (carrito.length === 0) return alert("El carrito está vacío.");
             
             const subtotalMonto = carrito.reduce((sum, i) => sum + (Number(i.precio) * i.cantidad), 0);
-            const medioPago = document.getElementById('selectMedioPago') ? document.getElementById('selectMedioPago'].value : 'Efectivo';
+            const medioPago = document.getElementById('selectMedioPago') ? document.getElementById('selectMedioPago').value : 'Efectivo';
 
             let costoEnvio = 0;
             let textoEnvio = "Retiro en Local (Gratis)";
