@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="https://walchu86.github.io/polirubro-virtual/style.css?v=105">
+    <link rel="stylesheet" href="style.css?v=200">
 </head>
 <body>
 
-    <!-- BANNER SUPERIOR PROMO -->
+    <!-- BANNER SUPERIOR PROMO DE ENVÍO GRATIS -->
     <div class="promo-banner">
-        🔥 ¡ENVÍOS A DOMICILIO Y LAS MEJORES OFERTAS EN CORRIENTES! 🚚
+        🔥 ¡ENVÍOS A DOMICILIO EN CORRIENTES! • <strong>¡ENVÍO GRATIS COMPRANDO \$20.000 O MÁS!</strong> 🚚💨
     </div>
 
     <!-- CABECERA PRINCIPAL -->
@@ -23,17 +23,11 @@
                 </div>
             </a>
             
-            <div class="header-animation-box">
-                <span class="anim-mouse">🖱️</span>
-                <div class="anim-cart-box">
-                    <span class="anim-cart">🛒</span>
-                    <span class="anim-item item-1">📦</span>
-                    <span class="anim-item item-2">🎁</span>
-                    <span class="anim-item item-3">⭐</span>
-                </div>
-                <div class="anim-text-badge">
-                    Compra fácil y <strong>rápido</strong>
-                </div>
+            <!-- ANIMACIÓN Y DESTACADO CENTRAL REHECHO Y FLUIDO -->
+            <div class="header-banner-animado">
+                <span class="pulse-icon">🛍️</span>
+                <span class="anim-text">Compra fácil, rápido y seguro desde tu celular</span>
+                <span class="anim-badges">📦 🎁 ⭐</span>
             </div>
 
             <div class="quick-badge">
@@ -74,7 +68,7 @@
             </div>
         </main>
 
-        <!-- COLUMNA DERECHA: SIDEBAR DE CATEGORÍAS (SOLO PC) -->
+        <!-- COLUMNA DERECHA: SIDEBAR DE CATEGORÍAS (PC) -->
         <aside class="sidebar" id="contenedorSidebarCategoriasPC">
             <h3 class="sidebar-title">📂 Categorías</h3>
             <div class="sidebar-menu" id="sidebarCategoriasMenu">
@@ -92,8 +86,8 @@
         </div>
         
         <div class="cart-shipping-box">
-            <p style="font-size:0.8rem; font-weight:bold; color:#c2410c;">🚚 Información de Entrega</p>
-            <p style="font-size:0.75rem; color:#64748b;">Los pedidos se coordinan y envían directamente por WhatsApp.</p>
+            <p style="font-size:0.85rem; font-weight:bold; color:#ea580c;">🚚 ¡ENVÍO GRATIS a partir de \$20.000!</p>
+            <p style="font-size:0.75rem; color:#64748b;">Los envíos se coordinan directamente por WhatsApp.</p>
         </div>
 
         <div class="cart-items" id="listaCarritoModal">
@@ -298,6 +292,9 @@
             });
             const total = carrito.reduce((sum, i) => sum + (i.precio * i.cantidad), 0);
             texto += `\n💰 *Total:* $${total.toLocaleString('es-AR')}\n`;
+            if (total >= 20000) {
+                texto += `🚚 *Envío:* ¡GRATIS! 🎉\n`;
+            }
             texto += `📍 *Dirección de envío:* (Escribir dirección aquí)`;
 
             window.open(`https://wa.me/543794000000?text=${encodeURIComponent(texto)}`, '_blank');
