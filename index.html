@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Todo lo que buscás, acá lo encontrás</title>
-    <link rel="stylesheet" href="style.css?v=2">
+    <link rel="stylesheet" href="style.css?v=3">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
@@ -33,7 +33,7 @@
         </div>
     </nav>
 
-    <!-- Carrito Superior / Flotante con Cajita de Regalo Interactiva 🎁 -->
+    <!-- Carrito Superior / Flotante -->
     <div class="floating-cart-bar" onclick="toggleCarrito()">
         <div class="floating-cart-content">
             <span>🛒 <strong id="cantCarrito">0</strong> un.</span>
@@ -69,6 +69,12 @@
         </aside>
     </div>
 
+    <!-- BOTÓN FLOTANTE WSP CON CARTEL DE CONTACTO -->
+    <a href="#" id="btnFlotanteWspGlobal" target="_blank" class="wsp-float" title="¿Te querés comunicar con nosotros?">
+        📲
+        <span class="wsp-tooltip">¿Te querés comunicar con nosotros?</span>
+    </a>
+
     <div id="lightboxModal" class="lightbox-overlay" onclick="cerrarLupa()">
         <span class="lightbox-close" onclick="cerrarLupa()">✕</span>
         <img class="lightbox-img" id="imgAmpliada" alt="Vista ampliada" onclick="event.stopPropagation()">
@@ -97,7 +103,7 @@
                 <span id="totalCarritoModal" style="color: #ea580c;">\$0</span>
             </div>
             <button class="btn-whatsapp" onclick="procesarPedidoYQR()" style="margin-top: 10px;">
-                📲 Confirmar Pedido y Generar QR / WhatsApp
+                📲 Confirmar Pedido / WhatsApp
             </button>
         </div>
         <div id="qrModalContainer" style="display: none; text-align: center; margin-top: 12px; padding: 12px; background: #f8fafc; border-radius: 12px; border: 2px dashed #22c55e;">
@@ -108,7 +114,7 @@
         </div>
     </div>
 
-    <!-- Modal / Cartel de Bienvenida de Envío Gratis -->
+    <!-- Modal / Cartel de Bienvenida -->
     <div id="welcome-modal" class="modal-overlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.6); z-index:9999; align-items:center; justify-content:center;">
         <div class="modal-content" style="background:#fff; padding:20px; border-radius:16px; max-width:350px; text-align:center;">
             <button class="modal-close" onclick="closeWelcomeModal()" style="float:right; border:none; background:none; font-size:1.2rem; cursor:pointer;">&times;</button>
@@ -133,11 +139,16 @@
         let productosMezcladosInicio = [];
         const NUMERO_WHATSAPP = "5493794655867";
 
-        // Abrir el cartel de bienvenida automáticamente al cargar la página
         window.addEventListener('DOMContentLoaded', () => {
             const modal = document.getElementById('welcome-modal');
             if (modal) {
                 modal.style.display = 'flex';
+            }
+            // Configurar enlace directo de WhatsApp en el botón flotante
+            const btnWspGlobal = document.getElementById('btnFlotanteWspGlobal');
+            if (btnWspGlobal) {
+                const msjConsulta = encodeURIComponent("👋 ¡Hola Polirubro Virtual! Quiero hacer una consulta.");
+                btnWspGlobal.href = `https://wa.me/${NUMERO_WHATSAPP}?text=${msjConsulta}`;
             }
             iniciarTienda();
         });
@@ -175,7 +186,6 @@
             productosMezcladosInicio = [...listaProductos].sort(() => Math.random() - 0.5);
         }
 
-        // FUNCIONES DE LUPA MEJORADAS CON HISTORIAL PARA CELULAR
         function abrirLupa(url) {
             document.getElementById('imgAmpliada').src = url;
             document.getElementById('lightboxModal').style.display = 'flex';
@@ -189,7 +199,6 @@
             }
         }
 
-        // FUNCIONES DE CARRITO MEJORADAS CON HISTORIAL
         function toggleCarrito() {
             const modal = document.getElementById('modalCarrito');
             const estaAbierto = modal.classList.toggle('abierto');
@@ -203,19 +212,23 @@
             }
         }
 
-        // Escuchar el botón de "Atrás" del celular o navegador
         window.addEventListener('popstate', (event) => {
             const lightbox = document.getElementById('lightboxModal');
-            const carrito = document.getElementById('modalCarrito');
+            const carritoModal = document.getElementById('modalCarrito');
 
             if (lightbox && lightbox.style.display === 'flex') {
                 lightbox.style.display = 'none';
             }
 
-            if (carrito && carrito.classList.contains('abierto')) {
-                carrito.classList.remove('abierto');
+            if (carritoModal && carritoModal.classList.contains('abierto')) {
+                carritoModal.classList.remove('abierto');
             }
         });
+
+        function compartirProductoWsp(nombre, precio) {
+            const msj = encodeURIComponent(`👋 ¡Mirá este producto en Polirubro Virtual!\n\n*${nombre}*\n💵 Precio: $${Number(precio).toLocaleString('es-AR')}\n\n👉 Comprá acá: https://polirubrovirtual.shop`);
+            window.open(`https://wa.me/?text=${msj}`, '_blank');
+        }
 
         function renderizarNavSecciones() {
             const nav = document.getElementById('navSeccionesHeader');
@@ -258,7 +271,10 @@
                         </div>
                         <div class="titulo-producto-oferta">${p.nombre}</div>
                         <div class="precio-producto-oferta">$${Number(p.precio).toLocaleString('es-AR')}</div>
-                        <button class="btn-add-cart" onclick="agregarAlCarrito(${p.id})" style="margin-top:6px;">🛒 AGREGAR</button>
+                        <div class="card-acciones" style="margin-top:6px; display:flex; gap:4px;">
+                            <button class="btn-add-cart" onclick="agregarAlCarrito(${p.id})">🛒 AGREGAR</button>
+                            <button class="btn-share-wsp" onclick="compartirProductoWsp('${p.nombre}', ${p.precio})" title="Compartir en WhatsApp">📲</button>
+                        </div>
                     </div>
                 `;
             });
@@ -299,7 +315,10 @@
                             <div class="titulo-producto">${p.nombre}</div>
                             <div class="precio-producto">$${Number(p.precio).toLocaleString('es-AR')}</div>
                             <div class="stock-tag">📦 Stock: <strong>${p.stock} un.</strong></div>
-                            <button class="btn-add-cart" onclick="agregarAlCarrito(${p.id})" style="margin-top:8px;">🛒 Agregar al Carrito</button>
+                            <div class="card-acciones" style="margin-top:8px; display:flex; gap:6px;">
+                                <button class="btn-add-cart" onclick="agregarAlCarrito(${p.id})">🛒 Agregar al Carrito</button>
+                                <button class="btn-share-wsp" onclick="compartirProductoWsp('${p.nombre}', ${p.precio})" title="Compartir oferta">📲</button>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -335,7 +354,39 @@
         function actualizarCarritoUI() {
             const totalCant = carrito.reduce((acc, x) => acc + x.cantidad, 0);
             const subtotal = carrito.reduce((acc, x) => acc + (x.precio * x.cantidad), 0);
-            const envio = subtotal >= 20000 ? 0 : Number(document.getElementById('selectEnvio')?.value || 0);
+
+            const selectElem = document.getElementById('selectEnvio');
+            const avisoElem = document.getElementById('avisoEnvioGratis');
+            let envio = 0;
+
+            if (subtotal >= 20000) {
+                envio = 0;
+                if (selectElem) {
+                    selectElem.innerHTML = `<option value="0">🎉 ¡Envío GRATIS aplicado (Superaste $20.000)!</option>`;
+                    selectElem.disabled = true;
+                }
+                if (avisoElem) {
+                    avisoElem.innerHTML = `<span style="color: #16a34a;">✨ ¡Felicitaciones! Tenés Envío GRATIS</span>`;
+                }
+            } else {
+                if (selectElem) {
+                    selectElem.disabled = false;
+                    const valPrevio = selectElem.value || "1500";
+                    selectElem.innerHTML = `
+                        <option value="0" ${valPrevio === "0" ? 'selected' : ''}>🏪 Retiro en Local (GRATIS)</option>
+                        <option value="1500" ${valPrevio === "1500" ? 'selected' : ''}>🛵 Dentro de las 4 Avenidas ($1.500)</option>
+                        <option value="2500" ${valPrevio === "2500" ? 'selected' : ''}>🚚 Fuera de las 4 Avenidas ($2.500)</option>
+                    `;
+                }
+                envio = Number(document.getElementById('selectEnvio')?.value || 0);
+                const resta = 20000 - subtotal;
+                if (avisoElem && subtotal > 0) {
+                    avisoElem.innerHTML = `<span style="color: #c2410c;">💡 Agregá $${resta.toLocaleString('es-AR')} más para envío GRATIS</span>`;
+                } else if (avisoElem) {
+                    avisoElem.innerHTML = '';
+                }
+            }
+
             const total = subtotal + envio;
 
             document.getElementById('cantCarrito').innerText = totalCant;
@@ -371,13 +422,21 @@
             if (carrito.length === 0) { alert("Agregá productos al carrito."); return; }
             let msj = "👋 *Hola Polirubro Virtual, quiero confirmar este pedido:*\n\n";
             carrito.forEach(x => { msj += `• ${x.nombre} x${x.cantidad} - $${(x.precio * x.cantidad).toLocaleString('es-AR')}\n`; });
-            msj += `\n💵 *Total:* ${document.getElementById('totalCarritoModal').innerText}`;
+            msj += `\n💵 *Total Final:* ${document.getElementById('totalCarritoModal').innerText}`;
+            
             const url = `https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(msj)}`;
             
-            document.getElementById('qrcode').innerHTML = "";
-            new QRCode(document.getElementById('qrcode'), { text: url, width: 130, height: 130 });
-            document.getElementById('linkBtnWsp').href = url;
-            document.getElementById('qrModalContainer').style.display = "block";
+            // Si el cliente está en el celular, abre directamente la app de WhatsApp
+            const esMobi = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+            if (esMobi) {
+                window.location.href = url;
+            } else {
+                // Si está en la PC, genera el código QR en pantalla
+                document.getElementById('qrcode').innerHTML = "";
+                new QRCode(document.getElementById('qrcode'), { text: url, width: 130, height: 130 });
+                document.getElementById('linkBtnWsp').href = url;
+                document.getElementById('qrModalContainer').style.display = "block";
+            }
         }
     </script>
 </body>
