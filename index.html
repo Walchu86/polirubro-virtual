@@ -154,7 +154,6 @@
         }
 
         function sincronizarYActualizarNube() {
-            // Datos estáticos integrados para GitHub Pages (sin depender de /api/datos)
             listaCategorias = ["Estética", "Electrónica", "Zapatería", "Accesorios"];
             
             listaProductos = [
@@ -176,14 +175,47 @@
             productosMezcladosInicio = [...listaProductos].sort(() => Math.random() - 0.5);
         }
 
+        // FUNCIONES DE LUPA MEJORADAS CON HISTORIAL PARA CELULAR
         function abrirLupa(url) {
             document.getElementById('imgAmpliada').src = url;
             document.getElementById('lightboxModal').style.display = 'flex';
+            history.pushState({ modalAbierto: 'lupa' }, '', '#lupa');
         }
 
         function cerrarLupa() {
             document.getElementById('lightboxModal').style.display = 'none';
+            if (window.location.hash === '#lupa') {
+                history.back();
+            }
         }
+
+        // FUNCIONES DE CARRITO MEJORADAS CON HISTORIAL
+        function toggleCarrito() {
+            const modal = document.getElementById('modalCarrito');
+            const estaAbierto = modal.classList.toggle('abierto');
+            
+            if (estaAbierto) {
+                history.pushState({ modalAbierto: 'carrito' }, '', '#carrito');
+            } else {
+                if (window.location.hash === '#carrito') {
+                    history.back();
+                }
+            }
+        }
+
+        // Escuchar el botón de "Atrás" del celular o navegador
+        window.addEventListener('popstate', (event) => {
+            const lightbox = document.getElementById('lightboxModal');
+            const carrito = document.getElementById('modalCarrito');
+
+            if (lightbox && lightbox.style.display === 'flex') {
+                lightbox.style.display = 'none';
+            }
+
+            if (carrito && carrito.classList.contains('abierto')) {
+                carrito.classList.remove('abierto');
+            }
+        });
 
         function renderizarNavSecciones() {
             const nav = document.getElementById('navSeccionesHeader');
@@ -334,8 +366,6 @@
                 `;
             });
         }
-
-        function toggleCarrito() { document.getElementById('modalCarrito').classList.toggle('abierto'); }
 
         function procesarPedidoYQR() {
             if (carrito.length === 0) { alert("Agregá productos al carrito."); return; }
