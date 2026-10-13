@@ -28,7 +28,7 @@
 <body class="admin-body">
     <header style="background:#0f172a; padding:1.2rem; border-bottom:1px solid #1e293b; text-align:center;">
         <h1 style="margin:0; font-size:1.5rem; color:#fff;">⚙️ Panel Administrador Cloud</h1>
-        <p style="margin:0.3rem 0 0 0; color:#38bdf8; font-size:0.85rem;">Sincronizado vía JSONBin (Corregido y Optimizado)</p>
+        <p style="margin:0.3rem 0 0 0; color:#38bdf8; font-size:0.85rem;">Sincronizado vía JSONBin</p>
         <div style="margin-top:0.8rem;">
             <a href="/" target="_blank" style="background:#0284c7; color:#fff; padding:0.4rem 1rem; border-radius:20px; text-decoration:none; font-weight:bold; font-size:0.8rem;">🌐 Ir a la Tienda Pública</a>
         </div>
@@ -122,7 +122,6 @@
 
         let imagenFinalOptimizada = "";
 
-        // LECTURA CORRECTA DE JSONBIN
         async function obtenerDatosServidor() {
             try {
                 const res = await fetch(API_URL, {
@@ -135,10 +134,8 @@
                 if (!res.ok) throw new Error("Error al conectar");
                 const resJson = await res.json();
                 
-                // Desenvolver si viene en resJson.record o directo
                 let datos = resJson.record ? resJson.record : resJson;
                 
-                // Normalizar categorías limpiando cualquier [object Object] viejo
                 let cats = Array.isArray(datos.categorias) ? datos.categorias : ["General", "Bazar", "Electrónica"];
                 cats = cats.map(c => (typeof c === 'string' ? c : (c.nombre || c.categoria || 'Sección'))).filter(c => typeof c === 'string');
 
@@ -162,10 +159,16 @@
                     },
                     body: JSON.stringify(datos)
                 });
-                if (!res.ok) throw new Error("Error al guardar");
+                if (!res.ok) {
+                    const errorTxt = await res.text();
+                    console.error("Error de servidor JSONBin:", errorTxt);
+                    alert("❌ JSONBin rechazó los datos. Verificá la consola.");
+                    return false;
+                }
                 return true;
             } catch (e) {
-                alert("❌ Error al guardar en la nube. Verificá tu conexión.");
+                console.error("Excepción al guardar:", e);
+                alert("❌ Error de red al guardar en la nube.");
                 return false;
             }
         }
@@ -259,14 +262,13 @@
             procesarYReducirImagen(url);
         }
 
-        // REDUCCIÓN EQUILIBRADA (400px, Calidad 0.6) - Mantiene nitidez y pesa ~30KB
         function procesarYReducirImagen(srcOriginal) {
             const img = new Image();
             img.crossOrigin = "anonymous";
             img.src = srcOriginal;
             img.onload = function() {
                 const canvas = document.createElement("canvas");
-                const MAX_SIZE = 400; // Resolución nítida para celulares
+                const MAX_SIZE = 400; 
                 let width = img.width, height = img.height;
                 if (width > height) {
                     if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; }
@@ -278,7 +280,6 @@
                 const ctx = canvas.getContext("2d");
                 ctx.drawImage(img, 0, 0, width, height);
                 
-                // Calidad 0.6 JPEG
                 imagenFinalOptimizada = canvas.toDataURL("image/jpeg", 0.6);
                 const tamanoKB = Math.round(imagenFinalOptimizada.length / 1024);
 
@@ -291,7 +292,6 @@
                 }
             };
             img.onerror = function() {
-                // Si la URL falla por seguridad, usar directamente
                 imagenFinalOptimizada = srcOriginal;
                 document.getElementById("imgPreview").src = srcOriginal;
                 document.getElementById("pesoPreview").innerText = "URL directa";
