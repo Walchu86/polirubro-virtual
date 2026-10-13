@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=248">
+    <link rel="stylesheet" href="style.css?v=250">
 </head>
 <body>
 
@@ -30,6 +30,7 @@
     <!-- CABECERA PRINCIPAL -->
     <header class="main-header">
         <div class="header-container">
+            <!-- Columna Izquierda: Logo y Botón de búsqueda -->
             <div class="header-left-col">
                 <a href="#" class="logo-title" style="text-decoration:none;">
                     <div class="brand-text">
@@ -49,20 +50,36 @@
                 </div>
             </div>
 
-            <!-- WIDGET DERECHO EXCLUSIVO PARA PC (SUGERENCIA 1 Y 3 COMBINADAS) -->
-            <div class="pc-desktop-widget">
-                <div class="pc-widget-title">
-                    <span>🕒 Tienda Activa 24/7</span>
-                    <div class="pc-animation-area">
-                        <span class="anim-cart-container">🛒</span>
-                        <span class="anim-mouse">🖱️</span>
+            <!-- Carrusel Central con Productos e Imagenes (EXCLUSIVO PARA PC) -->
+            <div class="pc-carousel-container">
+                <div class="pc-carousel-track" id="carouselTrack">
+                    <div class="pc-carousel-slide active">
+                        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&auto=format&fit=crop&q=60" alt="Electrónica">
+                        <div class="pc-carousel-caption">⚡ Auriculares y Electrónica</div>
+                    </div>
+                    <div class="pc-carousel-slide">
+                        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&auto=format&fit=crop&q=60" alt="Zapatillas">
+                        <div class="pc-carousel-caption">👟 Zapatillas y Moda</div>
+                    </div>
+                    <div class="pc-carousel-slide">
+                        <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=500&auto=format&fit=crop&q=60" alt="Estética">
+                        <div class="pc-carousel-caption">✨ Productos Capilares y Belleza</div>
+                    </div>
+                    <div class="pc-carousel-slide">
+                        <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500&auto=format&fit=crop&q=60" alt="Tienda">
+                        <div class="pc-carousel-caption">🛍️ Polirubro Virtual a un clic de la compra</div>
                     </div>
                 </div>
+            </div>
+
+            <!-- Widget Derecho (EXCLUSIVO PARA PC) -->
+            <div class="pc-desktop-widget">
+                <div class="pc-widget-title">🕒 Tienda Activa 24/7</div>
                 <div class="pc-widget-text">
-                    Atención directa y pedidos activos desde casa. Envíos en <strong>Corrientes Capital</strong>. 📲 Consultas: <strong>3794655867</strong>
+                    Pedidos desde casa en <strong>Corrientes Capital</strong>. 📲 <strong>3794655867</strong>
                 </div>
                 <div class="pc-widget-badges">
-                    <span class="pc-badge-item">🔒 Compra 100% Segura</span>
+                    <span class="pc-badge-item">🔒 100% Segura</span>
                     <span class="pc-badge-item">💵 Efectivo / Transf.</span>
                     <span class="pc-badge-item">🚚 Envío Gratis ≥ \$20k</span>
                 </div>
@@ -205,6 +222,18 @@
         let carrito = JSON.parse(localStorage.getItem('carrito_polirubro')) || [];
         let categoriaActiva = 'TODAS';
         let yaAlcanzoEnvioGratis = false;
+
+        // Carrusel automático para la PC
+        let currentSlide = 0;
+        function iniciarCarruselPC() {
+            const slides = document.querySelectorAll('.pc-carousel-slide');
+            if (slides.length === 0) return;
+            setInterval(() => {
+                slides[currentSlide].classList.remove('active');
+                currentSlide = (currentSlide + 1) % slides.length;
+                slides[currentSlide].classList.add('active');
+            }, 3500);
+        }
 
         function cerrarWelcomeModal() {
             const modal = document.getElementById('welcomeModal');
@@ -638,6 +667,7 @@
         window.onload = () => {
             cargarCatalogoPublico();
             actualizarCarritoUI();
+            iniciarCarruselPC();
         };
     </script>
 </body>
