@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=230">
+    <link rel="stylesheet" href="style.css?v=231">
 </head>
 <body>
 
@@ -115,7 +115,6 @@
         </div>
 
         <div class="checkout-options" style="margin-top:5px; padding:10px 0; border-top:1px solid #e2e8f0;">
-            <!-- CONTENEDOR DE ZONA DINÁMICO (SE OCULTA O MUESTRA ENVÍO GRATIS SI SUPERA \$20.000) -->
             <div id="contenedorZonaEnvio">
                 <label style="font-size:0.80rem; font-weight:bold; color:#1e293b; display:block; margin-bottom:4px;">📍 Selección de Zona / Entrega:</label>
                 <select id="selectTipoEnvio" class="select-checkout" onchange="actualizarCarritoUI()">
@@ -177,7 +176,6 @@
     <a href="https://wa.me/543794655867?text=Hola!%20Tengo%20una%20consulta%20sobre%20la%20tienda." target="_blank" class="wsp-float" title="Consultar por WhatsApp">💬</a>
 
     <script>
-        // AQUÍ PODÉS CAMBIAR MANUALMENTE EL NÚMERO DE TELÉFONO EN EL FUTURO:
         const NUMERO_WHATSAPP = "3794655867";
 
         let todosLosProductos = [];
@@ -381,8 +379,8 @@
 
             if (subtotalMonto >= 20000) {
                 if (bannerCart) bannerCart.innerHTML = `<p style="font-size:0.85rem; font-weight:bold; color:#22c55e;">🎉 ¡FELICITACIONES! Tenés ENVÍO GRATIS aplicado en tu pedido.</p>`;
-                if (contenedorZona) contenedorZona.style.display = 'none'; // Oculta el selector de zonas al aplicar la promo
-                if (avisoPromo) avisoPromo.style.display = 'block'; // Muestra el cartel que confirma el beneficio
+                if (contenedorZona) contenedorZona.style.display = 'none';
+                if (avisoPromo) avisoPromo.style.display = 'block';
             } else {
                 if (bannerCart) bannerCart.innerHTML = `<p style="font-size:0.85rem; font-weight:bold; color:#ea580c;">🚚 Envío GRATIS en compras desde \$20.000</p><p style="font-size:0.75rem; color:#64748b;">Elegí tu zona de envío y método de pago antes de enviar.</p>`;
                 if (contenedorZona) contenedorZona.style.display = 'block';
@@ -520,7 +518,7 @@
         function enviarProductoWsp(nombre, precio, talle) {
             const talleTxt = talle ? ` (Talle: ${talle})` : '';
             const texto = `¡Mirá esta oferta en Polirubro Virtual! 🛍️✨\n\n*${nombre}*${talleTxt}\nPrecio: \$${formatearPrecio(precio)}\n\nMiralo y pedilo acá: https://polirubrovirtual.shop`;
-            window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`, '_blank');
+            window.open(`https://wa.me/54${NUMERO_WHATSAPP}?text=${encodeURIComponent(texto)}`, '_blank');
         }
 
         function procesarPedidoCheckout() {
