@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Panel Administrador | Polirubro Virtual</title>
-    <link rel="stylesheet" href="style.css?v=224">
+    <link rel="stylesheet" href="style.css?v=232">
     <style>
         body.admin-body { background-color: #0b0f19 !important; color: #f8fafc !important; font-family: system-ui, -apple-system, sans-serif !important; }
         .admin-wrapper { max-width: 1200px; margin: 0 auto; padding: 1.5rem 1rem; }
@@ -64,7 +64,6 @@
                         <input type="text" id="prodNombre" class="form-input" placeholder="Ej: Remera Algodón / Zapatillas">
                     </div>
 
-                    <!-- DESCRIPCIÓN BREVE -->
                     <div class="form-group">
                         <label class="form-label">📝 Descripción Breve (Opcional):</label>
                         <textarea id="prodDescripcion" class="form-input" rows="2" placeholder="Ej: 100% algodón, excelente calidad..."></textarea>
@@ -87,7 +86,7 @@
                         </select>
                     </div>
 
-                    <!-- SELECTOR DE TALLES UNIVERSALES ARGENTINA -->
+                    <!-- SELECTOR DE TALLES -->
                     <div class="form-group">
                         <label class="form-label">👕 Talles Disponibles (Opcional):</label>
                         <select id="prodTalle" class="form-input">
@@ -123,6 +122,21 @@
                         </select>
                     </div>
 
+                    <!-- NUEVO: SELECTOR DE COLORES PRIMARIOS -->
+                    <div class="form-group">
+                        <label class="form-label">🎨 Color (Opcional):</label>
+                        <select id="prodColor" class="form-input">
+                            <option value="">Sin color específico</option>
+                            <option value="Blanco">⚪ Blanco</option>
+                            <option value="Negro">⚫ Negro</option>
+                            <option value="Rojo">🔴 Rojo</option>
+                            <option value="Azul">🔵 Azul</option>
+                            <option value="Amarillo">🟡 Amarillo</option>
+                            <option value="Gris">🔘 Gris</option>
+                            <option value="Verde">🟢 Verde</option>
+                        </select>
+                    </div>
+
                     <div class="form-group" style="display:flex; align-items:center; gap:0.5rem; background:#1e293b; padding:0.6rem; border-radius:8px; border:1px solid #334155;">
                         <input type="checkbox" id="prodOferta" style="width:18px; height:18px; cursor:pointer;">
                         <label for="prodOferta" style="font-size:0.85rem; color:#f43f5e; font-weight:bold; cursor:pointer;">🔥 Oferta Especial (48hs)</label>
@@ -130,7 +144,7 @@
                     <div class="form-group">
                         <label class="form-label">🖼️ Imagen (Archivo PC/Celular o URL):</label>
                         <input type="file" id="fileInput" accept="image/*" onchange="convertirArchivoABase64(event)" style="margin-bottom:0.4rem; color: #cbd5e1; font-size: 0.85rem;">
-                        <input type="url" id="urlInput" class="form-input" placeholder="O pegá una URL web aquí..." oninput="procesarImagenURL(this.value)">
+                        <input type="url" id="urlInput" class="form-input" placeholder="O pegá una URL web hier..." oninput="procesarImagenURL(this.value)">
                         <div id="previewContainer" style="display:none; margin-top:0.5rem; text-align:center; background:#070a12; padding:8px; border-radius:8px; border:1px dashed #38bdf8;">
                             <p style="font-size: 0.75rem; color: #38bdf8; margin-bottom: 4px;">Vista Previa:</p>
                             <img id="imgPreview" src="" alt="Preview" style="max-width:110px; max-height:110px; border-radius:6px; object-fit:contain;">
@@ -151,7 +165,7 @@
                         <tr>
                             <th>Nombre</th>
                             <th>Sección</th>
-                            <th>Talle</th>
+                            <th>Talle / Color</th>
                             <th>Precio</th>
                             <th>Stock</th>
                             <th>Oferta</th>
@@ -234,13 +248,16 @@
             prods.forEach(p => {
                 const badgeOferta = p.enOferta ? '<span style="color:#f43f5e; font-weight:bold;">🔥 Sí</span>' : '<span style="color:#94a3b8;">No</span>';
                 const stockVal = p.stock !== undefined ? p.stock : 10;
-                const talleVal = p.talle ? `<span style="background:#334155; padding:2px 6px; border-radius:4px; font-size:0.75rem;">${p.talle}</span>` : '<span style="color:#64748b;">-</span>';
+                let talleColorTxt = [];
+                if (p.talle) talleColorTxt.push(`T: ${p.talle}`);
+                if (p.color) talleColorTxt.push(`C: ${p.color}`);
+                const talleColorVal = talleColorTxt.length > 0 ? `<span style="background:#334155; padding:2px 6px; border-radius:4px; font-size:0.75rem;">${talleColorTxt.join(' / ')}</span>` : '<span style="color:#64748b;">-</span>';
                 const precioLimpinho = Number(p.precio || 0).toLocaleString('es-AR');
                 tbody.innerHTML += `
                     <tr>
                         <td style="font-weight: bold; color: #fff;">${p.nombre}</td>
                         <td><span style="background: #1e293b; padding: 3px 8px; border-radius: 4px; border: 1px solid #334155; font-size: 0.78rem;">${p.categoria}</span></td>
-                        <td>${talleVal}</td>
+                        <td>${talleColorVal}</td>
                         <td style="color: #38bdf8; font-weight: bold;">$${precioLimpinho}</td>
                         <td><span style="color: #34d399; font-weight: bold;">${stockVal} un.</span></td>
                         <td>${badgeOferta}</td>
@@ -369,6 +386,7 @@
             document.getElementById('prodStock').value = prod.stock !== undefined ? prod.stock : 10;
             document.getElementById('selectCategorias').value = prod.categoria;
             document.getElementById('prodTalle').value = prod.talle || "";
+            document.getElementById('prodColor').value = prod.color || "";
             document.getElementById('prodOferta').checked = prod.enOferta || false;
 
             if (prod.imagen) {
@@ -392,6 +410,7 @@
             document.getElementById('prodStock').value = '10';
             document.getElementById('selectCategorias').value = '';
             document.getElementById('prodTalle').value = '';
+            document.getElementById('prodColor').value = '';
             document.getElementById('prodOferta').checked = false;
             document.getElementById('urlInput').value = '';
             document.getElementById('fileInput').value = '';
@@ -411,6 +430,7 @@
             const stockRaw = document.getElementById('prodStock').value;
             const categoria = document.getElementById('selectCategorias').value;
             const talle = document.getElementById('prodTalle').value;
+            const color = document.getElementById('prodColor').value;
             const enOferta = document.getElementById('prodOferta').checked;
 
             if (!nombre || !precioRaw || !categoria) return alert("Completá nombre, precio y sección.");
@@ -432,6 +452,7 @@
                         stock,
                         categoria,
                         talle,
+                        color,
                         enOferta,
                         imagen: imagenFinalBase64
                     };
@@ -445,6 +466,7 @@
                     stock,
                     categoria,
                     talle,
+                    color,
                     enOferta,
                     imagen: imagenFinalBase64
                 });
