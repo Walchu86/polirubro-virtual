@@ -1,18 +1,5 @@
 {
-  "productos": [
-    {
-      "id": 1791919660024,
-      "nombre": "remera",
-      "descripcion": "renera muy bena calidad",
-      "precio": 15000,
-      "stock": 10,
-      "categoria": "Zapatería",
-      "talle": "M",
-      "color": "Blanco",
-      "enOferta": false,
-      "imagen": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSN0XxtYMgIBz2C4VRUPkUt6X73GM3XNEQewiVyBBps7A2A1jzK8xD8As&s=10"
-    }
-  ],
+  "productos": [],
   "categorias": [
     "Estética",
     "Electrónica",
