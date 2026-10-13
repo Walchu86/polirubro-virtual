@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=232">
+    <link rel="stylesheet" href="style.css?v=233">
 </head>
 <body>
 
@@ -242,9 +242,12 @@
                 const imgUrl = p.imagen || 'https://via.placeholder.com/300?text=Sin+Imagen';
                 const precioLimpio = Number(p.precio || 0);
                 
+                const talleArr = p.talles || (p.talle ? [p.talle] : []);
+                const colorArr = p.colores || (p.color ? [p.color] : []);
+
                 let badgesHtml = '';
-                if (p.talle) badgesHtml += `<span style="background:#f1f5f9; color:#475569; padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:bold; border:1px solid #cbd5e1; margin-left:4px;">T: ${p.talle}</span>`;
-                if (p.color) badgesHtml += `<span style="background:#f1f5f9; color:#475569; padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:bold; border:1px solid #cbd5e1; margin-left:4px;">C: ${p.color}</span>`;
+                if (talleArr.length > 0) badgesHtml += `<span style="background:#f1f5f9; color:#475569; padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:bold; border:1px solid #cbd5e1; margin-left:4px;">T: ${talleArr.join(', ')}</span>`;
+                if (colorArr.length > 0) badgesHtml += `<span style="background:#f1f5f9; color:#475569; padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:bold; border:1px solid #cbd5e1; margin-left:4px;">C: ${colorArr.join(', ')}</span>`;
                 
                 const descHtml = p.descripcion ? `<p style="font-size:0.8rem; color:#64748b; margin:4px 0 8px 0; line-height:1.2;">${p.descripcion}</p>` : '';
 
@@ -268,7 +271,7 @@
                         </div>
                         <div class="card-acciones">
                             <button class="btn-add-cart" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);" onclick="agregarAlCarrito(${p.id})">🛒 Agregar</button>
-                            <button class="btn-share-wsp" onclick="enviarProductoWsp('${p.nombre}', ${precioLimpio}, '${p.talle || ''}', '${p.color || ''}')" title="Enviar producto por WhatsApp" style="background:#22c55e; color:white; border:none; padding:8px 10px; border-radius:8px; cursor:pointer; font-size:0.85rem; font-weight:bold;">📤 Enviar</button>
+                            <button class="btn-share-wsp" onclick="enviarProductoWsp(${p.id})" title="Enviar producto por WhatsApp" style="background:#22c55e; color:white; border:none; padding:8px 10px; border-radius:8px; cursor:pointer; font-size:0.85rem; font-weight:bold;">📤 Enviar</button>
                         </div>
                     </div>
                 `;
@@ -330,9 +333,12 @@
                 const imgUrl = p.imagen || 'https://via.placeholder.com/300?text=Sin+Imagen';
                 const precioLimpio = Number(p.precio || 0);
                 
+                const talleArr = p.talles || (p.talle ? [p.talle] : []);
+                const colorArr = p.colores || (p.color ? [p.color] : []);
+
                 let badgesHtml = '';
-                if (p.talle) badgesHtml += `<span style="background:#f1f5f9; color:#475569; padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:bold; border:1px solid #cbd5e1; margin-left:4px;">T: ${p.talle}</span>`;
-                if (p.color) badgesHtml += `<span style="background:#f1f5f9; color:#475569; padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:bold; border:1px solid #cbd5e1; margin-left:4px;">C: ${p.color}</span>`;
+                if (talleArr.length > 0) badgesHtml += `<span style="background:#f1f5f9; color:#475569; padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:bold; border:1px solid #cbd5e1; margin-left:4px;">T: ${talleArr.join(', ')}</span>`;
+                if (colorArr.length > 0) badgesHtml += `<span style="background:#f1f5f9; color:#475569; padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:bold; border:1px solid #cbd5e1; margin-left:4px;">C: ${colorArr.join(', ')}</span>`;
                 
                 const descHtml = p.descripcion ? `<p style="font-size:0.8rem; color:#64748b; margin:4px 0 8px 0; line-height:1.2;">${p.descripcion}</p>` : '';
 
@@ -354,7 +360,7 @@
                         </div>
                         <div class="card-acciones">
                             <button class="btn-add-cart" onclick="agregarAlCarrito(${p.id})">🛒 Agregar</button>
-                            <button class="btn-share-wsp" onclick="enviarProductoWsp('${p.nombre}', ${precioLimpio}, '${p.talle || ''}', '${p.color || ''}')" title="Enviar producto por WhatsApp" style="background:#22c55e; color:white; border:none; padding:8px 10px; border-radius:8px; cursor:pointer; font-size:0.85rem; font-weight:bold;">📤 Enviar</button>
+                            <button class="btn-share-wsp" onclick="enviarProductoWsp(${p.id})" title="Enviar producto por WhatsApp" style="background:#22c55e; color:white; border:none; padding:8px 10px; border-radius:8px; cursor:pointer; font-size:0.85rem; font-weight:bold;">📤 Enviar</button>
                         </div>
                     </div>
                 `;
@@ -431,10 +437,12 @@
 
             contenedor.innerHTML = carrito.map(i => {
                 const precioItem = Number(i.precio || 0);
+                const tArr = i.talles || (i.talle ? [i.talle] : []);
+                const cArr = i.colores || (i.color ? [i.color] : []);
                 let detallesExtra = [];
-                if (i.talle) detallesExtra.push(`T: ${i.talle}`);
-                if (i.color) detallesExtra.push(`C: ${i.color}`);
-                const detalleTxt = detallesExtra.length > 0 ? ` (${detallesExtra.join(', ')})` : '';
+                if (tArr.length > 0) detallesExtra.push(`T: ${tArr.join(', ')}`);
+                if (cArr.length > 0) detallesExtra.push(`C: ${cArr.join(', ')}`);
+                const detalleTxt = detallesExtra.length > 0 ? ` (${detallesExtra.join(' | ')})` : '';
                 return `
                     <div class="cart-item" style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid #f1f5f9;">
                         <div style="flex:1; padding-right:8px;">
@@ -526,13 +534,19 @@
             }
         };
 
-        function enviarProductoWsp(nombre, precio, talle, color) {
+        function enviarProductoWsp(idProd) {
+            const prod = todosLosProductos.find(p => p.id === idProd);
+            if (!prod) return;
+
+            const tArr = prod.talles || (prod.talle ? [prod.talle] : []);
+            const cArr = prod.colores || (prod.color ? [prod.color] : []);
+
             let detalles = [];
-            if (talle) detalles.push(`Talle: ${talle}`);
-            if (color) detalles.push(`Color: ${color}`);
-            const detalleTxt = detalles.length > 0 ? ` (${detalles.join(' - ')})` : '';
+            if (tArr.length > 0) detalles.push(`Talles: ${tArr.join(', ')}`);
+            if (cArr.length > 0) detalles.push(`Colores: ${cArr.join(', ')}`);
+            const detalleTxt = detalles.length > 0 ? `\n*${detalles.join(' | ')}*` : '';
             
-            const texto = `¡Mirá esta oferta en Polirubro Virtual! 🛍️✨\n\n*${nombre}*${detalleTxt}\nPrecio: \$${formatearPrecio(precio)}\n\nMiraló y pedilo acá: https://polirubrovirtual.shop`;
+            const texto = `¡Mirá esta oferta en Polirubro Virtual! 🛍️✨\n\n*${prod.nombre}*${detalleTxt}\nPrecio: \$${formatearPrecio(prod.precio)}\n\nMiraló y pedilo acá: https://polirubrovirtual.shop`;
             const urlWsp = `https://wa.me/54${NUMERO_WHATSAPP}?text=${encodeURIComponent(texto)}`;
             window.open(urlWsp, '_blank');
         }
@@ -560,10 +574,12 @@
 
             let texto = "🛒 *NUEVO PEDIDO - POLIRUBRO VIRTUAL*\n\n";
             carrito.forEach(i => {
+                const tArr = i.talles || (i.talle ? [i.talle] : []);
+                const cArr = i.colores || (i.color ? [i.color] : []);
                 let detallesExtra = [];
-                if (i.talle) detallesExtra.push(`T: ${i.talle}`);
-                if (i.color) detallesExtra.push(`C: ${i.color}`);
-                const detalleTxt = detallesExtra.length > 0 ? ` (${detallesExtra.join(', ')})` : '';
+                if (tArr.length > 0) detallesExtra.push(`T: ${tArr.join(', ')}`);
+                if (cArr.length > 0) detallesExtra.push(`C: ${cArr.join(', ')}`);
+                const detalleTxt = detallesExtra.length > 0 ? ` (${detallesExtra.join(' | ')})` : '';
                 texto += `• ${i.cantidad}x ${i.nombre}${detalleTxt} ($${formatearPrecio(Number(i.precio) * i.cantidad)})\n`;
             });
 
@@ -572,7 +588,7 @@
             if (subtotalMonto >= 20000) {
                 texto += `🎉 *¡ENVÍO GRATIS APLICADO por superar \$20.000!*\n`;
             }
-            texto += `💳 *Medio de Pago:* ${medioPago}\n`;
+            texto += `💳 *💳 Forma de Pago:* ${medioPago}\n`;
             texto += `💰 *TOTAL A PAGAR:* \$${formatearPrecio(totalFinal)}\n\n`;
             texto += `📍 *Dirección de Entrega:* (Escribir tu dirección exacta aquí)`;
 
