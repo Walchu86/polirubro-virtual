@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=246">
+    <link rel="stylesheet" href="style.css?v=248">
 </head>
 <body>
 
@@ -27,7 +27,7 @@
         </div>
     </div>
 
-    <!-- CABECERA PRINCIPAL (CON ANIMACIÓN DE CARRITO Y MOUSE EN PC) -->
+    <!-- CABECERA PRINCIPAL -->
     <header class="main-header">
         <div class="header-container">
             <div class="header-left-col">
@@ -49,14 +49,23 @@
                 </div>
             </div>
 
-            <!-- ANIMACIÓN INTERACTIVA DE CARRITO Y MOUSE (SOLO PC) -->
-            <div class="pc-animation-box">
-                <div class="anim-cart-container">
-                    🛒
-                    <span class="anim-item-flying">🎁</span>
+            <!-- WIDGET DERECHO EXCLUSIVO PARA PC (SUGERENCIA 1 Y 3 COMBINADAS) -->
+            <div class="pc-desktop-widget">
+                <div class="pc-widget-title">
+                    <span>🕒 Tienda Activa 24/7</span>
+                    <div class="pc-animation-area">
+                        <span class="anim-cart-container">🛒</span>
+                        <span class="anim-mouse">🖱️</span>
+                    </div>
                 </div>
-                <div class="anim-mouse">🖱️</div>
-                <div class="pc-anim-text">¡Elegí y Llená tu Carrito!</div>
+                <div class="pc-widget-text">
+                    Atención directa y pedidos activos desde casa. Envíos en <strong>Corrientes Capital</strong>. 📲 Consultas: <strong>3794655867</strong>
+                </div>
+                <div class="pc-widget-badges">
+                    <span class="pc-badge-item">🔒 Compra 100% Segura</span>
+                    <span class="pc-badge-item">💵 Efectivo / Transf.</span>
+                    <span class="pc-badge-item">🚚 Envío Gratis ≥ \$20k</span>
+                </div>
             </div>
         </div>
     </header>
@@ -70,7 +79,7 @@
     <div class="floating-cart-bar" onclick="abrirCarrito()">
         <div class="floating-cart-content">
             <span>🛒 Carrito: <strong id="cartCount">0</strong> productos</span>
-            <span class="ver-carrito-text">Ver Pedido ➔</span>
+            <span class="ver-carrito-text">VER PEDIDO ➔</span>
             <span>Total: \$<strong id="cartTotalHeader">0</strong></span>
         </div>
     </div>
