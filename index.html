@@ -4,13 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=210">
+    <link rel="stylesheet" href="style.css?v=212">
 </head>
 <body>
 
-    <!-- BANNER SUPERIOR LIMPIO -->
+    <!-- BANNER SUPERIOR CON ANIMACIÓN MARQUESINA -->
     <div class="promo-banner">
-        🔥 ¡ENVÍOS A DOMICILIO EN CORRIENTES! • <strong>¡ENVÍO GRATIS COMPRANDO \$20.000 O MÁS!</strong> 🚚💨
+        <div class="marquee-container">
+            <span>🔥 ¡ENVÍOS A DOMICILIO EN CORRIENTES! • <strong>¡ENVÍO GRATIS COMPRANDO \$20.000 O MÁS!</strong> 🚚💨 • ¡Comprá fácil, rápido y seguro desde tu celular! 📦 ⭐</span>
+        </div>
     </div>
 
     <!-- CABECERA PRINCIPAL -->
@@ -26,12 +28,13 @@
             <!-- ANIMACIÓN Y DESTACADO CENTRAL -->
             <div class="header-banner-animado">
                 <span class="pulse-icon">🛍️</span>
-                <span class="anim-text">Compra fácil, rápido y seguro desde tu celular</span>
+                <span class="anim-text">Atención personalizada y envíos rápidos</span>
                 <span class="anim-badges">📦 🎁 ⭐</span>
             </div>
 
-            <div class="quick-badge">
-                ⚡ Pedidos al Instante
+            <!-- BOTÓN LLAMATIVO ACTUALIZADO -->
+            <div class="quick-badge-llamativo">
+                🔥 ¡Hacé clic y llevate lo que necesitás!
             </div>
         </div>
     </header>
@@ -59,6 +62,21 @@
         <main>
             <div class="search-box">
                 <input type="text" id="inputBuscador" class="search-input" placeholder="🔍 Buscar productos en el catálogo..." oninput="filtrarProductos()">
+            </div>
+
+            <!-- SECCIÓN EXCLUSIVA: OFERTAS ESPECIALES 48 HS -->
+            <div id="seccionOfertas48hs" style="display:none; margin-bottom: 30px;">
+                <div style="background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); border: 2px dashed #ef4444; border-radius: 12px; padding: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                        <h2 style="font-size: 1.25rem; color: #b91c1c; display: flex; align-items: center; gap: 8px; margin:0;">
+                            ⚡ OFERTAS FLASH 48 HORAS 🔥
+                        </h2>
+                        <span style="background: #ef4444; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase;">¡Por tiempo limitado!</span>
+                    </div>
+                    <div class="productos-grid" id="gridOfertas48hs">
+                        <!-- Se cargan dinámicamente -->
+                    </div>
+                </div>
             </div>
 
             <h2 class="cat-titulo-seccion" id="tituloSeccionActiva">🌟 Todos los Productos</h2>
@@ -178,6 +196,7 @@
                     categoriasDisponibles = data.categorias || ["Estética", "Electrónica", "Zapatería", "Accesorios"];
                     
                     renderizarMenuCategorias(categoriasDisponibles);
+                    renderizarOfertas48hs();
                     filtrarProductos();
                 } else {
                     grid.innerHTML = '<p style="text-align:center; width:100%; color:#dc2626; padding:2rem;">No hay productos disponibles.</p>';
@@ -186,6 +205,44 @@
                 console.error(e);
                 grid.innerHTML = '<p style="text-align:center; width:100%; color:#dc2626; padding:2rem;">Error al conectar con la tienda.</p>';
             }
+        }
+
+        function renderizarOfertas48hs() {
+            const seccion = document.getElementById('seccionOfertas48hs');
+            const grid48 = document.getElementById('gridOfertas48hs');
+
+            // Filtramos productos que tengan marcado oferta de 48hs (enOferta o propiedad oferta48hs)
+            const ofertas = todosLosProductos.filter(p => p.enOferta || p.oferta48hs);
+
+            if (ofertas.length === 0) {
+                seccion.style.display = 'none';
+                return;
+            }
+
+            seccion.style.display = 'block';
+            grid48.innerHTML = ofertas.map(p => {
+                const imgUrl = p.imagen || 'https://via.placeholder.com/300?text=Sin+Imagen';
+                return `
+                    <div class="card-producto" style="border: 1px solid #fca5a5;">
+                        <div class="badge-oferta-box">
+                            <span class="badge-oferta" style="background:#ef4444;">⚡ 48 HS</span>
+                        </div>
+                        <div class="img-frame" onclick="abrirLightbox('${imgUrl}')">
+                            <img src="${imgUrl}" alt="${p.nombre}" class="img-producto" loading="lazy">
+                        </div>
+                        <div class="card-detalles">
+                            <span style="font-size:0.7rem; color:#ef4444; font-weight:bold; text-transform:uppercase;">${p.categoria}</span>
+                            <h3 class="titulo-producto">${p.nombre}</h3>
+                            <div class="precio-producto" style="color:#ef4444;">$${Number(p.precio).toLocaleString('es-AR')}</div>
+                            <div class="stock-tag">Stock disponible: ${p.stock || 0} un.</div>
+                        </div>
+                        <div class="card-acciones">
+                            <button class="btn-add-cart" style="background-color:#ef4444;" onclick="agregarAlCarrito(${p.id})">🛒 Agregar</button>
+                            <button class="btn-share-wsp" onclick="consultarProductoWsp('${p.nombre}', ${p.precio})" title="Consultar por WhatsApp">💬</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
         function renderizarMenuCategorias(cats) {
