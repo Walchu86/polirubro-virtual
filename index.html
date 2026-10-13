@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Todo lo que buscás, acá lo encontrás</title>
-    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="style.css?v=2">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
@@ -109,19 +109,19 @@
     </div>
 
     <!-- Modal / Cartel de Bienvenida de Envío Gratis -->
-    <div id="welcome-modal" class="modal-overlay">
-        <div class="modal-content">
-            <button class="modal-close" onclick="closeWelcomeModal()">&times;</button>
+    <div id="welcome-modal" class="modal-overlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.6); z-index:9999; align-items:center; justify-content:center;">
+        <div class="modal-content" style="background:#fff; padding:20px; border-radius:16px; max-width:350px; text-align:center;">
+            <button class="modal-close" onclick="closeWelcomeModal()" style="float:right; border:none; background:none; font-size:1.2rem; cursor:pointer;">&times;</button>
             <div class="modal-header">
-                <h2>🎁 ¡Bienvenido a Polirubro Virtual!</h2>
+                <h2>🎁 ¡Bienvenido!</h2>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="margin:15px 0;">
                 <p>Aprovechá nuestra promoción exclusiva:</p>
-                <div class="promo-badge">
+                <div class="promo-badge" style="background:#fff7ed; padding:10px; border-radius:8px; margin-top:8px; color:#c2410c; font-size:0.85rem;">
                     🚚 ¡Comprando <strong>\$20.000</strong> el envío es <strong>GRATIS</strong>!
                 </div>
             </div>
-            <button class="btn-modal-action" onclick="closeWelcomeModal()">¡Entendido, empezar a comprar!</button>
+            <button class="btn-modal-action" onclick="closeWelcomeModal()" style="background:#ea580c; color:#fff; border:none; padding:10px 15px; border-radius:8px; font-weight:bold; cursor:pointer;">¡Entendido, empezar!</button>
         </div>
     </div>
 
@@ -150,30 +150,20 @@
         }
 
         async function iniciarTienda() {
-            await sincronizarYActualizarNube();
-            window.addEventListener('focus', async () => {
-                await sincronizarYActualizarNube();
-            });
+            sincronizarYActualizarNube();
         }
 
-        async function sincronizarYActualizarNube() {
-            try {
-                const res = await fetch("/api/datos");
-                if (!res.ok) throw new Error("Error al obtener datos del servidor");
-                const estructuraReal = await res.json();
-
-                listaProductos = Array.isArray(estructuraReal.productos) ? estructuraReal.productos : [];
-
-                let rawCats = estructuraReal.categorias || ["Estética", "Electrónica", "Zapatería", "Accesorios"];
-                listaCategorias = rawCats.map(c => {
-                    if (typeof c === 'string') return c;
-                    return c.nombre || c.categoria || 'Sección';
-                });
-
-            } catch(e) {
-                console.error("Error al conectar con el servidor:", e);
-                listaCategorias = ["Estética", "Electrónica", "Zapatería", "Accesorios"];
-            }
+        function sincronizarYActualizarNube() {
+            // Datos estáticos integrados para GitHub Pages (sin depender de /api/datos)
+            listaCategorias = ["Estética", "Electrónica", "Zapatería", "Accesorios"];
+            
+            listaProductos = [
+                { id: 1, nombre: "Alisado Espejo Profesional", precio: 8500, stock: 12, categoria: "Estética", enOferta: true, imagen: "" },
+                { id: 2, nombre: "Botox Capilar Nutritivo", precio: 6500, stock: 8, categoria: "Estética", enOferta: false, imagen: "" },
+                { id: 3, nombre: "Soporte Celular Auto 360", precio: 4500, stock: 15, categoria: "Electrónica", enOferta: true, imagen: "" },
+                { id: 4, nombre: "Alpargatas Estilo Pampa", precio: 9800, stock: 10, categoria: "Zapatería", enOferta: false, imagen: "" },
+                { id: 5, nombre: "Cargador Rápido USB Tipo C", precio: 5200, stock: 20, categoria: "Electrónica", enOferta: false, imagen: "" }
+            ];
 
             actualizarMezclainicio();
             renderizarNavSecciones();
