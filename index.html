@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=245">
+    <link rel="stylesheet" href="style.css?v=246">
 </head>
 <body>
 
@@ -27,7 +27,7 @@
         </div>
     </div>
 
-    <!-- CABECERA PRINCIPAL (CON WIDGET EXCLUSIVO A LA DERECHA EN PC) -->
+    <!-- CABECERA PRINCIPAL (CON ANIMACIÓN DE CARRITO Y MOUSE EN PC) -->
     <header class="main-header">
         <div class="header-container">
             <div class="header-left-col">
@@ -49,15 +49,14 @@
                 </div>
             </div>
 
-            <!-- WIDGET DE ESCRITORIO (SOLO PC - MEZCLA 1 Y 3) -->
-            <div class="pc-desktop-widget">
-                <div class="pc-widget-title">🕒 Tienda Activa 24/7 • Comprá sin moverte</div>
-                <div class="pc-widget-text">Realizá tus pedidos desde casa de forma rápida y segura en Corrientes Capital.</div>
-                <div class="pc-widget-badges">
-                    <span class="pc-badge-item">🔒 Compra Segura</span>
-                    <span class="pc-badge-item">💵 Efectivo / Transf.</span>
-                    <span class="pc-badge-item">🚚 Envío Gratis ≥ \$20k</span>
+            <!-- ANIMACIÓN INTERACTIVA DE CARRITO Y MOUSE (SOLO PC) -->
+            <div class="pc-animation-box">
+                <div class="anim-cart-container">
+                    🛒
+                    <span class="anim-item-flying">🎁</span>
                 </div>
+                <div class="anim-mouse">🖱️</div>
+                <div class="pc-anim-text">¡Elegí y Llená tu Carrito!</div>
             </div>
         </div>
     </header>
@@ -577,7 +576,6 @@
         function procesarPedidoCheckout() {
             if (carrito.length === 0) return alert("El carrito está vacío.");
             
-            pagoVal = document.getElementById('selectMedioPago') ? document.getElementById('selectMedioPago').value : 'Efectivo';
             const subtotalMonto = carrito.reduce((sum, i) => sum + (Number(i.precio) * i.cantidad), 0);
             const medioPago = document.getElementById('selectMedioPago') ? document.getElementById('selectMedioPago').value : 'Efectivo';
 
