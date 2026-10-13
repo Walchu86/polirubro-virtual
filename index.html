@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=213">
+    <link rel="stylesheet" href="style.css?v=214">
 </head>
 <body>
 
     <!-- BANNER SUPERIOR CON ANIMACIÓN MARQUESINA -->
     <div class="promo-banner">
         <div class="marquee-container">
-            <span>🔥 ¡GRAN INAUGURACIÓN EN CORRIENTES! • <strong>¡ENVÍO GRATIS COMPRANDO \$20.000 O MÁS!</strong> 🚚💨 • ¡Comprá fácil, rápido y seguro desde tu celular! 📦 ⭐</span>
+            <span>🔥 ¡ENVÍOS A DOMICILIO EN CORRIENTES! • <strong>¡ENVÍO GRATIS COMPRANDO \$20.000 O MÁS!</strong> 🚚💨 • ¡Comprá fácil, rápido y seguro desde tu celular! 📦 ⭐</span>
         </div>
     </div>
 
@@ -60,12 +60,11 @@
         
         <!-- COLUMNA IZQUIERDA: PRODUCTOS -->
         <main>
-            <!-- CARTEL DE BIENVENIDA E INAUGURACIÓN -->
+            <!-- CARTEL DE BIENVENIDA (SOLO AL ENTRAR) -->
             <div class="welcome-banner-box" style="background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%); border: 2px solid #fdba74; border-radius: 12px; padding: 18px; margin-bottom: 20px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.03);">
-                <h3 style="color: #c2410c; font-size: 1.15rem; font-weight: 800; margin-bottom: 6px;">🎉 ¡BIENVENIDOS A NUESTRA GRAN INAUGURACIÓN! 🚀</h3>
+                <h3 style="color: #c2410c; font-size: 1.15rem; font-weight: 800; margin-bottom: 6px;">🎉 ¡Bienvenido a Polirubro Virtual! 🚀</h3>
                 <p style="color: #475569; font-size: 0.9rem; line-height: 1.4; margin: 0;">
-                    Estamos comenzando con nuestra tienda online en Corrientes Capital. 
-                    Aprovechá nuestros precios y recordá que <strong>¡comprando \$20.000 o más, el envío es TOTALMENTE GRATIS!</strong> 🚚✨
+                    Aprovechá nuestros precios en Corrientes Capital y recordá que <strong>¡comprando \$20.000 o más, el envío es TOTALMENTE GRATIS!</strong> 🚚✨
                 </p>
             </div>
 
@@ -193,7 +192,6 @@
         let carrito = JSON.parse(localStorage.getItem('carrito_polirubro')) || [];
         let categoriaActiva = 'TODAS';
 
-        // Función para enfocar el buscador al hacer clic en el botón llamativo
         function enfocarBuscador() {
             const input = document.getElementById('inputBuscador');
             if (input) {
@@ -497,7 +495,7 @@
             const selectEnvio = document.getElementById('selectTipoEnvio');
             const tipoEnvioVal = selectEnvio ? selectEnvio.value : 'local';
             const textoEnvio = selectEnvio ? selectEnvio.options[selectEnvio.selectedIndex].text : 'Retiro en Local';
-            const medioPago = document.getElementById('selectMedioPago') ? document.getElementById('selectMedioPago'].value : 'Efectivo';
+            const medioPago = document.getElementById('selectMedioPago') ? document.getElementById('selectMedioPago').value : 'Efectivo';
 
             let costoEnvio = 0;
             if (tipoEnvioVal === 'dentro') costoEnvio = 1500;
