@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=215">
+    <link rel="stylesheet" href="style.css?v=217">
 </head>
 <body>
 
@@ -25,15 +25,13 @@
                 </div>
             </a>
             
-            <!-- ANIMACIÓN Y DESTACADO CENTRAL -->
             <div class="header-banner-animado">
                 <span class="pulse-icon">🛍️</span>
                 <span class="anim-text">Atención personalizada y envíos rápidos</span>
                 <span class="anim-badges">📦 🎁 ⭐</span>
             </div>
 
-            <!-- BOTÓN LLAMATIVO INTERACTIVO -->
-            <div class="quick-badge-llamativo" onclick="enfocarBuscador()" style="cursor:pointer;" title="¡Hacé clic para buscar productos!">
+            <div class="quick-badge-llamativo" onclick="enfocarBuscador()" title="¡Hacé clic para buscar productos!">
                 🔥 ¡Hacé clic y llevate lo que necesitás!
             </div>
         </div>
@@ -41,9 +39,7 @@
 
     <!-- BARRA DE NAVEGACIÓN NARANJA (SECCIONES) -->
     <nav class="main-nav">
-        <div class="nav-container-categorias" id="contenedorCategoriasNav">
-            <!-- Se generan dinámicamente -->
-        </div>
+        <div class="nav-container-categorias" id="contenedorCategoriasNav"></div>
     </nav>
 
     <!-- BARRA FLOTANTE SUPERIOR DEL CARRITO -->
@@ -58,12 +54,11 @@
     <!-- LAYOUT PRINCIPAL -->
     <div class="main-layout">
         
-        <!-- COLUMNA IZQUIERDA: PRODUCTOS -->
         <main>
-            <!-- CARTEL DE BIENVENIDA (SOLO AL ENTRAR) -->
-            <div class="welcome-banner-box" style="background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%); border: 2px solid #fdba74; border-radius: 12px; padding: 18px; margin-bottom: 20px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.03);">
-                <h3 style="color: #c2410c; font-size: 1.15rem; font-weight: 800; margin-bottom: 6px;">🎉 ¡Bienvenido a Polirubro Virtual! 🚀</h3>
-                <p style="color: #475569; font-size: 0.9rem; line-height: 1.4; margin: 0;">
+            <!-- CARTEL DE BIENVENIDA ANIMADO (APARECE AL ENTRAR) -->
+            <div class="welcome-popup-animado">
+                <h3 style="color: #c2410c; font-size: 1.2rem; font-weight: 900; margin-bottom: 6px;">🎉 ¡Bienvenido a Polirubro Virtual! 🚀</h3>
+                <p style="color: #475569; font-size: 0.92rem; line-height: 1.4; margin: 0;">
                     Aprovechá nuestros precios en Corrientes Capital y recordá que <strong>¡comprando \$20.000 o más, el envío es TOTALMENTE GRATIS!</strong> 🚚✨
                 </p>
             </div>
@@ -74,32 +69,25 @@
 
             <!-- SECCIÓN EXCLUSIVA: OFERTAS ESPECIALES 48 HS -->
             <div id="seccionOfertas48hs" style="display:none; margin-bottom: 30px;">
-                <div style="background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); border: 2px dashed #ef4444; border-radius: 12px; padding: 20px;">
+                <div style="background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); border: 2px dashed #ef4444; border-radius: 16px; padding: 20px; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.1);">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
                         <h2 style="font-size: 1.25rem; color: #b91c1c; display: flex; align-items: center; gap: 8px; margin:0;">
                             ⚡ OFERTAS FLASH 48 HORAS 🔥
                         </h2>
-                        <span style="background: #ef4444; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase;">¡Por tiempo limitado!</span>
+                        <span style="background: #ef4444; color: white; padding: 5px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; box-shadow: 0 2px 5px rgba(239, 68, 68, 0.3);">¡Por tiempo limitado!</span>
                     </div>
-                    <div class="productos-grid" id="gridOfertas48hs">
-                        <!-- Se cargan dinámicamente -->
-                    </div>
+                    <div class="productos-grid" id="gridOfertas48hs"></div>
                 </div>
             </div>
 
             <h2 class="cat-titulo-seccion" id="tituloSeccionActiva">🌟 Todos los Productos</h2>
 
-            <div class="productos-grid" id="gridProductos">
-                <!-- Se cargan dinámicamente -->
-            </div>
+            <div class="productos-grid" id="gridProductos"></div>
         </main>
 
-        <!-- COLUMNA DERECHA: SIDEBAR DE CATEGORÍAS (PC) -->
         <aside class="sidebar" id="contenedorSidebarCategoriasPC">
             <h3 class="sidebar-title">📂 Categorías</h3>
-            <div class="sidebar-menu" id="sidebarCategoriasMenu">
-                <!-- Se generan dinámicamente -->
-            </div>
+            <div class="sidebar-menu" id="sidebarCategoriasMenu"></div>
         </aside>
 
     </div>
@@ -116,11 +104,8 @@
             <p style="font-size:0.75rem; color:#64748b;">Elegí tu zona de envío y método de pago antes de enviar.</p>
         </div>
 
-        <div class="cart-items" id="listaCarritoModal">
-            <!-- Ítems del carrito -->
-        </div>
+        <div class="cart-items" id="listaCarritoModal"></div>
 
-        <!-- OPCIONES DE ENVÍO Y PAGO -->
         <div class="checkout-options" style="margin-top:10px; padding:10px 0; border-top:1px solid #e2e8f0;">
             <label style="font-size:0.8rem; font-weight:bold; color:#1e293b; display:block; margin-bottom:4px;">📍 Selección de Zona / Entrega:</label>
             <select id="selectTipoEnvio" class="select-checkout" onchange="actualizarCarritoUI()">
@@ -155,36 +140,28 @@
         </div>
     </div>
 
-    <!-- MODAL CÓDIGO QR PARA VERSIÓN PC -->
+    <!-- MODAL QR Y LIGHTBOX -->
     <div class="lightbox-overlay" id="qrModal" onclick="cerrarModalQR()">
-        <div style="background:#ffffff; padding:25px; border-radius:15px; text-align:center; max-width:350px; width:90%; position:relative;" onclick="event.stopPropagation()">
+        <div style="background:#ffffff; padding:25px; border-radius:16px; text-align:center; max-width:350px; width:90%; position:relative;" onclick="event.stopPropagation()">
             <span class="lightbox-close" onclick="cerrarModalQR()" style="color:#000; top:10px; right:15px;">&times;</span>
             <h3 style="color:#ea580c; margin-bottom:10px; font-size:1.2rem;">📱 ¡Escaneá para enviar tu pedido!</h3>
             <p style="font-size:0.85rem; color:#64748b; margin-bottom:15px;">Apunta la cámara de tu celular al código QR para abrir el pedido detallado directamente en tu WhatsApp.</p>
-            
-            <div style="background:#f8fafc; padding:15px; border-radius:10px; display:inline-block; border:1px solid #e2e8f0; margin-bottom:15px;">
+            <div style="background:#f8fafc; padding:15px; border-radius:12px; display:inline-block; border:1px solid #e2e8f0; margin-bottom:15px;">
                 <img id="imgCodigoQR" src="" alt="Código QR WhatsApp" style="width:200px; height:200px; display:block;">
             </div>
-
-            <p style="font-size:0.8rem; color:#1e293b; font-weight:bold; margin-bottom:10px;">¿Estás navegando desde la PC?</p>
             <a id="linkDirectoWspPC" href="#" target="_blank" style="display:block; background-color:#22c55e; color:white; text-decoration:none; padding:10px; border-radius:8px; font-weight:bold; font-size:0.85rem;">
                 💻 Abrir en WhatsApp Web
             </a>
         </div>
     </div>
 
-    <!-- VISOR LUPA / LIGHTBOX PARA IMÁGENES -->
     <div class="lightbox-overlay" id="lightboxModal" onclick="cerrarLightbox()">
         <span class="lightbox-close">&times;</span>
         <img class="lightbox-img" id="lightboxImg" src="" alt="Ampliada">
     </div>
 
-    <!-- BOTÓN FLOTANTE WHATSAPP GENERAL -->
-    <a href="https://wa.me/5493794655857?text=Hola!%20Tengo%20una%20consulta%20sobre%20la%20tienda." target="_blank" class="wsp-float" title="Consultar por WhatsApp">
-        💬
-    </a>
+    <a href="https://wa.me/5493794655857?text=Hola!%20Tengo%20una%20consulta%20sobre%20la%20tienda." target="_blank" class="wsp-float" title="Consultar por WhatsApp">💬</a>
 
-    <!-- LÓGICA DE LA TIENDA Y CÓDIGO QR -->
     <script>
         const NUMERO_WHATSAPP = "5493794655857";
         let todosLosProductos = [];
@@ -200,12 +177,15 @@
             }
         }
 
+        function formatearPrecio(precio) {
+            return Number(precio || 0).toLocaleString('es-AR');
+        }
+
         async function cargarCatalogoPublico() {
             const grid = document.getElementById('gridProductos');
-            grid.innerHTML = '<p style="text-align:center; width:100%; color:#64748b; padding:2rem;">Actualizando catálogo en tiempo real...</p>';
+            grid.innerHTML = '<p style="text-align:center; width:100%; color:#64748b; padding:2rem;">Actualizando catálogo...</p>';
 
             try {
-                // Forzamos el timestamp para evitar caché y traer siempre lo último del Admin/GitHub
                 const res = await fetch('productos.json?v=' + Date.now());
                 if (res.ok) {
                     const data = await res.json();
@@ -239,9 +219,9 @@
             grid48.innerHTML = ofertas.map(p => {
                 const imgUrl = p.imagen || 'https://via.placeholder.com/300?text=Sin+Imagen';
                 return `
-                    <div class="card-producto" style="border: 1px solid #fca5a5;">
+                    <div class="card-producto en-oferta-card">
                         <div class="badge-oferta-box">
-                            <span class="badge-oferta" style="background:#ef4444;">⚡ 48 HS</span>
+                            <span class="badge-oferta">⚡ OFERTA FLASH</span>
                         </div>
                         <div class="img-frame" onclick="abrirLightbox('${imgUrl}')">
                             <img src="${imgUrl}" alt="${p.nombre}" class="img-producto" loading="lazy">
@@ -249,11 +229,11 @@
                         <div class="card-detalles">
                             <span style="font-size:0.7rem; color:#ef4444; font-weight:bold; text-transform:uppercase;">${p.categoria}</span>
                             <h3 class="titulo-producto">${p.nombre}</h3>
-                            <div class="precio-producto" style="color:#ef4444;">$${Number(p.precio).toLocaleString('es-AR')}</div>
+                            <div class="precio-producto" style="color:#ef4444;">\$${formatearPrecio(p.precio)}</div>
                             <div class="stock-tag">Stock disponible: ${p.stock || 0} un.</div>
                         </div>
                         <div class="card-acciones">
-                            <button class="btn-add-cart" style="background-color:#ef4444;" onclick="agregarAlCarrito(${p.id})">🛒 Agregar</button>
+                            <button class="btn-add-cart" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);" onclick="agregarAlCarrito(${p.id})">🛒 Agregar</button>
                             <button class="btn-share-wsp" onclick="consultarProductoWsp('${p.nombre}', ${p.precio})" title="Consultar por WhatsApp">💬</button>
                         </div>
                     </div>
@@ -313,10 +293,11 @@
                         <span class="badge-oferta">🔥 OFERTA</span>
                     </div>` : '';
                 
+                const claseOfertaCard = p.enOferta ? 'card-producto en-oferta-card' : 'card-producto';
                 const imgUrl = p.imagen || 'https://via.placeholder.com/300?text=Sin+Imagen';
 
                 return `
-                    <div class="card-producto">
+                    <div class="${claseOfertaCard}">
                         ${badgeOferta}
                         <div class="img-frame" onclick="abrirLightbox('${imgUrl}')">
                             <img src="${imgUrl}" alt="${p.nombre}" class="img-producto" loading="lazy">
@@ -324,7 +305,7 @@
                         <div class="card-detalles">
                             <span style="font-size:0.7rem; color:#ea580c; font-weight:bold; text-transform:uppercase;">${p.categoria}</span>
                             <h3 class="titulo-producto">${p.nombre}</h3>
-                            <div class="precio-producto">$${Number(p.precio).toLocaleString('es-AR')}</div>
+                            <div class="precio-producto">\$${formatearPrecio(p.precio)}</div>
                             <div class="stock-tag">Stock disponible: ${p.stock || 0} un.</div>
                         </div>
                         <div class="card-acciones">
@@ -354,7 +335,7 @@
             localStorage.setItem('carrito_polirubro', JSON.stringify(carrito));
             
             const totalItems = carrito.reduce((sum, i) => sum + i.cantidad, 0);
-            const subtotalMonto = carrito.reduce((sum, i) => sum + (i.precio * i.cantidad), 0);
+            const subtotalMonto = carrito.reduce((sum, i) => sum + (Number(i.precio) * i.cantidad), 0);
 
             const optDentro = document.getElementById('optEnvioDentro');
             const optFuera = document.getElementById('optEnvioFuera');
@@ -385,9 +366,9 @@
             const totalFinal = subtotalMonto + costoEnvio;
 
             document.getElementById('cartCount').innerText = totalItems;
-            document.getElementById('cartTotalHeader').innerText = totalFinal.toLocaleString('es-AR');
-            document.getElementById('cartSubtotalModal').innerText = subtotalMonto.toLocaleString('es-AR');
-            document.getElementById('cartTotalModal').innerText = totalFinal.toLocaleString('es-AR');
+            document.getElementById('cartTotalHeader').innerText = formatearPrecio(totalFinal);
+            document.getElementById('cartSubtotalModal').innerText = formatearPrecio(subtotalMonto);
+            document.getElementById('cartTotalModal').innerText = formatearPrecio(totalFinal);
 
             const elemEnvio = document.getElementById('cartEnvioTexto');
             if (elemEnvio) {
@@ -396,7 +377,7 @@
                 } else if (envioGratisAplica) {
                     elemEnvio.innerHTML = '<span style="color:#22c55e; font-weight:bold;">¡GRATIS PROMO! 🎉</span>';
                 } else {
-                    elemEnvio.innerText = '\$' + costoEnvio.toLocaleString('es-AR');
+                    elemEnvio.innerText = '\$' + formatearPrecio(costoEnvio);
                 }
             }
 
@@ -410,7 +391,7 @@
                 <div class="cart-item">
                     <div style="flex:1;">
                         <strong style="font-size:0.85rem; color:#1e293b;">${i.nombre}</strong>
-                        <div style="font-size:0.75rem; color:#ea580c;">$${Number(i.precio).toLocaleString('es-AR')} c/u</div>
+                        <div style="font-size:0.75rem; color:#ea580c;">\$${formatearPrecio(i.precio)} c/u</div>
                     </div>
                     <div style="display:flex; align-items:center; gap:6px;">
                         <button onclick="cambiarQty(${i.id}, -1)" style="padding:2px 8px; background:#e2e8f0; border:none; border-radius:4px; font-weight:bold; cursor:pointer;">-</button>
@@ -431,7 +412,6 @@
             actualizarCarritoUI();
         }
 
-        /* --- CONTROL DE HISTORIAL Y MODALES --- */
         let estadoModal = null;
 
         function abrirCarrito() {
@@ -485,14 +465,14 @@
         };
 
         function consultarProductoWsp(nombre, precio) {
-            const texto = `Hola! Me interesa el producto *${nombre}* ($${Number(precio).toLocaleString('es-AR')}) que vi en Polirubro Virtual. ¿Hay stock?`;
+            const texto = `Hola! Me interesa el producto *${nombre}* ($${formatearPrecio(precio)}) que vi en Polirubro Virtual. ¿Hay stock?`;
             window.open(`https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(texto)}`, '_blank');
         }
 
         function procesarPedidoCheckout() {
             if (carrito.length === 0) return alert("El carrito está vacío.");
             
-            const subtotalMonto = carrito.reduce((sum, i) => sum + (i.precio * i.cantidad), 0);
+            const subtotalMonto = carrito.reduce((sum, i) => sum + (Number(i.precio) * i.cantidad), 0);
             const selectEnvio = document.getElementById('selectTipoEnvio');
             const tipoEnvioVal = selectEnvio ? selectEnvio.value : 'local';
             const textoEnvio = selectEnvio ? selectEnvio.options[selectEnvio.selectedIndex].text : 'Retiro en Local';
@@ -510,27 +490,25 @@
 
             let texto = "🛒 *NUEVO PEDIDO - POLIRUBRO VIRTUAL*\n\n";
             carrito.forEach(i => {
-                texto += `• ${i.cantidad}x ${i.nombre} ($${(i.precio * i.cantidad).toLocaleString('es-AR')})\n`;
+                texto += `• ${i.cantidad}x ${i.nombre} ($${formatearPrecio(i.precio * i.cantidad)})\n`;
             });
 
-            texto += `\n💵 *Subtotal:* $${subtotalMonto.toLocaleString('es-AR')}\n`;
+            texto += `\n💵 *Subtotal:* \$${formatearPrecio(subtotalMonto)}\n`;
             texto += `🛵 *Entrega:* ${textoEnvio}\n`;
             if (subtotalMonto >= 20000 && tipoEnvioVal !== 'local') {
                 texto += `🎉 *¡ENVÍO GRATIS APLICADO por superar \$20.000!*\n`;
             }
             texto += `💳 *Medio de Pago:* ${medioPago}\n`;
-            texto += `💰 *TOTAL A PAGAR:* $${totalFinal.toLocaleString('es-AR')}\n\n`;
+            texto += `💰 *TOTAL A PAGAR:* \$${formatearPrecio(totalFinal)}\n\n`;
             texto += `📍 *Dirección de Entrega:* (Escribir tu dirección exacta aquí)`;
 
-            const urlWsp = `https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(texto)}`;
-
             if (window.innerWidth > 768) {
-                const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(urlWsp)}`;
+                const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(texto)}`;
                 document.getElementById('imgCodigoQR').src = qrUrl;
-                document.getElementById('linkDirectoWspPC').href = urlWsp;
+                document.getElementById('linkDirectoWspPC').href = `https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(texto)}`;
                 document.getElementById('qrModal').style.display = 'flex';
             } else {
-                window.open(urlWsp, '_blank');
+                window.open(`https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(texto)}`, '_blank');
             }
         }
 
