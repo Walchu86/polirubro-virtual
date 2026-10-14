@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=260">
+    <link rel="stylesheet" href="style.css?v=262">
 </head>
 <body>
 
@@ -108,11 +108,11 @@
                 <input type="text" id="inputBuscador" class="search-input" placeholder="🔍 Buscar productos en el catálogo..." oninput="filtrarProductos()">
             </div>
 
-            <!-- SECCIÓN OFERTAS 48 HS: FORMATO TIRA / CARRUSEL FINO -->
+            <!-- SECCIÓN OFERTAS 48 HS: TIRA ULTRA-FINA Y COMPACTA -->
             <div id="seccionOfertas48hs" style="display:none;" class="tira-ofertas-wrapper">
                 <div class="tira-ofertas-header">
                     <span class="tira-ofertas-tag">⚡ OFERTAS FLASH 48 HS</span>
-                    <span class="tira-ofertas-sub">¡Tocá una oferta para sumarla!</span>
+                    <span class="tira-ofertas-sub">¡Tocá para ver detalles y comprar!</span>
                 </div>
                 <div class="tira-ofertas-carril" id="gridOfertas48hs"></div>
             </div>
@@ -127,6 +127,29 @@
             <div class="sidebar-menu" id="sidebarCategoriasMenu"></div>
         </aside>
 
+    </div>
+
+    <!-- MODAL DETALLE DE PRODUCTO / OFERTA -->
+    <div class="lightbox-overlay" id="detalleModal" onclick="cerrarModalDetalle()">
+        <div class="detalle-modal-box" onclick="event.stopPropagation()">
+            <span class="lightbox-close" onclick="cerrarModalDetalle()">&times;</span>
+            <div class="detalle-modal-grid">
+                <div class="detalle-img-frame">
+                    <img id="detalleImg" src="" alt="Producto">
+                </div>
+                <div class="detalle-info">
+                    <span id="detalleCategoria" class="detalle-cat-tag">ESTÉTICA</span>
+                    <h3 id="detalleTitulo" class="detalle-titulo">Nombre del Producto</h3>
+                    <div id="detallePrecio" class="detalle-precio">\$0</div>
+                    <p id="detalleDescripcion" class="detalle-descripcion"></p>
+                    <div id="detalleVariantes" class="detalle-variantes"></div>
+                    <div class="detalle-acciones">
+                        <button id="detalleBtnAgregar" class="btn-add-cart">🛒 Agregar al Carrito</button>
+                        <button id="detalleBtnWsp" class="btn-share-wsp">📤 Enviar por WhatsApp</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- MODAL CARRITO -->
@@ -252,23 +275,23 @@
                 const res = await fetch('productos.json?v=' + Date.now());
                 if (res.ok) {
                     const data = await res.json();
-                    todosLosProductos = data.productos || [];
-                    const rawCats = data.categorias || ["Estética", "Electrónica", "Zapatería", "Accesorios"];
+                    todosLosProductos = Array.isArray(data.productos) ? data.productos : [];
+                    const rawCats = Array.isArray(data.categorias) ? data.categorias : ["Estética", "Electrónica", "Zapatería", "Accesorios", "Muebleria"];
                     categoriasDisponibles = rawCats.map(c => typeof c === 'string' ? c : (c.nombre || c.categoria || '')).filter(c => c !== '');
                     
                     renderizarMenuCategorias(categoriasDisponibles);
                     renderizarOfertas48hs();
                     filtrarProductos();
                 } else {
-                    grid.innerHTML = '<p style="text-align:center; width:100%; color:#dc2626; padding:2rem;">No hay productos disponibles.</p>';
+                    grid.innerHTML = '<p style="text-align:center; width:100%; color:#64748b; padding:2rem; grid-column: 1 / -1;">No hay productos cargados en esta sección.</p>';
                 }
             } catch (e) {
                 console.error(e);
-                grid.innerHTML = '<p style="text-align:center; width:100%; color:#dc2626; padding:2rem;">Error al conectar.</p>';
+                grid.innerHTML = '<p style="text-align:center; width:100%; color:#64748b; padding:2rem; grid-column: 1 / -1;">No hay productos cargados en esta sección.</p>';
             }
         }
 
-        // RENDERIZADO COMPACTO DE OFERTAS: TIRA CON FOTO + PRECIO
+        // RENDERIZADO COMPACTO DE OFERTAS: TIRA ULTRA-FINA
         function renderizarOfertas48hs() {
             const seccion = document.getElementById('seccionOfertas48hs');
             const carril = document.getElementById('gridOfertas48hs');
@@ -286,7 +309,7 @@
                 const precioLimpio = Number(p.precio || 0);
 
                 return `
-                    <div class="oferta-tira-item" onclick="agregarAlCarrito(${p.id})" title="Tocar para agregar al carrito">
+                    <div class="oferta-tira-item" onclick="abrirModalDetalle(${p.id})" title="Ver detalles y comprar">
                         <span class="oferta-tira-badge">OFERTA</span>
                         <img src="${imgUrl}" alt="${p.nombre}" class="oferta-tira-img" loading="lazy">
                         <span class="oferta-tira-nombre">${p.nombre}</span>
@@ -294,6 +317,40 @@
                     </div>
                 `;
             }).join('');
+        }
+
+        // MODAL DETALLE DE PRODUCTO / OFERTA
+        function abrirModalDetalle(idProd) {
+            const p = todosLosProductos.find(item => item.id === idProd);
+            if (!p) return;
+
+            document.getElementById('detalleImg').src = p.imagen || 'https://via.placeholder.com/300?text=Sin+Imagen';
+            document.getElementById('detalleCategoria').innerText = p.categoria || 'POLIRUBRO';
+            document.getElementById('detalleTitulo').innerText = p.nombre || 'Producto';
+            document.getElementById('detallePrecio').innerText = '\$' + formatearPrecio(p.precio || 0);
+            document.getElementById('detalleDescripcion').innerText = p.descripcion || 'Sin descripción disponible.';
+
+            const contenedorVar = document.getElementById('detalleVariantes');
+            let varHtml = '';
+            if (p.tamanios && p.tamanios.length > 0) varHtml += `<span class="detalle-badge-var">Tam: ${p.tamanios.join(', ')}</span>`;
+            if (p.talles && p.talles.length > 0) varHtml += `<span class="detalle-badge-var">Talles: ${p.talles.join(', ')}</span>`;
+            if (p.colores && p.colores.length > 0) varHtml += `<span class="detalle-badge-var">Colores: ${p.colores.join(', ')}</span>`;
+            contenedorVar.innerHTML = varHtml;
+
+            document.getElementById('detalleBtnAgregar').onclick = () => {
+                agregarAlCarrito(p.id);
+                cerrarModalDetalle();
+            };
+
+            document.getElementById('detalleBtnWsp').onclick = () => {
+                enviarProductoWsp(p.id);
+            };
+
+            document.getElementById('detalleModal').style.display = 'flex';
+        }
+
+        function cerrarModalDetalle() {
+            document.getElementById('detalleModal').style.display = 'none';
         }
 
         function renderizarMenuCategorias(cats) {
@@ -352,8 +409,8 @@
 
                 let badgesHtml = '';
                 if (tamArr.length > 0) badgesHtml += `<span style="background:#e0f2fe; color:#0369a1; padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:bold; border:1px solid #bae6fd; margin-left:4px;">Tam: ${tamArr.join(', ')}</span>`;
-                if (tArr.length > 0) badgesHtml += `<span style="background:#f1f5f9; color:#475569; padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:bold; border:1px solid #cbd5e1; margin-left:4px;">T: ${talleArr.join(', ')}</span>`;
-                if (colorArr.length > 0) badgesHtml += `<span style="background:#f1f5f9; color:#475569; padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:bold; border:1px solid #cbd5e1; margin-left:4px;">C: ${colorArr.join(', ')}</span>`;
+                if (tArr.length > 0) badgesHtml += `<span style="background:#f1f5f9; color:#475569; padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:bold; border:1px solid #cbd5e1; margin-left:4px;">T: ${tArr.join(', ')}</span>`;
+                if (cArr.length > 0) badgesHtml += `<span style="background:#f1f5f9; color:#475569; padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:bold; border:1px solid #cbd5e1; margin-left:4px;">C: ${cArr.join(', ')}</span>`;
                 
                 const descHtml = p.descripcion ? `<p style="font-size:0.8rem; color:#64748b; margin:4px 0 8px 0; line-height:1.2;">${p.descripcion}</p>` : '';
 
