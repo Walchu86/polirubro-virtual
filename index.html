@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=255">
+    <link rel="stylesheet" href="style.css?v=256">
 </head>
 <body>
 
@@ -14,7 +14,7 @@
             <button class="welcome-close-btn" onclick="cerrarWelcomeModal()">✕</button>
             <h3 style="color: #c2410c; font-size: 1.3rem; font-weight: 900; margin-bottom: 10px;">🎉 ¡Bienvenido a Polirubro Virtual! 🚀</h3>
             <p style="color: #475569; font-size: 0.95rem; line-height: 1.5; margin-bottom: 5px;">
-                Aprovechá nuestros precios en Corrientes Capital y recordá que <strong>¡comprando $20.000 o más, el envío es TOTALMENTE GRATIS!</strong> 🚚✨
+                Aprovechá nuestros precios en Corrientes Capital y recordá que <strong>¡comprando \$20.000 o más, el envío es TOTALMENTE GRATIS!</strong> 🚚✨
             </p>
             <button class="btn-vamos-comprar" onclick="cerrarWelcomeModal()">¡Vamos a comprar! 🛒</button>
         </div>
@@ -23,7 +23,7 @@
     <!-- BANNER SUPERIOR CON ANIMACIÓN MARQUESINA -->
     <div class="promo-banner">
         <div class="marquee-container">
-            <span>🔥 ¡ENVÍOS A DOMICILIO EN CORRIENTES! • <strong>¡ENVÍO GRATIS COMPRANDO $20.000 O MÁS!</strong> 🚚💨 • ¡Comprá fácil, rápido y seguro desde tu celular! 📦 ⭐</span>
+            <span>🔥 ¡ENVÍOS A DOMICILIO EN CORRIENTES! • <strong>¡ENVÍO GRATIS COMPRANDO \$20.000 O MÁS!</strong> 🚚💨 • ¡Comprá fácil, rápido y seguro desde tu celular! 📦 ⭐</span>
         </div>
     </div>
 
@@ -82,7 +82,7 @@
                 <div class="pc-widget-badges">
                     <span class="pc-badge-item">🔒 100% Segura</span>
                     <span class="pc-badge-item">💵 Efectivo / Transf.</span>
-                    <span class="pc-badge-item">🚚 Envío Gratis ≥ $20k</span>
+                    <span class="pc-badge-item">🚚 Envío Gratis ≥ \$20k</span>
                 </div>
             </div>
         </div>
@@ -98,7 +98,7 @@
         <div class="floating-cart-content">
             <span>🛒 Carrito: <strong id="cartCount">0</strong> prod.</span>
             <span class="ver-carrito-text">VER PEDIDO ➔</span>
-            <span>Total: $<strong id="cartTotalHeader">0</strong></span>
+            <span>Total: \$<strong id="cartTotalHeader">0</strong></span>
         </div>
     </div>
 
@@ -143,7 +143,7 @@
         </div>
         
         <div class="cart-shipping-box" id="bannerCartShipping">
-            <p style="font-size:0.85rem; font-weight:bold; color:#ea580c;">🚚 Envío GRATIS en compras desde $20.000</p>
+            <p style="font-size:0.85rem; font-weight:bold; color:#ea580c;">🚚 Envío GRATIS en compras desde \$20.000</p>
             <p style="font-size:0.75rem; color:#64748b;">Elegí tu zona de envío y método de pago antes de enviar.</p>
         </div>
 
@@ -158,12 +158,12 @@
                 <label style="font-size:0.80rem; font-weight:bold; color:#1e293b; display:block; margin-bottom:4px;">📍 Selección de Zona / Entrega:</label>
                 <select id="selectTipoEnvio" class="select-checkout" onchange="actualizarCarritoUI()">
                     <option value="local">🏬 Retiro en Local (Gratis)</option>
-                    <option value="dentro">🛵 Dentro de las 4 Avenidas ($1.500)</option>
-                    <option value="fuera">🚚 Fuera de las 4 Avenidas ($2.500)</option>
+                    <option value="dentro">🛵 Dentro de las 4 Avenidas (\$1.500)</option>
+                    <option value="fuera">🚚 Fuera de las 4 Avenidas (\$2.500)</option>
                 </select>
             </div>
             <div id="avisoEnvioGratisPromo" style="display:none; background: #ecfdf5; border: 1.5px solid #34d399; padding: 10px; border-radius: 8px; text-align: center; margin-top: 5px;">
-                <p style="font-size: 0.85rem; font-weight: 800; color: #065f46; margin: 0;">🎉 ¡BENEFICIO APLICADO: ENVÍO 100% GRATIS ($0)!</p>
+                <p style="font-size: 0.85rem; font-weight: 800; color: #065f46; margin: 0;">🎉 ¡BENEFICIO APLICADO: ENVÍO 100% GRATIS (\$0)!</p>
             </div>
 
             <label style="font-size:0.80rem; font-weight:bold; color:#1e293b; display:block; margin-top:10px; margin-bottom:4px;">💳 Forma de Pago:</label>
@@ -176,15 +176,15 @@
         <div class="cart-footer" style="padding-top:10px;">
             <div style="display:flex; justify-content:space-between; margin-bottom: 4px; font-size: 0.85rem; color:#64748b;">
                 <span>Subtotal productos:</span>
-                <span>$<span id="cartSubtotalModal">0</span></span>
+                <span>\$<span id="cartSubtotalModal">0</span></span>
             </div>
             <div style="display:flex; justify-content:space-between; margin-bottom: 8px; font-size: 0.85rem; color:#64748b;">
                 <span>Costo de envío:</span>
-                <span id="cartEnvioTexto">$0</span>
+                <span id="cartEnvioTexto">\$0</span>
             </div>
             <div style="display:flex; justify-content:space-between; margin-bottom: 12px; font-weight: bold; font-size: 1.1rem; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
                 <span>Total a pagar:</span>
-                <span style="color:#ea580c;">$<span id="cartTotalModal">0</span></span>
+                <span style="color:#ea580c;">\$<span id="cartTotalModal">0</span></span>
             </div>
             <div style="display:flex; gap: 8px; margin-top: 6px;">
                 <button onclick="cerrarCarrito()" style="flex:1; background:#64748b; color:white; border:none; padding:10px; border-radius:8px; font-weight:bold; font-size:0.85rem; cursor:pointer;">🛍️ Seguir comprando</button>
@@ -480,7 +480,7 @@
             const elemEnvio = document.getElementById('cartEnvioTexto');
             if (elemEnvio) {
                 if (subtotalMonto >= 20000) {
-                    elemEnvio.innerHTML = '<span style="color:#22c55e; font-weight:bold;">¡GRATIS PROMO! 🎉 ($0)</span>';
+                    elemEnvio.innerHTML = '<span style="color:#22c55e; font-weight:bold;">¡GRATIS PROMO! 🎉 (\$0)</span>';
                 } else if (tipoEnvio === 'local') {
                     elemEnvio.innerHTML = '<span style="color:#22c55e; font-weight:bold;">GRATIS (Retiro)</span>';
                 } else {
@@ -607,7 +607,9 @@
             const detalleTxt = detalles.length > 0 ? `\n*${detalles.join(' | ')}*` : '';
             
             const texto = `¡Mirá esta oferta en Polirubro Virtual! 🛍️✨\n\n*${prod.nombre}*${detalleTxt}\nPrecio: $${formatearPrecio(prod.precio)}\n\nMiraló y pedilo acá: https://polirubrovirtual.shop`;
-            const urlWsp = `https://wa.me/54${NUMERO_WHATSAPP}?text=${encodeURIComponent(texto)}`;
+            
+            // Corrige el botón de enviar para que abra los contactos del propio cliente
+            const urlWsp = `https://wa.me/?text=${encodeURIComponent(texto)}`;
             window.open(urlWsp, '_blank');
         }
 
