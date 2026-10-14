@@ -4,26 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=258">
+    <link rel="stylesheet" href="style.css?v=260">
 </head>
 <body>
 
-    <!-- POP-UP DE BIENVENIDA ANIMADO -->
+    <!-- POP-UP DE BIENVENIDA DIRECTO -->
     <div class="welcome-modal-overlay" id="welcomeModal" style="display: flex;">
         <div class="welcome-modal-content">
             <button class="welcome-close-btn" onclick="cerrarWelcomeModal()">✕</button>
-            <h3 style="color: #c2410c; font-size: 1.3rem; font-weight: 900; margin-bottom: 10px;">🎉 ¡Bienvenido a Polirubro Virtual! 🚀</h3>
-            <p style="color: #475569; font-size: 0.95rem; line-height: 1.5; margin-bottom: 5px;">
-                Aprovechá nuestros precios en Corrientes Capital y recordá que <strong>¡comprando \$20.000 o más, el envío es TOTALMENTE GRATIS!</strong> 🚚✨
+            <h3 style="color: #c2410c; font-size: 1.25rem; font-weight: 900; margin-bottom: 8px;">🎉 ¡Bienvenido a Polirubro Virtual! 🚀</h3>
+            <p style="color: #475569; font-size: 0.95rem; line-height: 1.4; margin-bottom: 5px;">
+                ¡Comprando \$20.000 o más, el envío es <strong>TOTALMENTE GRATIS</strong>! 🚚✨
             </p>
             <button class="btn-vamos-comprar" onclick="cerrarWelcomeModal()">¡Vamos a comprar! 🛒</button>
         </div>
     </div>
 
-    <!-- BANNER SUPERIOR CON ANIMACIÓN MARQUESINA -->
+    <!-- BANNER SUPERIOR MARQUESINA -->
     <div class="promo-banner">
         <div class="marquee-container">
-            <span>🔥 ¡ENVÍOS A DOMICILIO EN CORRIENTES! • <strong>¡ENVÍO GRATIS COMPRANDO \$20.000 O MÁS!</strong> 🚚💨 • ¡Comprá fácil, rápido y seguro desde tu celular! 📦 ⭐</span>
+            <span>🔥 ¡ENVÍOS A DOMICILIO EN CORRIENTES! • <strong>¡ENVÍO GRATIS COMPRANDO \$20.000 O MÁS!</strong> 🚚💨 • ¡Comprá fácil y seguro desde tu celular! 📦 ⭐</span>
         </div>
     </div>
 
@@ -44,12 +44,12 @@
                     </div>
                 </div>
 
-                <div class="quick-badge-llamativo" onclick="enfocarBuscador()" title="¡Hacé clic para buscar productos!">
+                <div class="quick-badge-llamativo" onclick="enfocarBuscador()" title="¡Buscá productos!">
                     🔥 ¡Hacé clic y llevate lo que necesitás!
                 </div>
             </div>
 
-            <!-- Carrusel Central (EXCLUSIVO PARA PC) -->
+            <!-- Carrusel Central (PC) -->
             <div class="pc-carousel-container">
                 <div class="pc-carousel-track" id="carouselTrack">
                     <div class="pc-carousel-slide active">
@@ -66,12 +66,12 @@
                     </div>
                     <div class="pc-carousel-slide">
                         <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500&auto=format&fit=crop&q=60" alt="Tienda">
-                        <div class="pc-carousel-caption">🛍️ Polirubro Virtual a un clic de la compra</div>
+                        <div class="pc-carousel-caption">🛍️ Polirubro Virtual a un clic</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Widget Derecho (EXCLUSIVO PARA PC) -->
+            <!-- Widget Derecho (PC) -->
             <div class="pc-desktop-widget">
                 <div class="pc-widget-title">🕒 Tienda Activa 24/7</div>
                 <div class="pc-widget-text">
@@ -86,21 +86,21 @@
         </div>
     </header>
 
-    <!-- BARRA DE NAVEGACIÓN NARANJA (SECCIONES) -->
+    <!-- BARRA DE SECCIONES -->
     <nav class="main-nav">
         <div class="nav-container-categorias" id="contenedorCategoriasNav"></div>
     </nav>
 
-    <!-- BARRA FLOTANTE SUPERIOR DEL CARRITO -->
+    <!-- BARRA FLOTANTE DEL CARRITO -->
     <div class="floating-cart-bar" onclick="abrirCarrito()">
         <div class="floating-cart-content">
-            <span>🛒 Carrito: <strong id="cartCount">0</strong> prod.</span>
+            <span>🛒 Carrito: <strong id="cartCount">0</strong></span>
             <span class="ver-carrito-text">VER PEDIDO ➔</span>
             <span>Total: \$<strong id="cartTotalHeader">0</strong></span>
         </div>
     </div>
 
-    <!-- LAYOUT PRINCIPAL -->
+    <!-- CONTENEDOR PRINCIPAL -->
     <div class="main-layout">
         
         <main>
@@ -108,17 +108,13 @@
                 <input type="text" id="inputBuscador" class="search-input" placeholder="🔍 Buscar productos en el catálogo..." oninput="filtrarProductos()">
             </div>
 
-            <!-- SECCIÓN EXCLUSIVA: OFERTAS FLASH 48 HS (COMPACTA Y DESLIZANTE) -->
-            <div id="seccionOfertas48hs" style="display:none; margin-bottom: 25px;">
-                <div class="ofertas-flash-container">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
-                        <h2 style="font-size: 1.1rem; color: #b91c1c; display: flex; align-items: center; gap: 6px; margin:0;">
-                            ⚡ OFERTAS FLASH 48 HORAS 🔥
-                        </h2>
-                        <span style="background: #ef4444; color: white; padding: 3px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase;">¡Por tiempo limitado!</span>
-                    </div>
-                    <div class="ofertas-flash-scroll" id="gridOfertas48hs"></div>
+            <!-- SECCIÓN OFERTAS 48 HS: FORMATO TIRA / CARRUSEL FINO -->
+            <div id="seccionOfertas48hs" style="display:none;" class="tira-ofertas-wrapper">
+                <div class="tira-ofertas-header">
+                    <span class="tira-ofertas-tag">⚡ OFERTAS FLASH 48 HS</span>
+                    <span class="tira-ofertas-sub">¡Tocá una oferta para sumarla!</span>
                 </div>
+                <div class="tira-ofertas-carril" id="gridOfertas48hs"></div>
             </div>
 
             <h2 class="cat-titulo-seccion" id="tituloSeccionActiva">🌟 Todos los Productos</h2>
@@ -133,7 +129,7 @@
 
     </div>
 
-    <!-- CARRITO / MODAL LATERAL -->
+    <!-- MODAL CARRITO -->
     <div class="cart-modal" id="cartModal">
         <div class="cart-header">
             <h3>🛍️ Tu Carrito de Compras</h3>
@@ -142,29 +138,29 @@
         
         <div class="cart-shipping-box" id="bannerCartShipping">
             <p style="font-size:0.85rem; font-weight:bold; color:#ea580c;">🚚 Envío GRATIS en compras desde \$20.000</p>
-            <p style="font-size:0.75rem; color:#64748b;">Elegí tu zona de envío y método de pago antes de enviar.</p>
+            <p style="font-size:0.75rem; color:#64748b;">Elegí zona de entrega y método de pago.</p>
         </div>
 
         <div class="cart-items" id="listaCarritoModal"></div>
 
-        <div style="padding: 5px 0; text-align: right;">
-            <button onclick="vaciarCarrito()" style="background: none; border: none; color: #ef4444; font-size: 0.78rem; font-weight: bold; cursor: pointer;">🗑️ Vaciar carrito entero</button>
+        <div style="padding: 4px 0; text-align: right;">
+            <button onclick="vaciarCarrito()" style="background: none; border: none; color: #ef4444; font-size: 0.78rem; font-weight: bold; cursor: pointer;">🗑️ Vaciar carrito</button>
         </div>
 
         <div class="checkout-options" style="margin-top:5px; padding:10px 0; border-top:1px solid #e2e8f0;">
             <div id="contenedorZonaEnvio">
-                <label style="font-size:0.80rem; font-weight:bold; color:#1e293b; display:block; margin-bottom:4px;">📍 Selección de Zona / Entrega:</label>
+                <label style="font-size:0.80rem; font-weight:bold; color:#1e293b; display:block; margin-bottom:4px;">📍 Zona / Entrega:</label>
                 <select id="selectTipoEnvio" class="select-checkout" onchange="actualizarCarritoUI()">
                     <option value="local">🏬 Retiro en Local (Gratis)</option>
                     <option value="dentro">🛵 Dentro de las 4 Avenidas (\$1.500)</option>
                     <option value="fuera">🚚 Fuera de las 4 Avenidas (\$2.500)</option>
                 </select>
             </div>
-            <div id="avisoEnvioGratisPromo" style="display:none; background: #ecfdf5; border: 1.5px solid #34d399; padding: 10px; border-radius: 8px; text-align: center; margin-top: 5px;">
-                <p style="font-size: 0.85rem; font-weight: 800; color: #065f46; margin: 0;">🎉 ¡BENEFICIO APLICADO: ENVÍO 100% GRATIS (\$0)!</p>
+            <div id="avisoEnvioGratisPromo" style="display:none; background: #ecfdf5; border: 1.5px solid #34d399; padding: 8px; border-radius: 8px; text-align: center; margin-top: 5px;">
+                <p style="font-size: 0.85rem; font-weight: 800; color: #065f46; margin: 0;">🎉 ¡ENVÍO 100% GRATIS (\$0)!</p>
             </div>
 
-            <label style="font-size:0.80rem; font-weight:bold; color:#1e293b; display:block; margin-top:10px; margin-bottom:4px;">💳 Forma de Pago:</label>
+            <label style="font-size:0.80rem; font-weight:bold; color:#1e293b; display:block; margin-top:8px; margin-bottom:4px;">💳 Forma de Pago:</label>
             <select id="selectMedioPago" class="select-checkout">
                 <option value="Efectivo al recibir/retirar">💵 Efectivo al recibir/retirar</option>
                 <option value="Pago por transferencia">🏦 Pago por transferencia</option>
@@ -173,34 +169,32 @@
 
         <div class="cart-footer" style="padding-top:10px;">
             <div style="display:flex; justify-content:space-between; margin-bottom: 4px; font-size: 0.85rem; color:#64748b;">
-                <span>Subtotal productos:</span>
+                <span>Subtotal:</span>
                 <span>\$<span id="cartSubtotalModal">0</span></span>
             </div>
-            <div style="display:flex; justify-content:space-between; margin-bottom: 8px; font-size: 0.85rem; color:#64748b;">
-                <span>Costo de envío:</span>
+            <div style="display:flex; justify-content:space-between; margin-bottom: 6px; font-size: 0.85rem; color:#64748b;">
+                <span>Envío:</span>
                 <span id="cartEnvioTexto">\$0</span>
             </div>
-            <div style="display:flex; justify-content:space-between; margin-bottom: 12px; font-weight: bold; font-size: 1.1rem; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
-                <span>Total a pagar:</span>
+            <div style="display:flex; justify-content:space-between; margin-bottom: 10px; font-weight: bold; font-size: 1.1rem; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                <span>Total:</span>
                 <span style="color:#ea580c;">\$<span id="cartTotalModal">0</span></span>
             </div>
-            <div style="display:flex; gap: 8px; margin-top: 6px;">
-                <button onclick="cerrarCarrito()" style="flex:1; background:#64748b; color:white; border:none; padding:10px; border-radius:8px; font-weight:bold; font-size:0.85rem; cursor:pointer;">🛍️ Seguir comprando</button>
+            <div style="display:flex; gap: 8px;">
+                <button onclick="cerrarCarrito()" style="flex:1; background:#64748b; color:white; border:none; padding:10px; border-radius:8px; font-weight:bold; font-size:0.85rem; cursor:pointer;">Seguir viendo</button>
                 <button class="btn-whatsapp" onclick="procesarPedidoCheckout()" style="flex:1; margin-top:0;">📲 Enviar Pedido</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL QR Y LIGHTBOX -->
+    <!-- LIGHTBOX / QR -->
     <div class="lightbox-overlay" id="qrModal" onclick="cerrarModalQR()">
-        <div style="background:#ffffff; padding:25px; border-radius:16px; text-align:center; max-width:350px; width:90%; position:relative;" onclick="event.stopPropagation()">
-            <span class="lightbox-close" onclick="cerrarModalQR()" style="color:#000; top:10px; right:15px;">&times;</span>
-            <h3 style="color:#ea580c; margin-bottom:10px; font-size:1.2rem;">📱 ¡Escaneá para enviar tu pedido!</h3>
-            <p style="font-size:0.85rem; color:#64748b; margin-bottom:15px;">Apunta la cámara de tu celular al código QR para abrir el pedido detallado directamente en tu WhatsApp.</p>
-            <div style="background:#f8fafc; padding:15px; border-radius:12px; display:inline-block; border:1px solid #e2e8f0; margin-bottom:15px;">
-                <img id="imgCodigoQR" src="" alt="Código QR WhatsApp" style="width:200px; height:200px; display:block;">
-            </div>
-            <a id="linkDirectoWspPC" href="#" target="_blank" style="display:block; background-color:#22c55e; color:white; text-decoration:none; padding:10px; border-radius:8px; font-weight:bold; font-size:0.85rem;">
+        <div style="background:#ffffff; padding:20px; border-radius:16px; text-align:center; max-width:320px; width:90%; position:relative;" onclick="event.stopPropagation()">
+            <span class="lightbox-close" onclick="cerrarModalQR()" style="color:#000; top:8px; right:12px;">&times;</span>
+            <h3 style="color:#ea580c; margin-bottom:8px; font-size:1.1rem;">📱 Escaneá para enviar</h3>
+            <p style="font-size:0.8rem; color:#64748b; margin-bottom:12px;">Apuntá con tu celular para enviar el pedido a WhatsApp.</p>
+            <img id="imgCodigoQR" src="" alt="QR" style="width:180px; height:180px; display:inline-block; margin-bottom:10px;">
+            <a id="linkDirectoWspPC" href="#" target="_blank" style="display:block; background-color:#22c55e; color:white; text-decoration:none; padding:8px; border-radius:8px; font-weight:bold; font-size:0.85rem;">
                 💻 Abrir en WhatsApp Web
             </a>
         </div>
@@ -211,7 +205,7 @@
         <img class="lightbox-img" id="lightboxImg" src="" alt="Ampliada">
     </div>
 
-    <a href="https://wa.me/543794655867?text=Hola!%20Tengo%20una%20consulta%20sobre%20la%20tienda." target="_blank" class="wsp-float" title="Consultar por WhatsApp">💬</a>
+    <a href="https://wa.me/543794655867?text=Hola!%20Tengo%20una%20consulta." target="_blank" class="wsp-float" title="Consultar por WhatsApp">💬</a>
 
     <script>
         const NUMERO_WHATSAPP = "3794655867";
@@ -235,9 +229,7 @@
 
         function cerrarWelcomeModal() {
             const modal = document.getElementById('welcomeModal');
-            if (modal) {
-                modal.style.display = 'none';
-            }
+            if (modal) modal.style.display = 'none';
         }
 
         function enfocarBuscador() {
@@ -254,7 +246,7 @@
 
         async function cargarCatalogoPublico() {
             const grid = document.getElementById('gridProductos');
-            grid.innerHTML = '<p style="text-align:center; width:100%; color:#64748b; padding:2rem;">Actualizando catálogo...</p>';
+            grid.innerHTML = '<p style="text-align:center; width:100%; color:#64748b; padding:2rem;">Cargando catálogo...</p>';
 
             try {
                 const res = await fetch('productos.json?v=' + Date.now());
@@ -272,13 +264,14 @@
                 }
             } catch (e) {
                 console.error(e);
-                grid.innerHTML = '<p style="text-align:center; width:100%; color:#dc2626; padding:2rem;">Error al conectar con la tienda.</p>';
+                grid.innerHTML = '<p style="text-align:center; width:100%; color:#dc2626; padding:2rem;">Error al conectar.</p>';
             }
         }
 
+        // RENDERIZADO COMPACTO DE OFERTAS: TIRA CON FOTO + PRECIO
         function renderizarOfertas48hs() {
             const seccion = document.getElementById('seccionOfertas48hs');
-            const grid48 = document.getElementById('gridOfertas48hs');
+            const carril = document.getElementById('gridOfertas48hs');
 
             const ofertas = todosLosProductos.filter(p => p.enOferta || p.oferta48hs);
 
@@ -288,39 +281,16 @@
             }
 
             seccion.style.display = 'block';
-            grid48.innerHTML = ofertas.map(p => {
-                const imgUrl = p.imagen || 'https://via.placeholder.com/300?text=Sin+Imagen';
+            carril.innerHTML = ofertas.map(p => {
+                const imgUrl = p.imagen || 'https://via.placeholder.com/150?text=Oferta';
                 const precioLimpio = Number(p.precio || 0);
-                
-                const tamArr = p.tamanios || [];
-                const talleArr = p.talles || (p.talle ? [p.talle] : []);
-                const colorArr = p.colores || (p.color ? [p.color] : []);
-
-                let badgesHtml = '';
-                if (tamArr.length > 0) badgesHtml += `<span style="background:#e0f2fe; color:#0369a1; padding:2px 5px; border-radius:4px; font-size:0.65rem; font-weight:bold;">Tam: ${tamArr.join(', ')}</span>`;
-                if (talleArr.length > 0) badgesHtml += `<span style="background:#f1f5f9; color:#475569; padding:2px 5px; border-radius:4px; font-size:0.65rem; font-weight:bold;">T: ${talleArr.join(', ')}</span>`;
-                if (colorArr.length > 0) badgesHtml += `<span style="background:#f1f5f9; color:#475569; padding:2px 5px; border-radius:4px; font-size:0.65rem; font-weight:bold;">C: ${colorArr.join(', ')}</span>`;
 
                 return `
-                    <div class="card-producto en-oferta-card card-oferta-compacta">
-                        <div class="badge-oferta-box">
-                            <span class="badge-oferta">🔥 OFERTA</span>
-                        </div>
-                        <div class="img-frame" onclick="abrirLightbox('${imgUrl}')" style="height: 130px;">
-                            <img src="${imgUrl}" alt="${p.nombre}" class="img-producto" loading="lazy">
-                        </div>
-                        <div class="card-detalles" style="padding: 8px 10px;">
-                            <span style="font-size:0.65rem; color:#ef4444; font-weight:bold; text-transform:uppercase;">${p.categoria}</span>
-                            <h3 class="titulo-producto" style="font-size: 0.85rem; margin: 2px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.nombre}</h3>
-                            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
-                                <span class="precio-producto" style="color:#ef4444; font-size: 1rem;">$${formatearPrecio(precioLimpio)}</span>
-                                <div>${badgesHtml}</div>
-                            </div>
-                        </div>
-                        <div class="card-acciones" style="padding: 6px 10px;">
-                            <button class="btn-add-cart" style="background: #ef4444; padding: 6px; font-size: 0.78rem;" onclick="agregarAlCarrito(${p.id})">🛒 Agregar</button>
-                            <button class="btn-share-wsp" onclick="enviarProductoWsp(${p.id})" title="Compartir" style="background:#22c55e; color:white; border:none; padding:6px 8px; border-radius:6px; cursor:pointer; font-size:0.78rem; font-weight:bold;">📤</button>
-                        </div>
+                    <div class="oferta-tira-item" onclick="agregarAlCarrito(${p.id})" title="Tocar para agregar al carrito">
+                        <span class="oferta-tira-badge">OFERTA</span>
+                        <img src="${imgUrl}" alt="${p.nombre}" class="oferta-tira-img" loading="lazy">
+                        <span class="oferta-tira-nombre">${p.nombre}</span>
+                        <span class="oferta-tira-precio">$${formatearPrecio(precioLimpio)}</span>
                     </div>
                 `;
             }).join('');
@@ -337,7 +307,6 @@
                 if (nombreCat) {
                     const activaClass = categoriaActiva === nombreCat ? 'activa-nav' : '';
                     const activaSidebar = categoriaActiva === nombreCat ? 'activa' : '';
-                    
                     navHtml += `<li><a href="#" class="${activaClass}" onclick="cambiarCategoria('${nombreCat}', event)">${nombreCat}</a></li>`;
                     sidebarHtml += `<button class="btn-categoria ${activaSidebar}" onclick="cambiarCategoria('${nombreCat}', event)">🔹 ${nombreCat}</button>`;
                 }
@@ -372,22 +341,18 @@
             }
 
             grid.innerHTML = filtrados.map(p => {
-                const badgeOferta = p.enOferta ? `
-                    <div class="badge-oferta-box">
-                        <span class="badge-oferta">🔥 OFERTA</span>
-                    </div>` : '';
-                
+                const badgeOferta = p.enOferta ? `<div class="badge-oferta-box"><span class="badge-oferta">🔥 OFERTA</span></div>` : '';
                 const claseOfertaCard = p.enOferta ? 'card-producto en-oferta-card' : 'card-producto';
                 const imgUrl = p.imagen || 'https://via.placeholder.com/300?text=Sin+Imagen';
                 const precioLimpio = Number(p.precio || 0);
                 
                 const tamArr = p.tamanios || [];
-                const talleArr = p.talles || (p.talle ? [p.talle] : []);
-                const colorArr = p.colores || (p.color ? [p.color] : []);
+                const tArr = p.talles || (p.talle ? [p.talle] : []);
+                const cArr = p.colores || (p.color ? [p.color] : []);
 
                 let badgesHtml = '';
                 if (tamArr.length > 0) badgesHtml += `<span style="background:#e0f2fe; color:#0369a1; padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:bold; border:1px solid #bae6fd; margin-left:4px;">Tam: ${tamArr.join(', ')}</span>`;
-                if (talleArr.length > 0) badgesHtml += `<span style="background:#f1f5f9; color:#475569; padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:bold; border:1px solid #cbd5e1; margin-left:4px;">T: ${talleArr.join(', ')}</span>`;
+                if (tArr.length > 0) badgesHtml += `<span style="background:#f1f5f9; color:#475569; padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:bold; border:1px solid #cbd5e1; margin-left:4px;">T: ${talleArr.join(', ')}</span>`;
                 if (colorArr.length > 0) badgesHtml += `<span style="background:#f1f5f9; color:#475569; padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:bold; border:1px solid #cbd5e1; margin-left:4px;">C: ${colorArr.join(', ')}</span>`;
                 
                 const descHtml = p.descripcion ? `<p style="font-size:0.8rem; color:#64748b; margin:4px 0 8px 0; line-height:1.2;">${p.descripcion}</p>` : '';
@@ -409,8 +374,8 @@
                             <div class="stock-tag">Stock disponible: ${p.stock || 0} un.</div>
                         </div>
                         <div class="card-acciones">
-                            <button class="btn-add-cart" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);" onclick="agregarAlCarrito(${p.id})">🛒 Agregar</button>
-                            <button class="btn-share-wsp" onclick="enviarProductoWsp(${p.id})" title="Enviar producto por WhatsApp" style="background:#22c55e; color:white; border:none; padding:8px 10px; border-radius:8px; cursor:pointer; font-size:0.85rem; font-weight:bold;">📤 Enviar</button>
+                            <button class="btn-add-cart" onclick="agregarAlCarrito(${p.id})">🛒 Agregar</button>
+                            <button class="btn-share-wsp" onclick="enviarProductoWsp(${p.id})" title="Enviar producto">📤 Enviar</button>
                         </div>
                     </div>
                 `;
@@ -449,11 +414,11 @@
             const avisoPromo = document.getElementById('avisoEnvioGratisPromo');
 
             if (subtotalMonto >= 20000) {
-                if (bannerCart) bannerCart.innerHTML = `<p style="font-size:0.85rem; font-weight:bold; color:#22c55e;">🎉 ¡FELICITACIONES! Tenés ENVÍO GRATIS aplicado en tu pedido.</p>`;
+                if (bannerCart) bannerCart.innerHTML = `<p style="font-size:0.85rem; font-weight:bold; color:#22c55e;">🎉 ¡Tenés ENVÍO GRATIS aplicado!</p>`;
                 if (contenedorZona) contenedorZona.style.display = 'none';
                 if (avisoPromo) avisoPromo.style.display = 'block';
             } else {
-                if (bannerCart) bannerCart.innerHTML = `<p style="font-size:0.85rem; font-weight:bold; color:#ea580c;">🚚 Envío GRATIS en compras desde $20.000</p><p style="font-size:0.75rem; color:#64748b;">Elegí tu zona de envío y método de pago antes de enviar.</p>`;
+                if (bannerCart) bannerCart.innerHTML = `<p style="font-size:0.85rem; font-weight:bold; color:#ea580c;">🚚 Envío GRATIS en compras desde $20.000</p><p style="font-size:0.75rem; color:#64748b;">Elegí zona de entrega y método de pago.</p>`;
                 if (contenedorZona) contenedorZona.style.display = 'block';
                 if (avisoPromo) avisoPromo.style.display = 'none';
             }
@@ -478,7 +443,7 @@
             const elemEnvio = document.getElementById('cartEnvioTexto');
             if (elemEnvio) {
                 if (subtotalMonto >= 20000) {
-                    elemEnvio.innerHTML = '<span style="color:#22c55e; font-weight:bold;">¡GRATIS PROMO! 🎉 (\$0)</span>';
+                    elemEnvio.innerHTML = '<span style="color:#22c55e; font-weight:bold;">¡GRATIS PROMO! (\$0)</span>';
                 } else if (tipoEnvio === 'local') {
                     elemEnvio.innerHTML = '<span style="color:#22c55e; font-weight:bold;">GRATIS (Retiro)</span>';
                 } else {
@@ -512,7 +477,7 @@
                             <button onclick="cambiarQty(${i.id}, -1)" style="padding:2px 8px; background:#e2e8f0; border:none; border-radius:4px; font-weight:bold; cursor:pointer;">-</button>
                             <span style="font-size:0.85rem; font-weight:bold; min-width:18px; text-align:center;">${i.cantidad}</span>
                             <button onclick="cambiarQty(${i.id}, 1)" style="padding:2px 8px; background:#e2e8f0; border:none; border-radius:4px; font-weight:bold; cursor:pointer;">+</button>
-                            <button onclick="eliminarDelCarrito(${i.id})" title="Eliminar producto" style="background:#ef4444; color:white; border:none; padding:3px 7px; border-radius:4px; font-size:0.75rem; cursor:pointer; margin-left:4px;">🗑️</button>
+                            <button onclick="eliminarDelCarrito(${i.id})" title="Eliminar" style="background:#ef4444; color:white; border:none; padding:3px 7px; border-radius:4px; font-size:0.75rem; cursor:pointer; margin-left:4px;">🗑️</button>
                         </div>
                     </div>
                 `;
@@ -523,9 +488,7 @@
             const item = carrito.find(i => i.id === id);
             if (!item) return;
             item.cantidad += delta;
-            if (item.cantidad <= 0) {
-                carrito = carrito.filter(i => i.id !== id);
-            }
+            if (item.cantidad <= 0) carrito = carrito.filter(i => i.id !== id);
             actualizarCarritoUI();
         }
 
@@ -535,7 +498,7 @@
         }
 
         function vaciarCarrito() {
-            if (confirm("¿Estás seguro de vaciar todo el carrito?")) {
+            if (confirm("¿Vaciar todo el carrito?")) {
                 carrito = [];
                 yaAlcanzoEnvioGratis = false;
                 actualizarCarritoUI();
@@ -587,11 +550,8 @@
         }
 
         window.onpopstate = function(event) {
-            if (estadoModal === 'cart') {
-                cerrarCarrito(true);
-            } else if (estadoModal === 'lightbox') {
-                cerrarLightbox(true);
-            }
+            if (estadoModal === 'cart') cerrarCarrito(true);
+            else if (estadoModal === 'lightbox') cerrarLightbox(true);
         };
 
         function enviarProductoWsp(idProd) {
