@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=265">
+    <link rel="stylesheet" href="style.css?v=266">
 </head>
 <body>
 
@@ -273,6 +273,7 @@
             grid.innerHTML = '<p style="text-align:center; width:100%; color:#64748b; padding:2rem;">Cargando catálogo...</p>';
 
             try {
+                // Truco para evitar caché agresivo
                 const res = await fetch('productos.json?v=' + Date.now());
                 if (res.ok) {
                     const data = await res.json();
@@ -402,14 +403,7 @@
             sidebarContainer.innerHTML = sidebarHtml;
         }
 
-        function cambiarCategoria(cat, event) {
-            if (event) event.preventDefault();
-            categoriaActiva = cat;
-            document.getElementById('tituloSeccionActiva').innerText = cat === 'TODAS' ? '🌟 Todos los Productos' : `📂 ${cat}`;
-            renderizarMenuCategorias(categoriasDisponibles);
-            filtrarProductos();
-        }
-
+        // AQUÍ ESTABA EL ERROR DE LAS VARIABLES, YA ESTÁ CORREGIDO.
         function filtrarProductos() {
             const busqueda = document.getElementById('inputBuscador').value.toLowerCase().trim();
             const grid = document.getElementById('gridProductos');
@@ -437,8 +431,8 @@
 
                 let badgesHtml = '';
                 if (tamArr.length > 0) badgesHtml += `<span style="background:#e0f2fe; color:#0369a1; padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:bold; border:1px solid #bae6fd; margin-left:4px;">Tam: ${tamArr.join(', ')}</span>`;
-                if (tArr.length > 0) badgesHtml += `<span style="background:#f1f5f9; color:#475569; padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:bold; border:1px solid #cbd5e1; margin-left:4px;">T: ${talleArr.join(', ')}</span>`;
-                if (colorArr.length > 0) badgesHtml += `<span style="background:#f1f5f9; color:#475569; padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:bold; border:1px solid #cbd5e1; margin-left:4px;">C: ${colorArr.join(', ')}</span>`;
+                if (tArr.length > 0) badgesHtml += `<span style="background:#f1f5f9; color:#475569; padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:bold; border:1px solid #cbd5e1; margin-left:4px;">T: ${tArr.join(', ')}</span>`;
+                if (cArr.length > 0) badgesHtml += `<span style="background:#f1f5f9; color:#475569; padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:bold; border:1px solid #cbd5e1; margin-left:4px;">C: ${cArr.join(', ')}</span>`;
                 
                 const descHtml = p.descripcion ? `<p style="font-size:0.8rem; color:#64748b; margin:4px 0 8px 0; line-height:1.2;">${p.descripcion}</p>` : '';
 
