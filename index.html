@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=266">
+    <link rel="stylesheet" href="style.css?v=270">
 </head>
 <body>
 
@@ -14,7 +14,7 @@
             <button class="welcome-close-btn" onclick="cerrarWelcomeModal()">✕</button>
             <h3 style="color: #c2410c; font-size: 1.25rem; font-weight: 900; margin-bottom: 8px;">🎉 ¡Bienvenido a Polirubro Virtual! 🚀</h3>
             <p style="color: #475569; font-size: 0.95rem; line-height: 1.4; margin-bottom: 5px;">
-                ¡Comprando \$20.000 o más, el envío es <strong>TOTALMENTE GRATIS</strong>! 🚚✨
+                ¡Comprando $20.000 o más, el envío es <strong>TOTALMENTE GRATIS</strong>! 🚚✨
             </p>
             <button class="btn-vamos-comprar" onclick="cerrarWelcomeModal()">¡Vamos a comprar! 🛒</button>
         </div>
@@ -23,7 +23,7 @@
     <!-- BANNER SUPERIOR MARQUESINA -->
     <div class="promo-banner">
         <div class="marquee-container">
-            <span>🔥 ¡ENVÍOS A DOMICILIO EN CORRIENTES! • <strong>¡ENVÍO GRATIS COMPRANDO \$20.000 O MÁS!</strong> 🚚💨 • ¡Comprá fácil y seguro desde tu celular! 📦 ⭐</span>
+            <span>🔥 ¡ENVÍOS A DOMICILIO EN CORRIENTES! • <strong>¡ENVÍO GRATIS COMPRANDO $20.000 O MÁS!</strong> 🚚💨 • ¡Comprá fácil y seguro desde tu celular! 📦 ⭐</span>
         </div>
     </div>
 
@@ -80,7 +80,7 @@
                 <div class="pc-widget-badges">
                     <span class="pc-badge-item">🔒 100% Segura</span>
                     <span class="pc-badge-item">💵 Efectivo / Transf.</span>
-                    <span class="pc-badge-item">🚚 Envío Gratis ≥ \$20k</span>
+                    <span class="pc-badge-item">🚚 Envío Gratis ≥ $20k</span>
                 </div>
             </div>
         </div>
@@ -96,7 +96,7 @@
         <div class="floating-cart-content">
             <span>🛒 Carrito: <strong id="cartCount">0</strong></span>
             <span class="ver-carrito-text">VER PEDIDO ➔</span>
-            <span>Total: \$<strong id="cartTotalHeader">0</strong></span>
+            <span>Total: $<strong id="cartTotalHeader">0</strong></span>
         </div>
     </div>
 
@@ -132,7 +132,7 @@
     <!-- MODAL DETALLE DE PRODUCTO / OFERTA -->
     <div class="lightbox-overlay" id="detalleModal" onclick="cerrarModalDetalle()">
         <div class="detalle-modal-box" onclick="event.stopPropagation()">
-            <span class="lightbox-close" onclick="cerrarModalDetalle()">&times;</span>
+            <button class="detalle-close-btn" onclick="cerrarModalDetalle()" title="Cerrar ventana">✕</button>
             <div class="detalle-modal-grid">
                 <div class="detalle-img-frame">
                     <img id="detalleImg" src="" alt="Producto">
@@ -140,7 +140,7 @@
                 <div class="detalle-info">
                     <span id="detalleCategoria" class="detalle-cat-tag">ESTÉTICA</span>
                     <h3 id="detalleTitulo" class="detalle-titulo">Nombre del Producto</h3>
-                    <div id="detallePrecio" class="detalle-precio">\$0</div>
+                    <div id="detallePrecio" class="detalle-precio">$0</div>
                     <p id="detalleDescripcion" class="detalle-descripcion"></p>
                     <div id="detalleVariantes" class="detalle-variantes"></div>
                     <div class="detalle-acciones">
@@ -273,7 +273,6 @@
             grid.innerHTML = '<p style="text-align:center; width:100%; color:#64748b; padding:2rem;">Cargando catálogo...</p>';
 
             try {
-                // Truco para evitar caché agresivo
                 const res = await fetch('productos.json?v=' + Date.now());
                 if (res.ok) {
                     const data = await res.json();
@@ -382,6 +381,15 @@
             document.getElementById('detalleModal').style.display = 'none';
         }
 
+        // Cierre con la tecla Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                cerrarModalDetalle();
+                cerrarLightbox();
+                cerrarCarrito();
+            }
+        });
+
         function renderizarMenuCategorias(cats) {
             const navContainer = document.getElementById('contenedorCategoriasNav');
             let navHtml = `<ul class="nav-links"><li><a href="#" class="${categoriaActiva === 'TODAS' ? 'activa-nav' : ''}" onclick="cambiarCategoria('TODAS', event)">🔥 Todos</a></li>`;
@@ -403,7 +411,6 @@
             sidebarContainer.innerHTML = sidebarHtml;
         }
 
-        // AQUÍ ESTABA EL ERROR DE LAS VARIABLES, YA ESTÁ CORREGIDO.
         function filtrarProductos() {
             const busqueda = document.getElementById('inputBuscador').value.toLowerCase().trim();
             const grid = document.getElementById('gridProductos');
