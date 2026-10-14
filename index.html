@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=257">
+    <link rel="stylesheet" href="style.css?v=258">
 </head>
 <body>
 
@@ -40,10 +40,8 @@
                 
                 <div class="header-banner-animado">
                     <div class="header-banner-content">
-                        <span>🛍️</span>
-                        <span>Atención personalizada y envíos rápidos</span>
+                        <span>📦 ⭐ Atención personalizada y envíos rápidos ✨</span>
                     </div>
-                    <div class="header-banner-badges">📦🎁⭐</div>
                 </div>
 
                 <div class="quick-badge-llamativo" onclick="enfocarBuscador()" title="¡Hacé clic para buscar productos!">
@@ -110,16 +108,16 @@
                 <input type="text" id="inputBuscador" class="search-input" placeholder="🔍 Buscar productos en el catálogo..." oninput="filtrarProductos()">
             </div>
 
-            <!-- SECCIÓN EXCLUSIVA: OFERTAS ESPECIALES 48 HS -->
-            <div id="seccionOfertas48hs" style="display:none; margin-bottom: 30px;">
-                <div style="background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); border: 2px dashed #ef4444; border-radius: 16px; padding: 20px; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.1);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
-                        <h2 style="font-size: 1.25rem; color: #b91c1c; display: flex; align-items: center; gap: 8px; margin:0;">
+            <!-- SECCIÓN EXCLUSIVA: OFERTAS FLASH 48 HS (COMPACTA Y DESLIZANTE) -->
+            <div id="seccionOfertas48hs" style="display:none; margin-bottom: 25px;">
+                <div class="ofertas-flash-container">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+                        <h2 style="font-size: 1.1rem; color: #b91c1c; display: flex; align-items: center; gap: 6px; margin:0;">
                             ⚡ OFERTAS FLASH 48 HORAS 🔥
                         </h2>
-                        <span style="background: #ef4444; color: white; padding: 5px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; box-shadow: 0 2px 5px rgba(239, 68, 68, 0.3);">¡Por tiempo limitado!</span>
+                        <span style="background: #ef4444; color: white; padding: 3px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase;">¡Por tiempo limitado!</span>
                     </div>
-                    <div class="productos-grid" id="gridOfertas48hs"></div>
+                    <div class="ofertas-flash-scroll" id="gridOfertas48hs"></div>
                 </div>
             </div>
 
@@ -299,33 +297,29 @@
                 const colorArr = p.colores || (p.color ? [p.color] : []);
 
                 let badgesHtml = '';
-                if (tamArr.length > 0) badgesHtml += `<span style="background:#e0f2fe; color:#0369a1; padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:bold; border:1px solid #bae6fd; margin-left:4px;">Tam: ${tamArr.join(', ')}</span>`;
-                if (talleArr.length > 0) badgesHtml += `<span style="background:#f1f5f9; color:#475569; padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:bold; border:1px solid #cbd5e1; margin-left:4px;">T: ${talleArr.join(', ')}</span>`;
-                if (colorArr.length > 0) badgesHtml += `<span style="background:#f1f5f9; color:#475569; padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:bold; border:1px solid #cbd5e1; margin-left:4px;">C: ${colorArr.join(', ')}</span>`;
-                
-                const descHtml = p.descripcion ? `<p style="font-size:0.8rem; color:#64748b; margin:4px 0 8px 0; line-height:1.2;">${p.descripcion}</p>` : '';
+                if (tamArr.length > 0) badgesHtml += `<span style="background:#e0f2fe; color:#0369a1; padding:2px 5px; border-radius:4px; font-size:0.65rem; font-weight:bold;">Tam: ${tamArr.join(', ')}</span>`;
+                if (talleArr.length > 0) badgesHtml += `<span style="background:#f1f5f9; color:#475569; padding:2px 5px; border-radius:4px; font-size:0.65rem; font-weight:bold;">T: ${talleArr.join(', ')}</span>`;
+                if (colorArr.length > 0) badgesHtml += `<span style="background:#f1f5f9; color:#475569; padding:2px 5px; border-radius:4px; font-size:0.65rem; font-weight:bold;">C: ${colorArr.join(', ')}</span>`;
 
                 return `
-                    <div class="card-producto en-oferta-card">
+                    <div class="card-producto en-oferta-card card-oferta-compacta">
                         <div class="badge-oferta-box">
-                            <span class="badge-oferta">⚡ OFERTA FLASH</span>
+                            <span class="badge-oferta">🔥 OFERTA</span>
                         </div>
-                        <div class="img-frame" onclick="abrirLightbox('${imgUrl}')">
+                        <div class="img-frame" onclick="abrirLightbox('${imgUrl}')" style="height: 130px;">
                             <img src="${imgUrl}" alt="${p.nombre}" class="img-producto" loading="lazy">
                         </div>
-                        <div class="card-detalles">
-                            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
-                                <span style="font-size:0.7rem; color:#ef4444; font-weight:bold; text-transform:uppercase;">${p.categoria}</span>
+                        <div class="card-detalles" style="padding: 8px 10px;">
+                            <span style="font-size:0.65rem; color:#ef4444; font-weight:bold; text-transform:uppercase;">${p.categoria}</span>
+                            <h3 class="titulo-producto" style="font-size: 0.85rem; margin: 2px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.nombre}</h3>
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+                                <span class="precio-producto" style="color:#ef4444; font-size: 1rem;">$${formatearPrecio(precioLimpio)}</span>
                                 <div>${badgesHtml}</div>
                             </div>
-                            <h3 class="titulo-producto">${p.nombre}</h3>
-                            ${descHtml}
-                            <div class="precio-producto" style="color:#ef4444;">$${formatearPrecio(precioLimpio)}</div>
-                            <div class="stock-tag">Stock disponible: ${p.stock || 0} un.</div>
                         </div>
-                        <div class="card-acciones">
-                            <button class="btn-add-cart" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);" onclick="agregarAlCarrito(${p.id})">🛒 Agregar</button>
-                            <button class="btn-share-wsp" onclick="enviarProductoWsp(${p.id})" title="Enviar producto por WhatsApp" style="background:#22c55e; color:white; border:none; padding:8px 10px; border-radius:8px; cursor:pointer; font-size:0.85rem; font-weight:bold;">📤 Enviar</button>
+                        <div class="card-acciones" style="padding: 6px 10px;">
+                            <button class="btn-add-cart" style="background: #ef4444; padding: 6px; font-size: 0.78rem;" onclick="agregarAlCarrito(${p.id})">🛒 Agregar</button>
+                            <button class="btn-share-wsp" onclick="enviarProductoWsp(${p.id})" title="Compartir" style="background:#22c55e; color:white; border:none; padding:6px 8px; border-radius:6px; cursor:pointer; font-size:0.78rem; font-weight:bold;">📤</button>
                         </div>
                     </div>
                 `;
