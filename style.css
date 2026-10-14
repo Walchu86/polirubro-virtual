@@ -149,7 +149,7 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
 /* SECCIONES Y TÍTULOS */
 .cat-titulo-seccion { font-size: 1.3rem; color: #1e293b; margin-bottom: 15px; font-weight: 800; border-bottom: 2px solid #e2e8f0; padding-bottom: 5px; }
 
-/* GRILLA DE PRODUCTOS */
+/* GRILLA DE PRODUCTOS CON IMÁGENES COMPLETAS Y CENTRADAS (OBJECT-FIT: CONTAIN) */
 .productos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 15px; }
 .card-producto { background: white; border-radius: 16px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.04); display: flex; flex-direction: column; position: relative; transition: transform 0.2s; }
 .card-producto:hover { transform: translateY(-3px); }
@@ -157,8 +157,29 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
 .badge-oferta-box { position: absolute; top: 10px; left: 10px; z-index: 5; }
 .badge-oferta { background: #ef4444; color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 900; text-transform: uppercase; box-shadow: 0 2px 6px rgba(239, 68, 68, 0.4); }
 
-.img-frame { width: 100%; height: 180px; background: #f1f5f9; cursor: pointer; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-.img-producto { width: 100%; height: 100%; object-fit: cover; }
+.img-frame {
+    width: 100%;
+    height: 190px;
+    background: #f8fafc;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 8px;
+}
+.img-producto {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain; /* Garantiza imagen completa sin recortes y perfectamente centrada */
+    transition: transform 0.3s ease;
+}
+.card-producto:hover .img-producto {
+    transform: scale(1.04);
+}
+
 .card-detalles { padding: 12px; flex: 1; display: flex; flex-direction: column; }
 .titulo-producto { font-size: 0.95rem; font-weight: bold; color: #1e293b; margin-bottom: 6px; }
 .precio-producto { font-size: 1.15rem; font-weight: 900; color: #ea580c; margin-top: auto; }
@@ -186,7 +207,7 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
 
 /* LIGHTBOX Y QR MODAL */
 .lightbox-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:3000; display:none; align-items:center; justify-content:center; }
-.lightbox-img { max-width: 90%; max-height: 85vh; border-radius: 12px; }
+.lightbox-img { max-width: 90%; max-height: 85vh; border-radius: 12px; object-fit: contain; }
 .lightbox-close { position: absolute; top: 20px; right: 25px; color: white; font-size: 2rem; cursor: pointer; font-weight: bold; }
 
 /* WHATSAPP FLOTANTE */
