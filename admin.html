@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Panel Administrador | Polirubro Virtual</title>
-    <link rel="stylesheet" href="style.css?v=255">
+    <link rel="stylesheet" href="style.css?v=257">
     <style>
         body.admin-body { background-color: #0b0f19 !important; color: #f8fafc !important; font-family: system-ui, -apple-system, sans-serif !important; }
         .admin-wrapper { max-width: 1200px; margin: 0 auto; padding: 1.5rem 1rem; }
@@ -73,7 +73,7 @@
 
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem;" class="form-group">
                         <div>
-                            <label class="form-label">Precio (\$):</label>
+                            <label class="form-label">Precio ($):</label>
                             <input type="number" id="prodPrecio" class="form-input" placeholder="4000">
                         </div>
                         <div>
@@ -86,6 +86,16 @@
                         <select id="selectCategorias" class="form-input">
                             <option value="">Seleccioná una sección...</option>
                         </select>
+                    </div>
+
+                    <!-- TAMAÑOS / VOLÚMENES DISPONIBLES (NUEVO) -->
+                    <div class="form-group">
+                        <label class="form-label">🧴 Tamaños / Volúmenes (Capilares / Líquidos):</label>
+                        <div class="checkbox-grid" id="grupoTamanios" style="grid-template-columns: repeat(3, 1fr);">
+                            <label class="checkbox-label"><input type="checkbox" value="250 cc"> 250 cc</label>
+                            <label class="checkbox-label"><input type="checkbox" value="500 cc"> 500 cc</label>
+                            <label class="checkbox-label"><input type="checkbox" value="1 Litro"> 1 Litro</label>
+                        </div>
                     </div>
 
                     <!-- TALLES MÚLTIPLES (CHECKBOXES) -->
@@ -167,7 +177,7 @@
                         <tr>
                             <th>Nombre</th>
                             <th>Sección</th>
-                            <th>Talles / Colores</th>
+                            <th>Variantes (Tamaños/Talles/Colores)</th>
                             <th>Precio</th>
                             <th>Stock</th>
                             <th>Oferta</th>
@@ -252,6 +262,7 @@
                 const stockVal = p.stock !== undefined ? p.stock : 10;
                 
                 let resumenTC = [];
+                if (p.tamanios && p.tamanios.length > 0) resumenTC.push(`Tam: ${p.tamanios.join(', ')}`);
                 if (p.talles && p.talles.length > 0) resumenTC.push(`T: ${p.talles.join(', ')}`);
                 else if (p.talle) resumenTC.push(`T: ${p.talle}`);
                 
@@ -395,6 +406,12 @@
             document.getElementById('selectCategorias').value = prod.categoria;
             document.getElementById('prodOferta').checked = prod.enOferta || false;
 
+            // Marcar tamaños guardados
+            const tamArr = prod.tamanios || [];
+            document.querySelectorAll('#grupoTamanios input[type="checkbox"]').forEach(chk => {
+                chk.checked = tamArr.includes(chk.value);
+            });
+
             // Marcar talles guardados
             const talleArr = prod.talles || (prod.talle ? [prod.talle] : []);
             document.querySelectorAll('#grupoTalles input[type="checkbox"]').forEach(chk => {
@@ -428,6 +445,7 @@
             document.getElementById('prodStock').value = '10';
             document.getElementById('selectCategorias').value = '';
             document.getElementById('prodOferta').checked = false;
+            document.querySelectorAll('#grupoTamanios input[type="checkbox"]').forEach(chk => chk.checked = false);
             document.querySelectorAll('#grupoTalles input[type="checkbox"]').forEach(chk => chk.checked = false);
             document.querySelectorAll('#grupoColores input[type="checkbox"]').forEach(chk => chk.checked = false);
             document.getElementById('urlInput').value = '';
@@ -448,6 +466,12 @@
             const stockRaw = document.getElementById('prodStock').value;
             const categoria = document.getElementById('selectCategorias').value;
             const enOferta = document.getElementById('prodOferta').checked;
+
+            // Recopilar tamaños seleccionados
+            let tamaniosSeleccionados = [];
+            document.querySelectorAll('#grupoTamanios input[type="checkbox"]:checked').forEach(chk => {
+                tamaniosSeleccionados.push(chk.value);
+            });
 
             // Recopilar talles seleccionados
             let tallesSeleccionados = [];
@@ -479,6 +503,7 @@
                         precio,
                         stock,
                         categoria,
+                        tamanios: tamaniosSeleccionados,
                         talles: tallesSeleccionados,
                         colores: coloresSeleccionados,
                         enOferta,
@@ -493,6 +518,7 @@
                     precio,
                     stock,
                     categoria,
+                    tamanios: tamaniosSeleccionados,
                     talles: tallesSeleccionados,
                     colores: coloresSeleccionados,
                     enOferta,
