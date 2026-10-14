@@ -55,7 +55,7 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
 .marquee-container { display: inline-block; animation: marquee 25s linear infinite; }
 @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-/* CABECERA */
+/* CABECERA (ALINEACIÓN LIMPIA EN PC) */
 .main-header { background: #ffffff; border-bottom: 1px solid #e2e8f0; padding: 12px 15px; }
 .header-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
 .header-left-col { display: flex; flex-direction: column; gap: 8px; align-items: center; width: 100%; text-align: center; }
@@ -70,14 +70,11 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
 
 .header-banner-animado {
     background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
-    border: 1px solid #fed7aa; padding: 6px 12px; border-radius: 10px;
-    display: flex; justify-content: center; align-items: center; width: 100%;
-    font-size: 0.8rem; color: #c2410c; font-weight: bold;
+    border: 1px solid #fed7aa; padding: 7px 14px; border-radius: 10px;
+    display: inline-flex; justify-content: center; align-items: center; width: auto; max-width: 100%;
+    font-size: 0.78rem; color: #c2410c; font-weight: bold; white-space: nowrap;
 }
-@media (min-width: 901px) {
-    .header-banner-animado { max-width: 300px; justify-content: flex-start; }
-}
-.header-banner-content { display: flex; align-items: center; justify-content: center; width: 100%; }
+.header-banner-content { display: flex; align-items: center; justify-content: center; }
 
 .quick-badge-llamativo {
     background: #22c55e; color: white; padding: 7px 14px; border-radius: 16px;
@@ -132,47 +129,46 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
 .search-input:focus { border-color: #ea580c; }
 
 /* ========================================================
-   NUEVA TIRA ULTRA-FINA Y COMPACTA PARA OFERTAS 48 HORAS
+   TIRA ULTRA-FINA PARA OFERTAS FLASH 48 HORAS
    ======================================================== */
 .tira-ofertas-wrapper {
     background: #fff1f2;
-    border: 1.5px dashed #f43f5e;
-    border-radius: 14px;
-    padding: 8px 12px;
-    margin-bottom: 18px;
+    border: 1px dashed #f43f5e;
+    border-radius: 12px;
+    padding: 6px 10px;
+    margin-bottom: 14px;
 }
 .tira-ofertas-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
 }
 .tira-ofertas-tag {
-    font-size: 0.8rem;
+    font-size: 0.72rem;
     font-weight: 900;
     color: #e11d48;
-    letter-spacing: 0.3px;
 }
 .tira-ofertas-sub {
-    font-size: 0.68rem;
+    font-size: 0.65rem;
     color: #9f1239;
     font-weight: 600;
 }
 .tira-ofertas-carril {
     display: flex;
-    gap: 10px;
+    gap: 8px;
     overflow-x: auto;
-    padding-bottom: 4px;
+    padding-bottom: 3px;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
 }
 .oferta-tira-item {
     background: #ffffff;
     border: 1px solid #fecdd3;
-    border-radius: 10px;
-    min-width: 105px;
-    max-width: 105px;
-    padding: 6px;
+    border-radius: 8px;
+    min-width: 85px;
+    max-width: 85px;
+    padding: 4px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -181,7 +177,7 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
     cursor: pointer;
     flex-shrink: 0;
     scroll-snap-align: start;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
     transition: transform 0.15s ease;
 }
 .oferta-tira-item:hover {
@@ -190,23 +186,23 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
 }
 .oferta-tira-badge {
     position: absolute;
-    top: 4px;
-    left: 4px;
+    top: 2px;
+    left: 2px;
     background: #e11d48;
     color: #fff;
-    font-size: 0.55rem;
+    font-size: 0.5rem;
     font-weight: 900;
-    padding: 1px 4px;
-    border-radius: 4px;
+    padding: 1px 3px;
+    border-radius: 3px;
 }
 .oferta-tira-img {
-    width: 65px;
-    height: 65px;
+    width: 48px;
+    height: 48px;
     object-fit: contain;
-    margin: 4px 0 2px 0;
+    margin: 2px 0;
 }
 .oferta-tira-nombre {
-    font-size: 0.72rem;
+    font-size: 0.65rem;
     font-weight: 700;
     color: #1e293b;
     width: 100%;
@@ -216,10 +212,88 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
     line-height: 1.1;
 }
 .oferta-tira-precio {
-    font-size: 0.8rem;
+    font-size: 0.72rem;
     font-weight: 900;
     color: #e11d48;
-    margin-top: 2px;
+    margin-top: 1px;
+}
+
+/* MODAL DETALLES DEL PRODUCTO */
+.detalle-modal-box {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 16px;
+    max-width: 500px;
+    width: 90%;
+    position: relative;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+}
+.detalle-modal-grid {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 15px;
+    align-items: start;
+}
+@media (max-width: 500px) {
+    .detalle-modal-grid { grid-template-columns: 1fr; }
+}
+.detalle-img-frame {
+    width: 100%;
+    height: 140px;
+    background: #f8fafc;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    border: 1px solid #e2e8f0;
+}
+.detalle-img-frame img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+.detalle-cat-tag {
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: #ef4444;
+    text-transform: uppercase;
+}
+.detalle-titulo {
+    font-size: 1rem;
+    color: #1e293b;
+    margin: 2px 0 4px 0;
+}
+.detalle-precio {
+    font-size: 1.15rem;
+    font-weight: 900;
+    color: #ea580c;
+    margin-bottom: 6px;
+}
+.detalle-descripcion {
+    font-size: 0.8rem;
+    color: #64748b;
+    line-height: 1.3;
+    margin-bottom: 8px;
+}
+.detalle-variantes {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+.detalle-badge-var {
+    background: #f1f5f9;
+    color: #475569;
+    font-size: 0.68rem;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid #cbd5e1;
+}
+.detalle-acciones {
+    display: flex;
+    gap: 8px;
 }
 
 /* GRILLA DE PRODUCTOS REGULARES */
