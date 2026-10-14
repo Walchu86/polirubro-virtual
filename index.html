@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=256">
+    <link rel="stylesheet" href="style.css?v=257">
 </head>
 <body>
 
@@ -294,10 +294,12 @@
                 const imgUrl = p.imagen || 'https://via.placeholder.com/300?text=Sin+Imagen';
                 const precioLimpio = Number(p.precio || 0);
                 
+                const tamArr = p.tamanios || [];
                 const talleArr = p.talles || (p.talle ? [p.talle] : []);
                 const colorArr = p.colores || (p.color ? [p.color] : []);
 
                 let badgesHtml = '';
+                if (tamArr.length > 0) badgesHtml += `<span style="background:#e0f2fe; color:#0369a1; padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:bold; border:1px solid #bae6fd; margin-left:4px;">Tam: ${tamArr.join(', ')}</span>`;
                 if (talleArr.length > 0) badgesHtml += `<span style="background:#f1f5f9; color:#475569; padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:bold; border:1px solid #cbd5e1; margin-left:4px;">T: ${talleArr.join(', ')}</span>`;
                 if (colorArr.length > 0) badgesHtml += `<span style="background:#f1f5f9; color:#475569; padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:bold; border:1px solid #cbd5e1; margin-left:4px;">C: ${colorArr.join(', ')}</span>`;
                 
@@ -385,10 +387,12 @@
                 const imgUrl = p.imagen || 'https://via.placeholder.com/300?text=Sin+Imagen';
                 const precioLimpio = Number(p.precio || 0);
                 
+                const tamArr = p.tamanios || [];
                 const talleArr = p.talles || (p.talle ? [p.talle] : []);
                 const colorArr = p.colores || (p.color ? [p.color] : []);
 
                 let badgesHtml = '';
+                if (tamArr.length > 0) badgesHtml += `<span style="background:#e0f2fe; color:#0369a1; padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:bold; border:1px solid #bae6fd; margin-left:4px;">Tam: ${tamArr.join(', ')}</span>`;
                 if (talleArr.length > 0) badgesHtml += `<span style="background:#f1f5f9; color:#475569; padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:bold; border:1px solid #cbd5e1; margin-left:4px;">T: ${talleArr.join(', ')}</span>`;
                 if (colorArr.length > 0) badgesHtml += `<span style="background:#f1f5f9; color:#475569; padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:bold; border:1px solid #cbd5e1; margin-left:4px;">C: ${colorArr.join(', ')}</span>`;
                 
@@ -496,9 +500,11 @@
 
             contenedor.innerHTML = carrito.map(i => {
                 const precioItem = Number(i.precio || 0);
+                const tamArr = i.tamanios || [];
                 const tArr = i.talles || (i.talle ? [i.talle] : []);
                 const cArr = i.colores || (i.color ? [i.color] : []);
                 let detallesExtra = [];
+                if (tamArr.length > 0) detallesExtra.push(`Tam: ${tamArr.join(', ')}`);
                 if (tArr.length > 0) detallesExtra.push(`T: ${tArr.join(', ')}`);
                 if (cArr.length > 0) detallesExtra.push(`C: ${cArr.join(', ')}`);
                 const detalleTxt = detallesExtra.length > 0 ? ` (${detallesExtra.join(' | ')})` : '';
@@ -598,17 +604,18 @@
             const prod = todosLosProductos.find(p => p.id === idProd);
             if (!prod) return;
 
+            const tamArr = prod.tamanios || [];
             const tArr = prod.talles || (prod.talle ? [prod.talle] : []);
             const cArr = prod.colores || (prod.color ? [prod.color] : []);
 
             let detalles = [];
+            if (tamArr.length > 0) detalles.push(`Tamaño: ${tamArr.join(', ')}`);
             if (tArr.length > 0) detalles.push(`Talles: ${tArr.join(', ')}`);
             if (cArr.length > 0) detalles.push(`Colores: ${cArr.join(', ')}`);
             const detalleTxt = detalles.length > 0 ? `\n*${detalles.join(' | ')}*` : '';
             
             const texto = `¡Mirá esta oferta en Polirubro Virtual! 🛍️✨\n\n*${prod.nombre}*${detalleTxt}\nPrecio: $${formatearPrecio(prod.precio)}\n\nMiraló y pedilo acá: https://polirubrovirtual.shop`;
             
-            // Corrige el botón de enviar para que abra los contactos del propio cliente
             const urlWsp = `https://wa.me/?text=${encodeURIComponent(texto)}`;
             window.open(urlWsp, '_blank');
         }
@@ -636,9 +643,11 @@
 
             let texto = "🛒 *NUEVO PEDIDO - POLIRUBRO VIRTUAL*\n\n";
             carrito.forEach(i => {
+                const tamArr = i.tamanios || [];
                 const tArr = i.talles || (i.talle ? [i.talle] : []);
                 const cArr = i.colores || (i.color ? [i.color] : []);
                 let detallesExtra = [];
+                if (tamArr.length > 0) detallesExtra.push(`Tam: ${tamArr.join(', ')}`);
                 if (tArr.length > 0) detallesExtra.push(`T: ${tArr.join(', ')}`);
                 if (cArr.length > 0) detallesExtra.push(`C: ${cArr.join(', ')}`);
                 const detalleTxt = detallesExtra.length > 0 ? ` (${detallesExtra.join(' | ')})` : '';
