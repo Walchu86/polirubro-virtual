@@ -1,724 +1,358 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=265">
-</head>
-<body>
-
-    <!-- POP-UP DE BIENVENIDA DIRECTO -->
-    <div class="welcome-modal-overlay" id="welcomeModal" style="display: flex;">
-        <div class="welcome-modal-content">
-            <button class="welcome-close-btn" onclick="cerrarWelcomeModal()">✕</button>
-            <h3 style="color: #c2410c; font-size: 1.25rem; font-weight: 900; margin-bottom: 8px;">🎉 ¡Bienvenido a Polirubro Virtual! 🚀</h3>
-            <p style="color: #475569; font-size: 0.95rem; line-height: 1.4; margin-bottom: 5px;">
-                ¡Comprando \$20.000 o más, el envío es <strong>TOTALMENTE GRATIS</strong>! 🚚✨
-            </p>
-            <button class="btn-vamos-comprar" onclick="cerrarWelcomeModal()">¡Vamos a comprar! 🛒</button>
-        </div>
-    </div>
-
-    <!-- BANNER SUPERIOR MARQUESINA -->
-    <div class="promo-banner">
-        <div class="marquee-container">
-            <span>🔥 ¡ENVÍOS A DOMICILIO EN CORRIENTES! • <strong>¡ENVÍO GRATIS COMPRANDO \$20.000 O MÁS!</strong> 🚚💨 • ¡Comprá fácil y seguro desde tu celular! 📦 ⭐</span>
-        </div>
-    </div>
-
-    <!-- CABECERA PRINCIPAL -->
-    <header class="main-header">
-        <div class="header-container">
-            <div class="header-left-col">
-                <a href="#" class="logo-title" style="text-decoration:none;">
-                    <div class="brand-text">
-                        <h1>POLIRUBRO <span>VIRTUAL</span></h1>
-                        <span class="tagline">Tu tienda online de confianza</span>
-                    </div>
-                </a>
-                
-                <div class="header-banner-animado">
-                    <div class="header-banner-content">
-                        <span>📦 ⭐ Atención personalizada y envíos rápidos ✨</span>
-                    </div>
-                </div>
-
-                <div class="quick-badge-llamativo" onclick="enfocarBuscador()" title="¡Buscá productos!">
-                    🔥 ¡Hacé clic y llevate lo que necesitás!
-                </div>
-            </div>
-
-            <!-- Carrusel Central (PC) -->
-            <div class="pc-carousel-container">
-                <div class="pc-carousel-track" id="carouselTrack">
-                    <div class="pc-carousel-slide active">
-                        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&auto=format&fit=crop&q=60" alt="Electrónica">
-                        <div class="pc-carousel-caption">⚡ Auriculares y Electrónica</div>
-                    </div>
-                    <div class="pc-carousel-slide">
-                        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&auto=format&fit=crop&q=60" alt="Zapatillas">
-                        <div class="pc-carousel-caption">👟 Zapatillas y Moda</div>
-                    </div>
-                    <div class="pc-carousel-slide">
-                        <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=500&auto=format&fit=crop&q=60" alt="Estética">
-                        <div class="pc-carousel-caption">✨ Productos Capilares y Belleza</div>
-                    </div>
-                    <div class="pc-carousel-slide">
-                        <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500&auto=format&fit=crop&q=60" alt="Tienda">
-                        <div class="pc-carousel-caption">🛍️ Polirubro Virtual a un clic</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Widget Derecho (PC) -->
-            <div class="pc-desktop-widget">
-                <div class="pc-widget-title">🕒 Tienda Activa 24/7</div>
-                <div class="pc-widget-text">
-                    Pedidos desde casa en <strong>Corrientes Capital</strong>. 📲 <strong>3794655867</strong>
-                </div>
-                <div class="pc-widget-badges">
-                    <span class="pc-badge-item">🔒 100% Segura</span>
-                    <span class="pc-badge-item">💵 Efectivo / Transf.</span>
-                    <span class="pc-badge-item">🚚 Envío Gratis ≥ \$20k</span>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <!-- BARRA DE SECCIONES -->
-    <nav class="main-nav">
-        <div class="nav-container-categorias" id="contenedorCategoriasNav"></div>
-    </nav>
-
-    <!-- BARRA FLOTANTE DEL CARRITO -->
-    <div class="floating-cart-bar" onclick="abrirCarrito()">
-        <div class="floating-cart-content">
-            <span>🛒 Carrito: <strong id="cartCount">0</strong></span>
-            <span class="ver-carrito-text">VER PEDIDO ➔</span>
-            <span>Total: \$<strong id="cartTotalHeader">0</strong></span>
-        </div>
-    </div>
-
-    <!-- CONTENEDOR PRINCIPAL -->
-    <div class="main-layout">
-        
-        <main>
-            <div class="search-box">
-                <input type="text" id="inputBuscador" class="search-input" placeholder="🔍 Buscar productos en el catálogo..." oninput="filtrarProductos()">
-            </div>
-
-            <!-- SECCIÓN OFERTAS 48 HS: TIRA ULTRA-FINA Y COMPACTA -->
-            <div id="seccionOfertas48hs" style="display:none;" class="tira-ofertas-wrapper">
-                <div class="tira-ofertas-header">
-                    <span class="tira-ofertas-tag">⚡ OFERTAS FLASH 48 HS</span>
-                    <span class="tira-ofertas-sub">¡Tocá para ver detalles y comprar!</span>
-                </div>
-                <div class="tira-ofertas-carril" id="gridOfertas48hs"></div>
-            </div>
-
-            <h2 class="cat-titulo-seccion" id="tituloSeccionActiva">🌟 Todos los Productos</h2>
-
-            <div class="productos-grid" id="gridProductos"></div>
-        </main>
-
-        <aside class="sidebar" id="contenedorSidebarCategoriasPC">
-            <h3 class="sidebar-title">📂 Categorías</h3>
-            <div class="sidebar-menu" id="sidebarCategoriasMenu"></div>
-        </aside>
-
-    </div>
-
-    <!-- MODAL DETALLE DE PRODUCTO / OFERTA -->
-    <div class="lightbox-overlay" id="detalleModal" onclick="cerrarModalDetalle()">
-        <div class="detalle-modal-box" onclick="event.stopPropagation()">
-            <span class="lightbox-close" onclick="cerrarModalDetalle()">&times;</span>
-            <div class="detalle-modal-grid">
-                <div class="detalle-img-frame">
-                    <img id="detalleImg" src="" alt="Producto">
-                </div>
-                <div class="detalle-info">
-                    <span id="detalleCategoria" class="detalle-cat-tag">ESTÉTICA</span>
-                    <h3 id="detalleTitulo" class="detalle-titulo">Nombre del Producto</h3>
-                    <div id="detallePrecio" class="detalle-precio">\$0</div>
-                    <p id="detalleDescripcion" class="detalle-descripcion"></p>
-                    <div id="detalleVariantes" class="detalle-variantes"></div>
-                    <div class="detalle-acciones">
-                        <button id="detalleBtnAgregar" class="btn-add-cart">🛒 Agregar al Carrito</button>
-                        <button id="detalleBtnWsp" class="btn-share-wsp">📤 Enviar por WhatsApp</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL CARRITO -->
-    <div class="cart-modal" id="cartModal">
-        <div class="cart-header">
-            <h3>🛍️ Tu Carrito de Compras</h3>
-            <button class="btn-close-cart" onclick="cerrarCarrito()">✕</button>
-        </div>
-        
-        <div class="cart-shipping-box" id="bannerCartShipping">
-            <p style="font-size:0.85rem; font-weight:bold; color:#ea580c;">🚚 Envío GRATIS en compras desde \$20.000</p>
-            <p style="font-size:0.75rem; color:#64748b;">Elegí zona de entrega y método de pago.</p>
-        </div>
-
-        <div class="cart-items" id="listaCarritoModal"></div>
-
-        <div style="padding: 4px 0; text-align: right;">
-            <button onclick="vaciarCarrito()" style="background: none; border: none; color: #ef4444; font-size: 0.78rem; font-weight: bold; cursor: pointer;">🗑️ Vaciar carrito</button>
-        </div>
-
-        <div class="checkout-options" style="margin-top:5px; padding:10px 0; border-top:1px solid #e2e8f0;">
-            <div id="contenedorZonaEnvio">
-                <label style="font-size:0.80rem; font-weight:bold; color:#1e293b; display:block; margin-bottom:4px;">📍 Zona / Entrega:</label>
-                <select id="selectTipoEnvio" class="select-checkout" onchange="actualizarCarritoUI()">
-                    <option value="local">🏬 Retiro en Local (Gratis)</option>
-                    <option value="dentro">🛵 Dentro de las 4 Avenidas (\$1.500)</option>
-                    <option value="fuera">🚚 Fuera de las 4 Avenidas (\$2.500)</option>
-                </select>
-            </div>
-            <div id="avisoEnvioGratisPromo" style="display:none; background: #ecfdf5; border: 1.5px solid #34d399; padding: 8px; border-radius: 8px; text-align: center; margin-top: 5px;">
-                <p style="font-size: 0.85rem; font-weight: 800; color: #065f46; margin: 0;">🎉 ¡ENVÍO 100% GRATIS (\$0)!</p>
-            </div>
-
-            <label style="font-size:0.80rem; font-weight:bold; color:#1e293b; display:block; margin-top:8px; margin-bottom:4px;">💳 Forma de Pago:</label>
-            <select id="selectMedioPago" class="select-checkout">
-                <option value="Efectivo al recibir/retirar">💵 Efectivo al recibir/retirar</option>
-                <option value="Pago por transferencia">🏦 Pago por transferencia</option>
-            </select>
-        </div>
-
-        <div class="cart-footer" style="padding-top:10px;">
-            <div style="display:flex; justify-content:space-between; margin-bottom: 4px; font-size: 0.85rem; color:#64748b;">
-                <span>Subtotal:</span>
-                <span>\$<span id="cartSubtotalModal">0</span></span>
-            </div>
-            <div style="display:flex; justify-content:space-between; margin-bottom: 6px; font-size: 0.85rem; color:#64748b;">
-                <span>Envío:</span>
-                <span id="cartEnvioTexto">\$0</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; margin-bottom: 10px; font-weight: bold; font-size: 1.1rem; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
-                <span>Total:</span>
-                <span style="color:#ea580c;">\$<span id="cartTotalModal">0</span></span>
-            </div>
-            <div style="display:flex; gap: 8px;">
-                <button onclick="cerrarCarrito()" style="flex:1; background:#64748b; color:white; border:none; padding:10px; border-radius:8px; font-weight:bold; font-size:0.85rem; cursor:pointer;">Seguir viendo</button>
-                <button class="btn-whatsapp" onclick="procesarPedidoCheckout()" style="flex:1; margin-top:0;">📲 Enviar Pedido</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- LIGHTBOX / QR -->
-    <div class="lightbox-overlay" id="qrModal" onclick="cerrarModalQR()">
-        <div style="background:#ffffff; padding:20px; border-radius:16px; text-align:center; max-width:320px; width:90%; position:relative;" onclick="event.stopPropagation()">
-            <span class="lightbox-close" onclick="cerrarModalQR()" style="color:#000; top:8px; right:12px;">&times;</span>
-            <h3 style="color:#ea580c; margin-bottom:8px; font-size:1.1rem;">📱 Escaneá para enviar</h3>
-            <p style="font-size:0.8rem; color:#64748b; margin-bottom:12px;">Apuntá con tu celular para enviar el pedido a WhatsApp.</p>
-            <img id="imgCodigoQR" src="" alt="QR" style="width:180px; height:180px; display:inline-block; margin-bottom:10px;">
-            <a id="linkDirectoWspPC" href="#" target="_blank" style="display:block; background-color:#22c55e; color:white; text-decoration:none; padding:8px; border-radius:8px; font-weight:bold; font-size:0.85rem;">
-                💻 Abrir en WhatsApp Web
-            </a>
-        </div>
-    </div>
-
-    <div class="lightbox-overlay" id="lightboxModal" onclick="cerrarLightbox()">
-        <span class="lightbox-close">&times;</span>
-        <img class="lightbox-img" id="lightboxImg" src="" alt="Ampliada">
-    </div>
-
-    <a href="https://wa.me/543794655867?text=Hola!%20Tengo%20una%20consulta." target="_blank" class="wsp-float" title="Consultar por WhatsApp">💬</a>
-
-    <script>
-        const NUMERO_WHATSAPP = "3794655867";
-
-        let todosLosProductos = [];
-        let categoriasDisponibles = [];
-        let carrito = JSON.parse(localStorage.getItem('carrito_polirubro')) || [];
-        let categoriaActiva = 'TODAS';
-        let yaAlcanzoEnvioGratis = false;
-        let intervaloOfertas = null;
-
-        let currentSlide = 0;
-        function iniciarCarruselPC() {
-            const slides = document.querySelectorAll('.pc-carousel-slide');
-            if (slides.length === 0) return;
-            setInterval(() => {
-                slides[currentSlide].classList.remove('active');
-                currentSlide = (currentSlide + 1) % slides.length;
-                slides[currentSlide].classList.add('active');
-            }, 3500);
-        }
-
-        function cerrarWelcomeModal() {
-            const modal = document.getElementById('welcomeModal');
-            if (modal) modal.style.display = 'none';
-        }
-
-        function enfocarBuscador() {
-            const input = document.getElementById('inputBuscador');
-            if (input) {
-                input.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                input.focus();
-            }
-        }
-
-        function formatearPrecio(precio) {
-            return Number(precio || 0).toLocaleString('es-AR');
-        }
-
-        async function cargarCatalogoPublico() {
-            const grid = document.getElementById('gridProductos');
-            grid.innerHTML = '<p style="text-align:center; width:100%; color:#64748b; padding:2rem;">Cargando catálogo...</p>';
-
-            try {
-                const res = await fetch('productos.json?v=' + Date.now());
-                if (res.ok) {
-                    const data = await res.json();
-                    todosLosProductos = Array.isArray(data.productos) ? data.productos : [];
-                    const rawCats = Array.isArray(data.categorias) ? data.categorias : ["Estética", "Electrónica", "Zapatería", "Accesorios", "Muebleria"];
-                    categoriasDisponibles = rawCats.map(c => typeof c === 'string' ? c : (c.nombre || c.categoria || '')).filter(c => c !== '');
-                    
-                    renderizarMenuCategorias(categoriasDisponibles);
-                    renderizarOfertas48hs();
-                    filtrarProductos();
-                } else {
-                    grid.innerHTML = '<p style="text-align:center; width:100%; color:#64748b; padding:2rem; grid-column: 1 / -1;">No hay productos cargados en esta sección.</p>';
-                }
-            } catch (e) {
-                console.error(e);
-                grid.innerHTML = '<p style="text-align:center; width:100%; color:#64748b; padding:2rem; grid-column: 1 / -1;">No hay productos cargados en esta sección.</p>';
-            }
-        }
-
-        function iniciarAutoplayOfertas() {
-            const carril = document.getElementById('gridOfertas48hs');
-            if (!carril) return;
-
-            if (intervaloOfertas) clearInterval(intervaloOfertas);
-
-            if (carril.scrollWidth > carril.clientWidth) {
-                intervaloOfertas = setInterval(() => {
-                    if (carril.scrollLeft + carril.clientWidth >= carril.scrollWidth - 1) {
-                        carril.scrollLeft = 0;
-                    } else {
-                        carril.scrollLeft += 1;
-                    }
-                }, 30);
-            }
-
-            carril.onmouseenter = () => clearInterval(intervaloOfertas);
-            carril.onmouseleave = () => iniciarAutoplayOfertas();
-            carril.ontouchstart = () => clearInterval(intervaloOfertas);
-            carril.ontouchend = () => {
-                setTimeout(iniciarAutoplayOfertas, 1500);
-            };
-        }
-
-        function renderizarOfertas48hs() {
-            const seccion = document.getElementById('seccionOfertas48hs');
-            const carril = document.getElementById('gridOfertas48hs');
-
-            const ofertas = todosLosProductos.filter(p => p.enOferta || p.oferta48hs);
-
-            if (ofertas.length === 0) {
-                seccion.style.display = 'none';
-                if (intervaloOfertas) clearInterval(intervaloOfertas);
-                return;
-            }
-
-            seccion.style.display = 'block';
-            carril.innerHTML = ofertas.map(p => {
-                const imgUrl = p.imagen || 'https://via.placeholder.com/150?text=Oferta';
-                const precioLimpio = Number(p.precio || 0);
-
-                return `
-                    <div class="oferta-tira-item" onclick="abrirModalDetalle(${p.id})" title="Ver detalles y comprar">
-                        <span class="oferta-tira-badge">OFERTA</span>
-                        <img src="${imgUrl}" alt="${p.nombre}" class="oferta-tira-img" loading="lazy">
-                        <span class="oferta-tira-nombre">${p.nombre}</span>
-                        <span class="oferta-tira-precio">$${formatearPrecio(precioLimpio)}</span>
-                    </div>
-                `;
-            }).join('');
-
-            if (ofertas.length > 1) {
-                setTimeout(iniciarAutoplayOfertas, 400);
-            }
-        }
-
-        function abrirModalDetalle(idProd) {
-            const p = todosLosProductos.find(item => item.id === idProd);
-            if (!p) return;
-
-            document.getElementById('detalleImg').src = p.imagen || 'https://via.placeholder.com/300?text=Sin+Imagen';
-            document.getElementById('detalleCategoria').innerText = p.categoria || 'POLIRUBRO';
-            document.getElementById('detalleTitulo').innerText = p.nombre || 'Producto';
-            document.getElementById('detallePrecio').innerText = '\$' + formatearPrecio(p.precio || 0);
-            document.getElementById('detalleDescripcion').innerText = p.descripcion || 'Sin descripción disponible.';
-
-            const contenedorVar = document.getElementById('detalleVariantes');
-            let varHtml = '';
-            if (p.tamanios && p.tamanios.length > 0) varHtml += `<span class="detalle-badge-var">Tam: ${p.tamanios.join(', ')}</span>`;
-            if (p.talles && p.talles.length > 0) varHtml += `<span class="detalle-badge-var">Talles: ${p.talles.join(', ')}</span>`;
-            if (p.colores && p.colores.length > 0) varHtml += `<span class="detalle-badge-var">Colores: ${p.colores.join(', ')}</span>`;
-            contenedorVar.innerHTML = varHtml;
-
-            document.getElementById('detalleBtnAgregar').onclick = () => {
-                agregarAlCarrito(p.id);
-                cerrarModalDetalle();
-            };
-
-            document.getElementById('detalleBtnWsp').onclick = () => {
-                enviarProductoWsp(p.id);
-            };
-
-            document.getElementById('detalleModal').style.display = 'flex';
-        }
-
-        function cerrarModalDetalle() {
-            document.getElementById('detalleModal').style.display = 'none';
-        }
-
-        function renderizarMenuCategorias(cats) {
-            const navContainer = document.getElementById('contenedorCategoriasNav');
-            let navHtml = `<ul class="nav-links"><li><a href="#" class="${categoriaActiva === 'TODAS' ? 'activa-nav' : ''}" onclick="cambiarCategoria('TODAS', event)">🔥 Todos</a></li>`;
-            
-            const sidebarContainer = document.getElementById('sidebarCategoriasMenu');
-            let sidebarHtml = `<button class="btn-categoria ${categoriaActiva === 'TODAS' ? 'activa' : ''}" onclick="cambiarCategoria('TODAS', event)">🔥 Todos los Productos</button>`;
-
-            cats.forEach(nombreCat => {
-                if (nombreCat) {
-                    const activaClass = categoriaActiva === nombreCat ? 'activa-nav' : '';
-                    const activaSidebar = categoriaActiva === nombreCat ? 'activa' : '';
-                    navHtml += `<li><a href="#" class="${activaClass}" onclick="cambiarCategoria('${nombreCat}', event)">${nombreCat}</a></li>`;
-                    sidebarHtml += `<button class="btn-categoria ${activaSidebar}" onclick="cambiarCategoria('${nombreCat}', event)">🔹 ${nombreCat}</button>`;
-                }
-            });
-
-            navHtml += `</ul>`;
-            navContainer.innerHTML = navHtml;
-            sidebarContainer.innerHTML = sidebarHtml;
-        }
-
-        function cambiarCategoria(cat, event) {
-            if (event) event.preventDefault();
-            categoriaActiva = cat;
-            document.getElementById('tituloSeccionActiva').innerText = cat === 'TODAS' ? '🌟 Todos los Productos' : `📂 ${cat}`;
-            renderizarMenuCategorias(categoriasDisponibles);
-            filtrarProductos();
-        }
-
-        function filtrarProductos() {
-            const busqueda = document.getElementById('inputBuscador').value.toLowerCase().trim();
-            const grid = document.getElementById('gridProductos');
-
-            let filtrados = todosLosProductos.filter(p => {
-                const matchCat = (categoriaActiva === 'TODAS') || (p.categoria === categoriaActiva);
-                const matchNombre = p.nombre.toLowerCase().includes(busqueda);
-                return matchCat && matchNombre;
-            });
-
-            if (filtrados.length === 0) {
-                grid.innerHTML = '<p style="text-align:center; width:100%; color:#64748b; padding:2rem; grid-column: 1 / -1;">No hay productos cargados en esta sección.</p>';
-                return;
-            }
-
-            grid.innerHTML = filtrados.map(p => {
-                const badgeOferta = p.enOferta ? `<div class="badge-oferta-box"><span class="badge-oferta">🔥 OFERTA</span></div>` : '';
-                const claseOfertaCard = p.enOferta ? 'card-producto en-oferta-card' : 'card-producto';
-                const imgUrl = p.imagen || 'https://via.placeholder.com/300?text=Sin+Imagen';
-                const precioLimpio = Number(p.precio || 0);
-                
-                const tamArr = p.tamanios || [];
-                const tArr = p.talles || (p.talle ? [p.talle] : []);
-                const cArr = p.colores || (p.color ? [p.color] : []);
-
-                let badgesHtml = '';
-                if (tamArr.length > 0) badgesHtml += `<span style="background:#e0f2fe; color:#0369a1; padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:bold; border:1px solid #bae6fd; margin-left:4px;">Tam: ${tamArr.join(', ')}</span>`;
-                if (tArr.length > 0) badgesHtml += `<span style="background:#f1f5f9; color:#475569; padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:bold; border:1px solid #cbd5e1; margin-left:4px;">T: ${talleArr.join(', ')}</span>`;
-                if (colorArr.length > 0) badgesHtml += `<span style="background:#f1f5f9; color:#475569; padding:2px 6px; border-radius:6px; font-size:0.7rem; font-weight:bold; border:1px solid #cbd5e1; margin-left:4px;">C: ${colorArr.join(', ')}</span>`;
-                
-                const descHtml = p.descripcion ? `<p style="font-size:0.8rem; color:#64748b; margin:4px 0 8px 0; line-height:1.2;">${p.descripcion}</p>` : '';
-
-                return `
-                    <div class="${claseOfertaCard}">
-                        ${badgeOferta}
-                        <div class="img-frame" onclick="abrirLightbox('${imgUrl}')">
-                            <img src="${imgUrl}" alt="${p.nombre}" class="img-producto" loading="lazy">
-                        </div>
-                        <div class="card-detalles">
-                            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
-                                <span style="font-size:0.7rem; color:#ea580c; font-weight:bold; text-transform:uppercase;">${p.categoria}</span>
-                                <div>${badgesHtml}</div>
-                            </div>
-                            <h3 class="titulo-producto">${p.nombre}</h3>
-                            ${descHtml}
-                            <div class="precio-producto">$${formatearPrecio(precioLimpio)}</div>
-                            <div class="stock-tag">Stock disponible: ${p.stock || 0} un.</div>
-                        </div>
-                        <div class="card-acciones">
-                            <button class="btn-add-cart" onclick="agregarAlCarrito(${p.id})">🛒 Agregar</button>
-                            <button class="btn-share-wsp" onclick="enviarProductoWsp(${p.id})" title="Enviar producto">📤 Enviar</button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function agregarAlCarrito(id) {
-            const prod = todosLosProductos.find(p => p.id === id);
-            if (!prod) return;
-
-            const item = carrito.find(i => i.id === id);
-            if (item) {
-                item.cantidad++;
-            } else {
-                carrito.push({ ...prod, precio: Number(prod.precio || 0), cantidad: 1 });
-            }
-            actualizarCarritoUI();
-
-            const subtotalMonto = carrito.reduce((sum, i) => sum + (Number(i.precio) * i.cantidad), 0);
-            if (subtotalMonto >= 20000 && !yaAlcanzoEnvioGratis) {
-                yaAlcanzoEnvioGratis = true;
-                abrirCarrito();
-            } else if (subtotalMonto < 20000) {
-                yaAlcanzoEnvioGratis = false;
-            }
-        }
-
-        function actualizarCarritoUI() {
-            localStorage.setItem('carrito_polirubro', JSON.stringify(carrito));
-            
-            const totalItems = carrito.reduce((sum, i) => sum + i.cantidad, 0);
-            const subtotalMonto = carrito.reduce((sum, i) => sum + (Number(i.precio) * i.cantidad), 0);
-
-            const bannerCart = document.getElementById('bannerCartShipping');
-            const contenedorZona = document.getElementById('contenedorZonaEnvio');
-            const avisoPromo = document.getElementById('avisoEnvioGratisPromo');
-
-            if (subtotalMonto >= 20000) {
-                if (bannerCart) bannerCart.innerHTML = `<p style="font-size:0.85rem; font-weight:bold; color:#22c55e;">🎉 ¡Tenés ENVÍO GRATIS aplicado!</p>`;
-                if (contenedorZona) contenedorZona.style.display = 'none';
-                if (avisoPromo) avisoPromo.style.display = 'block';
-            } else {
-                if (bannerCart) bannerCart.innerHTML = `<p style="font-size:0.85rem; font-weight:bold; color:#ea580c;">🚚 Envío GRATIS en compras desde $20.000</p><p style="font-size:0.75rem; color:#64748b;">Elegí zona de entrega y método de pago.</p>`;
-                if (contenedorZona) contenedorZona.style.display = 'block';
-                if (avisoPromo) avisoPromo.style.display = 'none';
-            }
-
-            const tipoEnvio = document.getElementById('selectTipoEnvio') ? document.getElementById('selectTipoEnvio').value : 'local';
-            let costoEnvio = 0;
-
-            if (subtotalMonto >= 20000) {
-                costoEnvio = 0;
-            } else {
-                if (tipoEnvio === 'dentro') costoEnvio = 1500;
-                if (tipoEnvio === 'fuera') costoEnvio = 2500;
-            }
-
-            const totalFinal = subtotalMonto + costoEnvio;
-
-            document.getElementById('cartCount').innerText = totalItems;
-            document.getElementById('cartTotalHeader').innerText = formatearPrecio(totalFinal);
-            document.getElementById('cartSubtotalModal').innerText = formatearPrecio(subtotalMonto);
-            document.getElementById('cartTotalModal').innerText = formatearPrecio(totalFinal);
-
-            const elemEnvio = document.getElementById('cartEnvioTexto');
-            if (elemEnvio) {
-                if (subtotalMonto >= 20000) {
-                    elemEnvio.innerHTML = '<span style="color:#22c55e; font-weight:bold;">¡GRATIS PROMO! (\$0)</span>';
-                } else if (tipoEnvio === 'local') {
-                    elemEnvio.innerHTML = '<span style="color:#22c55e; font-weight:bold;">GRATIS (Retiro)</span>';
-                } else {
-                    elemEnvio.innerText = '\$' + formatearPrecio(costoEnvio);
-                }
-            }
-
-            const contenedor = document.getElementById('listaCarritoModal');
-            if (carrito.length === 0) {
-                contenedor.innerHTML = '<p style="text-align:center; color:#64748b; padding:1.5rem; font-size:0.9rem;">🛒 Tu carrito está vacío.</p>';
-                return;
-            }
-
-            contenedor.innerHTML = carrito.map(i => {
-                const precioItem = Number(i.precio || 0);
-                const tamArr = i.tamanios || [];
-                const tArr = i.talles || (i.talle ? [i.talle] : []);
-                const cArr = i.colores || (i.color ? [i.color] : []);
-                let detallesExtra = [];
-                if (tamArr.length > 0) detallesExtra.push(`Tam: ${tamArr.join(', ')}`);
-                if (tArr.length > 0) detallesExtra.push(`T: ${tArr.join(', ')}`);
-                if (cArr.length > 0) detallesExtra.push(`C: ${cArr.join(', ')}`);
-                const detalleTxt = detallesExtra.length > 0 ? ` (${detallesExtra.join(' | ')})` : '';
-                return `
-                    <div class="cart-item" style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid #f1f5f9;">
-                        <div style="flex:1; padding-right:8px;">
-                            <strong style="font-size:0.85rem; color:#1e293b; display:block;">${i.nombre}${detalleTxt}</strong>
-                            <div style="font-size:0.75rem; color:#ea580c;">$${formatearPrecio(precioItem)} c/u</div>
-                        </div>
-                        <div style="display:flex; align-items:center; gap:6px;">
-                            <button onclick="cambiarQty(${i.id}, -1)" style="padding:2px 8px; background:#e2e8f0; border:none; border-radius:4px; font-weight:bold; cursor:pointer;">-</button>
-                            <span style="font-size:0.85rem; font-weight:bold; min-width:18px; text-align:center;">${i.cantidad}</span>
-                            <button onclick="cambiarQty(${i.id}, 1)" style="padding:2px 8px; background:#e2e8f0; border:none; border-radius:4px; font-weight:bold; cursor:pointer;">+</button>
-                            <button onclick="eliminarDelCarrito(${i.id})" title="Eliminar" style="background:#ef4444; color:white; border:none; padding:3px 7px; border-radius:4px; font-size:0.75rem; cursor:pointer; margin-left:4px;">🗑️</button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function cambiarQty(id, delta) {
-            const item = carrito.find(i => i.id === id);
-            if (!item) return;
-            item.cantidad += delta;
-            if (item.cantidad <= 0) carrito = carrito.filter(i => i.id !== id);
-            actualizarCarritoUI();
-        }
-
-        function eliminarDelCarrito(id) {
-            carrito = carrito.filter(i => i.id !== id);
-            actualizarCarritoUI();
-        }
-
-        function vaciarCarrito() {
-            if (confirm("¿Vaciar todo el carrito?")) {
-                carrito = [];
-                yaAlcanzoEnvioGratis = false;
-                actualizarCarritoUI();
-            }
-        }
-
-        let estadoModal = null;
-
-        function abrirCarrito() {
-            const cartModal = document.getElementById('cartModal');
-            if (cartModal && !cartModal.classList.contains('abierto')) {
-                cartModal.classList.add('abierto');
-                estadoModal = 'cart';
-                history.pushState({ modalOpen: 'cart' }, "");
-            }
-        }
-
-        function cerrarCarrito(desdeHistorial = false) {
-            const cartModal = document.getElementById('cartModal');
-            if (cartModal && cartModal.classList.contains('abierto')) {
-                cartModal.classList.remove('abierto');
-                estadoModal = null;
-                if (!desdeHistorial && history.state && history.state.modalOpen) {
-                    history.back();
-                }
-            }
-        }
-
-        function abrirLightbox(src) {
-            document.getElementById('lightboxImg').src = src;
-            document.getElementById('lightboxModal').style.display = 'flex';
-            estadoModal = 'lightbox';
-            history.pushState({ modalOpen: 'lightbox' }, "");
-        }
-
-        function cerrarLightbox(desdeHistorial = false) {
-            const modal = document.getElementById('lightboxModal');
-            if (modal.style.display === 'flex') {
-                modal.style.display = 'none';
-                estadoModal = null;
-                if (!desdeHistorial && history.state && history.state.modalOpen) {
-                    history.back();
-                }
-            }
-        }
-
-        function cerrarModalQR() {
-            document.getElementById('qrModal').style.display = 'none';
-        }
-
-        window.onpopstate = function(event) {
-            if (estadoModal === 'cart') cerrarCarrito(true);
-            else if (estadoModal === 'lightbox') cerrarLightbox(true);
-        };
-
-        function enviarProductoWsp(idProd) {
-            const prod = todosLosProductos.find(p => p.id === idProd);
-            if (!prod) return;
-
-            const tamArr = prod.tamanios || [];
-            const tArr = prod.talles || (prod.talle ? [prod.talle] : []);
-            const cArr = prod.colores || (prod.color ? [prod.color] : []);
-
-            let detalles = [];
-            if (tamArr.length > 0) detalles.push(`Tamaño: ${tamArr.join(', ')}`);
-            if (tArr.length > 0) detalles.push(`Talles: ${tArr.join(', ')}`);
-            if (cArr.length > 0) detalles.push(`Colores: ${cArr.join(', ')}`);
-            const detalleTxt = detalles.length > 0 ? `\n*${detalles.join(' | ')}*` : '';
-            
-            const texto = `¡Mirá esta oferta en Polirubro Virtual! 🛍️✨\n\n*${prod.nombre}*${detalleTxt}\nPrecio: $${formatearPrecio(prod.precio)}\n\nMiraló y pedilo acá: https://polirubrovirtual.shop`;
-            
-            const urlWsp = `https://wa.me/?text=${encodeURIComponent(texto)}`;
-            window.open(urlWsp, '_blank');
-        }
-
-        function procesarPedidoCheckout() {
-            if (carrito.length === 0) return alert("El carrito está vacío.");
-            
-            const subtotalMonto = carrito.reduce((sum, i) => sum + (Number(i.precio) * i.cantidad), 0);
-            const medioPago = document.getElementById('selectMedioPago') ? document.getElementById('selectMedioPago').value : 'Efectivo';
-
-            let costoEnvio = 0;
-            let textoEnvio = "Retiro en Local (Gratis)";
-            if (subtotalMonto >= 20000) {
-                costoEnvio = 0;
-                textoEnvio = "Envío a Domicilio (¡GRATIS por superar \$20.000!)";
-            } else {
-                const selectEnvio = document.getElementById('selectTipoEnvio');
-                const tipoEnvioVal = selectEnvio ? selectEnvio.value : 'local';
-                textoEnvio = selectEnvio ? selectEnvio.options[selectEnvio.selectedIndex].text : 'Retiro en Local';
-                if (tipoEnvioVal === 'dentro') costoEnvio = 1500;
-                if (tipoEnvioVal === 'fuera') costoEnvio = 2500;
-            }
-
-            const totalFinal = subtotalMonto + costoEnvio;
-
-            let texto = "🛒 *NUEVO PEDIDO - POLIRUBRO VIRTUAL*\n\n";
-            carrito.forEach(i => {
-                const tamArr = i.tamanios || [];
-                const tArr = i.talles || (i.talle ? [i.talle] : []);
-                const cArr = i.colores || (i.color ? [i.color] : []);
-                let detallesExtra = [];
-                if (tamArr.length > 0) detallesExtra.push(`Tam: ${tamArr.join(', ')}`);
-                if (tArr.length > 0) detallesExtra.push(`T: ${tArr.join(', ')}`);
-                if (cArr.length > 0) detallesExtra.push(`C: ${cArr.join(', ')}`);
-                const detalleTxt = detallesExtra.length > 0 ? ` (${detallesExtra.join(' | ')})` : '';
-                texto += `• ${i.cantidad}x ${i.nombre}${detalleTxt} ($${formatearPrecio(Number(i.precio) * i.cantidad)})\n`;
-            });
-
-            texto += `\n💵 *Subtotal:* $${formatearPrecio(subtotalMonto)}\n`;
-            texto += `🛵 *Entrega:* ${textoEnvio}\n`;
-            if (subtotalMonto >= 20000) {
-                texto += `🎉 *¡ENVÍO GRATIS APLICADO por superar $20.000!*\n`;
-            }
-            texto += `💳 *Forma de Pago:* ${medioPago}\n`;
-            texto += `💰 *TOTAL A PAGAR:* $${formatearPrecio(totalFinal)}\n\n`;
-            texto += `📍 *Dirección de Entrega:* (Escribir tu dirección exacta aquí)`;
-
-            const urlWsp = `https://wa.me/54${NUMERO_WHATSAPP}?text=${encodeURIComponent(texto)}`;
-
-            if (window.innerWidth > 768) {
-                const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(texto)}`;
-                document.getElementById('imgCodigoQR').src = qrUrl;
-                document.getElementById('linkDirectoWspPC').href = urlWsp;
-                document.getElementById('qrModal').style.display = 'flex';
-            } else {
-                window.open(urlWsp, '_blank');
-            }
-        }
-
-        window.onload = () => {
-            cargarCatalogoPublico();
-            actualizarCarritoUI();
-            iniciarCarruselPC();
-        };
-    </script>
-</body>
-</html>
+/* ESTILOS GENERALES POLIRUBRO VIRTUAL */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8fafc; color: #1e293b; padding-bottom: 70px; }
+
+/* MODAL DE BIENVENIDA */
+.welcome-modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.65);
+    z-index: 5000; display: flex; align-items: center; justify-content: center; padding: 15px;
+}
+.welcome-modal-content {
+    background: #ffffff; padding: 22px 18px; border-radius: 18px;
+    max-width: 360px; width: 100%; text-align: center; position: relative;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.3); animation: modalScale 0.25s ease;
+}
+@keyframes modalScale {
+    0% { transform: scale(0.85); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+.welcome-close-btn {
+    position: absolute; top: 10px; right: 12px; background: none; border: none;
+    font-size: 1.2rem; cursor: pointer; color: #64748b; font-weight: bold;
+}
+.btn-vamos-comprar {
+    background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
+    color: white; border: none; padding: 11px 18px; border-radius: 10px;
+    font-weight: 900; font-size: 0.9rem; cursor: pointer; width: 100%;
+    margin-top: 12px; box-shadow: 0 4px 12px rgba(234, 88, 12, 0.3); text-transform: uppercase;
+}
+
+/* BARRA FLOTANTE DEL CARRITO */
+.floating-cart-bar {
+    position: fixed; bottom: 0; left: 0; width: 100%;
+    background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
+    color: white; padding: 8px 12px; box-shadow: 0 -3px 12px rgba(0,0,0,0.2);
+    z-index: 1000; cursor: pointer;
+}
+.floating-cart-content {
+    max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between;
+    align-items: center; font-size: 0.85rem; font-weight: bold; width: 100%;
+}
+.ver-carrito-text {
+    background: #ffffff; color: #ea580c; padding: 6px 16px; border-radius: 20px;
+    font-size: 0.82rem; font-weight: 900; text-transform: uppercase;
+    animation: destelloBoton 2s infinite ease-in-out;
+}
+@keyframes destelloBoton {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* MARQUESINA */
+.promo-banner { background: #1e293b; color: #fff; padding: 6px 0; overflow: hidden; white-space: nowrap; font-size: 0.8rem; }
+.marquee-container { display: inline-block; animation: marquee 25s linear infinite; }
+@keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+
+/* CABECERA (ALINEACIÓN LIMPIA EN PC) */
+.main-header { background: #ffffff; border-bottom: 1px solid #e2e8f0; padding: 12px 15px; }
+.header-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+.header-left-col { display: flex; flex-direction: column; gap: 8px; align-items: center; width: 100%; text-align: center; }
+@media (min-width: 901px) {
+    .header-left-col { width: auto; align-items: flex-start; text-align: left; }
+}
+
+.logo-title { display: flex; align-items: center; text-decoration: none; justify-content: center; }
+.brand-text h1 { font-size: 1.5rem; color: #ea580c; font-weight: 900; line-height: 1.1; }
+.brand-text h1 span { color: #1e293b; }
+.tagline { font-size: 0.78rem; color: #64748b; display: block; margin-top: 2px; }
+
+.header-banner-animado {
+    background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+    border: 1px solid #fed7aa; padding: 7px 14px; border-radius: 10px;
+    display: inline-flex; justify-content: center; align-items: center; width: auto; max-width: 100%;
+    font-size: 0.78rem; color: #c2410c; font-weight: bold; white-space: nowrap;
+}
+.header-banner-content { display: flex; align-items: center; justify-content: center; }
+
+.quick-badge-llamativo {
+    background: #22c55e; color: white; padding: 7px 14px; border-radius: 16px;
+    font-weight: bold; font-size: 0.8rem; cursor: pointer; width: 100%; text-align: center;
+}
+@media (min-width: 901px) {
+    .quick-badge-llamativo { width: fit-content; }
+}
+
+/* PC WIDGET Y CARRUSEL */
+.pc-carousel-container, .pc-desktop-widget { display: none !important; }
+@media (min-width: 901px) {
+    .pc-carousel-container {
+        display: flex !important; flex: 1; max-width: 320px; height: 120px;
+        background: #1e293b; border-radius: 14px; overflow: hidden; position: relative;
+        border: 2px solid #fed7aa; margin: auto 0;
+    }
+    .pc-desktop-widget {
+        display: flex !important; flex-direction: column; gap: 4px;
+        background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+        border: 1.5px solid #fed7aa; border-radius: 14px; padding: 8px 12px;
+        max-width: 290px; margin: auto 0;
+    }
+}
+.pc-carousel-track { display: flex; width: 100%; height: 100%; position: relative; }
+.pc-carousel-slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 1s ease-in-out; }
+.pc-carousel-slide.active { opacity: 1; }
+.pc-carousel-slide img { width: 100%; height: 100%; object-fit: cover; }
+.pc-carousel-caption {
+    position: absolute; bottom: 0; left: 0; width: 100%;
+    background: rgba(0,0,0,0.7); color: white; font-size: 0.72rem; font-weight: bold; text-align: center; padding: 4px;
+}
+.pc-widget-title { font-size: 0.78rem; font-weight: 900; color: #c2410c; }
+.pc-widget-text { font-size: 0.7rem; color: #475569; }
+.pc-widget-badges { display: flex; gap: 4px; flex-wrap: wrap; }
+.pc-badge-item { background: #ffffff; color: #ea580c; font-size: 0.62rem; font-weight: 800; padding: 2px 5px; border-radius: 4px; border: 1px solid #fdba74; }
+
+/* NAVEGACIÓN */
+.main-nav { background: #ea580c; padding: 6px 10px; overflow-x: auto; }
+.nav-container-categorias { max-width: 1200px; margin: 0 auto; display: flex; gap: 8px; }
+.nav-links { display: flex; list-style: none; gap: 8px; white-space: nowrap; }
+.nav-links a { color: white; text-decoration: none; padding: 5px 12px; border-radius: 16px; font-size: 0.8rem; font-weight: bold; background: rgba(0,0,0,0.15); }
+.nav-links a.activa-nav, .nav-links a:hover { background: #ffffff; color: #ea580c; }
+
+/* LAYOUT */
+.main-layout { max-width: 1200px; margin: 15px auto; padding: 0 10px; display: grid; grid-template-columns: 1fr 260px; gap: 15px; }
+@media (max-width: 900px) { .main-layout { grid-template-columns: 1fr; } aside.sidebar { display: none; } }
+
+/* BUSCADOR */
+.search-box { margin-bottom: 15px; }
+.search-input { width: 100%; padding: 10px 14px; border-radius: 10px; border: 2px solid #cbd5e1; outline: none; font-size: 0.9rem; background: #fff; }
+.search-input:focus { border-color: #ea580c; }
+
+/* ========================================================
+   TIRA ULTRA-FINA PARA OFERTAS FLASH 48 HORAS
+   ======================================================== */
+.tira-ofertas-wrapper {
+    background: #fff1f2;
+    border: 1px dashed #f43f5e;
+    border-radius: 12px;
+    padding: 6px 10px;
+    margin-bottom: 14px;
+}
+.tira-ofertas-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+.tira-ofertas-tag {
+    font-size: 0.72rem;
+    font-weight: 900;
+    color: #e11d48;
+}
+.tira-ofertas-sub {
+    font-size: 0.65rem;
+    color: #9f1239;
+    font-weight: 600;
+}
+.tira-ofertas-carril {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 3px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+.tira-ofertas-carril::-webkit-scrollbar {
+    display: none;
+}
+.oferta-tira-item {
+    background: #ffffff;
+    border: 1px solid #fecdd3;
+    border-radius: 8px;
+    min-width: 85px;
+    max-width: 85px;
+    padding: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    cursor: pointer;
+    flex-shrink: 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    transition: transform 0.15s ease;
+}
+.oferta-tira-item:hover {
+    transform: translateY(-2px);
+    border-color: #e11d48;
+}
+.oferta-tira-badge {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    background: #e11d48;
+    color: #fff;
+    font-size: 0.5rem;
+    font-weight: 900;
+    padding: 1px 3px;
+    border-radius: 3px;
+}
+.oferta-tira-img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    margin: 2px 0;
+}
+.oferta-tira-nombre {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #1e293b;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.1;
+}
+.oferta-tira-precio {
+    font-size: 0.72rem;
+    font-weight: 900;
+    color: #e11d48;
+    margin-top: 1px;
+}
+
+/* MODAL DETALLES DEL PRODUCTO */
+.detalle-modal-box {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 16px;
+    max-width: 500px;
+    width: 90%;
+    position: relative;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+}
+.detalle-modal-grid {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 15px;
+    align-items: start;
+}
+@media (max-width: 500px) {
+    .detalle-modal-grid { grid-template-columns: 1fr; }
+}
+.detalle-img-frame {
+    width: 100%;
+    height: 140px;
+    background: #f8fafc;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    border: 1px solid #e2e8f0;
+}
+.detalle-img-frame img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+.detalle-cat-tag {
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: #ef4444;
+    text-transform: uppercase;
+}
+.detalle-titulo {
+    font-size: 1rem;
+    color: #1e293b;
+    margin: 2px 0 4px 0;
+}
+.detalle-precio {
+    font-size: 1.15rem;
+    font-weight: 900;
+    color: #ea580c;
+    margin-bottom: 6px;
+}
+.detalle-descripcion {
+    font-size: 0.8rem;
+    color: #64748b;
+    line-height: 1.3;
+    margin-bottom: 8px;
+}
+.detalle-variantes {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+.detalle-badge-var {
+    background: #f1f5f9;
+    color: #475569;
+    font-size: 0.68rem;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid #cbd5e1;
+}
+.detalle-acciones {
+    display: flex;
+    gap: 8px;
+}
+
+/* GRILLA DE PRODUCTOS REGULARES */
+.cat-titulo-seccion { font-size: 1.15rem; color: #1e293b; margin-bottom: 12px; font-weight: 800; border-bottom: 2px solid #e2e8f0; padding-bottom: 4px; }
+.productos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.card-producto { background: white; border-radius: 14px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 2px 8px rgba(0,0,0,0.03); display: flex; flex-direction: column; position: relative; }
+.en-oferta-card { border: 1.5px solid #ef4444; }
+.badge-oferta-box { position: absolute; top: 8px; left: 8px; z-index: 5; }
+.badge-oferta { background: #ef4444; color: white; padding: 3px 8px; border-radius: 12px; font-size: 0.65rem; font-weight: 900; }
+
+.img-frame {
+    width: 100%;
+    height: 170px;
+    background: #f8fafc;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 6px;
+}
+.img-producto {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+}
+.card-detalles { padding: 10px; flex: 1; display: flex; flex-direction: column; }
+.titulo-producto { font-size: 0.9rem; font-weight: bold; color: #1e293b; margin-bottom: 4px; }
+.precio-producto { font-size: 1.1rem; font-weight: 900; color: #ea580c; margin-top: auto; }
+.stock-tag { font-size: 0.7rem; color: #64748b; margin-top: 2px; }
+.card-acciones { padding: 8px 10px; background: #f8fafc; border-top: 1px solid #f1f5f9; display: flex; gap: 6px; }
+.btn-add-cart { flex: 1; background: #ea580c; color: white; border: none; padding: 7px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.8rem; }
+.btn-share-wsp { background: #22c55e; color: white; border: none; padding: 7px 10px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: bold; }
+
+/* SIDEBAR */
+.sidebar { background: white; border-radius: 14px; padding: 12px; border: 1px solid #e2e8f0; height: fit-content; }
+.sidebar-title { font-size: 1rem; color: #ea580c; margin-bottom: 10px; font-weight: 800; }
+.sidebar-menu { display: flex; flex-direction: column; gap: 4px; }
+.btn-categoria { background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px 10px; text-align: left; border-radius: 6px; font-size: 0.8rem; font-weight: bold; color: #475569; cursor: pointer; }
+.btn-categoria:hover, .btn-categoria.activa { background: #ea580c; color: white; border-color: #ea580c; }
+
+/* MODAL CARRITO */
+.cart-modal { position: fixed; top: 0; right: -100%; width: 100%; max-width: 380px; height: 100%; background: white; z-index: 2000; box-shadow: -5px 0 20px rgba(0,0,0,0.15); transition: right 0.25s ease; display: flex; flex-direction: column; padding: 15px; }
+.cart-modal.abierto { right: 0; }
+.cart-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; }
+.btn-close-cart { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #64748b; }
+.cart-shipping-box { background: #fff7ed; border: 1px solid #ffedd5; padding: 8px; border-radius: 6px; margin: 10px 0; text-align: center; }
+.cart-items { flex: 1; overflow-y: auto; margin-bottom: 8px; }
+.select-checkout { width: 100%; padding: 7px; border-radius: 6px; border: 1px solid #cbd5e1; background: #fff; font-size: 0.8rem; outline: none; margin-top: 3px; }
+.btn-whatsapp { width: 100%; background: #22c55e; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; font-size: 0.9rem; cursor: pointer; margin-top: 6px; text-transform: uppercase; }
+
+/* LIGHTBOX */
+.lightbox-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:3000; display:none; align-items:center; justify-content:center; }
+.lightbox-img { max-width: 90%; max-height: 80vh; border-radius: 10px; object-fit: contain; }
+.lightbox-close { position: absolute; top: 15px; right: 20px; color: white; font-size: 1.8rem; cursor: pointer; font-weight: bold; }
+
+/* WHATSAPP FLOTANTE */
+.wsp-float { position: fixed; bottom: 70px; right: 15px; background: #22c55e; color: white; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; box-shadow: 0 4px 12px rgba(34,197,94,0.35); z-index: 999; text-decoration: none; }
