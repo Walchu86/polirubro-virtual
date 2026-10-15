@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <!-- Versión actualizada para evitar problemas de caché -->
-    <link rel="stylesheet" href="style.css?v=301">
+    <!-- Versión actualizada a v=305 para vencer al caché -->
+    <link rel="stylesheet" href="style.css?v=305">
 </head>
 <body>
 
@@ -20,12 +20,12 @@
         </div>
     </div>
 
-    <!-- POP-UP DE BIENVENIDA DIRECTO (CORREGIDO PARA QUE NO SE TRABE) -->
+    <!-- POP-UP DE BIENVENIDA DIRECTO -->
     <div class="welcome-modal-overlay" id="welcomeModal" style="display: flex;">
         <div class="welcome-modal-content">
             <button class="welcome-close-btn" onclick="cerrarWelcomeModal()">✕</button>
             <h3 style="color: #c2410c; font-size: 1.25rem; font-weight: 900; margin-bottom: 8px;">🎉 ¡Bienvenido a Polirubro Virtual! 🚀</h3>
-            <p style="color: #475569; font-size: 0.95rem; line-height: 1.4; margin-bottom: 12px;">
+            <p style="color: #475569; font-size: 0.95rem; line-height: 1.4; margin-bottom: 5px;">
                 ¡Comprando $20.000 o más, el envío es <strong>TOTALMENTE GRATIS</strong>! 🚚✨
             </p>
             <button class="btn-vamos-comprar" onclick="cerrarWelcomeModal()">¡Vamos a comprar! 🛒</button>
@@ -277,7 +277,7 @@
             const modal = document.getElementById('welcomeModal');
             if (modal) {
                 modal.style.display = 'none';
-                modal.remove(); // Elimina el elemento por completo para liberar la pantalla móvil
+                modal.remove(); // Elimina el elemento por completo para evitar que bloquee la pantalla móvil
             }
         }
 
