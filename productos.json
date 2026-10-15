@@ -256,21 +256,6 @@
       "imagen": "https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?w=600&auto=format&fit=crop&q=80"
     },
     {
-      "id": 1792023227483,
-      "nombre": "¡SÚPER COMBO NA CAPILAR!",
-      "descripcion": "Armá tu rutina ideal eligiendo 3 productos a tu elección de nuestra línea profesional.",
-      "precio": 10000,
-      "stock": 5,
-      "categoria": "Estética",
-      "tamanios": [
-        "250 cc"
-      ],
-      "talles": [],
-      "colores": [],
-      "enOferta": true,
-      "imagen": "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&auto=format&fit=crop&q=80"
-    },
-    {
       "id": 1792030000004,
       "nombre": "Extracto Femenino Alma Monique Arnold",
       "descripcion": "Extracto Femenino Alma (Monique Arnold): Fragancia cálida y cautivadora, con notas envolventes que combinan acordes florales y sutiles toques dulces, transmitiendo una personalidad profunda, natural y de gran elegancia.",
