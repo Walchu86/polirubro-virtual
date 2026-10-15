@@ -314,6 +314,21 @@
       "colores": [],
       "enOferta": true,
       "imagen": "https://http2.mlstatic.com/D_NQ_NP_2X_726675-MLA106759176383_022026-F.webp"
+    },
+    {
+      "id": 1792040051432,
+      "nombre": "Extracto Femenino Alma Monique Arnold",
+      "descripcion": "Extracto Femenino Alma (Monique Arnold): Fragancia cálida y cautivadora, con notas envolventes que combinan acordes florales y sutiles toques dulces, transmitiendo una personalidad profunda, natural y de gran elegancia.",
+      "precio": 5000,
+      "stock": 1,
+      "categoria": "Cosmética",
+      "tamanios": [
+        "15 ml"
+      ],
+      "talles": [],
+      "colores": [],
+      "enOferta": true,
+      "imagen": "https://http2.mlstatic.com/D_NQ_NP_2X_821149-MLA73374061140_122023-F.webp"
     }
   ],
   "categorias": [
