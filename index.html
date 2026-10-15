@@ -4,9 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=280">
+    <link rel="stylesheet" href="style.css?v=290">
 </head>
 <body>
+
+    <!-- MENÚ LATERAL DESPLEGABLE (SOLO MÓVIL: DE IZQUIERDA A DERECHA) -->
+    <div class="drawer-overlay" id="drawerCategorias" onclick="cerrarMenuCategorias()">
+        <div class="drawer-content" onclick="event.stopPropagation()">
+            <div class="drawer-header">
+                <h3>📂 Categorías</h3>
+                <button class="drawer-close-btn" onclick="cerrarMenuCategorias()" title="Cerrar">✕</button>
+            </div>
+            <div class="drawer-menu-lista" id="drawerListaCategorias"></div>
+        </div>
+    </div>
 
     <!-- POP-UP DE BIENVENIDA DIRECTO -->
     <div class="welcome-modal-overlay" id="welcomeModal" style="display: flex;">
@@ -14,7 +25,7 @@
             <button class="welcome-close-btn" onclick="cerrarWelcomeModal()">✕</button>
             <h3 style="color: #c2410c; font-size: 1.25rem; font-weight: 900; margin-bottom: 8px;">🎉 ¡Bienvenido a Polirubro Virtual! 🚀</h3>
             <p style="color: #475569; font-size: 0.95rem; line-height: 1.4; margin-bottom: 5px;">
-                ¡Comprando \$20.000 o más, el envío es <strong>TOTALMENTE GRATIS</strong>! 🚚✨
+                ¡Comprando $20.000 o más, el envío es <strong>TOTALMENTE GRATIS</strong>! 🚚✨
             </p>
             <button class="btn-vamos-comprar" onclick="cerrarWelcomeModal()">¡Vamos a comprar! 🛒</button>
         </div>
@@ -31,6 +42,11 @@
     <header class="main-header">
         <div class="header-container">
             <div class="header-left-col">
+                <!-- BOTÓN ACCESO DIRECTO CATEGORÍAS (EXCLUSIVO MÓVIL) -->
+                <button class="btn-abrir-drawer-movil" onclick="abrirMenuCategorias()" title="Ver todas las categorías">
+                    ☰ Categorías
+                </button>
+
                 <a href="#" class="logo-title" style="text-decoration:none;">
                     <div class="brand-text">
                         <h1>POLIRUBRO <span>VIRTUAL</span></h1>
@@ -80,14 +96,14 @@
                 <div class="pc-widget-badges">
                     <span class="pc-badge-item">🔒 100% Segura</span>
                     <span class="pc-badge-item">💵 Efectivo / Transf.</span>
-                    <span class="pc-badge-item">🚚 Envío Gratis \$20k</span>
+                    <span class="pc-badge-item">🚚 Envío Gratis $20k</span>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- BARRA DE SECCIONES -->
-    <nav class="main-nav">
+    <!-- BARRA DE SECCIONES CON MOVIMIENTO DINÁMICO -->
+    <nav class="main-nav" id="mainNavContenedor">
         <div class="nav-container-categorias" id="contenedorCategoriasNav"></div>
     </nav>
 
@@ -96,7 +112,7 @@
         <div class="floating-cart-content">
             <span>🛒 Carrito: <strong id="cartCount">0</strong></span>
             <span class="ver-carrito-text">VER PEDIDO ➔</span>
-            <span>Total: \$<strong id="cartTotalHeader">0</strong></span>
+            <span>Total: $<strong id="cartTotalHeader">0</strong></span>
         </div>
     </div>
 
@@ -160,7 +176,7 @@
         </div>
         
         <div class="cart-shipping-box" id="bannerCartShipping">
-            <p style="font-size:0.85rem; font-weight:bold; color:#ea580c;">🚚 Envío GRATIS en compras desde \$20.000</p>
+            <p style="font-size:0.85rem; font-weight:bold; color:#ea580c;">🚚 Envío GRATIS en compras desde $20.000</p>
             <p style="font-size:0.75rem; color:#64748b;">Elegí zona de entrega y método de pago.</p>
         </div>
 
@@ -175,12 +191,12 @@
                 <label style="font-size:0.80rem; font-weight:bold; color:#1e293b; display:block; margin-bottom:4px;">📍 Zona / Entrega:</label>
                 <select id="selectTipoEnvio" class="select-checkout" onchange="actualizarCarritoUI()">
                     <option value="local">🏬 Retiro en Local (Gratis)</option>
-                    <option value="dentro">🛵 Dentro de las 4 Avenidas (\$1.500)</option>
-                    <option value="fuera">🚚 Fuera de las 4 Avenidas (\$2.500)</option>
+                    <option value="dentro">🛵 Dentro de las 4 Avenidas ($1.500)</option>
+                    <option value="fuera">🚚 Fuera de las 4 Avenidas ($2.500)</option>
                 </select>
             </div>
             <div id="avisoEnvioGratisPromo" style="display:none; background: #ecfdf5; border: 1.5px solid #34d399; padding: 8px; border-radius: 8px; text-align: center; margin-top: 5px;">
-                <p style="font-size: 0.85rem; font-weight: 800; color: #065f46; margin: 0;">🎉 ¡ENVÍO 100% GRATIS (\$0)!</p>
+                <p style="font-size: 0.85rem; font-weight: 800; color: #065f46; margin: 0;">🎉 ¡ENVÍO 100% GRATIS ($0)!</p>
             </div>
 
             <label style="font-size:0.80rem; font-weight:bold; color:#1e293b; display:block; margin-top:8px; margin-bottom:4px;">💳 Forma de Pago:</label>
@@ -197,7 +213,7 @@
             </div>
             <div style="display:flex; justify-content:space-between; margin-bottom: 6px; font-size: 0.85rem; color:#64748b;">
                 <span>Envío:</span>
-                <span id="cartEnvioTexto">\$0</span>
+                <span id="cartEnvioTexto">$0</span>
             </div>
             <div style="display:flex; justify-content:space-between; margin-bottom: 10px; font-weight: bold; font-size: 1.1rem; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
                 <span>Total:</span>
@@ -239,6 +255,7 @@
         let categoriaActiva = 'TODAS';
         let yaAlcanzoEnvioGratis = false;
         let intervaloOfertas = null;
+        let estadoModal = null;
 
         let currentSlide = 0;
         function iniciarCarruselPC() {
@@ -275,6 +292,40 @@
                 [copia[i], copia[j]] = [copia[j], copia[i]];
             }
             return copia;
+        }
+
+        // CONTROL DEL MENÚ DESPLEGABLE DE CATEGORÍAS (MÓVIL)
+        function abrirMenuCategorias() {
+            const drawer = document.getElementById('drawerCategorias');
+            if (drawer && !drawer.classList.contains('abierto')) {
+                drawer.classList.add('abierto');
+                estadoModal = 'drawer';
+                history.pushState({ modalOpen: 'drawer' }, "");
+            }
+        }
+
+        function cerrarMenuCategorias(desdeHistorial = false) {
+            const drawer = document.getElementById('drawerCategorias');
+            if (drawer && drawer.classList.contains('abierto')) {
+                drawer.classList.remove('abierto');
+                estadoModal = null;
+                if (!desdeHistorial && history.state && history.state.modalOpen) {
+                    history.back();
+                }
+            }
+        }
+
+        function animarBarraCategorias() {
+            const barra = document.getElementById('mainNavContenedor');
+            if (!barra) return;
+            barra.classList.remove('animando-barra');
+            void barra.offsetWidth; // Reinicia animación CSS
+            barra.classList.add('animando-barra');
+
+            const activaLink = barra.querySelector('.activa-nav');
+            if (activaLink) {
+                activaLink.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
         }
 
         async function cargarCatalogoPublico() {
@@ -383,27 +434,37 @@
                 enviarProductoWsp(p.id);
             };
 
-            document.getElementById('detalleModal').style.display = 'flex';
-        }
-
-        function cerrarModalDetalle() {
-            document.getElementById('detalleModal').style.display = 'none';
-        }
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                cerrarModalDetalle();
-                cerrarLightbox();
-                cerrarCarrito();
+            const modal = document.getElementById('detalleModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                estadoModal = 'detalle';
+                history.pushState({ modalOpen: 'detalle' }, "");
             }
-        });
+        }
+
+        function cerrarModalDetalle(desdeHistorial = false) {
+            const modal = document.getElementById('detalleModal');
+            if (modal && modal.style.display === 'flex') {
+                modal.style.display = 'none';
+                estadoModal = null;
+                if (!desdeHistorial && history.state && history.state.modalOpen) {
+                    history.back();
+                }
+            }
+        }
 
         function renderizarMenuCategorias(cats) {
+            // Barra horizontal superior
             const navContainer = document.getElementById('contenedorCategoriasNav');
             let navHtml = `<ul class="nav-links"><li><a href="#" class="${categoriaActiva === 'TODAS' ? 'activa-nav' : ''}" onclick="cambiarCategoria('TODAS', event)">🔥 Todos</a></li>`;
             
+            // Sidebar PC
             const sidebarContainer = document.getElementById('sidebarCategoriasMenu');
             let sidebarHtml = `<button class="btn-categoria ${categoriaActiva === 'TODAS' ? 'activa' : ''}" onclick="cambiarCategoria('TODAS', event)">🔥 Todos los Productos</button>`;
+
+            // Desplegable lateral móvil
+            const drawerContainer = document.getElementById('drawerListaCategorias');
+            let drawerHtml = `<button class="drawer-btn-cat ${categoriaActiva === 'TODAS' ? 'activa' : ''}" onclick="seleccionarCatDrawer('TODAS')">🔥 Todos los Productos</button>`;
 
             cats.forEach(nombreCat => {
                 if (nombreCat) {
@@ -411,12 +472,19 @@
                     const activaSidebar = categoriaActiva === nombreCat ? 'activa' : '';
                     navHtml += `<li><a href="#" class="${activaClass}" onclick="cambiarCategoria('${nombreCat}', event)">${nombreCat}</a></li>`;
                     sidebarHtml += `<button class="btn-categoria ${activaSidebar}" onclick="cambiarCategoria('${nombreCat}', event)">🔹 ${nombreCat}</button>`;
+                    drawerHtml += `<button class="drawer-btn-cat ${activaSidebar}" onclick="seleccionarCatDrawer('${nombreCat}')">🔹 ${nombreCat}</button>`;
                 }
             });
 
             navHtml += `</ul>`;
             navContainer.innerHTML = navHtml;
             sidebarContainer.innerHTML = sidebarHtml;
+            if (drawerContainer) drawerContainer.innerHTML = drawerHtml;
+        }
+
+        function seleccionarCatDrawer(cat) {
+            cambiarCategoria(cat);
+            cerrarMenuCategorias();
         }
 
         function cambiarCategoria(cat, event) {
@@ -424,6 +492,7 @@
             categoriaActiva = cat;
             document.getElementById('tituloSeccionActiva').innerText = cat === 'TODAS' ? '🌟 Todos los Productos' : `📂 ${cat}`;
             renderizarMenuCategorias(categoriasDisponibles);
+            animarBarraCategorias();
             filtrarProductos();
         }
 
@@ -609,8 +678,6 @@
             }
         }
 
-        let estadoModal = null;
-
         function abrirCarrito() {
             const cartModal = document.getElementById('cartModal');
             if (cartModal && !cartModal.classList.contains('abierto')) {
@@ -640,7 +707,7 @@
 
         function cerrarLightbox(desdeHistorial = false) {
             const modal = document.getElementById('lightboxModal');
-            if (modal.style.display === 'flex') {
+            if (modal && modal.style.display === 'flex') {
                 modal.style.display = 'none';
                 estadoModal = null;
                 if (!desdeHistorial && history.state && history.state.modalOpen) {
@@ -653,9 +720,12 @@
             document.getElementById('qrModal').style.display = 'none';
         }
 
+        // CIERRE INTELIGENTE CON EL BOTÓN "ATRÁS" DEL CELULAR
         window.onpopstate = function(event) {
-            if (estadoModal === 'cart') cerrarCarrito(true);
+            if (estadoModal === 'drawer') cerrarMenuCategorias(true);
+            else if (estadoModal === 'cart') cerrarCarrito(true);
             else if (estadoModal === 'lightbox') cerrarLightbox(true);
+            else if (estadoModal === 'detalle') cerrarModalDetalle(true);
         };
 
         function enviarProductoWsp(idProd) {
@@ -737,6 +807,7 @@
             cargarCatalogoPublico();
             actualizarCarritoUI();
             iniciarCarruselPC();
+            animarBarraCategorias();
         };
     </script>
 </body>
