@@ -266,8 +266,8 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
 .nav-links a { color: white; text-decoration: none; padding: 5px 12px; border-radius: 16px; font-size: 0.8rem; font-weight: bold; background: rgba(0,0,0,0.15); transition: all 0.2s ease; }
 .nav-links a.activa-nav, .nav-links a:hover { background: #ffffff; color: #ea580c; }
 
-/* LAYOUT */
-.main-layout { max-width: 1200px; margin: 15px auto; padding: 0 10px; display: grid; grid-template-columns: 1fr 260px; gap: 15px; box-sizing: border-box; min-height: 65vh; }
+/* LAYOUT (ARMONIZADO SIN ESPACIO EN BLANCO AL PIE) */
+.main-layout { max-width: 1200px; margin: 15px auto; padding: 0 10px; display: grid; grid-template-columns: 1fr 260px; gap: 15px; box-sizing: border-box; min-height: 75vh; }
 @media (max-width: 900px) { .main-layout { grid-template-columns: 1fr; } aside.sidebar { display: none; } }
 
 /* BUSCADOR */
@@ -276,7 +276,7 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
 .search-input:focus { border-color: #ea580c; }
 
 /* ========================================================
-   TIRA ULTRA-FINA PARA OFERTAS FLASH 48 HORAS (CARRUSEL INFINITO)
+   TIRA ULTRA-FINA PARA OFERTAS FLASH 48 HORAS (CARRUSEL INFINITO SIN BACHES)
    ======================================================== */
 .tira-ofertas-wrapper {
     background: #fff1f2;
@@ -474,7 +474,7 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
     gap: 8px;
 }
 
-/* GRILLA DE PRODUCTOS REGULARES (IMÁGENES PROPORCIONADAS SIN CORTES NI ESTIRAMIENTOS) */
+/* GRILLA DE PRODUCTOS REGULARES (IMÁGENES PERFECTAS SIN CORTES) */
 .cat-titulo-seccion { font-size: 1.15rem; color: #1e293b; margin-bottom: 12px; font-weight: 800; border-bottom: 2px solid #e2e8f0; padding-bottom: 4px; }
 .productos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
 .card-producto { background: white; border-radius: 14px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 2px 8px rgba(0,0,0,0.03); display: flex; flex-direction: column; position: relative; }
@@ -563,12 +563,4 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
         padding: 6px 4px !important;
         font-size: 0.72rem !important;
     }
-}
-
-/* CORRECCIONES FINALES DE DISEÑO Y ARMONIZACIÓN */
-.main-layout {
-    min-height: 75vh !important;
-}
-.tira-ofertas-carril {
-    animation: none !important;
 }
