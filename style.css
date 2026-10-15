@@ -534,7 +534,7 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
 /* WHATSAPP FLOTANTE */
 .wsp-float { position: fixed; bottom: 70px; right: 15px; background: #22c55e; color: white; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; box-shadow: 0 4px 12px rgba(34,197,94,0.35); z-index: 999; text-decoration: none; }
 
-/* ADAPTACIONES ESPECÍfICAS PARA MÓVIL (CELULAR) */
+/* ADAPTACIONES ESPECÍFICAS PARA MÓVIL (CELULAR) */
 @media (max-width: 768px) {
     .productos-grid {
         grid-template-columns: repeat(2, 1fr) !important;
