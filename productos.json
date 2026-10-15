@@ -374,6 +374,21 @@
       "colores": [],
       "enOferta": true,
       "imagen": "https://http2.mlstatic.com/D_NQ_NP_2X_965626-MLA49668490801_042022-F.webp"
+    },
+    {
+      "id": 1792041140439,
+      "nombre": "extracto Femenino Today Tomorrow Always (Avon)",
+      "descripcion": "Fragancia elegante y romántica, con un cautivador bouquet floral blanco que evoca momentos inolvidables, combinando notas de mariposa blanca, hibisco y almizcle sedoso para una estela sofisticada y duradera.",
+      "precio": 5000,
+      "stock": 1,
+      "categoria": "Cosmética",
+      "tamanios": [
+        "15 ml"
+      ],
+      "talles": [],
+      "colores": [],
+      "enOferta": true,
+      "imagen": "https://http2.mlstatic.com/D_NQ_NP_885928-MLA93116865930_092025-O.webp"
     }
   ],
   "categorias": [
