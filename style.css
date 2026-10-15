@@ -134,15 +134,15 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
 .nav-links a { color: white; text-decoration: none; padding: 5px 12px; border-radius: 16px; font-size: 0.8rem; font-weight: bold; background: rgba(0,0,0,0.15); transition: all 0.2s ease; }
 .nav-links a.activa-nav, .nav-links a:hover { background: #fff; color: #ea580c; }
 
-/* LAYOUT CON CUADRO LATERAL DE SECCIONES RESTAURADO EN PC */
+/* LAYOUT CON CUADRO DE SECCIONES FIJO A LA DERECHA EN PC (OCULTO EN CELULAR) */
 .main-layout { max-width: 1200px; margin: 15px auto; padding: 0 10px; display: grid; grid-template-columns: 1fr 260px; gap: 15px; box-sizing: border-box; align-items: start; }
-@media (max-width: 900px) { .main-layout { grid-template-columns: 1fr; } aside.sidebar { display: none; } }
+@media (max-width: 900px) { .main-layout { grid-template-columns: 1fr; } aside.sidebar { display: none !important; } }
 
 .search-box { margin-bottom: 12px; }
 .search-input { width: 100%; padding: 10px 14px; border-radius: 10px; border: 2px solid #cbd5e1; outline: none; font-size: 0.9rem; background: #fff; }
 .search-input:focus { border-color: #ea580c; }
 
-/* TIRA DE OFERTAS FLASH FLUIDA Y SIN BACHES */
+/* TIRA DE OFERTAS FLASH FLUIDA */
 .tira-ofertas-wrapper {
     background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 100%);
     border: 1px solid #fda4af; border-radius: 14px; padding: 8px 12px; margin-bottom: 14px; overflow: hidden; position: relative; box-shadow: 0 4px 12px rgba(225, 29, 72, 0.08);
