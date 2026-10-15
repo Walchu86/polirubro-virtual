@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=296">
+    <link rel="stylesheet" href="style.css?v=297">
 </head>
 <body>
 
@@ -126,13 +126,15 @@
                 <input type="text" id="inputBuscador" class="search-input" placeholder="🔍 Buscar productos en el catálogo..." oninput="filtrarProductos()">
             </div>
 
-            <!-- SECCIÓN OFERTAS 48 HS: TIRA ULTRA-FINA Y COMPACTA -->
+            <!-- SECCIÓN OFERTAS 48 HS: TIRA ULTRA-FINA Y COMPACTA CON CARRUSEL -->
             <div id="seccionOfertas48hs" style="display:none;" class="tira-ofertas-wrapper">
                 <div class="tira-ofertas-header">
                     <span class="tira-ofertas-tag">⚡ OFERTAS FLASH 48 HS</span>
                     <span class="tira-ofertas-sub">¡Tocá para ver detalles y comprar!</span>
                 </div>
-                <div class="tira-ofertas-carril" id="gridOfertas48hs"></div>
+                <div class="tira-ofertas-carril-container">
+                    <div class="tira-ofertas-carril" id="gridOfertas48hs"></div>
+                </div>
             </div>
 
             <h2 class="cat-titulo-seccion" id="tituloSeccionActiva">🌟 Todos los Productos</h2>
@@ -257,7 +259,6 @@
         let carrito = JSON.parse(localStorage.getItem('carrito_polirubro')) || [];
         let categoriaActiva = 'TODAS';
         let yaAlcanzoEnvioGratis = false;
-        let intervaloOfertas = null;
         let estadoModal = null;
 
         let currentSlide = 0;
@@ -330,7 +331,6 @@
             }
         }
 
-        // SE RESTAURA LA LECTURA DIRECTA DE PRODUCTOS.JSON
         async function cargarCatalogoPublico() {
             const grid = document.getElementById('gridProductos');
             grid.innerHTML = '<p style="text-align:center; width:100%; color:#64748b; padding:2rem;">Cargando catálogo...</p>';
@@ -356,30 +356,6 @@
             }
         }
 
-        function iniciarAutoplayOfertas() {
-            const carril = document.getElementById('gridOfertas48hs');
-            if (!carril) return;
-
-            if (intervaloOfertas) clearInterval(intervaloOfertas);
-
-            if (carril.scrollWidth > carril.clientWidth) {
-                intervaloOfertas = setInterval(() => {
-                    if (carril.scrollLeft + carril.clientWidth >= carril.scrollWidth - 1) {
-                        carril.scrollLeft = 0;
-                    } else {
-                        carril.scrollLeft += 1;
-                    }
-                }, 30);
-            }
-
-            carril.onmouseenter = () => clearInterval(intervaloOfertas);
-            carril.onmouseleave = () => iniciarAutoplayOfertas();
-            carril.ontouchstart = () => clearInterval(intervaloOfertas);
-            carril.ontouchend = () => {
-                setTimeout(iniciarAutoplayOfertas, 1500);
-            };
-        }
-
         function renderizarOfertas48hs() {
             const seccion = document.getElementById('seccionOfertas48hs');
             const carril = document.getElementById('gridOfertas48hs');
@@ -388,12 +364,13 @@
 
             if (ofertas.length === 0) {
                 seccion.style.display = 'none';
-                if (intervaloOfertas) clearInterval(intervaloOfertas);
                 return;
             }
 
             seccion.style.display = 'block';
-            carril.innerHTML = ofertas.map(p => {
+            
+            // Duplicar elementos para asegurar bucle infinito fluido con animación CSS
+            const itemsHtml = ofertas.map(p => {
                 const imgUrl = p.imagen || 'https://via.placeholder.com/150?text=Oferta';
                 const precioLimpio = Number(p.precio || 0);
 
@@ -407,9 +384,7 @@
                 `;
             }).join('');
 
-            if (ofertas.length > 1) {
-                setTimeout(iniciarAutoplayOfertas, 400);
-            }
+            carril.innerHTML = itemsHtml + itemsHtml; // Duplicado para loop perfecto
         }
 
         function abrirModalDetalle(idProd) {
