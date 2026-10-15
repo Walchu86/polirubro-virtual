@@ -1,5 +1,9 @@
 /* ESTILOS GENERALES POLIRUBRO VIRTUAL */
 * { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+    overflow-x: hidden !important;
+    width: 100%;
+}
 body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8fafc; color: #1e293b; padding-bottom: 70px; }
 
 /* FILA DEL ENCABEZADO: TÍTULO Y BOTÓN HAMBURGUESA */
@@ -263,7 +267,7 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
 .nav-links a.activa-nav, .nav-links a:hover { background: #ffffff; color: #ea580c; }
 
 /* LAYOUT */
-.main-layout { max-width: 1200px; margin: 15px auto; padding: 0 10px; display: grid; grid-template-columns: 1fr 260px; gap: 15px; }
+.main-layout { max-width: 1200px; margin: 15px auto; padding: 0 10px; display: grid; grid-template-columns: 1fr 260px; gap: 15px; box-sizing: border-box; }
 @media (max-width: 900px) { .main-layout { grid-template-columns: 1fr; } aside.sidebar { display: none; } }
 
 /* BUSCADOR */
@@ -272,7 +276,7 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
 .search-input:focus { border-color: #ea580c; }
 
 /* ========================================================
-   TIRA ULTRA-FINA PARA OFERTAS FLASH 48 HORAS
+   TIRA ULTRA-FINA PARA OFERTAS FLASH 48 HORAS (CARRUSEL INFINITO)
    ======================================================== */
 .tira-ofertas-wrapper {
     background: #fff1f2;
@@ -280,6 +284,8 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
     border-radius: 12px;
     padding: 6px 10px;
     margin-bottom: 14px;
+    overflow: hidden;
+    position: relative;
 }
 .tira-ofertas-header {
     display: flex;
@@ -297,17 +303,26 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
     color: #9f1239;
     font-weight: 600;
 }
+.tira-ofertas-carril-container {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+}
 .tira-ofertas-carril {
     display: flex;
     gap: 8px;
-    overflow-x: auto;
+    width: max-content;
     padding-bottom: 3px;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
+    animation: scrollOfertas 25s linear infinite;
 }
-.tira-ofertas-carril::-webkit-scrollbar {
-    display: none;
+.tira-ofertas-wrapper:hover .tira-ofertas-carril {
+    animation-play-state: paused;
 }
+@keyframes scrollOfertas {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
 .oferta-tira-item {
     background: #ffffff;
     border: 1px solid #fecdd3;
@@ -525,3 +540,34 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
 
 /* WHATSAPP FLOTANTE */
 .wsp-float { position: fixed; bottom: 70px; right: 15px; background: #22c55e; color: white; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; box-shadow: 0 4px 12px rgba(34,197,94,0.35); z-index: 999; text-decoration: none; }
+
+/* ADAPTACIONES ESPECÍFICAS PARA MÓVIL (CELULAR) */
+@media (max-width: 768px) {
+    .productos-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+    }
+    .card-producto {
+        border-radius: 10px !important;
+    }
+    .img-frame {
+        height: 130px !important;
+    }
+    .card-detalles {
+        padding: 8px !important;
+    }
+    .titulo-producto {
+        font-size: 0.8rem !important;
+    }
+    .precio-producto {
+        font-size: 0.95rem !important;
+    }
+    .card-acciones {
+        padding: 6px 8px !important;
+        gap: 4px !important;
+    }
+    .btn-add-cart, .btn-share-wsp {
+        padding: 6px 4px !important;
+        font-size: 0.72rem !important;
+    }
+}
