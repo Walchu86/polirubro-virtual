@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=1010">
+    <link rel="stylesheet" href="style.css?v=1020">
 </head>
 <body>
     <div class="drawer-overlay" id="drawerCategorias" onclick="cerrarMenuCategorias()">
@@ -81,6 +81,7 @@
         </div>
     </div>
 
+    <!-- CONTENEDOR PRINCIPAL AMPLIO Y LIMPIO (SIN SIDEBAR LATERAL MOLESTO) -->
     <div class="main-layout">
         <main class="main-content-area">
             <section class="search-box">
@@ -102,15 +103,6 @@
                 <div class="productos-grid" id="gridProductos"></div>
             </section>
         </main>
-
-        <aside class="sidebar" id="contenedorSidebarCategoriasPC">
-            <h3 class="sidebar-title">📂 Secciones</h3>
-            <div class="sidebar-menu" id="sidebarCategoriasMenu"></div>
-            <div class="sidebar-info-box">
-                <h4 style="font-size: 0.85rem; color: #ea580c; margin-bottom: 6px; font-weight: 900;">📍 Envíos y Retiros</h4>
-                <p style="font-size: 0.75rem; color: #475569; line-height: 1.3;">Corrientes Capital. Envío gratis superando los \$20.000.</p>
-            </div>
-        </aside>
     </div>
 
     <div class="lightbox-overlay" id="detalleModal" onclick="cerrarModalDetalle()">
@@ -350,23 +342,19 @@
         function renderizarMenuCategorias(cats) {
             const navContainer = document.getElementById('contenedorCategoriasNav');
             let navHtml = `<ul class="nav-links"><li><a href="#" class="${categoriaActiva === 'TODAS' ? 'activa-nav' : ''}" onclick="cambiarCategoria('TODAS', event)">🔥 Todos</a></li>`;
-            const sidebarContainer = document.getElementById('sidebarCategoriasMenu');
-            let sidebarHtml = `<button class="btn-categoria ${categoriaActiva === 'TODAS' ? 'activa' : ''}" onclick="cambiarCategoria('TODAS', event)">🔥 Todos los Productos</button>`;
             const drawerContainer = document.getElementById('drawerListaCategorias');
             let drawerHtml = `<button class="drawer-btn-cat ${categoriaActiva === 'TODAS' ? 'activa' : ''}" onclick="seleccionarCatDrawer('TODAS')">🔥 Todos los Productos</button>`;
 
             cats.forEach(nombreCat => {
                 if (nombreCat) {
                     const activaClass = categoriaActiva === nombreCat ? 'activa-nav' : '';
-                    const activaSidebar = categoriaActiva === nombreCat ? 'activa' : '';
+                    const activaDrawer = categoriaActiva === nombreCat ? 'activa' : '';
                     navHtml += `<li><a href="#" class="${activaClass}" onclick="cambiarCategoria('${nombreCat}', event)">${nombreCat}</a></li>`;
-                    sidebarHtml += `<button class="btn-categoria ${activaSidebar}" onclick="cambiarCategoria('${nombreCat}', event)">🔹 ${nombreCat}</button>`;
-                    drawerHtml += `<button class="drawer-btn-cat ${activaSidebar}" onclick="seleccionarCatDrawer('${nombreCat}')">🔹 ${nombreCat}</button>`;
+                    drawerHtml += `<button class="drawer-btn-cat ${activaDrawer}" onclick="seleccionarCatDrawer('${nombreCat}')">🔹 ${nombreCat}</button>`;
                 }
             });
             navHtml += `</ul>`;
             navContainer.innerHTML = navHtml;
-            sidebarContainer.innerHTML = sidebarHtml;
             if (drawerContainer) drawerContainer.innerHTML = drawerHtml;
         }
 
