@@ -6,7 +6,6 @@ html, body {
 }
 body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8fafc; color: #1e293b; padding-bottom: 70px; }
 
-/* FILA DEL ENCABEZADO: TÍTULO Y BOTÓN HAMBURGUESA */
 .header-brand-row {
     display: flex;
     align-items: center;
@@ -15,7 +14,6 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
     width: 100%;
 }
 
-/* BOTÓN 3 RAYITAS CIRCULAR CON DESTELLO (SOLO MÓVIL) */
 .btn-hamburguesa-destello {
     position: absolute;
     left: 0;
@@ -56,7 +54,6 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
     }
 }
 
-/* MENÚ LATERAL DESPLEGABLE (DRAWER EXCLUSIVO MÓVIL) */
 .drawer-overlay {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
@@ -138,7 +135,6 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
     border-color: #ea580c;
 }
 
-/* MODAL DE BIENVENIDA */
 .welcome-modal-overlay {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
@@ -165,7 +161,6 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
     margin-top: 12px; box-shadow: 0 4px 12px rgba(234, 88, 12, 0.3); text-transform: uppercase;
 }
 
-/* BARRA FLOTANTE DEL CARRITO */
 .floating-cart-bar {
     position: fixed; bottom: 0; left: 0; width: 100%;
     background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
@@ -186,12 +181,10 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
     50% { transform: scale(1.05); }
 }
 
-/* MARQUESINA */
 .promo-banner { background: #1e293b; color: #fff; padding: 6px 0; overflow: hidden; white-space: nowrap; font-size: 0.8rem; }
 .marquee-container { display: inline-block; animation: marquee 25s linear infinite; }
 @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-/* CABECERA (ALINEACIÓN CENTRADA EN PC) */
 .main-header { background: #ffffff; border-bottom: 1px solid #e2e8f0; padding: 12px 15px; }
 .header-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
 .header-left-col { display: flex; flex-direction: column; gap: 8px; align-items: center; width: 100%; text-align: center; }
@@ -217,7 +210,6 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
     font-weight: bold; font-size: 0.8rem; cursor: pointer; width: auto; min-width: 260px; text-align: center; margin: 0 auto;
 }
 
-/* PC WIDGET Y CARRUSEL */
 .pc-carousel-container, .pc-desktop-widget { display: none !important; }
 @media (min-width: 901px) {
     .pc-carousel-container {
@@ -245,7 +237,6 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
 .pc-widget-badges { display: flex; gap: 4px; flex-wrap: wrap; }
 .pc-badge-item { background: #ffffff; color: #ea580c; font-size: 0.62rem; font-weight: 800; padding: 2px 5px; border-radius: 4px; border: 1px solid #fdba74; }
 
-/* NAVEGACIÓN Y ANIMACIÓN DINÁMICA DE LA BARRA NARANJA */
 .main-nav {
     background: #ea580c;
     padding: 6px 10px;
@@ -266,62 +257,64 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
 .nav-links a { color: white; text-decoration: none; padding: 5px 12px; border-radius: 16px; font-size: 0.8rem; font-weight: bold; background: rgba(0,0,0,0.15); transition: all 0.2s ease; }
 .nav-links a.activa-nav, .nav-links a:hover { background: #ffffff; color: #ea580c; }
 
-/* LAYOUT (ARMONIZADO SIN ESPACIO EN BLANCO AL PIE) */
-.main-layout { max-width: 1200px; margin: 15px auto; padding: 0 10px; display: grid; grid-template-columns: 1fr 260px; gap: 15px; box-sizing: border-box; min-height: 75vh; }
+.main-layout { max-width: 1200px; margin: 15px auto; padding: 0 10px; display: grid; grid-template-columns: 1fr 260px; gap: 15px; box-sizing: border-box; min-height: 75vh; align-items: start; }
 @media (max-width: 900px) { .main-layout { grid-template-columns: 1fr; } aside.sidebar { display: none; } }
 
-/* BUSCADOR */
 .search-box { margin-bottom: 15px; }
 .search-input { width: 100%; padding: 10px 14px; border-radius: 10px; border: 2px solid #cbd5e1; outline: none; font-size: 0.9rem; background: #fff; }
 .search-input:focus { border-color: #ea580c; }
 
-/* ========================================================
-   TIRA ULTRA-FINA PARA OFERTAS FLASH 48 HORAS (CARRUSEL INFINITO SIN BACHES)
-   ======================================================== */
 .tira-ofertas-wrapper {
-    background: #fff1f2;
-    border: 1px dashed #f43f5e;
-    border-radius: 12px;
-    padding: 6px 10px;
-    margin-bottom: 14px;
+    background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 100%);
+    border: 1px solid #fda4af;
+    border-radius: 14px;
+    padding: 8px 12px;
+    margin-bottom: 16px;
     overflow: hidden;
     position: relative;
+    box-shadow: 0 4px 12px rgba(225, 29, 72, 0.08);
 }
 .tira-ofertas-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
 }
 .tira-ofertas-tag {
-    font-size: 0.72rem;
+    font-size: 0.75rem;
     font-weight: 900;
     color: #e11d48;
+    letter-spacing: 0.5px;
 }
 .tira-ofertas-sub {
-    font-size: 0.65rem;
+    font-size: 0.68rem;
     color: #9f1239;
-    font-weight: 600;
+    font-weight: 700;
 }
 .tira-ofertas-carril-container {
     width: 100%;
     overflow: hidden;
     position: relative;
+    cursor: grab;
 }
 .tira-ofertas-carril {
     display: flex;
-    gap: 8px;
+    gap: 10px;
     width: max-content;
-    padding-bottom: 3px;
+    padding-bottom: 4px;
     will-change: scroll-position;
+    scrollbar-width: none;
+}
+.tira-ofertas-carril::-webkit-scrollbar {
+    display: none;
 }
 .oferta-tira-item {
     background: #ffffff;
     border: 1px solid #fecdd3;
-    border-radius: 8px;
-    min-width: 85px;
-    max-width: 85px;
-    padding: 4px;
+    border-radius: 10px;
+    min-width: 90px;
+    max-width: 90px;
+    padding: 6px 4px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -329,29 +322,30 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
     position: relative;
     cursor: pointer;
     flex-shrink: 0;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
-    transition: transform 0.15s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+    transition: transform 0.2s ease, border-color 0.2s ease;
 }
 .oferta-tira-item:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px);
     border-color: #e11d48;
 }
 .oferta-tira-badge {
     position: absolute;
-    top: 2px;
-    left: 2px;
+    top: 3px;
+    left: 3px;
     background: #e11d48;
     color: #fff;
     font-size: 0.5rem;
     font-weight: 900;
-    padding: 1px 3px;
-    border-radius: 3px;
+    padding: 1px 4px;
+    border-radius: 4px;
 }
 .oferta-tira-img {
-    width: 48px;
-    height: 48px;
+    width: 52px;
+    height: 52px;
     object-fit: contain;
-    margin: 2px 0;
+    margin: 3px 0;
+    background: #ffffff;
 }
 .oferta-tira-nombre {
     font-size: 0.65rem;
@@ -367,10 +361,9 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
     font-size: 0.72rem;
     font-weight: 900;
     color: #e11d48;
-    margin-top: 1px;
+    margin-top: 2px;
 }
 
-/* MODAL DETALLES DEL PRODUCTO CON BOTÓN ✕ VISIBLE */
 .detalle-modal-box {
     background: #ffffff;
     padding: 22px 18px 18px 18px;
@@ -474,10 +467,10 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
     gap: 8px;
 }
 
-/* GRILLA DE PRODUCTOS REGULARES (IMÁGENES PERFECTAS SIN CORTES NI ESTIRAMIENTOS) */
+/* Solución definitiva para que las imágenes se adapten sin recortes laterales */
 .cat-titulo-seccion { font-size: 1.15rem; color: #1e293b; margin-bottom: 12px; font-weight: 800; border-bottom: 2px solid #e2e8f0; padding-bottom: 4px; }
-.productos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
-.card-producto { background: white; border-radius: 14px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 2px 8px rgba(0,0,0,0.03); display: flex; flex-direction: column; position: relative; }
+.productos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px; width: 100%; }
+.card-producto { background: white; border-radius: 14px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 2px 8px rgba(0,0,0,0.03); display: flex; flex-direction: column; position: relative; height: 100%; }
 .en-oferta-card { border: 1.5px solid #ef4444; }
 .badge-oferta-box { position: absolute; top: 8px; left: 8px; z-index: 5; }
 .badge-oferta { background: #ef4444; color: white; padding: 3px 8px; border-radius: 12px; font-size: 0.65rem; font-weight: 900; }
@@ -499,24 +492,22 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
     max-height: 100% !important;
     width: auto !important;
     height: auto !important;
-    object-fit: contain !important;
+    object-fit: contain !important; /* Mantiene la proporción sin cortar los costados */
 }
 .card-detalles { padding: 10px; flex: 1; display: flex; flex-direction: column; }
 .titulo-producto { font-size: 0.9rem; font-weight: bold; color: #1e293b; margin-bottom: 4px; }
 .precio-producto { font-size: 1.1rem; font-weight: 900; color: #ea580c; margin-top: auto; }
 .stock-tag { font-size: 0.7rem; color: #64748b; margin-top: 2px; }
-.card-acciones { padding: 8px 10px; background: #f8fafc; border-top: 1px solid #f1f5f9; display: flex; gap: 6px; }
+.card-acciones { padding: 8px 10px; background: #f8fafc; border-top: 1px solid #f1f5f9; display: flex; gap: 6px; margin-top: auto; }
 .btn-add-cart { flex: 1; background: #ea580c; color: white; border: none; padding: 7px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.8rem; }
 .btn-share-wsp { background: #22c55e; color: white; border: none; padding: 7px 10px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: bold; }
 
-/* SIDEBAR (PC) */
-.sidebar { background: white; border-radius: 14px; padding: 12px; border: 1px solid #e2e8f0; height: fit-content; }
+.sidebar { background: white; border-radius: 14px; padding: 12px; border: 1px solid #e2e8f0; height: fit-content; position: sticky; top: 15px; }
 .sidebar-title { font-size: 1rem; color: #ea580c; margin-bottom: 10px; font-weight: 800; }
 .sidebar-menu { display: flex; flex-direction: column; gap: 4px; }
 .btn-categoria { background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px 10px; text-align: left; border-radius: 6px; font-size: 0.8rem; font-weight: bold; color: #475569; cursor: pointer; }
 .btn-categoria:hover, .btn-categoria.activa { background: #ea580c; color: white; border-color: #ea580c; }
 
-/* MODAL CARRITO */
 .cart-modal { position: fixed; top: 0; right: -100%; width: 100%; max-width: 380px; height: 100%; background: white; z-index: 2000; box-shadow: -5px 0 20px rgba(0,0,0,0.15); transition: right 0.25s ease; display: flex; flex-direction: column; padding: 15px; }
 .cart-modal.abierto { right: 0; }
 .cart-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; }
@@ -526,15 +517,12 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
 .select-checkout { width: 100%; padding: 7px; border-radius: 6px; border: 1px solid #cbd5e1; background: #fff; font-size: 0.8rem; outline: none; margin-top: 3px; }
 .btn-whatsapp { width: 100%; background: #22c55e; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; font-size: 0.9rem; cursor: pointer; margin-top: 6px; text-transform: uppercase; }
 
-/* LIGHTBOX */
 .lightbox-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:3000; display:none; align-items:center; justify-content:center; }
 .lightbox-img { max-width: 90%; max-height: 80vh; border-radius: 10px; object-fit: contain; }
 .lightbox-close { position: absolute; top: 15px; right: 20px; color: white; font-size: 1.8rem; cursor: pointer; font-weight: bold; }
 
-/* WHATSAPP FLOTANTE */
 .wsp-float { position: fixed; bottom: 70px; right: 15px; background: #22c55e; color: white; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; box-shadow: 0 4px 12px rgba(34,197,94,0.35); z-index: 999; text-decoration: none; }
 
-/* ADAPTACIONES ESPECÍFICAS PARA MÓVIL (CELULAR) */
 @media (max-width: 768px) {
     .productos-grid {
         grid-template-columns: repeat(2, 1fr) !important;
