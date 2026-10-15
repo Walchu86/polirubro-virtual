@@ -267,7 +267,7 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
 .nav-links a.activa-nav, .nav-links a:hover { background: #ffffff; color: #ea580c; }
 
 /* LAYOUT */
-.main-layout { max-width: 1200px; margin: 15px auto; padding: 0 10px; display: grid; grid-template-columns: 1fr 260px; gap: 15px; box-sizing: border-box; }
+.main-layout { max-width: 1200px; margin: 15px auto; padding: 0 10px; display: grid; grid-template-columns: 1fr 260px; gap: 15px; box-sizing: border-box; min-height: 65vh; }
 @media (max-width: 900px) { .main-layout { grid-template-columns: 1fr; } aside.sidebar { display: none; } }
 
 /* BUSCADOR */
@@ -276,7 +276,7 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
 .search-input:focus { border-color: #ea580c; }
 
 /* ========================================================
-   TIRA ULTRA-FINA PARA OFERTAS FLASH 48 HORAS (CARRUSEL INFINITO)
+   TIRA ULTRA-FINA PARA OFERTAS FLASH 48 HORAS (CARRUSEL INFINITO SUAVE)
    ======================================================== */
 .tira-ofertas-wrapper {
     background: #fff1f2;
@@ -313,16 +313,8 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
     gap: 8px;
     width: max-content;
     padding-bottom: 3px;
-    animation: scrollOfertas 25s linear infinite;
+    will-change: scroll-position;
 }
-.tira-ofertas-wrapper:hover .tira-ofertas-carril {
-    animation-play-state: paused;
-}
-@keyframes scrollOfertas {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-}
-
 .oferta-tira-item {
     background: #ffffff;
     border: 1px solid #fecdd3;
@@ -495,18 +487,13 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
     height: 170px;
     background: #f8fafc;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     overflow: hidden;
-    padding: 6px;
+    position: relative;
 }
 .img-producto {
-    max-width: 100%;
-    max-height: 100%;
-    width: auto;
-    height: auto;
-    object-fit: contain;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
 }
 .card-detalles { padding: 10px; flex: 1; display: flex; flex-direction: column; }
 .titulo-producto { font-size: 0.9rem; font-weight: bold; color: #1e293b; margin-bottom: 4px; }
@@ -551,7 +538,7 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
         border-radius: 10px !important;
     }
     .img-frame {
-        height: 130px !important;
+        height: 140px !important;
     }
     .card-detalles {
         padding: 8px !important;
