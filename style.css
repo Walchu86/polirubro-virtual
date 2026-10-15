@@ -474,7 +474,7 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
     gap: 8px;
 }
 
-/* GRILLA DE PRODUCTOS REGULARES (IMÁGENES PERFECTAS SIN CORTES) */
+/* GRILLA DE PRODUCTOS REGULARES (IMÁGENES PERFECTAS SIN CORTES NI ESTIRAMIENTOS) */
 .cat-titulo-seccion { font-size: 1.15rem; color: #1e293b; margin-bottom: 12px; font-weight: 800; border-bottom: 2px solid #e2e8f0; padding-bottom: 4px; }
 .productos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
 .card-producto { background: white; border-radius: 14px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 2px 8px rgba(0,0,0,0.03); display: flex; flex-direction: column; position: relative; }
