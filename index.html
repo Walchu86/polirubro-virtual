@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=1035">
+    <link rel="stylesheet" href="style.css?v=1050">
 </head>
 <body>
     <div class="drawer-overlay" id="drawerCategorias" onclick="cerrarMenuCategorias()">
@@ -81,7 +81,7 @@
         </div>
     </div>
 
-    <!-- LAYOUT PRINCIPAL CON EL CUADRO DE SECCIONES AL COSTADO EN PC -->
+    <!-- LAYOUT PRINCIPAL CON CUADRO DE SECCIONES A LA DERECHA EN PC -->
     <div class="main-layout">
         <main class="main-content-area">
             <section class="search-box">
@@ -93,7 +93,7 @@
                     <span class="tira-ofertas-tag">⚡ OFERTAS FLASH 48 HS</span>
                     <span class="tira-ofertas-sub">¡Tocá para ver detalles y comprar!</span>
                 </div>
-                <div class="tira-ofertas-carril-container">
+                <div class="tira-ofertas-carril-container" id="carrilContainer">
                     <div class="tira-ofertas-carril" id="gridOfertas48hs"></div>
                 </div>
             </section>
@@ -104,7 +104,7 @@
             </section>
         </main>
 
-        <!-- CUADRO DE SECCIONES Y DETALLES AL COSTADO (SOLO PC) -->
+        <!-- CUADRO DE SECCIONES AL COSTADO EN PC -->
         <aside class="sidebar" id="contenedorSidebarCategoriasPC">
             <h3 class="sidebar-title">📂 Secciones</h3>
             <div class="sidebar-menu" id="sidebarCategoriasMenu"></div>
@@ -353,10 +353,8 @@
         function renderizarMenuCategorias(cats) {
             const navContainer = document.getElementById('contenedorCategoriasNav');
             let navHtml = `<ul class="nav-links"><li><a href="#" class="${categoriaActiva === 'TODAS' ? 'activa-nav' : ''}" onclick="cambiarCategoria('TODAS', event)">🔥 Todos</a></li>`;
-            
             const sidebarContainer = document.getElementById('sidebarCategoriasMenu');
             let sidebarHtml = `<button class="btn-categoria ${categoriaActiva === 'TODAS' ? 'activa' : ''}" onclick="cambiarCategoria('TODAS', event)">🔥 Todos los Productos</button>`;
-
             const drawerContainer = document.getElementById('drawerListaCategorias');
             let drawerHtml = `<button class="drawer-btn-cat ${categoriaActiva === 'TODAS' ? 'activa' : ''}" onclick="seleccionarCatDrawer('TODAS')">🔥 Todos los Productos</button>`;
 
