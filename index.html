@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=295">
+    <link rel="stylesheet" href="style.css?v=296">
 </head>
 <body>
 
@@ -25,7 +25,7 @@
             <button class="welcome-close-btn" onclick="cerrarWelcomeModal()">✕</button>
             <h3 style="color: #c2410c; font-size: 1.25rem; font-weight: 900; margin-bottom: 8px;">🎉 ¡Bienvenido a Polirubro Virtual! 🚀</h3>
             <p style="color: #475569; font-size: 0.95rem; line-height: 1.4; margin-bottom: 5px;">
-                ¡Comprando $20.000 o más, el envío es <strong>TOTALMENTE GRATIS</strong>! 🚚✨
+                ¡Comprando \$20.000 o más, el envío es <strong>TOTALMENTE GRATIS</strong>! 🚚✨
             </p>
             <button class="btn-vamos-comprar" onclick="cerrarWelcomeModal()">¡Vamos a comprar! 🛒</button>
         </div>
@@ -330,16 +330,17 @@
             }
         }
 
+        // SE RESTAURA LA LECTURA DIRECTA DE PRODUCTOS.JSON
         async function cargarCatalogoPublico() {
             const grid = document.getElementById('gridProductos');
             grid.innerHTML = '<p style="text-align:center; width:100%; color:#64748b; padding:2rem;">Cargando catálogo...</p>';
 
             try {
-                const res = await fetch('database.json?v=' + Date.now());
+                const res = await fetch('productos.json?v=' + Date.now());
                 if (res.ok) {
                     const data = await res.json();
                     todosLosProductos = Array.isArray(data.productos) ? data.productos : [];
-                    const rawCats = Array.isArray(data.categorias) ? data.categorias : ["Estética", "Electrónica", "Zapatería", "Accesorios", "Mueblería"];
+                    const rawCats = Array.isArray(data.categorias) ? data.categorias : ["Estética", "Electrónica", "Zapatería", "Accesorios", "Muebleria"];
                     categoriasDisponibles = rawCats.map(c => typeof c === 'string' ? c : (c.nombre || c.categoria || '')).filter(c => c !== '');
                     
                     ordenCategoriasActual = mezclarArray(categoriasDisponibles);
@@ -491,7 +492,6 @@
             if (event) event.preventDefault();
             categoriaActiva = cat;
 
-            // Cada vez que se vuelve a TODAS, se rota el orden de las categorías en pantalla
             if (cat === 'TODAS') {
                 ordenCategoriasActual = mezclarArray(categoriasDisponibles);
             }
