@@ -299,6 +299,21 @@
       "colores": [],
       "enOferta": true,
       "imagen": "https://http2.mlstatic.com/D_NQ_NP_2X_737813-MLA73464511843_122023-F.webp"
+    },
+    {
+      "id": 1792039937652,
+      "nombre": "Extracto Femenino Diamond Monique Arnold",
+      "descripcion": "Extracto Femenino Diamond (Monique Arnold): Fragancia deslumbrante y sofisticada, con notas luminosas y acordes florales modernos que aportan un toque de elegancia magnética y un brillo único en la piel.",
+      "precio": 5000,
+      "stock": 1,
+      "categoria": "Cosmética",
+      "tamanios": [
+        "15 ml"
+      ],
+      "talles": [],
+      "colores": [],
+      "enOferta": true,
+      "imagen": "https://http2.mlstatic.com/D_NQ_NP_2X_726675-MLA106759176383_022026-F.webp"
     }
   ],
   "categorias": [
