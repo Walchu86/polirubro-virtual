@@ -4,11 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=999">
+    <link rel="stylesheet" href="style.css?v=1005">
 </head>
 <body>
 
-    <!-- MENÚ LATERAL DESPLEGABLE (SOLO MÓVIL: DE IZQUIERDA A DERECHA) -->
     <div class="drawer-overlay" id="drawerCategorias" onclick="cerrarMenuCategorias()">
         <div class="drawer-content" onclick="event.stopPropagation()">
             <div class="drawer-header">
@@ -19,35 +18,30 @@
         </div>
     </div>
 
-    <!-- POP-UP DE BIENVENIDA DIRECTO -->
     <div class="welcome-modal-overlay" id="welcomeModal" style="display: flex;">
         <div class="welcome-modal-content">
             <button class="welcome-close-btn" onclick="cerrarWelcomeModal()">✕</button>
             <h3 style="color: #c2410c; font-size: 1.25rem; font-weight: 900; margin-bottom: 8px;">🎉 ¡Bienvenido a Polirubro Virtual! 🚀</h3>
             <p style="color: #475569; font-size: 0.95rem; line-height: 1.4; margin-bottom: 5px;">
-                ¡Comprando $20.000 o más, el envío es <strong>TOTALMENTE GRATIS</strong>! 🚚✨
+                ¡Comprando \$20.000 o más, el envío es <strong>TOTALMENTE GRATIS</strong>! 🚚✨
             </p>
             <button class="btn-vamos-comprar" onclick="cerrarWelcomeModal()">¡Vamos a comprar! 🛒</button>
         </div>
     </div>
 
-    <!-- BANNER SUPERIOR MARQUESINA -->
     <div class="promo-banner">
         <div class="marquee-container">
             <span>🔥 ¡ENVÍOS A DOMICILIO ! • <strong>¡ENVÍO GRATIS COMPRANDO \$20.000 O MÁS!</strong> 🚚💨 • ¡Comprá fácil y seguro desde tu celular! 📦 ⭐</span>
         </div>
     </div>
 
-    <!-- CABECERA PRINCIPAL -->
     <header class="main-header">
         <div class="header-container">
             <div class="header-left-col">
                 <div class="header-brand-row">
-                    <!-- BOTÓN 3 RAYITAS A LA IZQUIERDA CON DESTELLO (EXCLUSIVO MÓVIL) -->
                     <button class="btn-hamburguesa-destello" onclick="abrirMenuCategorias()" title="Abrir Categorías">
                         <span>☰</span>
                     </button>
-
                     <a href="#" class="logo-title" style="text-decoration:none;">
                         <div class="brand-text">
                             <h1>POLIRUBRO <span>VIRTUAL</span></h1>
@@ -67,7 +61,6 @@
                 </div>
             </div>
 
-            <!-- Carrusel Central (PC) -->
             <div class="pc-carousel-container">
                 <div class="pc-carousel-track" id="carouselTrack">
                     <div class="pc-carousel-slide active">
@@ -89,7 +82,6 @@
                 </div>
             </div>
 
-            <!-- Widget Derecho (PC) -->
             <div class="pc-desktop-widget">
                 <div class="pc-widget-title">🕒 Tienda Activa 24/7</div>
                 <div class="pc-widget-text">
@@ -104,12 +96,10 @@
         </div>
     </header>
 
-    <!-- BARRA DE SECCIONES CON MOVIMIENTO DINÁMICO -->
     <nav class="main-nav" id="mainNavContenedor">
         <div class="nav-container-categorias" id="contenedorCategoriasNav"></div>
     </nav>
 
-    <!-- BARRA FLOTANTE DEL CARRITO -->
     <div class="floating-cart-bar" onclick="abrirCarrito()">
         <div class="floating-cart-content">
             <span>🛒 Carrito: <strong id="cartCount">0</strong></span>
@@ -118,15 +108,12 @@
         </div>
     </div>
 
-    <!-- CONTENEDOR PRINCIPAL -->
     <div class="main-layout">
-        
         <main>
             <div class="search-box">
                 <input type="text" id="inputBuscador" class="search-input" placeholder="🔍 Buscar productos en el catálogo..." oninput="filtrarProductos()">
             </div>
 
-            <!-- SECCIÓN OFERTAS 48 HS: TIRA ULTRA-FINA Y COMPACTA CON CARRUSEL -->
             <div id="seccionOfertas48hs" style="display:none;" class="tira-ofertas-wrapper">
                 <div class="tira-ofertas-header">
                     <span class="tira-ofertas-tag">⚡ OFERTAS FLASH 48 HS</span>
@@ -138,7 +125,6 @@
             </div>
 
             <h2 class="cat-titulo-seccion" id="tituloSeccionActiva">🌟 Todos los Productos</h2>
-
             <div class="productos-grid" id="gridProductos"></div>
         </main>
 
@@ -146,10 +132,8 @@
             <h3 class="sidebar-title">📂 Categorías</h3>
             <div class="sidebar-menu" id="sidebarCategoriasMenu"></div>
         </aside>
-
     </div>
 
-    <!-- MODAL DETALLE DE PRODUCTO / OFERTA -->
     <div class="lightbox-overlay" id="detalleModal" onclick="cerrarModalDetalle()">
         <div class="detalle-modal-box" onclick="event.stopPropagation()">
             <button class="detalle-close-btn" onclick="cerrarModalDetalle()" title="Cerrar ventana">✕</button>
@@ -172,24 +156,19 @@
         </div>
     </div>
 
-    <!-- MODAL CARRITO -->
     <div class="cart-modal" id="cartModal">
         <div class="cart-header">
             <h3>🛍️ Tu Carrito de Compras</h3>
             <button class="btn-close-cart" onclick="cerrarCarrito()">✕</button>
         </div>
-        
         <div class="cart-shipping-box" id="bannerCartShipping">
             <p style="font-size:0.85rem; font-weight:bold; color:#ea580c;">🚚 Envío GRATIS en compras desde \$20.000</p>
             <p style="font-size:0.75rem; color:#64748b;">Elegí zona de entrega y método de pago.</p>
         </div>
-
         <div class="cart-items" id="listaCarritoModal"></div>
-
         <div style="padding: 4px 0; text-align: right;">
             <button onclick="vaciarCarrito()" style="background: none; border: none; color: #ef4444; font-size: 0.78rem; font-weight: bold; cursor: pointer;">🗑️ Vaciar carrito</button>
         </div>
-
         <div class="checkout-options" style="margin-top:5px; padding:10px 0; border-top:1px solid #e2e8f0;">
             <div id="contenedorZonaEnvio">
                 <label style="font-size:0.80rem; font-weight:bold; color:#1e293b; display:block; margin-bottom:4px;">📍 Zona / Entrega:</label>
@@ -202,14 +181,12 @@
             <div id="avisoEnvioGratisPromo" style="display:none; background: #ecfdf5; border: 1.5px solid #34d399; padding: 8px; border-radius: 8px; text-align: center; margin-top: 5px;">
                 <p style="font-size: 0.85rem; font-weight: 800; color: #065f46; margin: 0;">🎉 ¡ENVÍO 100% GRATIS (\$0)!</p>
             </div>
-
             <label style="font-size:0.80rem; font-weight:bold; color:#1e293b; display:block; margin-top:8px; margin-bottom:4px;">💳 Forma de Pago:</label>
             <select id="selectMedioPago" class="select-checkout">
                 <option value="Efectivo al recibir/retirar">💵 Efectivo al recibir/retirar</option>
                 <option value="Pago por transferencia">🏦 Pago por transferencia</option>
             </select>
         </div>
-
         <div class="cart-footer" style="padding-top:10px;">
             <div style="display:flex; justify-content:space-between; margin-bottom: 4px; font-size: 0.85rem; color:#64748b;">
                 <span>Subtotal:</span>
@@ -230,7 +207,6 @@
         </div>
     </div>
 
-    <!-- LIGHTBOX / QR -->
     <div class="lightbox-overlay" id="qrModal" onclick="cerrarModalQR()">
         <div style="background:#ffffff; padding:20px; border-radius:16px; text-align:center; max-width:320px; width:90%; position:relative;" onclick="event.stopPropagation()">
             <span class="lightbox-close" onclick="cerrarModalQR()" style="color:#000; top:8px; right:12px;">&times;</span>
@@ -252,7 +228,6 @@
 
     <script>
         const NUMERO_WHATSAPP = "3794655867";
-
         let todosLosProductos = [];
         let categoriasDisponibles = [];
         let ordenCategoriasActual = [];
@@ -260,8 +235,8 @@
         let categoriaActiva = 'TODAS';
         let yaAlcanzoEnvioGratis = false;
         let estadoModal = null;
-
         let currentSlide = 0;
+
         function iniciarCarruselPC() {
             const slides = document.querySelectorAll('.pc-carousel-slide');
             if (slides.length === 0) return;
@@ -324,7 +299,6 @@
             barra.classList.remove('animando-barra');
             void barra.offsetWidth;
             barra.classList.add('animando-barra');
-
             const activaLink = barra.querySelector('.activa-nav');
             if (activaLink) {
                 activaLink.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
@@ -334,7 +308,6 @@
         async function cargarCatalogoPublico() {
             const grid = document.getElementById('gridProductos');
             grid.innerHTML = '<p style="text-align:center; width:100%; color:#64748b; padding:2rem;">Cargando catálogo...</p>';
-
             try {
                 const res = await fetch('productos.json?v=' + Date.now());
                 if (res.ok) {
@@ -342,24 +315,22 @@
                     todosLosProductos = Array.isArray(data.productos) ? data.productos : [];
                     const rawCats = Array.isArray(data.categorias) ? data.categorias : ["Estética", "Electrónica", "Zapatería", "Accesorios", "Muebleria"];
                     categoriasDisponibles = rawCats.map(c => typeof c === 'string' ? c : (c.nombre || c.categoria || '')).filter(c => c !== '');
-                    
                     ordenCategoriasActual = mezclarArray(categoriasDisponibles);
                     renderizarMenuCategorias(ordenCategoriasActual);
                     renderizarOfertas48hs();
                     filtrarProductos();
                 } else {
-                    grid.innerHTML = '<p style="text-align:center; width:100%; color:#64748b; padding:2rem; grid-column: 1 / -1;">No hay productos cargados en esta sección.</p>';
+                    grid.innerHTML = '<p style="text-align:center; width:100%; color:#64748b; padding:2rem; grid-column: 1 / -1;">No hay productos cargados.</p>';
                 }
             } catch (e) {
                 console.error(e);
-                grid.innerHTML = '<p style="text-align:center; width:100%; color:#64748b; padding:2rem; grid-column: 1 / -1;">No hay productos cargados en esta sección.</p>';
+                grid.innerHTML = '<p style="text-align:center; width:100%; color:#64748b; padding:2rem; grid-column: 1 / -1;">No hay productos cargados.</p>';
             }
         }
 
         function renderizarOfertas48hs() {
             const seccion = document.getElementById('seccionOfertas48hs');
             const carril = document.getElementById('gridOfertas48hs');
-
             const ofertas = todosLosProductos.filter(p => p.enOferta || p.oferta48hs);
 
             if (ofertas.length === 0) {
@@ -368,39 +339,38 @@
             }
 
             seccion.style.display = 'block';
-            
             const itemsHtml = ofertas.map(p => {
                 const imgUrl = p.imagen || 'https://via.placeholder.com/150?text=Oferta';
                 const precioLimpio = Number(p.precio || 0);
-
                 return `
                     <div class="oferta-tira-item" onclick="abrirModalDetalle(${p.id})" title="Ver detalles y comprar">
                         <span class="oferta-tira-badge">OFERTA</span>
-                        <img src="${imgUrl}" alt="${p.nombre}" class="oferta-tira-img" loading="lazy">
+                        <img src="${imgUrl}" alt="${p.nombre}" class="oferta-tira-img">
                         <span class="oferta-tira-nombre">${p.nombre}</span>
                         <span class="oferta-tira-precio">$${formatearPrecio(precioLimpio)}</span>
                     </div>
                 `;
             }).join('');
 
-            carril.innerHTML = itemsHtml + itemsHtml;
-            setTimeout(iniciarAutoplayOfertas, 400);
+            carril.innerHTML = itemsHtml + itemsHtml + itemsHtml;
+            setTimeout(iniciarAutoplayOfertas, 300);
         }
 
         function iniciarAutoplayOfertas() {
             const carril = document.getElementById('gridOfertas48hs');
             if (!carril) return;
-
             if (window.ofertasAnimId) cancelAnimationFrame(window.ofertasAnimId);
 
-            let scrollSpeed = 0.6;
+            let scrollPos = 0;
+            const scrollSpeed = 0.5;
             let isPaused = false;
 
             function step() {
                 if (!isPaused) {
-                    carril.scrollLeft += scrollSpeed;
-                    const maxScroll = carril.scrollWidth / 2;
-                    if (carril.scrollLeft >= maxScroll) {
+                    scrollPos += scrollSpeed;
+                    carril.scrollLeft = scrollPos;
+                    if (carril.scrollLeft >= (carril.scrollWidth / 3) * 2) {
+                        scrollPos = 0;
                         carril.scrollLeft = 0;
                     }
                 }
@@ -410,8 +380,7 @@
             carril.onmouseenter = () => { isPaused = true; };
             carril.onmouseleave = () => { isPaused = false; };
             carril.ontouchstart = () => { isPaused = true; };
-            carril.ontouchend = () => { setTimeout(() => { isPaused = false; }, 1000); };
-
+            carril.ontouchend = () => { setTimeout(() => { isPaused = false; }, 800); };
             window.ofertasAnimId = requestAnimationFrame(step);
         }
 
@@ -436,7 +405,6 @@
                 agregarAlCarrito(p.id);
                 cerrarModalDetalle();
             };
-
             document.getElementById('detalleBtnWsp').onclick = () => {
                 enviarProductoWsp(p.id);
             };
@@ -463,10 +431,8 @@
         function renderizarMenuCategorias(cats) {
             const navContainer = document.getElementById('contenedorCategoriasNav');
             let navHtml = `<ul class="nav-links"><li><a href="#" class="${categoriaActiva === 'TODAS' ? 'activa-nav' : ''}" onclick="cambiarCategoria('TODAS', event)">🔥 Todos</a></li>`;
-            
             const sidebarContainer = document.getElementById('sidebarCategoriasMenu');
             let sidebarHtml = `<button class="btn-categoria ${categoriaActiva === 'TODAS' ? 'activa' : ''}" onclick="cambiarCategoria('TODAS', event)">🔥 Todos los Productos</button>`;
-
             const drawerContainer = document.getElementById('drawerListaCategorias');
             let drawerHtml = `<button class="drawer-btn-cat ${categoriaActiva === 'TODAS' ? 'activa' : ''}" onclick="seleccionarCatDrawer('TODAS')">🔥 Todos los Productos</button>`;
 
@@ -494,11 +460,9 @@
         function cambiarCategoria(cat, event) {
             if (event) event.preventDefault();
             categoriaActiva = cat;
-
             if (cat === 'TODAS') {
                 ordenCategoriasActual = mezclarArray(categoriasDisponibles);
             }
-
             document.getElementById('tituloSeccionActiva').innerText = cat === 'TODAS' ? '🌟 Todos los Productos' : `📂 ${cat}`;
             renderizarMenuCategorias(ordenCategoriasActual);
             animarBarraCategorias();
@@ -508,7 +472,6 @@
         function filtrarProductos() {
             const busqueda = document.getElementById('inputBuscador').value.toLowerCase().trim();
             const grid = document.getElementById('gridProductos');
-
             let base = todosLosProductos;
             if (categoriaActiva === 'TODAS' && busqueda === '') {
                 base = mezclarArray(todosLosProductos);
@@ -521,14 +484,13 @@
             });
 
             if (filtrados.length === 0) {
-                grid.innerHTML = '<p style="text-align:center; width:100%; color:#64748b; padding:2rem; grid-column: 1 / -1;">No hay productos cargados en esta sección.</p>';
+                grid.innerHTML = '<p style="text-align:center; width:100%; color:#64748b; padding:2rem; grid-column: 1 / -1;">No hay productos cargados.</p>';
                 return;
             }
 
             grid.innerHTML = filtrados.map(p => {
                 const imgUrl = p.imagen || 'https://via.placeholder.com/300?text=Sin+Imagen';
                 const precioLimpio = Number(p.precio || 0);
-                
                 const tamArr = p.tamanios || [];
                 const tArr = p.talles || (p.talle ? [p.talle] : []);
                 const cArr = p.colores || (p.color ? [p.color] : []);
@@ -543,7 +505,7 @@
                 return `
                     <div class="card-producto">
                         <div class="img-frame" onclick="abrirLightbox('${imgUrl}')">
-                            <img src="${imgUrl}" alt="${p.nombre}" class="img-producto" loading="lazy">
+                            <img src="${imgUrl}" alt="${p.nombre}" class="img-producto">
                         </div>
                         <div class="card-detalles">
                             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
@@ -567,7 +529,6 @@
         function agregarAlCarrito(id) {
             const prod = todosLosProductos.find(p => p.id === id);
             if (!prod) return;
-
             const item = carrito.find(i => i.id === id);
             if (item) {
                 item.cantidad++;
@@ -587,10 +548,8 @@
 
         function actualizarCarritoUI() {
             localStorage.setItem('carrito_polirubro', JSON.stringify(carrito));
-            
             const totalItems = carrito.reduce((sum, i) => sum + i.cantidad, 0);
             const subtotalMonto = carrito.reduce((sum, i) => sum + (Number(i.precio) * i.cantidad), 0);
-
             const bannerCart = document.getElementById('bannerCartShipping');
             const contenedorZona = document.getElementById('contenedorZonaEnvio');
             const avisoPromo = document.getElementById('avisoEnvioGratisPromo');
@@ -606,15 +565,7 @@
             }
 
             const tipoEnvio = document.getElementById('selectTipoEnvio') ? document.getElementById('selectTipoEnvio').value : 'local';
-            let costoEnvio = 0;
-
-            if (subtotalMonto >= 20000) {
-                costoEnvio = 0;
-            } else {
-                if (tipoEnvio === 'dentro') costoEnvio = 1500;
-                if (tipoEnvio === 'fuera') costoEnvio = 2500;
-            }
-
+            let costoEnvio = (subtotalMonto >= 20000) ? 0 : (tipoEnvio === 'dentro' ? 1500 : (tipoEnvio === 'fuera' ? 2500 : 0));
             const totalFinal = subtotalMonto + costoEnvio;
 
             document.getElementById('cartCount').innerText = totalItems;
@@ -641,18 +592,10 @@
 
             contenedor.innerHTML = carrito.map(i => {
                 const precioItem = Number(i.precio || 0);
-                const tamArr = i.tamanios || [];
-                const tArr = i.talles || (i.talle ? [i.talle] : []);
-                const cArr = i.colores || (i.color ? [i.color] : []);
-                let detallesExtra = [];
-                if (tamArr.length > 0) detallesExtra.push(`Tam: ${tamArr.join(', ')}`);
-                if (tArr.length > 0) detallesExtra.push(`T: ${tArr.join(', ')}`);
-                if (cArr.length > 0) detallesExtra.push(`C: ${cArr.join(', ')}`);
-                const detalleTxt = detallesExtra.length > 0 ? ` (${detallesExtra.join(' | ')})` : '';
                 return `
                     <div class="cart-item" style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid #f1f5f9;">
                         <div style="flex:1; padding-right:8px;">
-                            <strong style="font-size:0.85rem; color:#1e293b; display:block;">${i.nombre}${detalleTxt}</strong>
+                            <strong style="font-size:0.85rem; color:#1e293b; display:block;">${i.nombre}</strong>
                             <div style="font-size:0.75rem; color:#ea580c;">$${formatearPrecio(precioItem)} c/u</div>
                         </div>
                         <div style="display:flex; align-items:center; gap:6px;">
@@ -739,29 +682,15 @@
         function enviarProductoWsp(idProd) {
             const prod = todosLosProductos.find(p => p.id === idProd);
             if (!prod) return;
-
-            const tamArr = prod.tamanios || [];
-            const tArr = prod.talles || (prod.talle ? [prod.talle] : []);
-            const cArr = prod.colores || (prod.color ? [prod.color] : []);
-
-            let detalles = [];
-            if (tamArr.length > 0) detalles.push(`Tamaño: ${tamArr.join(', ')}`);
-            if (tArr.length > 0) detalles.push(`Talles: ${tArr.join(', ')}`);
-            if (cArr.length > 0) detalles.push(`Colores: ${cArr.join(', ')}`);
-            const detalleTxt = detalles.length > 0 ? `\n*${detalles.join(' | ')}*` : '';
-            
-            const texto = `¡Mirá este producto en Polirubro Virtual! 🛍️✨\n\n*${prod.nombre}*${detalleTxt}\nPrecio: $${formatearPrecio(prod.precio)}\n\nMiraló y pedilo acá: https://polirubrovirtual.shop`;
-            
+            const texto = `¡Mirá este producto en Polirubro Virtual! 🛍️✨\n\n*${prod.nombre}*\nPrecio: $${formatearPrecio(prod.precio)}\n\nMiraló y pedilo acá: https://polirubrovirtual.shop`;
             const urlWsp = `https://wa.me/?text=${encodeURIComponent(texto)}`;
             window.open(urlWsp, '_blank');
         }
 
         function procesarPedidoCheckout() {
             if (carrito.length === 0) return alert("El carrito está vacío.");
-            
             const subtotalMonto = carrito.reduce((sum, i) => sum + (Number(i.precio) * i.cantidad), 0);
             const medioPago = document.getElementById('selectMedioPago') ? document.getElementById('selectMedioPago').value : 'Efectivo';
-
             let costoEnvio = 0;
             let textoEnvio = "Retiro en Local (Gratis)";
             if (subtotalMonto >= 20000) {
@@ -774,22 +703,12 @@
                 if (tipoEnvioVal === 'dentro') costoEnvio = 1500;
                 if (tipoEnvioVal === 'fuera') costoEnvio = 2500;
             }
-
             const totalFinal = subtotalMonto + costoEnvio;
 
             let texto = "🛒 *NUEVO PEDIDO - POLIRUBRO VIRTUAL*\n\n";
             carrito.forEach(i => {
-                const tamArr = i.tamanios || [];
-                const tArr = i.talles || (i.talle ? [i.talle] : []);
-                const cArr = i.colores || (i.color ? [i.color] : []);
-                let detallesExtra = [];
-                if (tamArr.length > 0) detallesExtra.push(`Tam: ${tamArr.join(', ')}`);
-                if (tArr.length > 0) detallesExtra.push(`T: ${tArr.join(', ')}`);
-                if (cArr.length > 0) detallesExtra.push(`C: ${cArr.join(', ')}`);
-                const detalleTxt = detallesExtra.length > 0 ? ` (${detallesExtra.join(' | ')})` : '';
-                texto += `• ${i.cantidad}x ${i.nombre}${detalleTxt} ($${formatearPrecio(Number(i.precio) * i.cantidad)})\n`;
+                texto += `• ${i.cantidad}x ${i.nombre} ($${formatearPrecio(Number(i.precio) * i.cantidad)})\n`;
             });
-
             texto += `\n💵 *Subtotal:* $${formatearPrecio(subtotalMonto)}\n`;
             texto += `🛵 *Entrega:* ${textoEnvio}\n`;
             if (subtotalMonto >= 20000) {
@@ -800,7 +719,6 @@
             texto += `📍 *Dirección de Entrega:* (Escribir tu dirección exacta aquí)`;
 
             const urlWsp = `https://wa.me/54${NUMERO_WHATSAPP}?text=${encodeURIComponent(texto)}`;
-
             if (window.innerWidth > 768) {
                 const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(texto)}`;
                 document.getElementById('imgCodigoQR').src = qrUrl;
