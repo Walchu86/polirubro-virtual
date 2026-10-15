@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=290">
+    <link rel="stylesheet" href="style.css?v=295">
 </head>
 <body>
 
@@ -42,17 +42,19 @@
     <header class="main-header">
         <div class="header-container">
             <div class="header-left-col">
-                <!-- BOTÓN ACCESO DIRECTO CATEGORÍAS (EXCLUSIVO MÓVIL) -->
-                <button class="btn-abrir-drawer-movil" onclick="abrirMenuCategorias()" title="Ver todas las categorías">
-                    ☰ Categorías
-                </button>
+                <div class="header-brand-row">
+                    <!-- BOTÓN 3 RAYITAS A LA IZQUIERDA CON DESTELLO (EXCLUSIVO MÓVIL) -->
+                    <button class="btn-hamburguesa-destello" onclick="abrirMenuCategorias()" title="Abrir Categorías">
+                        <span>☰</span>
+                    </button>
 
-                <a href="#" class="logo-title" style="text-decoration:none;">
-                    <div class="brand-text">
-                        <h1>POLIRUBRO <span>VIRTUAL</span></h1>
-                        <span class="tagline">Tu tienda online de confianza</span>
-                    </div>
-                </a>
+                    <a href="#" class="logo-title" style="text-decoration:none;">
+                        <div class="brand-text">
+                            <h1>POLIRUBRO <span>VIRTUAL</span></h1>
+                            <span class="tagline">Tu tienda online de confianza</span>
+                        </div>
+                    </a>
+                </div>
                 
                 <div class="header-banner-animado">
                     <div class="header-banner-content">
@@ -96,7 +98,7 @@
                 <div class="pc-widget-badges">
                     <span class="pc-badge-item">🔒 100% Segura</span>
                     <span class="pc-badge-item">💵 Efectivo / Transf.</span>
-                    <span class="pc-badge-item">🚚 Envío Gratis $20k</span>
+                    <span class="pc-badge-item">🚚 Envío Gratis \$20k</span>
                 </div>
             </div>
         </div>
@@ -112,7 +114,7 @@
         <div class="floating-cart-content">
             <span>🛒 Carrito: <strong id="cartCount">0</strong></span>
             <span class="ver-carrito-text">VER PEDIDO ➔</span>
-            <span>Total: $<strong id="cartTotalHeader">0</strong></span>
+            <span>Total: \$<strong id="cartTotalHeader">0</strong></span>
         </div>
     </div>
 
@@ -176,7 +178,7 @@
         </div>
         
         <div class="cart-shipping-box" id="bannerCartShipping">
-            <p style="font-size:0.85rem; font-weight:bold; color:#ea580c;">🚚 Envío GRATIS en compras desde $20.000</p>
+            <p style="font-size:0.85rem; font-weight:bold; color:#ea580c;">🚚 Envío GRATIS en compras desde \$20.000</p>
             <p style="font-size:0.75rem; color:#64748b;">Elegí zona de entrega y método de pago.</p>
         </div>
 
@@ -191,12 +193,12 @@
                 <label style="font-size:0.80rem; font-weight:bold; color:#1e293b; display:block; margin-bottom:4px;">📍 Zona / Entrega:</label>
                 <select id="selectTipoEnvio" class="select-checkout" onchange="actualizarCarritoUI()">
                     <option value="local">🏬 Retiro en Local (Gratis)</option>
-                    <option value="dentro">🛵 Dentro de las 4 Avenidas ($1.500)</option>
-                    <option value="fuera">🚚 Fuera de las 4 Avenidas ($2.500)</option>
+                    <option value="dentro">🛵 Dentro de las 4 Avenidas (\$1.500)</option>
+                    <option value="fuera">🚚 Fuera de las 4 Avenidas (\$2.500)</option>
                 </select>
             </div>
             <div id="avisoEnvioGratisPromo" style="display:none; background: #ecfdf5; border: 1.5px solid #34d399; padding: 8px; border-radius: 8px; text-align: center; margin-top: 5px;">
-                <p style="font-size: 0.85rem; font-weight: 800; color: #065f46; margin: 0;">🎉 ¡ENVÍO 100% GRATIS ($0)!</p>
+                <p style="font-size: 0.85rem; font-weight: 800; color: #065f46; margin: 0;">🎉 ¡ENVÍO 100% GRATIS (\$0)!</p>
             </div>
 
             <label style="font-size:0.80rem; font-weight:bold; color:#1e293b; display:block; margin-top:8px; margin-bottom:4px;">💳 Forma de Pago:</label>
@@ -213,7 +215,7 @@
             </div>
             <div style="display:flex; justify-content:space-between; margin-bottom: 6px; font-size: 0.85rem; color:#64748b;">
                 <span>Envío:</span>
-                <span id="cartEnvioTexto">$0</span>
+                <span id="cartEnvioTexto">\$0</span>
             </div>
             <div style="display:flex; justify-content:space-between; margin-bottom: 10px; font-weight: bold; font-size: 1.1rem; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
                 <span>Total:</span>
@@ -251,6 +253,7 @@
 
         let todosLosProductos = [];
         let categoriasDisponibles = [];
+        let ordenCategoriasActual = [];
         let carrito = JSON.parse(localStorage.getItem('carrito_polirubro')) || [];
         let categoriaActiva = 'TODAS';
         let yaAlcanzoEnvioGratis = false;
@@ -294,7 +297,6 @@
             return copia;
         }
 
-        // CONTROL DEL MENÚ DESPLEGABLE DE CATEGORÍAS (MÓVIL)
         function abrirMenuCategorias() {
             const drawer = document.getElementById('drawerCategorias');
             if (drawer && !drawer.classList.contains('abierto')) {
@@ -319,7 +321,7 @@
             const barra = document.getElementById('mainNavContenedor');
             if (!barra) return;
             barra.classList.remove('animando-barra');
-            void barra.offsetWidth; // Reinicia animación CSS
+            void barra.offsetWidth;
             barra.classList.add('animando-barra');
 
             const activaLink = barra.querySelector('.activa-nav');
@@ -333,14 +335,15 @@
             grid.innerHTML = '<p style="text-align:center; width:100%; color:#64748b; padding:2rem;">Cargando catálogo...</p>';
 
             try {
-                const res = await fetch('productos.json?v=' + Date.now());
+                const res = await fetch('database.json?v=' + Date.now());
                 if (res.ok) {
                     const data = await res.json();
                     todosLosProductos = Array.isArray(data.productos) ? data.productos : [];
-                    const rawCats = Array.isArray(data.categorias) ? data.categorias : ["Estética", "Electrónica", "Zapatería", "Accesorios", "Muebleria"];
+                    const rawCats = Array.isArray(data.categorias) ? data.categorias : ["Estética", "Electrónica", "Zapatería", "Accesorios", "Mueblería"];
                     categoriasDisponibles = rawCats.map(c => typeof c === 'string' ? c : (c.nombre || c.categoria || '')).filter(c => c !== '');
                     
-                    renderizarMenuCategorias(categoriasDisponibles);
+                    ordenCategoriasActual = mezclarArray(categoriasDisponibles);
+                    renderizarMenuCategorias(ordenCategoriasActual);
                     renderizarOfertas48hs();
                     filtrarProductos();
                 } else {
@@ -454,15 +457,12 @@
         }
 
         function renderizarMenuCategorias(cats) {
-            // Barra horizontal superior
             const navContainer = document.getElementById('contenedorCategoriasNav');
             let navHtml = `<ul class="nav-links"><li><a href="#" class="${categoriaActiva === 'TODAS' ? 'activa-nav' : ''}" onclick="cambiarCategoria('TODAS', event)">🔥 Todos</a></li>`;
             
-            // Sidebar PC
             const sidebarContainer = document.getElementById('sidebarCategoriasMenu');
             let sidebarHtml = `<button class="btn-categoria ${categoriaActiva === 'TODAS' ? 'activa' : ''}" onclick="cambiarCategoria('TODAS', event)">🔥 Todos los Productos</button>`;
 
-            // Desplegable lateral móvil
             const drawerContainer = document.getElementById('drawerListaCategorias');
             let drawerHtml = `<button class="drawer-btn-cat ${categoriaActiva === 'TODAS' ? 'activa' : ''}" onclick="seleccionarCatDrawer('TODAS')">🔥 Todos los Productos</button>`;
 
@@ -490,8 +490,14 @@
         function cambiarCategoria(cat, event) {
             if (event) event.preventDefault();
             categoriaActiva = cat;
+
+            // Cada vez que se vuelve a TODAS, se rota el orden de las categorías en pantalla
+            if (cat === 'TODAS') {
+                ordenCategoriasActual = mezclarArray(categoriasDisponibles);
+            }
+
             document.getElementById('tituloSeccionActiva').innerText = cat === 'TODAS' ? '🌟 Todos los Productos' : `📂 ${cat}`;
-            renderizarMenuCategorias(categoriasDisponibles);
+            renderizarMenuCategorias(ordenCategoriasActual);
             animarBarraCategorias();
             filtrarProductos();
         }
@@ -720,7 +726,6 @@
             document.getElementById('qrModal').style.display = 'none';
         }
 
-        // CIERRE INTELIGENTE CON EL BOTÓN "ATRÁS" DEL CELULAR
         window.onpopstate = function(event) {
             if (estadoModal === 'drawer') cerrarMenuCategorias(true);
             else if (estadoModal === 'cart') cerrarCarrito(true);
