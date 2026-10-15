@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Panel Administrador | Polirubro Virtual</title>
-    <link rel="stylesheet" href="style.css?v=257">
+    <link rel="stylesheet" href="style.css?v=260">
     <style>
         body.admin-body { background-color: #0b0f19 !important; color: #f8fafc !important; font-family: system-ui, -apple-system, sans-serif !important; }
         .admin-wrapper { max-width: 1200px; margin: 0 auto; padding: 1.5rem 1rem; }
@@ -45,7 +45,7 @@
                     <h3>📂 Gestionar Secciones</h3>
                     <div class="form-group">
                         <label class="form-label">Nueva Sección:</label>
-                        <input type="text" id="inputNuevaCat" class="form-input" placeholder="Ej: Indumentaria, Calzado">
+                        <input type="text" id="inputNuevaCat" class="form-input" placeholder="Ej: Indumentaria, Calzado, Perfumería">
                     </div>
                     <button type="button" onclick="guardarSeccion()" class="btn-action" style="background: #2563eb;">✨ Guardar y Sincronizar</button>
                     
@@ -63,17 +63,17 @@
                     
                     <div class="form-group">
                         <label class="form-label">Nombre del Producto:</label>
-                        <input type="text" id="prodNombre" class="form-input" placeholder="Ej: Remera Algodón / Zapatillas">
+                        <input type="text" id="prodNombre" class="form-input" placeholder="Ej: Perfume Sauvage / Alisado / Zapatillas">
                     </div>
 
                     <div class="form-group">
                         <label class="form-label">📝 Descripción Breve (Opcional):</label>
-                        <textarea id="prodDescripcion" class="form-input" rows="2" placeholder="Ej: 100% algodón, excelente calidad..."></textarea>
+                        <textarea id="prodDescripcion" class="form-input" rows="2" placeholder="Ej: Fragancia de larga duración, excelente calidad..."></textarea>
                     </div>
 
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem;" class="form-group">
                         <div>
-                            <label class="form-label">Precio ($):</label>
+                            <label class="form-label">Precio (\$):</label>
                             <input type="number" id="prodPrecio" class="form-input" placeholder="4000">
                         </div>
                         <div>
@@ -88,10 +88,14 @@
                         </select>
                     </div>
 
-                    <!-- TAMAÑOS / VOLÚMENES DISPONIBLES (NUEVO) -->
+                    <!-- TAMAÑOS / VOLÚMENES: PERFUMES Y LÍQUIDOS -->
                     <div class="form-group">
-                        <label class="form-label">🧴 Tamaños / Volúmenes (Capilares / Líquidos):</label>
-                        <div class="checkbox-grid" id="grupoTamanios" style="grid-template-columns: repeat(3, 1fr);">
+                        <label class="form-label">🧴 Tamaños / Volúmenes (Perfumes y Líquidos):</label>
+                        <div class="checkbox-grid" id="grupoTamanios" style="grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));">
+                            <!-- Perfumes -->
+                            <label class="checkbox-label"><input type="checkbox" value="30 ml"> 30 ml</label>
+                            <label class="checkbox-label"><input type="checkbox" value="50 ml"> 50 ml</label>
+                            <!-- Líquidos y capilares -->
                             <label class="checkbox-label"><input type="checkbox" value="250 cc"> 250 cc</label>
                             <label class="checkbox-label"><input type="checkbox" value="500 cc"> 500 cc</label>
                             <label class="checkbox-label"><input type="checkbox" value="1 Litro"> 1 Litro</label>
@@ -194,7 +198,7 @@
 
     <script>
         let imagenFinalBase64 = "";
-        let datosTienda = { productos: [], categorias: ["Estética", "Electrónica", "Zapatería", "Accesorios"] };
+        let datosTienda = { productos: [], categorias: ["Estética", "Electrónica", "Zapatería", "Accesorios", "Muebleria"] };
 
         function obtenerConfig() {
             let owner = localStorage.getItem("gh_owner") || "Walchu86";
@@ -230,7 +234,7 @@
         }
 
         function renderizarInterfaz() {
-            let rawCats = datosTienda.categorias || ["Estética", "Electrónica", "Zapatería", "Accesorios"];
+            let rawCats = datosTienda.categorias || ["Estética", "Electrónica", "Zapatería", "Accesorios", "Muebleria"];
             let listaNombresCats = rawCats.map(c => typeof c === 'string' ? c : (c.nombre || c.categoria || '')).filter(c => c !== '');
 
             const select = document.getElementById('selectCategorias');
@@ -394,6 +398,10 @@
             document.getElementById("fileInput").value = "";
         }
 
+        function normalizarTexto(txt) {
+            return String(txt || '').replace(/\s+/g, '').toLowerCase();
+        }
+
         function prepararEdicion(idProd) {
             const prod = (datosTienda.productos || []).find(p => p.id === idProd);
             if (!prod) return;
@@ -406,22 +414,22 @@
             document.getElementById('selectCategorias').value = prod.categoria;
             document.getElementById('prodOferta').checked = prod.enOferta || false;
 
-            // Marcar tamaños guardados
-            const tamArr = prod.tamanios || [];
+            // Marcar tamaños guardados (reconoce con o sin espacios: 30ml / 30 ml, 250cc / 250 cc)
+            const tamArr = (prod.tamanios || []).map(normalizarTexto);
             document.querySelectorAll('#grupoTamanios input[type="checkbox"]').forEach(chk => {
-                chk.checked = tamArr.includes(chk.value);
+                chk.checked = tamArr.includes(normalizarTexto(chk.value));
             });
 
             // Marcar talles guardados
-            const talleArr = prod.talles || (prod.talle ? [prod.talle] : []);
+            const talleArr = (prod.talles || (prod.talle ? [prod.talle] : [])).map(normalizarTexto);
             document.querySelectorAll('#grupoTalles input[type="checkbox"]').forEach(chk => {
-                chk.checked = talleArr.includes(chk.value);
+                chk.checked = talleArr.includes(normalizarTexto(chk.value));
             });
 
             // Marcar colores guardados
-            const colorArr = prod.colores || (prod.color ? [prod.color] : []);
+            const colorArr = (prod.colores || (prod.color ? [prod.color] : [])).map(normalizarTexto);
             document.querySelectorAll('#grupoColores input[type="checkbox"]').forEach(chk => {
-                chk.checked = colorArr.includes(chk.value);
+                chk.checked = colorArr.includes(normalizarTexto(chk.value));
             });
 
             if (prod.imagen) {
