@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=297">
+    <link rel="stylesheet" href="style.css?v=299">
 </head>
 <body>
 
@@ -25,7 +25,7 @@
             <button class="welcome-close-btn" onclick="cerrarWelcomeModal()">✕</button>
             <h3 style="color: #c2410c; font-size: 1.25rem; font-weight: 900; margin-bottom: 8px;">🎉 ¡Bienvenido a Polirubro Virtual! 🚀</h3>
             <p style="color: #475569; font-size: 0.95rem; line-height: 1.4; margin-bottom: 5px;">
-                ¡Comprando \$20.000 o más, el envío es <strong>TOTALMENTE GRATIS</strong>! 🚚✨
+                ¡Comprando $20.000 o más, el envío es <strong>TOTALMENTE GRATIS</strong>! 🚚✨
             </p>
             <button class="btn-vamos-comprar" onclick="cerrarWelcomeModal()">¡Vamos a comprar! 🛒</button>
         </div>
@@ -34,7 +34,7 @@
     <!-- BANNER SUPERIOR MARQUESINA -->
     <div class="promo-banner">
         <div class="marquee-container">
-            <span>🔥 ¡ENVÍOS A DOMICILIO ! • <strong>¡ENVÍO GRATIS COMPRANDO \$20.000 O MÁS!</strong> 🚚💨 • ¡Comprá fácil y seguro desde tu celular! 📦 ⭐</span>
+            <span>🔥 ¡ENVÍOS A DOMICILIO ! • <strong>¡ENVÍO GRATIS COMPRANDO $20.000 O MÁS!</strong> 🚚💨 • ¡Comprá fácil y seguro desde tu celular! 📦 ⭐</span>
         </div>
     </div>
 
@@ -98,7 +98,7 @@
                 <div class="pc-widget-badges">
                     <span class="pc-badge-item">🔒 100% Segura</span>
                     <span class="pc-badge-item">💵 Efectivo / Transf.</span>
-                    <span class="pc-badge-item">🚚 Envío Gratis \$20k</span>
+                    <span class="pc-badge-item">🚚 Envío Gratis $20k</span>
                 </div>
             </div>
         </div>
@@ -160,7 +160,7 @@
                 <div class="detalle-info">
                     <span id="detalleCategoria" class="detalle-cat-tag">ESTÉTICA</span>
                     <h3 id="detalleTitulo" class="detalle-titulo">Nombre del Producto</h3>
-                    <div id="detallePrecio" class="detalle-precio">\$0</div>
+                    <div id="detallePrecio" class="detalle-precio">$0</div>
                     <p id="detalleDescripcion" class="detalle-descripcion"></p>
                     <div id="detalleVariantes" class="detalle-variantes"></div>
                     <div class="detalle-acciones">
@@ -180,7 +180,7 @@
         </div>
         
         <div class="cart-shipping-box" id="bannerCartShipping">
-            <p style="font-size:0.85rem; font-weight:bold; color:#ea580c;">🚚 Envío GRATIS en compras desde \$20.000</p>
+            <p style="font-size:0.85rem; font-weight:bold; color:#ea580c;">🚚 Envío GRATIS en compras desde $20.000</p>
             <p style="font-size:0.75rem; color:#64748b;">Elegí zona de entrega y método de pago.</p>
         </div>
 
@@ -195,12 +195,12 @@
                 <label style="font-size:0.80rem; font-weight:bold; color:#1e293b; display:block; margin-bottom:4px;">📍 Zona / Entrega:</label>
                 <select id="selectTipoEnvio" class="select-checkout" onchange="actualizarCarritoUI()">
                     <option value="local">🏬 Retiro en Local (Gratis)</option>
-                    <option value="dentro">🛵 Dentro de las 4 Avenidas (\$1.500)</option>
-                    <option value="fuera">🚚 Fuera de las 4 Avenidas (\$2.500)</option>
+                    <option value="dentro">🛵 Dentro de las 4 Avenidas ($1.500)</option>
+                    <option value="fuera">🚚 Fuera de las 4 Avenidas ($2.500)</option>
                 </select>
             </div>
             <div id="avisoEnvioGratisPromo" style="display:none; background: #ecfdf5; border: 1.5px solid #34d399; padding: 8px; border-radius: 8px; text-align: center; margin-top: 5px;">
-                <p style="font-size: 0.85rem; font-weight: 800; color: #065f46; margin: 0;">🎉 ¡ENVÍO 100% GRATIS (\$0)!</p>
+                <p style="font-size: 0.85rem; font-weight: 800; color: #065f46; margin: 0;">🎉 ¡ENVÍO 100% GRATIS ($0)!</p>
             </div>
 
             <label style="font-size:0.80rem; font-weight:bold; color:#1e293b; display:block; margin-top:8px; margin-bottom:4px;">💳 Forma de Pago:</label>
@@ -217,11 +217,11 @@
             </div>
             <div style="display:flex; justify-content:space-between; margin-bottom: 6px; font-size: 0.85rem; color:#64748b;">
                 <span>Envío:</span>
-                <span id="cartEnvioTexto">\$0</span>
+                <span id="cartEnvioTexto">$0</span>
             </div>
             <div style="display:flex; justify-content:space-between; margin-bottom: 10px; font-weight: bold; font-size: 1.1rem; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
                 <span>Total:</span>
-                <span style="color:#ea580c;">\$<span id="cartTotalModal">0</span></span>
+                <span style="color:#ea580c;">$<span id="cartTotalModal">0</span></span>
             </div>
             <div style="display:flex; gap: 8px;">
                 <button onclick="cerrarCarrito()" style="flex:1; background:#64748b; color:white; border:none; padding:10px; border-radius:8px; font-weight:bold; font-size:0.85rem; cursor:pointer;">Seguir viendo</button>
@@ -369,7 +369,6 @@
 
             seccion.style.display = 'block';
             
-            // Duplicar elementos para asegurar bucle infinito fluido con animación CSS
             const itemsHtml = ofertas.map(p => {
                 const imgUrl = p.imagen || 'https://via.placeholder.com/150?text=Oferta';
                 const precioLimpio = Number(p.precio || 0);
@@ -384,7 +383,36 @@
                 `;
             }).join('');
 
-            carril.innerHTML = itemsHtml + itemsHtml; // Duplicado para loop perfecto
+            carril.innerHTML = itemsHtml + itemsHtml;
+            setTimeout(iniciarAutoplayOfertas, 300);
+        }
+
+        function iniciarAutoplayOfertas() {
+            const carril = document.getElementById('gridOfertas48hs');
+            if (!carril) return;
+
+            if (window.ofertasAnimId) cancelAnimationFrame(window.ofertasAnimId);
+
+            let scrollSpeed = 0.8;
+            let isPaused = false;
+
+            function step() {
+                if (!isPaused) {
+                    carril.scrollLeft += scrollSpeed;
+                    const maxScroll = carril.scrollWidth / 2;
+                    if (carril.scrollLeft >= maxScroll || maxScroll === 0) {
+                        carril.scrollLeft = 0;
+                    }
+                }
+                window.ofertasAnimId = requestAnimationFrame(step);
+            }
+
+            carril.onmouseenter = () => { isPaused = true; };
+            carril.onmouseleave = () => { isPaused = false; };
+            carril.ontouchstart = () => { isPaused = true; };
+            carril.ontouchend = () => { setTimeout(() => { isPaused = false; }, 1200); };
+
+            window.ofertasAnimId = requestAnimationFrame(step);
         }
 
         function abrirModalDetalle(idProd) {
@@ -732,7 +760,7 @@
             if (carrito.length === 0) return alert("El carrito está vacío.");
             
             const subtotalMonto = carrito.reduce((sum, i) => sum + (Number(i.precio) * i.cantidad), 0);
-            const medioPago = document.getElementById('selectMedioPago') ? document.getElementById('selectMedioPago').value : 'Efectivo';
+            const medioPago = document.getElementById('selectMedioPago') ? document.getElementById('selectMedioPago'].value : 'Efectivo';
 
             let costoEnvio = 0;
             let textoEnvio = "Retiro en Local (Gratis)";
