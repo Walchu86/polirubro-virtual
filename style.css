@@ -4,7 +4,7 @@ html, body {
     overflow-x: hidden !important;
     width: 100%;
 }
-body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8fafc; color: #1e293b; padding-bottom: 70px; min-height: 100vh; }
+body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8fafc; color: #1e293b; padding-bottom: 70px; }
 
 /* FILA DEL ENCABEZADO: TÍTULO Y BOTÓN HAMBURGUESA */
 .header-brand-row {
@@ -266,8 +266,8 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
 .nav-links a { color: white; text-decoration: none; padding: 5px 12px; border-radius: 16px; font-size: 0.8rem; font-weight: bold; background: rgba(0,0,0,0.15); transition: all 0.2s ease; }
 .nav-links a.activa-nav, .nav-links a:hover { background: #ffffff; color: #ea580c; }
 
-/* LAYOUT CON min-height PARA EVITAR EL ESPACIO EN BLANCO AL PIE */
-.main-layout { max-width: 1200px; margin: 15px auto; padding: 0 10px; display: grid; grid-template-columns: 1fr 260px; gap: 15px; box-sizing: border-box; min-height: 75vh; }
+/* LAYOUT */
+.main-layout { max-width: 1200px; margin: 15px auto; padding: 0 10px; display: grid; grid-template-columns: 1fr 260px; gap: 15px; box-sizing: border-box; min-height: 65vh; }
 @media (max-width: 900px) { .main-layout { grid-template-columns: 1fr; } aside.sidebar { display: none; } }
 
 /* BUSCADOR */
@@ -276,7 +276,7 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
 .search-input:focus { border-color: #ea580c; }
 
 /* ========================================================
-   TIRA ULTRA-FINA PARA OFERTAS FLASH 48 HORAS (CARRUSEL INFINITO SUAVE)
+   TIRA ULTRA-FINA PARA OFERTAS FLASH 48 HORAS (CARRUSEL INFINITO)
    ======================================================== */
 .tira-ofertas-wrapper {
     background: #fff1f2;
@@ -313,8 +313,16 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
     gap: 8px;
     width: max-content;
     padding-bottom: 3px;
-    will-change: scroll-position;
+    animation: scrollOfertasCss 30s linear infinite;
 }
+.tira-ofertas-wrapper:hover .tira-ofertas-carril {
+    animation-play-state: paused;
+}
+@keyframes scrollOfertasCss {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
 .oferta-tira-item {
     background: #ffffff;
     border: 1px solid #fecdd3;
@@ -485,19 +493,21 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
 .img-frame {
     width: 100%;
     height: 170px;
-    background: #f8fafc;
+    background: #ffffff;
     cursor: pointer;
-    overflow: hidden;
-    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
+    position: relative;
+    padding: 8px;
 }
 .img-producto {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover !important;
-    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
 }
 .card-detalles { padding: 10px; flex: 1; display: flex; flex-direction: column; }
 .titulo-producto { font-size: 0.9rem; font-weight: bold; color: #1e293b; margin-bottom: 4px; }
@@ -542,7 +552,7 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
         border-radius: 10px !important;
     }
     .img-frame {
-        height: 140px !important;
+        height: 130px !important;
     }
     .card-detalles {
         padding: 8px !important;
