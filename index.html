@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=404">
+    <link rel="stylesheet" href="style.css?v=500">
 </head>
 <body>
 
@@ -384,6 +384,35 @@
             }).join('');
 
             carril.innerHTML = itemsHtml + itemsHtml;
+            setTimeout(iniciarAutoplayOfertas, 400);
+        }
+
+        function iniciarAutoplayOfertas() {
+            const carril = document.getElementById('gridOfertas48hs');
+            if (!carril) return;
+
+            if (window.ofertasAnimId) cancelAnimationFrame(window.ofertasAnimId);
+
+            let scrollSpeed = 0.6;
+            let isPaused = false;
+
+            function step() {
+                if (!isPaused) {
+                    carril.scrollLeft += scrollSpeed;
+                    const maxScroll = carril.scrollWidth / 2;
+                    if (carril.scrollLeft >= maxScroll) {
+                        carril.scrollLeft = 0;
+                    }
+                }
+                window.ofertasAnimId = requestAnimationFrame(step);
+            }
+
+            carril.onmouseenter = () => { isPaused = true; };
+            carril.onmouseleave = () => { isPaused = false; };
+            carril.ontouchstart = () => { isPaused = true; };
+            carril.ontouchend = () => { setTimeout(() => { isPaused = false; }, 1000); };
+
+            window.ofertasAnimId = requestAnimationFrame(step);
         }
 
         function abrirModalDetalle(idProd) {
