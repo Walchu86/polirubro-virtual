@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=1000004">
+    <link rel="stylesheet" href="style.css?v=1000006">
 </head>
 <body>
     <div class="drawer-overlay" id="drawerCategorias" onclick="cerrarMenuCategorias()">
@@ -296,7 +296,7 @@
                     <span class="oferta-tira-precio">$${formatearPrecio(p.precio)}</span>
                 </div>
             `).join('');
-            carril.innerHTML = itemsHtml.repeat(6);
+            carril.innerHTML = itemsHtml.repeat(10);
             setTimeout(iniciarAutoplayOfertas, 300);
         }
 
@@ -304,13 +304,13 @@
             const carril = document.getElementById('gridOfertas48hs');
             if (!carril) return;
             if (window.ofertasAnimId) cancelAnimationFrame(window.ofertasAnimId);
-            let scrollPos = 0, scrollSpeed = 0.7, isPaused = false;
+            let scrollPos = 0, scrollSpeed = 0.6, isPaused = false;
             function step() {
                 if (!isPaused) {
                     scrollPos += scrollSpeed;
                     carril.scrollLeft = scrollPos;
-                    const singleSetWidth = carril.scrollWidth / 6;
-                    if (carril.scrollLeft >= singleSetWidth * 3) { 
+                    const singleSetWidth = carril.scrollWidth / 10;
+                    if (carril.scrollLeft >= singleSetWidth * 5) { 
                         scrollPos = 0; 
                         carril.scrollLeft = 0; 
                     }
@@ -405,7 +405,7 @@
                 return;
             }
 
-            grid.innerHTML = filtrados.map(p => {
+            let htmlProductos = filtrados.map(p => {
                 const imgUrl = p.imagen || 'https://via.placeholder.com/300?text=Sin+Imagen';
                 const tamArr = p.tamanios || [];
                 const tArr = p.talles || (p.talle ? [p.talle] : []);
@@ -438,6 +438,18 @@
                     </div>
                 `;
             }).join('');
+
+            // FANTASMAS INVISIBLES PARA COMPLETAR LA ÚLTIMA FILA SI ES IMPAR (4 columnas PC / 2 columnas Celu)
+            const columnasActuales = window.innerWidth > 900 ? 4 : 2;
+            const residuo = filtrados.length % columnasActuales;
+            let fantasmasHtml = '';
+            if (residuo > 0) {
+                for (let i = 0; i < (columnasActuales - residuo); i++) {
+                    fantasmasHtml += `<div style="visibility: hidden; border: none; background: transparent; box-shadow: none; pointer-events: none; height: 0; margin: 0; padding: 0;"></div>`;
+                }
+            }
+
+            grid.innerHTML = htmlProductos + fantasmasHtml;
         }
 
         function agregarAlCarrito(id) {
