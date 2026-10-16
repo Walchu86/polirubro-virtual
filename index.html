@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=1000000">
+    <link rel="stylesheet" href="style.css?v=1000004">
 </head>
 <body>
     <div class="drawer-overlay" id="drawerCategorias" onclick="cerrarMenuCategorias()">
@@ -296,11 +296,11 @@
                     <span class="oferta-tira-precio">$${formatearPrecio(p.precio)}</span>
                 </div>
             `).join('');
-            carril.innerHTML = itemsHtml + itemsHtml + itemsHtml + itemsHtml;
+            carril.innerHTML = itemsHtml.repeat(6);
             setTimeout(iniciarAutoplayOfertas, 300);
         }
 
-       function iniciarAutoplayOfertas() {
+        function iniciarAutoplayOfertas() {
             const carril = document.getElementById('gridOfertas48hs');
             if (!carril) return;
             if (window.ofertasAnimId) cancelAnimationFrame(window.ofertasAnimId);
@@ -314,15 +314,6 @@
                         scrollPos = 0; 
                         carril.scrollLeft = 0; 
                     }
-                }
-                window.ofertasAnimId = requestAnimationFrame(step);
-            }
-            carril.onmouseenter = () => { isPaused = true; };
-            carril.onmouseleave = () => { isPaused = false; };
-            carril.ontouchstart = () => { isPaused = true; };
-            carril.ontouchend = () => { setTimeout(() => { isPaused = false; }, 800); };
-            window.ofertasAnimId = requestAnimationFrame(step);
-        }
                 }
                 window.ofertasAnimId = requestAnimationFrame(step);
             }
@@ -602,7 +593,12 @@
             } else { window.open(urlWsp, '_blank'); }
         }
 
-        window.onload = () => { cargarCatalogoPublico(); actualizarCarritoUI(); iniciarCarruselPC(); animarBarraCategorias(); };
+        window.onload = () => { 
+            cargarCatalogoPublico(); 
+            actualizarCarritoUI(); 
+            iniciarCarruselPC(); 
+            animarBarraCategorias(); 
+        };
     </script>
 </body>
 </html>
