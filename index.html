@@ -300,20 +300,29 @@
             setTimeout(iniciarAutoplayOfertas, 300);
         }
 
-        function iniciarAutoplayOfertas() {
+       function iniciarAutoplayOfertas() {
             const carril = document.getElementById('gridOfertas48hs');
             if (!carril) return;
             if (window.ofertasAnimId) cancelAnimationFrame(window.ofertasAnimId);
-            let scrollPos = 0, scrollSpeed = 0.75, isPaused = false;
+            let scrollPos = 0, scrollSpeed = 0.7, isPaused = false;
             function step() {
                 if (!isPaused) {
                     scrollPos += scrollSpeed;
                     carril.scrollLeft = scrollPos;
-                    const singleSetWidth = carril.scrollWidth / 4;
-                    if (carril.scrollLeft >= singleSetWidth * 2) { 
+                    const singleSetWidth = carril.scrollWidth / 6;
+                    if (carril.scrollLeft >= singleSetWidth * 3) { 
                         scrollPos = 0; 
                         carril.scrollLeft = 0; 
                     }
+                }
+                window.ofertasAnimId = requestAnimationFrame(step);
+            }
+            carril.onmouseenter = () => { isPaused = true; };
+            carril.onmouseleave = () => { isPaused = false; };
+            carril.ontouchstart = () => { isPaused = true; };
+            carril.ontouchend = () => { setTimeout(() => { isPaused = false; }, 800); };
+            window.ofertasAnimId = requestAnimationFrame(step);
+        }
                 }
                 window.ofertasAnimId = requestAnimationFrame(step);
             }
