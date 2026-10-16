@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=1000000">
 </head>
 <body>
     <div class="drawer-overlay" id="drawerCategorias" onclick="cerrarMenuCategorias()">
@@ -304,13 +304,16 @@
             const carril = document.getElementById('gridOfertas48hs');
             if (!carril) return;
             if (window.ofertasAnimId) cancelAnimationFrame(window.ofertasAnimId);
-            let scrollPos = 0, scrollSpeed = 0.8, isPaused = false;
+            let scrollPos = 0, scrollSpeed = 0.75, isPaused = false;
             function step() {
                 if (!isPaused) {
                     scrollPos += scrollSpeed;
                     carril.scrollLeft = scrollPos;
                     const singleSetWidth = carril.scrollWidth / 4;
-                    if (carril.scrollLeft >= singleSetWidth * 2) { scrollPos = 0; carril.scrollLeft = 0; }
+                    if (carril.scrollLeft >= singleSetWidth * 2) { 
+                        scrollPos = 0; 
+                        carril.scrollLeft = 0; 
+                    }
                 }
                 window.ofertasAnimId = requestAnimationFrame(step);
             }
