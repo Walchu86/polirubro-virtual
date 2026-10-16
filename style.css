@@ -134,23 +134,27 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
 .nav-links a { color: white; text-decoration: none; padding: 5px 12px; border-radius: 16px; font-size: 0.8rem; font-weight: bold; background: rgba(0,0,0,0.15); transition: all 0.2s ease; }
 .nav-links a.activa-nav, .nav-links a:hover { background: #fff; color: #ea580c; }
 
-/* LAYOUT PRINCIPAL CON SIDEBAR EN PC */
-.main-layout { max-width: 1200px; margin: 15px auto; padding: 0 10px; display: grid; grid-template-columns: 1fr 260px; gap: 15px; box-sizing: border-box; align-items: start; }
+/* LAYOUT PRINCIPAL CON SIDEBAR EN PC - CENTRADO Y FLUIDO */
+.main-layout { max-width: 1200px; margin: 15px auto; padding: 0 10px; display: grid; grid-template-columns: 1fr 260px; gap: 15px; box-sizing: border-box; align-items: start; width: 100%; }
 @media (max-width: 900px) { .main-layout { grid-template-columns: 1fr; } aside.sidebar { display: none !important; } }
+
+.main-content-area { width: 100%; min-width: 0; box-sizing: border-box; }
 
 .search-box { margin-bottom: 12px; }
 .search-input { width: 100%; padding: 10px 14px; border-radius: 10px; border: 2px solid #cbd5e1; outline: none; font-size: 0.9rem; background: #fff; }
 .search-input:focus { border-color: #ea580c; }
 
-/* CARRUSEL DE OFERTAS FLASH FLUIDO Y SIN BACHES */
+/* CARRUSEL DE OFERTAS FLASH ADAPTADO ESTRICTAMENTE AL ANCHO DEL CONTENEDOR */
 .tira-ofertas-wrapper {
     background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 100%);
-    border: 1px solid #fda4af; border-radius: 14px; padding: 8px 12px; margin-bottom: 14px; overflow: hidden; position: relative; box-shadow: 0 4px 12px rgba(225, 29, 72, 0.08);
+    border: 1px solid #fda4af; border-radius: 14px; padding: 8px 12px; margin-bottom: 14px; 
+    overflow: hidden; position: relative; box-shadow: 0 4px 12px rgba(225, 29, 72, 0.08); 
+    width: 100%; max-width: 100%; box-sizing: border-box;
 }
 .tira-ofertas-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
 .tira-ofertas-tag { font-size: 0.75rem; font-weight: 900; color: #e11d48; }
 .tira-ofertas-sub { font-size: 0.68rem; color: #9f1239; font-weight: 700; }
-.tira-ofertas-carril-container { width: 100%; overflow: hidden; position: relative; cursor: grab; }
+.tira-ofertas-carril-container { width: 100%; max-width: 100%; overflow: hidden; position: relative; cursor: grab; box-sizing: border-box; }
 .tira-ofertas-carril { display: flex; gap: 10px; width: max-content; padding-bottom: 4px; will-change: scroll-position; scrollbar-width: none; }
 .tira-ofertas-carril::-webkit-scrollbar { display: none; }
 .oferta-tira-item {
@@ -183,7 +187,7 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
 
 /* GRILLA DE PRODUCTOS - ALTURAS UNIFICADAS PARA EVITAR DESFASE EN PC */
 .cat-titulo-seccion { font-size: 1.15rem; color: #1e293b; margin-bottom: 12px; font-weight: 800; border-bottom: 2px solid #e2e8f0; padding-bottom: 4px; }
-.productos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 12px; width: 100%; align-items: stretch; }
+.productos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; width: 100%; align-items: stretch; }
 .card-producto { background: #fff; border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 2px 8px rgba(0,0,0,0.03); display: flex; flex-direction: column; position: relative; height: 100%; }
 
 .img-frame { width: 100%; height: 160px; background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; padding: 6px; flex-shrink: 0; }
