@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Polirubro Virtual | Catálogo Online</title>
-    <link rel="stylesheet" href="style.css?v=1000006">
+    <link rel="stylesheet" href="style.css?v=1000007">
 </head>
 <body>
     <div class="drawer-overlay" id="drawerCategorias" onclick="cerrarMenuCategorias()">
@@ -296,32 +296,8 @@
                     <span class="oferta-tira-precio">$${formatearPrecio(p.precio)}</span>
                 </div>
             `).join('');
-            carril.innerHTML = itemsHtml.repeat(10);
-            setTimeout(iniciarAutoplayOfertas, 300);
-        }
-
-        function iniciarAutoplayOfertas() {
-            const carril = document.getElementById('gridOfertas48hs');
-            if (!carril) return;
-            if (window.ofertasAnimId) cancelAnimationFrame(window.ofertasAnimId);
-            let scrollPos = 0, scrollSpeed = 0.6, isPaused = false;
-            function step() {
-                if (!isPaused) {
-                    scrollPos += scrollSpeed;
-                    carril.scrollLeft = scrollPos;
-                    const singleSetWidth = carril.scrollWidth / 10;
-                    if (carril.scrollLeft >= singleSetWidth * 5) { 
-                        scrollPos = 0; 
-                        carril.scrollLeft = 0; 
-                    }
-                }
-                window.ofertasAnimId = requestAnimationFrame(step);
-            }
-            carril.onmouseenter = () => { isPaused = true; };
-            carril.onmouseleave = () => { isPaused = false; };
-            carril.ontouchstart = () => { isPaused = true; };
-            carril.ontouchend = () => { setTimeout(() => { isPaused = false; }, 800); };
-            window.ofertasAnimId = requestAnimationFrame(step);
+            // Duplicamos 6 veces para asegurar una rueda infinita perfecta
+            carril.innerHTML = itemsHtml.repeat(6);
         }
 
         function abrirModalDetalle(idProd) {
@@ -439,7 +415,7 @@
                 `;
             }).join('');
 
-            // FANTASMAS INVISIBLES PARA COMPLETAR LA ÚLTIMA FILA SI ES IMPAR (4 columnas PC / 2 columnas Celu)
+            // TARJETAS FANTASMAS INVISIBLES PARA CERRAR EL BACHE DE PRODUCTOS IMPARES
             const columnasActuales = window.innerWidth > 900 ? 4 : 2;
             const residuo = filtrados.length % columnasActuales;
             let fantasmasHtml = '';
