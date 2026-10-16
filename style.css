@@ -231,7 +231,7 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
 
 /* RESPONSIVE MÓVIL EXACTO DE 2 COLUMNAS SIN BACHES NI IMÁGENES ROTAS */
 @media (max-width: 768px) {
-    .productos-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
+    .productos-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; justify-content: center !important; }
     .card-producto { border-radius: 10px !important; height: 100% !important; }
     .img-frame { height: 125px !important; }
     .img-producto { width: 100% !important; height: 100% !important; object-fit: contain !important; }
