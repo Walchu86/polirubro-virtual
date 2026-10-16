@@ -1,4 +1,4 @@
-/* ESTILOS GENERALES POLIRUBRO VIRTUAL */
+/* ESTILOS GENERALES POLIRUBRO VIRTUAL - VERSIÓN DEFINITIVA */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { overflow-x: hidden !important; width: 100%; }
 body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8fafc; color: #1e293b; padding-bottom: 70px; }
@@ -134,7 +134,7 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
 .nav-links a { color: white; text-decoration: none; padding: 5px 12px; border-radius: 16px; font-size: 0.8rem; font-weight: bold; background: rgba(0,0,0,0.15); transition: all 0.2s ease; }
 .nav-links a.activa-nav, .nav-links a:hover { background: #fff; color: #ea580c; }
 
-/* LAYOUT CON CUADRO DE SECCIONES FIJO A LA DERECHA EN PC */
+/* LAYOUT PRINCIPAL CON SIDEBAR EN PC */
 .main-layout { max-width: 1200px; margin: 15px auto; padding: 0 10px; display: grid; grid-template-columns: 1fr 260px; gap: 15px; box-sizing: border-box; align-items: start; }
 @media (max-width: 900px) { .main-layout { grid-template-columns: 1fr; } aside.sidebar { display: none !important; } }
 
@@ -142,7 +142,7 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
 .search-input { width: 100%; padding: 10px 14px; border-radius: 10px; border: 2px solid #cbd5e1; outline: none; font-size: 0.9rem; background: #fff; }
 .search-input:focus { border-color: #ea580c; }
 
-/* TIRA DE OFERTAS FLASH FLUIDA SIN BACHES */
+/* CARRUSEL DE OFERTAS FLASH FLUIDO Y SIN BACHES */
 .tira-ofertas-wrapper {
     background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 100%);
     border: 1px solid #fda4af; border-radius: 14px; padding: 8px 12px; margin-bottom: 14px; overflow: hidden; position: relative; box-shadow: 0 4px 12px rgba(225, 29, 72, 0.08);
@@ -181,18 +181,19 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
 .detalle-badge-var { background: #f1f5f9; color: #475569; font-size: 0.68rem; font-weight: bold; padding: 2px 6px; border-radius: 4px; border: 1px solid #cbd5e1; }
 .detalle-acciones { display: flex; gap: 8px; }
 
-/* GRILLA DE PRODUCTOS - FLUIDA Y SIN BACHES */
+/* GRILLA DE PRODUCTOS - ALTURAS UNIFICADAS PARA EVITAR DESFASE EN PC */
 .cat-titulo-seccion { font-size: 1.15rem; color: #1e293b; margin-bottom: 12px; font-weight: 800; border-bottom: 2px solid #e2e8f0; padding-bottom: 4px; }
-.productos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 12px; width: 100%; }
+.productos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 12px; width: 100%; align-items: stretch; }
 .card-producto { background: #fff; border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 2px 8px rgba(0,0,0,0.03); display: flex; flex-direction: column; position: relative; height: 100%; }
 
-.img-frame { width: 100%; height: 160px; background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; padding: 6px; }
-.img-producto { max-width: 100% !important; max-height: 100% !important; width: auto !important; height: auto !important; object-fit: contain !important; }
-.card-detalles { padding: 10px; flex: 1; display: flex; flex-direction: column; }
-.titulo-producto { font-size: 0.85rem; font-weight: bold; color: #1e293b; margin-bottom: 4px; }
-.precio-producto { font-size: 1.05rem; font-weight: 900; color: #ea580c; margin-top: auto; }
+.img-frame { width: 100%; height: 160px; background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; padding: 6px; flex-shrink: 0; }
+.img-producto { width: 100% !important; height: 100% !important; object-fit: contain !important; }
+
+.card-detalles { padding: 10px; flex: 1; display: flex; flex-direction: column; justify-content: flex-start; }
+.titulo-producto { font-size: 0.85rem; font-weight: bold; color: #1e293b; margin-bottom: 4px; line-height: 1.2; }
+.precio-producto { font-size: 1.05rem; font-weight: 900; color: #ea580c; margin-top: auto; padding-top: 6px; }
 .stock-tag { font-size: 0.68rem; color: #64748b; margin-top: 2px; }
-.card-acciones { padding: 8px 10px; background: #f8fafc; border-top: 1px solid #f1f5f9; display: flex; gap: 6px; margin-top: auto; }
+.card-acciones { padding: 8px 10px; background: #f8fafc; border-top: 1px solid #f1f5f9; display: flex; gap: 6px; margin-top: auto; flex-shrink: 0; }
 .btn-add-cart { flex: 1; background: #ea580c; color: white; border: none; padding: 6px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.78rem; }
 .btn-share-wsp { background: #22c55e; color: white; border: none; padding: 6px 9px; border-radius: 6px; cursor: pointer; font-size: 0.78rem; font-weight: bold; }
 
@@ -227,12 +228,12 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
 /* RESPONSIVE MÓVIL EXACTO DE 2 COLUMNAS SIN BACHES NI IMÁGENES ROTAS */
 @media (max-width: 768px) {
     .productos-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
-    .card-producto { border-radius: 10px !important; }
-    .img-frame { height: 130px !important; }
-    .img-producto { max-width: 100% !important; max-height: 100% !important; object-fit: contain !important; }
-    .card-detalles { padding: 8px !important; }
-    .titulo-producto { font-size: 0.78rem !important; }
-    .precio-producto { font-size: 0.9rem !important; }
-    .card-acciones { padding: 6px 8px !important; gap: 4px !important; }
-    .btn-add-cart, .btn-share-wsp { padding: 6px 4px !important; font-size: 0.7rem !important; }
+    .card-producto { border-radius: 10px !important; height: 100% !important; }
+    .img-frame { height: 125px !important; }
+    .img-producto { width: 100% !important; height: 100% !important; object-fit: contain !important; }
+    .card-detalles { padding: 7px !important; }
+    .titulo-producto { font-size: 0.75rem !important; }
+    .precio-producto { font-size: 0.85rem !important; }
+    .card-acciones { padding: 6px !important; gap: 4px !important; }
+    .btn-add-cart, .btn-share-wsp { padding: 5px 3px !important; font-size: 0.68rem !important; }
 }
