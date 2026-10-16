@@ -144,7 +144,7 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
 .search-input { width: 100%; padding: 10px 14px; border-radius: 10px; border: 2px solid #cbd5e1; outline: none; font-size: 0.9rem; background: #fff; }
 .search-input:focus { border-color: #ea580c; }
 
-/* CARRUSEL DE OFERTAS FLASH FLUIDO Y CONTINUO */
+/* CARRUSEL DE OFERTAS FLASH PROFESIONAL CON ANIMACIÓN CSS PURA (RUEDA CONSTANTE) */
 .tira-ofertas-wrapper {
     background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 100%);
     border: 1px solid #fda4af; border-radius: 14px; padding: 8px 12px; margin-bottom: 14px; 
@@ -154,9 +154,17 @@ body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8f
 .tira-ofertas-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
 .tira-ofertas-tag { font-size: 0.75rem; font-weight: 900; color: #e11d48; }
 .tira-ofertas-sub { font-size: 0.68rem; color: #9f1239; font-weight: 700; }
-.tira-ofertas-carril-container { width: 100%; max-width: 100%; overflow: hidden; position: relative; cursor: grab; box-sizing: border-box; display: flex; }
-.tira-ofertas-carril { display: flex; gap: 10px; width: max-content; padding-bottom: 4px; will-change: scroll-position; scrollbar-width: none; }
-.tira-ofertas-carril::-webkit-scrollbar { display: none; }
+.tira-ofertas-carril-container { width: 100%; max-width: 100%; overflow: hidden; position: relative; display: flex; }
+.tira-ofertas-carril { 
+    display: flex; gap: 10px; width: max-content; padding-bottom: 4px; 
+    animation: scrollOfertas 35s linear infinite; 
+}
+.tira-ofertas-carril:hover { animation-play-state: paused; }
+@keyframes scrollOfertas {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
 .oferta-tira-item {
     background: #fff; border: 1px solid #fecdd3; border-radius: 10px; min-width: 90px; max-width: 90px;
     padding: 6px 4px; display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; cursor: pointer; flex-shrink: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.04); transition: transform 0.2s ease;
